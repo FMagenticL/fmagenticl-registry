@@ -22,6 +22,12 @@ DELTA_CACHE_PATH = os.environ.get(
     os.path.join(os.path.expanduser("~"), ".fmagenticl", "delta_cache.json"),
 )
 
+# Base64-encoded Ed25519 public key for verifying signed snapshots and deltas.
+FMAGENTICL_PUBLIC_KEY = os.environ.get(
+    "FMAGENTICL_PUBLIC_KEY",
+    "guknKNLrBRrjQ83nSrj3V5+fysNYf99X9w7MdOdqB5w=",
+)
+
 # HTTP timeout profile. Total worst-case latency for a single request is
 # bounded by (connect + read) = 1.5 seconds. This is the SLA the client
 # guarantees to the host agent runtime.

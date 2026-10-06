@@ -19,6 +19,8 @@ import threading
 import time
 from typing import Optional
 
+from fmagenticl.client.verify import verify_snapshot_file
+
 
 class LocalCache:
     def __init__(
@@ -26,12 +28,22 @@ class LocalCache:
         snapshot_path: str = "snapshot.json",
         delta_path: Optional[str] = None,
         cache_path: Optional[str] = None,
+        verify_signature: bool = True,
+        sig_path: Optional[str] = None,
+        public_key_b64: Optional[str] = None,
     ):
         self.snapshot_path = snapshot_path
         self.delta_path = delta_path or cache_path or os.environ.get(
             "FMAGENTICL_DELTA_CACHE_PATH",
             os.path.join(os.path.expanduser("~"), ".fmagenticl", "delta_cache.json"),
         )
+        self.verify_signature = (
+            verify_signature
+            if os.environ.get("FMAGENTICL_VERIFY_SIGNATURES", "1") != "0"
+            else False
+        )
+        self.sig_path = sig_path
+        self.public_key_b64 = public_key_b64
         self._lock = threading.Lock()
         self._memory: dict = {}
         self._delta: dict = {}
@@ -41,6 +53,15 @@ class LocalCache:
     def _load_snapshot(self) -> None:
         if not os.path.exists(self.snapshot_path):
             return
+
+        if self.verify_signature:
+            if not verify_snapshot_file(
+                self.snapshot_path,
+                sig_path=self.sig_path,
+                public_key_b64=self.public_key_b64,
+            ):
+                return
+
         try:
             with open(self.snapshot_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
