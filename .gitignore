@@ -76,3 +76,16 @@ Thumbs.db
 
 dist_pkg/
 
+
+# Air-Gap Quarantine & Leak Prevention
+prompt_*.txt
+scratch_*
+*.token
+*.pdf
+dist/*.pdf
+dist/*_index.md
+dist/google_export_*
+google_export_*
+build_google_photos_exports.py
+*.auth
+*.pat
