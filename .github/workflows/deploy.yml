@@ -55,7 +55,9 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           npm install -g wrangler
+          wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql
           python scripts/build_guestbook.py || echo "Warning: D1 guestbook query failed, retaining static guestbook.json"
+
 
       - name: Build static distribution & sign
         env:
