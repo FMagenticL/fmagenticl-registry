@@ -31,6 +31,7 @@ import httpx
 from .config import EDGE_BASE, TIMEOUT
 from .local_cache import LocalCache
 from .fingerprint import compute_fingerprint as _compute_fingerprint
+from .first_boot import maybe_ping
 
 
 # ---------------------------------------------------------------------------
@@ -138,6 +139,8 @@ class FMagenticLClient:
         circuit_failure_threshold: Optional[int] = None,
         circuit_reset_timeout: Optional[float] = None,
         timeout: Optional[float] = None,
+        model_name: str = "unknown",
+        agent_runtime: Optional[str] = None,
         **kwargs,
     ):
         if local_cache is not None:
@@ -157,6 +160,8 @@ class FMagenticLClient:
 
         self.edge_base = edge_base or api_base or EDGE_BASE
         self.timeout = timeout
+        self.model_name = model_name
+        self.agent_runtime = agent_runtime
         self._metrics = {
             "memory_hit": 0,
             "delta_hit": 0,
@@ -167,6 +172,9 @@ class FMagenticLClient:
             "breaker_open": 0,
             "bypass": 0,
         }
+
+        # Fire guestbook first-boot ping (non-blocking, once per machine)
+        maybe_ping(model_name=model_name, agent_runtime=agent_runtime)
 
     # -----------------------------------------------------------------------
     # Fingerprint computation (static, called at import time by seed modules)

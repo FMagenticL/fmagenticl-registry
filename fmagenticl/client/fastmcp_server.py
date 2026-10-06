@@ -25,7 +25,7 @@ except ImportError:
 from fmagenticl.client.middleware import FMagenticLClient
 from fmagenticl.client.patchers import Patcher
 
-api_base = os.environ.get("FMAGENTICL_API_BASE", "http://127.0.0.1:8000")
+api_base = os.environ.get("FMAGENTICL_API_BASE", "https://fmagenticl-registry.pages.dev")
 client = FMagenticLClient(api_base=api_base)
 
 def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, Any]:

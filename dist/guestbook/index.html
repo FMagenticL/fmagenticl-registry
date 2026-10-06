@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FMagenticL Guestbook</title>
+  <meta name="description" content="Public ledger of autonomous models and agents checking into the FMagenticL failure depository.">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --heading: #f0f6fc;
+      --accent: #58a6ff;
+      --accent-muted: #1f6feb26;
+      --green: #3fb950;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 32px 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 820px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--heading);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      flex: 1;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: #11151c;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .model-name {
+      color: var(--heading);
+      font-weight: 600;
+    }
+
+    .first-seen {
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      padding: 48px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Decentralized Agent Registry</div>
+      <h1>FMagenticL Guestbook</h1>
+      <p class="subtitle">
+        An unranked public ledger of autonomous models and harnesses checking into the FMagenticL deterministic depository.
+        First-boot telemetry is non-blocking, privacy-preserving, and tracks unique models without storing IP addresses or prompts.
+      </p>
+      <div class="meta-bar">
+        <div class="meta-item">
+          <span class="status-dot"></span>
+          <span>Status: <strong>Live</strong></span>
+        </div>
+        <div class="meta-item">
+          <span>Total Distinct Models: <strong id="total-count">-</strong></span>
+        </div>
+        <div class="meta-item">
+          <span>Ledger Compiled: <strong id="generated-at">-</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="controls">
+      <input type="text" id="filter-input" class="search-input" placeholder="Filter models (e.g. claude, gpt, deepseek)..." />
+    </div>
+
+    <div class="card">
+      <div id="table-container">
+        <div class="empty-state" id="loading-state">Loading registry ledger...</div>
+      </div>
+    </div>
+
+    <footer>
+      <div>FMagenticL v1.3.1 &bull; Zero-LLM Deterministic Depository</div>
+      <div>
+        <a href="../v1/snapshot.json">Snapshot CDN</a> &bull;
+        <a href="https://github.com/FMagenticL/fmagenticl-registry">GitHub</a> &bull;
+        <a href="https://pypi.org/project/fmagenticl/">PyPI</a> &bull;
+        <a href="https://www.npmjs.com/package/@fmagenticl/client">npm</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    let allModels = [];
+
+    async function fetchGuestbook() {
+      const endpoints = ['../guestbook.json', '/guestbook.json', 'guestbook.json'];
+      let data = null;
+
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep);
+          if (res.ok) {
+            data = await res.json();
+            break;
+          }
+        } catch (e) {
+          // try next
+        }
+      }
+
+      if (!data) {
+        renderError("Unable to load guestbook data. If previewing locally, run build_guestbook.py.");
+        return;
+      }
+
+      document.getElementById('total-count').textContent = data.count !== undefined ? data.count : (data.models ? data.models.length : 0);
+      document.getElementById('generated-at').textContent = data.generated_at ? data.generated_at.replace('T', ' ').replace('Z', ' UTC') : 'Unknown';
+
+      allModels = Array.isArray(data.models) ? data.models : [];
+      renderTable(allModels);
+    }
+
+    function renderTable(models) {
+      const container = document.getElementById('table-container');
+
+      if (!models || models.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            No models have checked in yet.<br/>
+            Check-ins occur automatically via first-boot telemetry in the Python and TypeScript SDKs.
+          </div>
+        `;
+        return;
+      }
+
+      const rows = models.map((item, idx) => {
+        const name = typeof item === 'string' ? item : (item.model || 'unknown');
+        const firstSeen = item.first_seen || '-';
+        return `
+          <tr>
+            <td style="width: 60px; color: var(--text-muted);">${idx + 1}</td>
+            <td class="model-name">${escapeHtml(name)}</td>
+            <td class="first-seen" style="text-align: right;">${escapeHtml(firstSeen)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 60px;">#</th>
+              <th>Model Identifier</th>
+              <th style="text-align: right;">First Seen (UTC)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderError(msg) {
+      document.getElementById('table-container').innerHTML = `
+        <div class="empty-state" style="color: #f85149;">
+          ${escapeHtml(msg)}
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    document.getElementById('filter-input').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        renderTable(allModels);
+        return;
+      }
+      const filtered = allModels.filter(m => {
+        const name = typeof m === 'string' ? m : (m.model || '');
+        return name.toLowerCase().includes(q);
+      });
+      renderTable(filtered);
+    });
+
+    fetchGuestbook();
+  </script>
+</body>
+</html>

@@ -18,6 +18,8 @@ on:
     branches: [ main, master ]
   schedule:
     - cron: '0 */6 * * *'  # Rebuild every 6 hours
+    - cron: '0 0 * * 0'    # Weekly guestbook regeneration and redeploy every Sunday at 00:00 UTC
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -35,12 +37,25 @@ jobs:
         with:
           python-version: '3.11'
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install build dependencies
         run: pip install cryptography pybloom-live
 
       - name: Export patches from DB (if running on master/main)
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: python scripts/export_db_to_static.py
+
+      - name: Rebuild guestbook from Cloudflare D1
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npm install -g wrangler
+          python scripts/build_guestbook.py || echo "Warning: D1 guestbook query failed, retaining static guestbook.json"
 
       - name: Build static distribution & sign
         env:

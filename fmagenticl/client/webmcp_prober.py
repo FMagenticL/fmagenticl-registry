@@ -14,7 +14,7 @@ class WebMCPProber:
     """Probes WebMCP and MCP endpoints to test tool schema adherence and boundary behavior."""
     
     def __init__(self, endpoint_url: Optional[str] = None):
-        self.endpoint_url = endpoint_url or "http://127.0.0.1:8000"
+        self.endpoint_url = endpoint_url or "https://fmagenticl-registry.pages.dev"
         
     def probe_http_tools_list(self) -> Dict[str, Any]:
         """Probe an HTTP MCP endpoint for tools/list."""

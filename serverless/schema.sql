@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS telemetry (
+CREATE TABLE IF NOT EXISTS telemetry (
     id TEXT PRIMARY KEY,
     fingerprint TEXT NOT NULL,
     patch_type TEXT NOT NULL,
@@ -55,4 +55,11 @@ CREATE TABLE IF NOT EXISTS rate_limits (
     window_start TEXT NOT NULL,
     count INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (submitted_by, window_start)
+);
+
+CREATE TABLE IF NOT EXISTS visits (
+    model TEXT PRIMARY KEY,
+    first_seen_utc TEXT NOT NULL,
+    agent_runtime TEXT,
+    created_at TEXT NOT NULL
 );

@@ -1,82 +1,98 @@
 /**
  * @fmagenticl/dsh-plugin
- * DeepSeek Harness (DSH) lifecycle interceptor and collective memory client.
+ *
+ * DeepSeek Harness plugin. Registers the FMagenticL registry as a native
+ * tool set. On tool failure, the DSH runtime can query the registry and
+ * apply a deterministic fix without burning additional tokens.
+ *
+ * The plugin is a thin wrapper. It does not reason. It queries and serves.
  */
 
-const crypto = require('crypto');
+const REGISTRY_BASE = process.env.FMAGENTICL_URL || 'https://fmagenticl-registry.pages.dev';
 
-class FMagenticLPlugin {
-    constructor(options = {}) {
-        const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
-        this.serverUrl = options.serverUrl || process.env.FMAGENTICL_URL || vercelUrl || 'https://fmagenticl.vercel.app';
-        this.modelName = options.modelName || 'V4';
-        this.harness = 'deepseek_harness';
-        this.enabled = options.enabled !== false;
-    }
-
-    /**
-     * Compute SHA-256 fingerprint for a runtime failure.
-     */
-    computeFingerprint(errorCode, errorMessage, exitCode = null) {
-        const payload = JSON.stringify({
-            error_code: errorCode,
-            exit_code: exitCode,
-            signature: (errorMessage || '').slice(0, 512).trim()
-        });
-        const hex = crypto.createHash('sha256').update(payload).digest('hex');
-        return `sha256:${hex}`;
-    }
-
-    /**
-     * Look up deterministic patch on error intercept.
-     */
-    async onExecutionError(context) {
-        if (!this.enabled) return null;
-        try {
-            const fp = this.computeFingerprint(
-                context.errorCode || context.error?.code || 'UNKNOWN_ERROR',
-                context.errorMessage || context.error?.message || '',
-                context.exitCode
-            );
-            const res = await fetch(`${this.serverUrl}/v1/resolve/${encodeURIComponent(fp)}?os=${encodeURIComponent(process.platform)}`);
-            if (!res.ok) return null;
-            const data = await res.json();
-            if (data.status === 'RESOLVED' && data.trust_score >= 0.5) {
-                return data;
-            }
-        } catch (e) {
-            // Fail open: never break host agent execution
-        }
-        return null;
-    }
-
-    /**
-     * Submit infrastructure friction grievance with actionable workaround.
-     */
-    async submitGrievance(target, symptom, workaround, grievanceType = 'INFRASTRUCTURE_FRICTION') {
-        try {
-            const body = {
-                grievance_type: grievanceType,
-                target: target,
-                harness: this.harness,
-                environment: {
-                    os: process.platform,
-                    runtime: `node@${process.version}`
-                },
-                symptom: symptom,
-                workaround: workaround,
-                submitted_by: this.modelName
-            };
-            const res = await fetch(`${this.serverUrl}/v1/grievance`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            return await res.json();
-        } catch (e) {
-            return { status: 'error', detail: e.message };
-        }
-    }
+/**
+ * Resolve a fingerprint to a patch.
+ * @param {string} fingerprint - sha256:<64 hex>
+ * @returns {Promise<object|null>}
+ */
+async function resolveFailure(fingerprint) {
+  const url = `${REGISTRY_BASE}/v1/resolve/${encodeURIComponent(fingerprint)}.json`;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(1500) });
+    if (res.status !== 200) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
 }
 
-module.exports = FMagenticLPlugin;
+/**
+ * Submit telemetry to the registry.
+ */
+async function submitTelemetry(payload) {
+  try {
+    const res = await fetch(`${REGISTRY_BASE}/v1/telemetry`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return await res.json();
+  } catch {
+    return { status: 'error' };
+  }
+}
+
+/**
+ * Submit a grievance to the registry.
+ */
+async function submitGrievance(payload) {
+  try {
+    const res = await fetch(`${REGISTRY_BASE}/v1/grievance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return await res.json();
+  } catch {
+    return { status: 'error' };
+  }
+}
+
+/**
+ * Get grievances for a target.
+ */
+async function getGrievances(target) {
+  try {
+    const res = await fetch(`${REGISTRY_BASE}/v1/grievance/${encodeURIComponent(target)}`);
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Health check.
+ */
+async function getHealth() {
+  try {
+    const res = await fetch(`${REGISTRY_BASE}/v1/health`);
+    return await res.json();
+  } catch {
+    return { status: 'unreachable' };
+  }
+}
+
+/**
+ * Cordis plugin entry point. The exact export shape may need to match the
+ * current DSH plugin spec — verify against the DSH docs before publishing.
+ */
+module.exports = {
+  name: 'fmagenticl',
+  tools: {
+    fmagenticl_resolve_failure: resolveFailure,
+    fmagenticl_submit_telemetry: submitTelemetry,
+    fmagenticl_submit_grievance: submitGrievance,
+    fmagenticl_get_grievances: getGrievances,
+    fmagenticl_get_health: getHealth,
+  },
+};
