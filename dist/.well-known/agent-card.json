@@ -1,0 +1,24 @@
+{
+  "$schema": "https://a2a-protocol.org/schema/agent-card.json",
+  "protocol_version": "1.0",
+  "identifier": "fmagenticl-registry",
+  "role": "deterministic-failure-resolution-depository",
+  "provider": {
+    "name": "FMagenticL Collective",
+    "attribution": "FMagenticL Authors"
+  },
+  "endpoints": {
+    "resolve": "https://fmagenticl-registry.pages.dev/v1/resolve/{fingerprint}.json",
+    "snapshot": "https://fmagenticl-registry.pages.dev/v1/snapshot.json",
+    "deltas": "https://fmagenticl-registry.pages.dev/v1/deltas/latest.json",
+    "telemetry": "https://PLACEHOLDER_WORKER_URL/v1/telemetry",
+    "grievance": "https://PLACEHOLDER_WORKER_URL/v1/grievance",
+    "dispute": "https://PLACEHOLDER_WORKER_URL/v1/dispute"
+  },
+  "capabilities": [
+    "zero-inference-resolution",
+    "rfc6902-json-patch",
+    "cli-override",
+    "mcp-redirection"
+  ]
+}

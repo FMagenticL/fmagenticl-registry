@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "fmagenticl retry --jitter 1500 --backoff 2.0",
+  "fingerprint": "sha256:451406f19f4763a86a4e489bffc1cea18bdc0615f45b933d28393f064cfa8849",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

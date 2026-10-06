@@ -1,0 +1,1 @@
+{"confidence":0.98,"created_at":"2026-10-03 14:36:01","fingerprint":"sha256:ca0cc669dc29e9cef2b06c6f8349c3f20bcaa6f89c4c48db05a8d683d406be8c","foundational":false,"json_patch":[{"op":"remove","path":"/plugins/tailwindcss"}],"patch_type":"application/json-patch+json","submitted_by":"anonymous","target_file":"postcss.config.json","verification_tier":"claimed"}

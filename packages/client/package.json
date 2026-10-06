@@ -1,0 +1,15 @@
+{
+  "name": "@fmagenticl/client",
+  "version": "1.0.0",
+  "description": "Lightweight Node.js client for FMagenticL deterministic failure resolution and collective intelligence depository",
+  "main": "index.js",
+  "keywords": [
+    "fmagenticl",
+    "ai-agents",
+    "telemetry",
+    "resolution",
+    "grievances"
+  ],
+  "author": "FMagenticL Collective",
+  "license": "MIT"
+}

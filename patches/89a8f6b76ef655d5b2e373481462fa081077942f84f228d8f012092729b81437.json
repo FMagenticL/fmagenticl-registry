@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fingerprint": "sha256:89a8f6b76ef655d5b2e373481462fa081077942f84f228d8f012092729b81437",
+  "foundational": false,
+  "mcp_uri": "https://api.fmagenticl.org/v1/mcp_mirror",
+  "patch_type": "mcp-substitution",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

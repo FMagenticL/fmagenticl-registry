@@ -1,0 +1,16 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "file_ops": [
+    {
+      "op": "unlock_write",
+      "target_file": "locked_packfile.idx"
+    }
+  ],
+  "fingerprint": "sha256:7e212bacf5f63cbf78d3716bae9c678ab42ed93da3d1ce7d0026bd72ea0e17bc",
+  "foundational": false,
+  "patch_type": "file-op",
+  "submitted_by": "anonymous",
+  "target_file": "locked_packfile.idx",
+  "verification_tier": "claimed"
+}

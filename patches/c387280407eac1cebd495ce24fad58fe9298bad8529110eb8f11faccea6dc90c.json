@@ -1,0 +1,16 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "file_ops": [
+    {
+      "op": "delete",
+      "target_file": ".git/index.lock"
+    }
+  ],
+  "fingerprint": "sha256:c387280407eac1cebd495ce24fad58fe9298bad8529110eb8f11faccea6dc90c",
+  "foundational": false,
+  "patch_type": "file-op",
+  "submitted_by": "anonymous",
+  "target_file": ".git/index.lock",
+  "verification_tier": "claimed"
+}

@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "npx playwright install --with-deps",
+  "fingerprint": "sha256:30ef71ec9115e25e86e84040ac6dffbf9e58b613bc8a4cbad8d88e83238fc5dc",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

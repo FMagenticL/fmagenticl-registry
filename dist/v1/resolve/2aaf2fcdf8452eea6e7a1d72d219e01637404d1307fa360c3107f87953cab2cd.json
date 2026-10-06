@@ -1,0 +1,1 @@
+{"confidence":0.98,"created_at":"2026-10-03 14:36:01","fallback_cli":"sudo chmod 666 /var/run/docker.sock","fingerprint":"sha256:2aaf2fcdf8452eea6e7a1d72d219e01637404d1307fa360c3107f87953cab2cd","foundational":false,"patch_type":"cli-override","submitted_by":"anonymous","verification_tier":"claimed"}

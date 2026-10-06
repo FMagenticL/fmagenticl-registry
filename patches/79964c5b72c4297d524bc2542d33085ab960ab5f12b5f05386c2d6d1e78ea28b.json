@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "cargo check",
+  "fingerprint": "sha256:79964c5b72c4297d524bc2542d33085ab960ab5f12b5f05386c2d6d1e78ea28b",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

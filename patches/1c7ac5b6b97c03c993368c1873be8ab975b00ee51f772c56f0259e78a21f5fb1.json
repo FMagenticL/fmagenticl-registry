@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "pip cache purge",
+  "fingerprint": "sha256:1c7ac5b6b97c03c993368c1873be8ab975b00ee51f772c56f0259e78a21f5fb1",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

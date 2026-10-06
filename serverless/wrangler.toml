@@ -1,0 +1,11 @@
+name = "fmagenticl-registry"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fmagenticl-registry"
+database_id = "8f0f1fae-2d36-4361-a547-26c0aa08d23d"
+
+[vars]
+ENVIRONMENT = "production"

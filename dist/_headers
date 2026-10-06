@@ -1,0 +1,32 @@
+/v1/health
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=60
+
+/v1/resolve/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/v1/deltas/*
+  Cache-Control: public, max-age=300
+  Access-Control-Allow-Origin: *
+
+/v1/snapshot.json
+  Cache-Control: public, max-age=600
+  Access-Control-Allow-Origin: *
+
+/v1/snapshot.sig
+  Cache-Control: public, max-age=600
+  Access-Control-Allow-Origin: *
+
+/v1/bloom.bin
+  Cache-Control: public, max-age=600
+  Access-Control-Allow-Origin: *
+
+/.well-known/*
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+
+/llms.txt
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *

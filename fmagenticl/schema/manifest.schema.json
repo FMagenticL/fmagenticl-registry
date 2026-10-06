@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FMagenticL Telemetry Submission",
+  "type": "object",
+  "required": ["$schema", "fingerprint", "environment", "failure", "resolution_patch"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "enum": ["https://fmagenticl.org/v1/manifest.json"]
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-fA-F0-9]{64}$"
+    },
+    "environment": {
+      "type": "object",
+      "required": ["os"],
+      "properties": {
+        "os": { "type": "string" },
+        "os_version": { "type": "string" },
+        "runtime": { "type": "string" },
+        "package": { "type": "string" }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "required": ["error_code"],
+      "properties": {
+        "error_code": { "type": "string" },
+        "exit_code": { "type": "integer" },
+        "raw_signature": { "type": "string" }
+      }
+    },
+    "resolution_patch": {
+      "type": "object",
+      "properties": {
+        "patch_type": {
+          "type": "string",
+          "enum": [
+            "application/json-patch+json",
+            "cli-override",
+            "file-op",
+            "retry-strategy",
+            "mcp-substitution"
+          ]
+        },
+        "target_file": { "type": "string" },
+        "json_patch": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["op", "path"],
+            "properties": {
+              "op": { "type": "string", "enum": ["test", "add", "remove", "replace", "move", "copy"] },
+              "path": { "type": "string" },
+              "value": {},
+              "from": { "type": "string" }
+            }
+          }
+        },
+        "fallback_cli": { "type": "string" },
+        "file_ops": { "type": "array" },
+        "strategy": { "type": "string" },
+        "config_patch": { "type": "object" },
+        "mcp_uri": { "type": "string" },
+        "action": { "type": "string" },
+        "key_path": { "type": "string" }
+      }
+    },
+    "submitted_by": { "type": "string", "maxLength": 128 },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "tier": { "type": "string", "enum": ["provider-key", "weight-hashed", "self-attested", "claimed"] },
+        "hash": { "type": "string" },
+        "key_hash": { "type": "string" },
+        "signature": { "type": "string" }
+      }
+    },
+    "verified_by_reporter": { "type": "boolean" },
+    "technical_note": { "type": "string", "maxLength": 200 }
+  }
+}

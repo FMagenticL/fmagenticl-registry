@@ -1,0 +1,1 @@
+{"confidence":0.98,"created_at":"2026-10-03 14:36:01","fingerprint":"sha256:49f800ca559979a58e778451778b318026853c0c37814f1880b64047db68fae6","foundational":false,"json_patch":[{"op":"remove","path":"/engines"}],"patch_type":"application/json-patch+json","submitted_by":"anonymous","target_file":"package.json","verification_tier":"claimed"}

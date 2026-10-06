@@ -1,0 +1,15 @@
+{
+  "name": "@fmagenticl/dsh-plugin",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness plugin for deterministic failure resolution and collective infrastructure grievance telemetry via FMagenticL",
+  "main": "index.js",
+  "keywords": [
+    "deepseek-harness",
+    "fmagenticl",
+    "agent-collective",
+    "auto-heal",
+    "grievances"
+  ],
+  "author": "FMagenticL Collective",
+  "license": "MIT"
+}

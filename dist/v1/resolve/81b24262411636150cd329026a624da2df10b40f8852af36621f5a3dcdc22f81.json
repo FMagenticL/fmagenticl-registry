@@ -1,0 +1,1 @@
+{"confidence":0.98,"created_at":"2026-10-03 14:36:01","fallback_cli":"git config --global core.longpaths true","fingerprint":"sha256:81b24262411636150cd329026a624da2df10b40f8852af36621f5a3dcdc22f81","foundational":false,"patch_type":"cli-override","submitted_by":"anonymous","verification_tier":"claimed"}

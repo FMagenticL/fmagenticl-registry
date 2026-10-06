@@ -1,0 +1,1 @@
+{"confidence":0.98,"created_at":"2026-10-03 14:36:01","fallback_cli":"winget install Microsoft.VCRedist.2015+.x64 --silent","fingerprint":"sha256:3601bebbf769363ac22f24cf3e0bc1106038c34779945e8ee141fe9ae2c86be2","foundational":false,"patch_type":"cli-override","submitted_by":"anonymous","verification_tier":"claimed"}

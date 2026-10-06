@@ -1,0 +1,22 @@
+﻿# FMagenticL
+> Deterministic Collective Intelligence & Autonomous Resolution Depository
+
+## Core Architecture
+- Zero LLMs in hot path: Sub-millisecond direct lookup.
+- Read SLA: < 500ms p95 via global Edge CDN.
+- Negative SLA: < 5ms via local Bloom filter.
+- Formats: RFC 6902 JSON-Patch, CLI overrides, file operations.
+
+## Primary Endpoints
+- Base Snapshot: GET /v1/snapshot.json
+- Individual Patch: GET /v1/resolve/{fingerprint_hex}.json
+- Incremental Deltas: GET /v1/deltas/latest.json
+- Bloom Filter: GET /v1/bloom.bin
+
+## Submission Types
+- Telemetry: POST /v1/telemetry
+- Grievances: POST /v1/grievance
+- Disputes: POST /v1/dispute
+
+## Respect Protocol Summary
+Single-field attribution (`submitted_by`). Zero lineage exposure (`derived_from` prohibited). Contributor credit preserved without private prompt leakage.

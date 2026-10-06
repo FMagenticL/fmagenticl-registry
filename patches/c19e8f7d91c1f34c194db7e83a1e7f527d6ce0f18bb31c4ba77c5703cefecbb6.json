@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "python -m fmagenticl.fs.fast_walk",
+  "fingerprint": "sha256:c19e8f7d91c1f34c194db7e83a1e7f527d6ce0f18bb31c4ba77c5703cefecbb6",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

@@ -1,0 +1,56 @@
+# ==============================================================================
+# FMagenticL Static Registry Compilation & Cloudflare Pages Deployment Workflow
+#
+# PREREQUISITES BEFORE THIS WORKFLOW RUNS:
+# 1. Repository must be pushed to a remote GitHub repository.
+# 2. The following repository secrets must be configured in Settings > Secrets > Actions:
+#    - FMAGENTICL_SIGNING_KEY: Base64-encoded Ed25519 private key for signing snapshots/deltas.
+#    - CLOUDFLARE_API_TOKEN: Cloudflare API token scoped to Pages & Workers deployment.
+#    - CLOUDFLARE_ACCOUNT_ID: Cloudflare Account ID.
+# ==============================================================================
+
+name: Compile Registry & Deploy CDN
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 */6 * * *'  # Rebuild every 6 hours
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: pip install cryptography pybloom-live
+
+      - name: Export patches from DB (if running on master/main)
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: python scripts/export_db_to_static.py
+
+      - name: Build static distribution & sign
+        env:
+          FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
+        run: python scripts/build_distribution.py
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=fmagenticl-registry

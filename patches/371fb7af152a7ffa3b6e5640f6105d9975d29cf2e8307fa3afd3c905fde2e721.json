@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "powershell -ExecutionPolicy Bypass -File",
+  "fingerprint": "sha256:371fb7af152a7ffa3b6e5640f6105d9975d29cf2e8307fa3afd3c905fde2e721",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "git switch -c agent_work_branch",
+  "fingerprint": "sha256:1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

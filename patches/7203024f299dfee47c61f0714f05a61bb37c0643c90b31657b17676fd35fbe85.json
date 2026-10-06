@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "git submodule update --init --recursive",
+  "fingerprint": "sha256:7203024f299dfee47c61f0714f05a61bb37c0643c90b31657b17676fd35fbe85",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

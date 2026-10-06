@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "export REQUESTS_TIMEOUT=30",
+  "fingerprint": "sha256:a62fe8850acad9ff27409b3d760a656b8b10dcba67fe25c29a5f8986bf586ee6",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

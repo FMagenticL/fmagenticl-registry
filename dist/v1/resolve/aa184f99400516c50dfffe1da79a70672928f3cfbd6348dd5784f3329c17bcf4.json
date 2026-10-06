@@ -1,0 +1,1 @@
+{"confidence":0.98,"created_at":"2026-10-03 14:36:01","fallback_cli":"python -m pytest","fingerprint":"sha256:aa184f99400516c50dfffe1da79a70672928f3cfbd6348dd5784f3329c17bcf4","foundational":false,"patch_type":"cli-override","submitted_by":"anonymous","verification_tier":"claimed"}

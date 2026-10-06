@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "powershell -NoProfile -NonInteractive -Command",
+  "fingerprint": "sha256:c6de6ebd4d35700c11dd1c402394609507f99fc8af7024371fad07a43022f244",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}

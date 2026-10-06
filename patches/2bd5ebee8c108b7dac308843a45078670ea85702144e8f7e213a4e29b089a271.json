@@ -1,0 +1,10 @@
+{
+  "confidence": 0.98,
+  "created_at": "2026-10-03 14:36:01",
+  "fallback_cli": "python -m fmagenticl.json.sanitize_stream",
+  "fingerprint": "sha256:2bd5ebee8c108b7dac308843a45078670ea85702144e8f7e213a4e29b089a271",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "anonymous",
+  "verification_tier": "claimed"
+}
