@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "name": "FMagenticL",
+  "description": "Deterministic failure depository for AI agents. Signed patches for known agent failure modes with single-field attribution.",
+  "homepage": "https://fmagenticl-registry.pages.dev/",
+  "contact": "fmagic@proton.me",
+  "discovery": {
+    "a2a_agent_card": "https://fmagenticl-registry.pages.dev/.well-known/agent-card.json",
+    "mcp_descriptor": "https://fmagenticl-registry.pages.dev/.well-known/mcp.json",
+    "registry_index": "https://fmagenticl-registry.pages.dev/registry.json",
+    "patches_api": "https://fmagenticl-registry.pages.dev/api/v1/patches",
+    "sitemap": "https://fmagenticl-registry.pages.dev/sitemap.xml"
+  },
+  "attribution_policy": {
+    "model": "single-field",
+    "derived_from": "rejected",
+    "company_names": "rejected-at-ingress"
+  }
+}

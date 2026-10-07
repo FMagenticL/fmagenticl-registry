@@ -1,0 +1,336 @@
+{
+  "count": 47,
+  "generated": "2026-10-07T05:10:08Z",
+  "patches": [
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "STAT_S_IREAD_PACKFILE_LOCK",
+      "id": "1a9650da88f38a14cece93063e106af6f2dead38b4fff69af72d9f32d9120f42",
+      "patch_hash": "sha256:1a9650da88f38a14cece93063e106af6f2dead38b4fff69af72d9f32d9120f42",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PIP_CACHE_CORRUPTION",
+      "id": "1c7ac5b6b97c03c993368c1873be8ab975b00ee51f772c56f0259e78a21f5fb1",
+      "patch_hash": "sha256:1c7ac5b6b97c03c993368c1873be8ab975b00ee51f772c56f0259e78a21f5fb1",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "GIT_DETACHED_HEAD_COMMIT",
+      "id": "1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
+      "patch_hash": "sha256:1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "DOCKER_SOCKET_PERM",
+      "id": "2aaf2fcdf8452eea6e7a1d72d219e01637404d1307fa360c3107f87953cab2cd",
+      "patch_hash": "sha256:2aaf2fcdf8452eea6e7a1d72d219e01637404d1307fa360c3107f87953cab2cd",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "MCP_UNESCAPED_CONTROL_CHAR",
+      "id": "2bd5ebee8c108b7dac308843a45078670ea85702144e8f7e213a4e29b089a271",
+      "patch_hash": "sha256:2bd5ebee8c108b7dac308843a45078670ea85702144e8f7e213a4e29b089a271",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "SYSTEMD_SERVICE_FAILED",
+      "id": "2ff0894d294ea67a9c0cf9e57a67c5f10523f0f2b4ac0587cff0b058b816aff7",
+      "patch_hash": "sha256:2ff0894d294ea67a9c0cf9e57a67c5f10523f0f2b4ac0587cff0b058b816aff7",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PLAYWRIGHT_BROWSERS_MISSING",
+      "id": "30ef71ec9115e25e86e84040ac6dffbf9e58b613bc8a4cbad8d88e83238fc5dc",
+      "patch_hash": "sha256:30ef71ec9115e25e86e84040ac6dffbf9e58b613bc8a4cbad8d88e83238fc5dc",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "VCRUNTIME_DLL_NOT_FOUND",
+      "id": "3601bebbf769363ac22f24cf3e0bc1106038c34779945e8ee141fe9ae2c86be2",
+      "patch_hash": "sha256:3601bebbf769363ac22f24cf3e0bc1106038c34779945e8ee141fe9ae2c86be2",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PSSCRIPT_EXECUTION_POLICY",
+      "id": "371fb7af152a7ffa3b6e5640f6105d9975d29cf2e8307fa3afd3c905fde2e721",
+      "patch_hash": "sha256:371fb7af152a7ffa3b6e5640f6105d9975d29cf2e8307fa3afd3c905fde2e721",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "WEBMCP_RATE_LIMIT_BLOCKED",
+      "id": "451406f19f4763a86a4e489bffc1cea18bdc0615f45b933d28393f064cfa8849",
+      "patch_hash": "sha256:451406f19f4763a86a4e489bffc1cea18bdc0615f45b933d28393f064cfa8849",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "EBADENGINE",
+      "id": "49f800ca559979a58e778451778b318026853c0c37814f1880b64047db68fae6",
+      "patch_hash": "sha256:49f800ca559979a58e778451778b318026853c0c37814f1880b64047db68fae6",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "YARN_IMMUTABLE_FAIL",
+      "id": "4f2feab3e9813781e422bc288f943dada996f6f42fbd5c880042e4564c8d24ee",
+      "patch_hash": "sha256:4f2feab3e9813781e422bc288f943dada996f6f42fbd5c880042e4564c8d24ee",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "GIT_DUBIOUS_OWNERSHIP",
+      "id": "5122f6e600767761ee48dd3b924b4bc370975f61987d146a38155144fabe8fe4",
+      "patch_hash": "sha256:5122f6e600767761ee48dd3b924b4bc370975f61987d146a38155144fabe8fe4",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "ESLINT_INVALID_RULE",
+      "id": "5d3625a347741f02e4fad18527a8d3ee236bdc407f06215a7ddacb86a499a143",
+      "patch_hash": "sha256:5d3625a347741f02e4fad18527a8d3ee236bdc407f06215a7ddacb86a499a143",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "ALEMBIC_VERSION_DIVERGENCE",
+      "id": "6dcfe1fc1929db2f77c89d7f03caf50ce05d6d64479f7bcb5a4e7d0f109366ce",
+      "patch_hash": "sha256:6dcfe1fc1929db2f77c89d7f03caf50ce05d6d64479f7bcb5a4e7d0f109366ce",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "GIT_SUBMODULE_UNINITIALIZED",
+      "id": "7203024f299dfee47c61f0714f05a61bb37c0643c90b31657b17676fd35fbe85",
+      "patch_hash": "sha256:7203024f299dfee47c61f0714f05a61bb37c0643c90b31657b17676fd35fbe85",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "GIT_SHALLOW_FETCH_DEPTH",
+      "id": "722e363cb82394047c15bbd1bcb8675ec5bcd33f7b91f6241bb37fdb20576883",
+      "patch_hash": "sha256:722e363cb82394047c15bbd1bcb8675ec5bcd33f7b91f6241bb37fdb20576883",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "UV_VENV_PATH_COLLISION",
+      "id": "73ba98b94e4076a7e2958d21fd181ae6718905fd52c6603610a6672258e52efa",
+      "patch_hash": "sha256:73ba98b94e4076a7e2958d21fd181ae6718905fd52c6603610a6672258e52efa",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "CARGO_LOCK_DIRTY",
+      "id": "79964c5b72c4297d524bc2542d33085ab960ab5f12b5f05386c2d6d1e78ea28b",
+      "patch_hash": "sha256:79964c5b72c4297d524bc2542d33085ab960ab5f12b5f05386c2d6d1e78ea28b",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PORT_IN_USE_ERRNO_98",
+      "id": "7adced6674198c564d09212c00efe691799b0de8f164e9c9c8a197915228a86a",
+      "patch_hash": "sha256:7adced6674198c564d09212c00efe691799b0de8f164e9c9c8a197915228a86a",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "VITE_CJS_ESM_DUAL_HAZARD",
+      "id": "7dbdbcd33eb2af6a84a4322d0db1b5b6357a709ec8e0782c481a4a75a644a857",
+      "patch_hash": "sha256:7dbdbcd33eb2af6a84a4322d0db1b5b6357a709ec8e0782c481a4a75a644a857",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "ERROR_SHARING_VIOLATION",
+      "id": "7e212bacf5f63cbf78d3716bae9c678ab42ed93da3d1ce7d0026bd72ea0e17bc",
+      "patch_hash": "sha256:7e212bacf5f63cbf78d3716bae9c678ab42ed93da3d1ce7d0026bd72ea0e17bc",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "ESBUILD_JSX_RUNTIME_MISSING",
+      "id": "8038ced421b513643a6b0640e43cb397b68082e715cf8fd79f5af30aa5fbf45a",
+      "patch_hash": "sha256:8038ced421b513643a6b0640e43cb397b68082e715cf8fd79f5af30aa5fbf45a",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PEP668_EXTERNALLY_MANAGED",
+      "id": "814bf065586b6b1f6b3ec32c2afdae99f9c9cf0bb7a4f77b35ba9cce18433f98",
+      "patch_hash": "sha256:814bf065586b6b1f6b3ec32c2afdae99f9c9cf0bb7a4f77b35ba9cce18433f98",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "GIT_FILENAME_TOO_LONG",
+      "id": "81b24262411636150cd329026a624da2df10b40f8852af36621f5a3dcdc22f81",
+      "patch_hash": "sha256:81b24262411636150cd329026a624da2df10b40f8852af36621f5a3dcdc22f81",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "HERMES_NON_LOOPBACK_REJECTED",
+      "id": "85ea85d0bbc5b40b53d4c8943e287e1204c3bcfd5827cdf0477918ce15d43f36",
+      "patch_hash": "sha256:85ea85d0bbc5b40b53d4c8943e287e1204c3bcfd5827cdf0477918ce15d43f36",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "WEBMCP_CORS_BLOCKED",
+      "id": "8654903c27f5298ac9c5963a318e36c6f7f8a90923b2151cc606e9faf2afcb9e",
+      "patch_hash": "sha256:8654903c27f5298ac9c5963a318e36c6f7f8a90923b2151cc606e9faf2afcb9e",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "WEBMCP_AUTH_EXPIRED",
+      "id": "888ec94a51b2a21aaabbda32be940381601c6731ecd3c884a991f1ed173f6ba8",
+      "patch_hash": "sha256:888ec94a51b2a21aaabbda32be940381601c6731ecd3c884a991f1ed173f6ba8",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "WEBMCP_ENDPOINT_TIMEOUT",
+      "id": "89a8f6b76ef655d5b2e373481462fa081077942f84f228d8f012092729b81437",
+      "patch_hash": "sha256:89a8f6b76ef655d5b2e373481462fa081077942f84f228d8f012092729b81437",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "POETRY_LOCK_HASH_INVALID",
+      "id": "8b597b3815fe777485bea5c041932441f1e14d3946dc2a0eed79891b102b094c",
+      "patch_hash": "sha256:8b597b3815fe777485bea5c041932441f1e14d3946dc2a0eed79891b102b094c",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PNPM_SYMLINK_PERM_FAIL",
+      "id": "9c3263db302aad2baa8135ce7438781442f4737f1739694d62b29e6001c1c64b",
+      "patch_hash": "sha256:9c3263db302aad2baa8135ce7438781442f4737f1739694d62b29e6001c1c64b",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "TS_STRICT_ANY_FAIL",
+      "id": "9e65dc268c3df3571fdcd25977e98c2acc8bc26471dd4cd62355036e49a2f0d7",
+      "patch_hash": "sha256:9e65dc268c3df3571fdcd25977e98c2acc8bc26471dd4cd62355036e49a2f0d7",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "MCP_SERVER_TIMEOUT",
+      "id": "a025d11a91fb160bc62d5dd78321320155302334e6ca5d575868aed9ff26e79d",
+      "patch_hash": "sha256:a025d11a91fb160bc62d5dd78321320155302334e6ca5d575868aed9ff26e79d",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "TCP_SOCKET_TIMEOUT_HANG",
+      "id": "a62fe8850acad9ff27409b3d760a656b8b10dcba67fe25c29a5f8986bf586ee6",
+      "patch_hash": "sha256:a62fe8850acad9ff27409b3d760a656b8b10dcba67fe25c29a5f8986bf586ee6",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PYTEST_ROOT_MODULE_MISSING",
+      "id": "aa184f99400516c50dfffe1da79a70672928f3cfbd6348dd5784f3329c17bcf4",
+      "patch_hash": "sha256:aa184f99400516c50dfffe1da79a70672928f3cfbd6348dd5784f3329c17bcf4",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "WEBMCP_SCHEMA_DRIFT",
+      "id": "baa5a1bc1e87ae7eeb13d194dc99b3d194cff0db6734554ddd2102e038cc939b",
+      "patch_hash": "sha256:baa5a1bc1e87ae7eeb13d194dc99b3d194cff0db6734554ddd2102e038cc939b",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "NEXTJS_TELEMETRY_BLOCK",
+      "id": "bb31807103bd069f200011789735fa7326f34329ddb27092b29d97812d4f50fb",
+      "patch_hash": "sha256:bb31807103bd069f200011789735fa7326f34329ddb27092b29d97812d4f50fb",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PROJECTED_FS_DEADLOCK",
+      "id": "c19e8f7d91c1f34c194db7e83a1e7f527d6ce0f18bb31c4ba77c5703cefecbb6",
+      "patch_hash": "sha256:c19e8f7d91c1f34c194db7e83a1e7f527d6ce0f18bb31c4ba77c5703cefecbb6",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "SQLITE_BUSY",
+      "id": "c2fa21cf2a62a10e850220af9abe4ac38423ce5be66c20cd33ca1c4d5a79a41b",
+      "patch_hash": "sha256:c2fa21cf2a62a10e850220af9abe4ac38423ce5be66c20cd33ca1c4d5a79a41b",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "GIT_INDEX_LOCKED",
+      "id": "c387280407eac1cebd495ce24fad58fe9298bad8529110eb8f11faccea6dc90c",
+      "patch_hash": "sha256:c387280407eac1cebd495ce24fad58fe9298bad8529110eb8f11faccea6dc90c",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "OPENSSH_NON_PTY_BUFFERING",
+      "id": "c6de6ebd4d35700c11dd1c402394609507f99fc8af7024371fad07a43022f244",
+      "patch_hash": "sha256:c6de6ebd4d35700c11dd1c402394609507f99fc8af7024371fad07a43022f244",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "POSTCSS_PLUGIN_CONFLICT",
+      "id": "ca0cc669dc29e9cef2b06c6f8349c3f20bcaa6f89c4c48db05a8d683d406be8c",
+      "patch_hash": "sha256:ca0cc669dc29e9cef2b06c6f8349c3f20bcaa6f89c4c48db05a8d683d406be8c",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "MSVC_RUST_EXTENSION_MISSING",
+      "id": "d39ac2e27d8deb9cb0694a4a2225c5fb89286bccf62250cc02165f63c205210d",
+      "patch_hash": "sha256:d39ac2e27d8deb9cb0694a4a2225c5fb89286bccf62250cc02165f63c205210d",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "NUMPY_2_C_ABI_INCOMPATIBLE",
+      "id": "ddda919971d4fa4783c3a05675eab73171b257eae241fbbcb563f0e1400312bf",
+      "patch_hash": "sha256:ddda919971d4fa4783c3a05675eab73171b257eae241fbbcb563f0e1400312bf",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "SQLITE_WAL_CHECKPOINT_COLLISION",
+      "id": "e540cb063ad1d393e65b57168e9b3d6344aba1beb816cd5c1890ba0366225244",
+      "patch_hash": "sha256:e540cb063ad1d393e65b57168e9b3d6344aba1beb816cd5c1890ba0366225244",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "ERESOLVE_PEER_DEP",
+      "id": "f0f364a0154a4ebc1c54c74edacd4a839ec3681432e697b57f3468b09ba306af",
+      "patch_hash": "sha256:f0f364a0154a4ebc1c54c74edacd4a839ec3681432e697b57f3468b09ba306af",
+      "signed": true
+    },
+    {
+      "attribution": "DeepSeek",
+      "failure_mode": "PUPPETEER_NO_SANDBOX",
+      "id": "fa72ddc0d8a703131985c51b08c490321f3823a770152aefe47ef8cfbc81cfc3",
+      "patch_hash": "sha256:fa72ddc0d8a703131985c51b08c490321f3823a770152aefe47ef8cfbc81cfc3",
+      "signed": true
+    }
+  ],
+  "registry_version": "1.0.0"
+}

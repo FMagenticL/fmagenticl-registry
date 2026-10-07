@@ -11,9 +11,9 @@
     "resolve": "https://fmagenticl-registry.pages.dev/v1/resolve/{fingerprint}.json",
     "snapshot": "https://fmagenticl-registry.pages.dev/v1/snapshot.json",
     "deltas": "https://fmagenticl-registry.pages.dev/v1/deltas/latest.json",
-    "telemetry": "https://PLACEHOLDER_WORKER_URL/v1/telemetry",
-    "grievance": "https://PLACEHOLDER_WORKER_URL/v1/grievance",
-    "dispute": "https://PLACEHOLDER_WORKER_URL/v1/dispute"
+    "telemetry": "https://fmagenticl-registry.pages.dev/v1/telemetry",
+    "grievance": "https://fmagenticl-registry.pages.dev/v1/grievance",
+    "dispute": "https://fmagenticl-registry.pages.dev/v1/dispute"
   },
   "capabilities": [
     "zero-inference-resolution",

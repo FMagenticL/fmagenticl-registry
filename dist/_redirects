@@ -1,0 +1,7 @@
+/registry /registry.json 200
+/patches /registry.json 200
+/agent.json /.well-known/agent.json 200
+/agent-card.json /.well-known/agent-card.json 200
+/mcp.json /.well-known/mcp.json 200
+/.well-known/registry.json /registry.json 200
+/api/patches /api/v1/patches 200

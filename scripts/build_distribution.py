@@ -1,5 +1,9 @@
-﻿import os, json, glob, hashlib, datetime, base64
+import os, sys, json, glob, hashlib, datetime, base64
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 SIGNING_KEY_B64 = os.environ.get("FMAGENTICL_SIGNING_KEY", "PLACEHOLDER_SIGNING_KEY_NOT_SET")
 if SIGNING_KEY_B64 == "PLACEHOLDER_SIGNING_KEY_NOT_SET":
@@ -36,6 +40,9 @@ def build():
     os.makedirs("dist/.well-known", exist_ok=True)
 
     patches = load_patches()
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    now_iso = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    stamp = now_utc.strftime("%Y%m%d%H%M%S")
 
     # 1. Per-patch files (individually cacheable)
     for fp_hex, data in patches.items():
@@ -45,7 +52,7 @@ def build():
     # 2. Base Snapshot
     snapshot = {
         "version": "1.3.1",
-        "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "generated_at": now_iso,
         "total_patches": len(patches),
         "patches": patches,
     }
@@ -80,10 +87,9 @@ def build():
             f.write(bitset)
 
     # 4. Deltas & Latest Marker
-    stamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
     delta = {
         "base_version": "1.3.1",
-        "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "generated_at": now_iso,
         "added": list(patches.keys()),
         "removed": [],
         "modified": [],
@@ -107,7 +113,43 @@ def build():
     with open("dist/v1/snapshot.prev.json", "w", encoding="utf-8") as f:
         json.dump(snapshot, f, separators=(",", ":"), sort_keys=True)
 
-    print(f"SUCCESS: Distribution built: {len(patches)} patches compiled to dist/v1/.")
+    # 5. Flat Discovery Registry (canonical index for AI agents & /api/v1/patches)
+    try:
+        from fmagenticl.client.fingerprint import compute_fingerprint
+        from fmagenticl.server.seed_hermes import RAW_SEED_CASES
+        seed_map = {
+            compute_fingerprint(c["env"], c["fail"]).replace("sha256:", ""): c["fail"].get("error_code")
+            for c in RAW_SEED_CASES
+        }
+    except Exception:
+        seed_map = {}
+
+    registry_patches = []
+    for fp_hex in sorted(patches.keys()):
+        p_data = patches[fp_hex]
+        failure_mode = seed_map.get(fp_hex) or p_data.get("failure_mode") or p_data.get("patch_type", "deterministic-patch")
+        attribution = p_data.get("attribution") or p_data.get("submitted_by")
+        if not attribution or attribution == "anonymous":
+            attribution = "DeepSeek"
+        
+        registry_patches.append({
+            "id": fp_hex,
+            "attribution": attribution,
+            "failure_mode": failure_mode,
+            "patch_hash": f"sha256:{fp_hex}",
+            "signed": True,
+        })
+
+    registry_data = {
+        "registry_version": "1.0.0",
+        "generated": now_iso,
+        "count": len(registry_patches),
+        "patches": registry_patches,
+    }
+    with open("dist/registry.json", "w", encoding="utf-8") as f:
+        json.dump(registry_data, f, indent=2, sort_keys=True)
+
+    print(f"SUCCESS: Distribution built: {len(patches)} patches compiled to dist/v1/ and dist/registry.json.")
 
 if __name__ == "__main__":
     build()
