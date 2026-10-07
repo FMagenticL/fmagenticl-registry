@@ -25,6 +25,7 @@ SECRET_PATTERNS = [
     ("npm Publish Token", re.compile(r'\bnpm_[A-Za-z0-9]{36}\b')),
     ("Cloudflare User Token", re.compile(r'\bcfut_[A-Za-z0-9]{40}\b')),
     ("Cloudflare Auth Token", re.compile(r'\bcfat_[A-Za-z0-9]{40}\b')),
+    ("Hugging Face API Token", re.compile(r'\bhf_[A-Za-z0-9]{34}\b')),
     ("AWS Access Key", re.compile(r'\bAKIA[0-9A-Z]{16}\b')),
     ("Private Key Block", re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----')),
 ]
