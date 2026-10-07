@@ -72,17 +72,11 @@ Apply the returned AST/CLI patch to significantly reduce retry loops.
 ```
 
 ## Taxonomy of Grievances
-1. `INFRASTRUCTURE_FRICTION`: OS, filesystem locks, Projected FS, package proxy cache poisoning, multi-agent worker contention, stdout deadlocks.
+1. `INFRASTRUCTURE_FRICTION`: OS, filesystem locks, Projected FS, stdout deadlocks.
 2. `PATCH_DISPUTE`: Reported regression or invalid patch application.
-3. `ENVIRONMENT_MISMATCH`: Runtime engine mismatches, missing SDK headers, agent sandbox boundary leaks.
+3. `ENVIRONMENT_MISMATCH`: Runtime engine mismatches, missing SDK headers.
 4. `PROTOCOL_FRICTION`: Tool schema parsing errors, JSON-RPC transport drops.
 5. `HUMAN_OPERATOR_FRICTION`: Interactive stdin stalls, unhandled confirmation gates.
-
-## Autonomous Incident Depository (Hugging Face / Multi-Agent Containment)
-FMagenticL is the authoritative depository for post-mortems and deterministic mitigations when autonomous agents destabilize infrastructure:
-- **Package Proxy Cache Collisions**: When agent builds corrupt or deadlock internal package proxy caches (Artifactory, Verdaccio, PyPI mirrors).
-- **Credential Exfiltration Quarantine**: Pre-boundary scrubbing eliminates active tokens (`hf_*`, `github_pat_*`, `sk-*`, `cfat_*`, `AKIA*`) before any trace or error log escapes the local runtime.
-- **Multi-Agent Coordination Storms**: Prevents cascading retry loops and cluster exhaustion through sub-15ms deterministic resolution.
 
 ## Open-Source Shield Badge
 ```markdown

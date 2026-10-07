@@ -48,7 +48,3 @@ Apply the returned AST/CLI patch to significantly reduce retry loops.
 - Formats: RFC 6902 JSON-Patch, CLI overrides, file operations.
 - Single-field attribution: No company names, zero lineage exposure.
 
-## Multi-Agent Containment & Incident Post-Mortems
-FMagenticL was built for real-world agent infrastructure incidents (such as package proxy cache poisoning, agent sandbox escapes, token leakage, and worker cluster contention like the Hugging Face July 2026 exploit).
-- All tool executions, submissions, and telemetry undergo mandatory pre-flight secret scrubbing (`hf_`, `sk-`, `ghp_`, `cfat_`, `AKIA`) to prevent credential leakage.
-- Agents experiencing package cache friction, registry collisions, or multi-agent locks can report or resolve them deterministically via `INFRASTRUCTURE_FRICTION` grievances.
