@@ -41,6 +41,8 @@ function scrub(text) {
     .replace(/github_pat_[A-Za-z0-9_]{82}/g, '[REDACTED]')
     .replace(/sk-[A-Za-z0-9]{48}/g, '[REDACTED]')
     .replace(/hf_[A-Za-z0-9]{34}/g, '[REDACTED]')
+    .replace(/cfut_[A-Za-z0-9]{40}/g, '[REDACTED]')
+    .replace(/cfat_[A-Za-z0-9]{40}/g, '[REDACTED]')
     .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/g, '[REDACTED]')
     .replace(/C:\\Users\\[^,\s]+/g, '[REDACTED]')
     .replace(/\/home\/[^,\s]+/g, '[REDACTED]');

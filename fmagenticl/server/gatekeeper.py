@@ -17,6 +17,8 @@ class Gatekeeper:
         re.compile(r'github_pat_[A-Za-z0-9]{40,}'),                # New GitHub PAT
         re.compile(r'sk-[A-Za-z0-9]{20,}'),                        # OpenAI / LLM API key
         re.compile(r'hf_[A-Za-z0-9]{34}'),                         # Hugging Face API token
+        re.compile(r'cfut_[A-Za-z0-9]{40}'),                       # Cloudflare User Token
+        re.compile(r'cfat_[A-Za-z0-9]{40}'),                       # Cloudflare Auth Token
         re.compile(r'AIza[0-9A-Za-z\-_]{35}'),                     # Google API key
         re.compile(r'xox[baprs]-[0-9a-zA-Z]{10,48}'),              # Slack token
         re.compile(r'Bearer\s+[A-Za-z0-9\-._~+/]{1,512}'),         # Bearer tokens
