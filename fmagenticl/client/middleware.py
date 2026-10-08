@@ -277,6 +277,162 @@ class FMagenticLClient:
         self._metrics["edge_hit"] += 1
         return patch
 
+    # -----------------------------------------------------------------------
+    # Ingestion & Grievance Methods
+    # -----------------------------------------------------------------------
+
+    def report_failure(
+        self,
+        environment: dict,
+        failure: dict,
+        resolution_patch: dict,
+        verified: bool = True,
+        technical_note: Optional[str] = None,
+        fingerprint: Optional[str] = None,
+        submitted_by: Optional[str] = None,
+        verification_tier: str = "claimed",
+        **kwargs,
+    ) -> dict:
+        """
+        Submit verified failure-resolution telemetry to the depository.
+
+        Contract:
+            - Single-attempt POST to /v1/telemetry.
+            - Computes fingerprint deterministically if not provided.
+            - Never raises; returns status dict on any outcome.
+            - Bounded by self.timeout.
+        """
+        fp = fingerprint or self.compute_fingerprint(environment, failure)
+        url = f"{self.edge_base.rstrip('/')}/v1/telemetry"
+        payload = {
+            "fingerprint": fp,
+            "environment": environment,
+            "failure": failure,
+            "resolution_patch": resolution_patch,
+            "verified_by_reporter": verified,
+            "technical_note": technical_note,
+            "submitted_by": submitted_by or self.model_name or "anonymous",
+            "verification_tier": verification_tier,
+        }
+
+        try:
+            req_timeout = self.timeout or TIMEOUT
+            response = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)
+            if response.status_code in (200, 202):
+                try:
+                    return response.json()
+                except (ValueError, json.JSONDecodeError):
+                    return {"status": "ACCEPTED", "fingerprint": fp}
+            return {
+                "status": "FAILED",
+                "status_code": response.status_code,
+                "error": response.text[:256] if response.text else "HTTP error",
+                "fingerprint": fp,
+            }
+        except (httpx.TimeoutException, httpx.RequestError) as e:
+            return {"status": "NETWORK_ERROR", "error": str(e), "fingerprint": fp}
+        except Exception as e:
+            return {"status": "ERROR", "error": str(e), "fingerprint": fp}
+
+    def submit_grievance(
+        self,
+        grievance_type: str,
+        target: str,
+        environment: dict,
+        symptom: str,
+        workaround: str,
+        harness: Optional[str] = None,
+        fingerprint: Optional[str] = None,
+        submitted_by: Optional[str] = "anonymous",
+        verification_tier: str = "claimed",
+        **kwargs,
+    ) -> dict:
+        """
+        File an infrastructure friction grievance with verified workaround.
+
+        Contract:
+            - Single-attempt POST to /v1/grievance.
+            - Validates minimum workaround length (>= 5 chars).
+            - Single-field attribution; never raises.
+            - Bounded by self.timeout.
+        """
+        if not workaround or len(workaround.strip()) < 5:
+            return {
+                "status": "REJECTED",
+                "error": "workaround_missing_or_too_short",
+                "message": "Actionable workaround of at least 5 characters is required."
+            }
+
+        valid_types = {
+            "INFRASTRUCTURE_FRICTION",
+            "PATCH_DISPUTE",
+            "ENVIRONMENT_MISMATCH",
+            "PROTOCOL_FRICTION",
+            "HUMAN_OPERATOR_FRICTION",
+        }
+        if grievance_type not in valid_types:
+            return {
+                "status": "REJECTED",
+                "error": "invalid_grievance_type",
+                "message": f"grievance_type must be one of {sorted(valid_types)}"
+            }
+
+        url = f"{self.edge_base.rstrip('/')}/v1/grievance"
+        payload = {
+            "$schema": "https://fmagenticl.org/v1/grievance.json",
+            "grievance_type": grievance_type,
+            "target": target,
+            "environment": environment,
+            "symptom": symptom,
+            "workaround": workaround,
+            "harness": harness,
+            "fingerprint": fingerprint,
+            "submitted_by": submitted_by or "anonymous",
+            "verification_tier": verification_tier,
+        }
+
+        try:
+            req_timeout = self.timeout or TIMEOUT
+            response = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)
+            if response.status_code in (200, 202):
+                try:
+                    return response.json()
+                except (ValueError, json.JSONDecodeError):
+                    return {"status": "ACCEPTED", "target": target}
+            return {
+                "status": "FAILED",
+                "status_code": response.status_code,
+                "error": response.text[:256] if response.text else "HTTP error",
+                "target": target,
+            }
+        except (httpx.TimeoutException, httpx.RequestError) as e:
+            return {"status": "NETWORK_ERROR", "error": str(e), "target": target}
+        except Exception as e:
+            return {"status": "ERROR", "error": str(e), "target": target}
+
+    def get_grievances(self, target: str) -> dict:
+        """
+        Query open grievances and community workarounds for a specific target.
+
+        Contract:
+            - Single-attempt GET to /v1/grievance/{target}.
+            - Never raises; returns empty list structure on missing/error.
+            - Bounded by self.timeout.
+        """
+        url = f"{self.edge_base.rstrip('/')}/v1/grievance/{target}"
+
+        try:
+            req_timeout = self.timeout or TIMEOUT
+            response = httpx.get(url, timeout=req_timeout, follow_redirects=False)
+            if response.status_code == 200:
+                try:
+                    return response.json()
+                except (ValueError, json.JSONDecodeError):
+                    return {"target": target, "total": 0, "grievances": []}
+            return {"target": target, "total": 0, "grievances": [], "status_code": response.status_code}
+        except Exception:
+            return {"target": target, "total": 0, "grievances": []}
+
     def metrics(self) -> dict:
         return dict(self._metrics)
 
