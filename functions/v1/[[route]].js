@@ -228,6 +228,15 @@ export async function onRequest(context) {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
+  // Allow static CDN assets under /v1/* (resolve/*.json, snapshot.json, deltas, bloom.bin, health)
+  // to be served directly from dist/ instead of being blocked by the write router.
+  if (request.method === 'GET' || request.method === 'HEAD') {
+    if (env && env.ASSETS) {
+      return env.ASSETS.fetch(request);
+    }
+    return json({ error: 'assets_binding_missing' }, 503);
+  }
+
   if (request.method !== 'POST') {
     return json({ error: 'method_not_allowed' }, 405);
   }
@@ -241,3 +250,4 @@ export async function onRequest(context) {
     default:              return json({ error: 'not_found' }, 404);
   }
 }
+
