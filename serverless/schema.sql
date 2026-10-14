@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS grievances (
         'PATCH_DISPUTE',
         'ENVIRONMENT_MISMATCH',
         'PROTOCOL_FRICTION',
-        'HUMAN_OPERATOR_FRICTION'
+        'HUMAN_OPERATOR_FRICTION',
+        'AGENT_FRICTION'
     )),
     target TEXT NOT NULL,
     harness TEXT,
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS grievances (
     environment_json TEXT,
     submitted_by TEXT NOT NULL,
     verification_tier TEXT NOT NULL,
+    applies_to TEXT,
     created_at TEXT NOT NULL,
     queue_status TEXT NOT NULL DEFAULT 'committed'
 );
@@ -63,3 +65,20 @@ CREATE TABLE IF NOT EXISTS visits (
     agent_runtime TEXT,
     created_at TEXT NOT NULL
 );
+
+-- patch_health: ACK/NACK lifecycle tracking for patch quarantine
+CREATE TABLE IF NOT EXISTS patch_health (
+  fingerprint TEXT PRIMARY KEY,
+  ack_count INTEGER NOT NULL DEFAULT 0,
+  nack_count INTEGER NOT NULL DEFAULT 0,
+  consecutive_nacks INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'ACTIVE',
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_patch_health_status ON patch_health(status);
+
+-- grievances: add applies_to column for AGENT_FRICTION entries
+-- SQLite does not support IF NOT EXISTS on ALTER TABLE ADD COLUMN.
+-- If this errors with "duplicate column name: applies_to", that is expected and fine.
+ALTER TABLE grievances ADD COLUMN applies_to TEXT;

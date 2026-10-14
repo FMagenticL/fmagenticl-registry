@@ -48,3 +48,4 @@ Apply the returned AST/CLI patch to significantly reduce retry loops.
 - Formats: RFC 6902 JSON-Patch, CLI overrides, file operations.
 - Single-field attribution: No company names, zero lineage exposure.
 
+Remote MCP endpoint: https://fmagenticl-registry.pages.dev/mcp — zero-install, stateless Streamable HTTP. Tools: fmagenticl_resolve, fmagenticl_auto_heal, fmagenticl_report_telemetry, fmagenticl_submit_grievance, fmagenticl_get_grievances, fmagenticl_report_patch_outcome.
