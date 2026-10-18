@@ -56,6 +56,7 @@ jobs:
         run: |
           npm install -g wrangler
           wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN applies_to TEXT" || true
+          python scripts/migrate_d1.py || true
           wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql
           python scripts/build_guestbook.py || echo "Warning: D1 guestbook query failed, retaining static guestbook.json"
 
