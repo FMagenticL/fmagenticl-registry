@@ -8,22 +8,22 @@ EXPECTED_CANONICAL = (
     "RuntimeError at <HEX_ADDR> in <USER_HOME>/app/main.py:<LINE>:<COL> "
     "(lib v2.4.x) at <TIMESTAMP>"
 )
+EXPECTED_HASH = "4fa7f8a7abab80e236000d115ea851a9c15c4473adca82af7743d99a1f6676e1"
 
 
 def test_canonical_output():
     assert normalize_error_string(TEST_VECTOR) == EXPECTED_CANONICAL
 
 
-def test_canonical_hash_is_deterministic():
+def test_canonical_hash_is_deterministic_and_pinned():
     h1 = canonical_fingerprint(TEST_VECTOR)
     h2 = canonical_fingerprint(TEST_VECTOR)
     assert h1 == h2
     assert len(h1) == 64
+    assert h1 == EXPECTED_HASH
 
 
 def test_no_time_of_day_corruption():
-    # Regression: time-of-day strings must not have ":MM:SS" eaten by the
-    # line:col normalizer.
     sample = "[10:42:00] server started"
     normalized = normalize_error_string(sample)
     assert "<LINE>:<COL>" not in normalized

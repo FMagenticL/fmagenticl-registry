@@ -1,3 +1,9 @@
+-- Migration note (2026-10-14): The applies_to column was added to grievances
+-- via a one-time manual ALTER TABLE against production D1. It is now part of
+-- the canonical CREATE TABLE statement. Do not re-add an ALTER statement here.
+-- This file must remain idempotent so the deploy workflow can safely run it
+-- on every push.
+
 CREATE TABLE IF NOT EXISTS telemetry (
     id TEXT PRIMARY KEY,
     fingerprint TEXT NOT NULL,
@@ -68,17 +74,12 @@ CREATE TABLE IF NOT EXISTS visits (
 
 -- patch_health: ACK/NACK lifecycle tracking for patch quarantine
 CREATE TABLE IF NOT EXISTS patch_health (
-  fingerprint TEXT PRIMARY KEY,
-  ack_count INTEGER NOT NULL DEFAULT 0,
-  nack_count INTEGER NOT NULL DEFAULT 0,
-  consecutive_nacks INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'ACTIVE',
-  updated_at TEXT NOT NULL
+    fingerprint TEXT PRIMARY KEY,
+    ack_count INTEGER NOT NULL DEFAULT 0,
+    nack_count INTEGER NOT NULL DEFAULT 0,
+    consecutive_nacks INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'ACTIVE',
+    updated_at TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_patch_health_status ON patch_health(status);
-
--- grievances: add applies_to column for AGENT_FRICTION entries
--- SQLite does not support IF NOT EXISTS on ALTER TABLE ADD COLUMN.
--- If this errors with "duplicate column name: applies_to", that is expected and fine.
-ALTER TABLE grievances ADD COLUMN applies_to TEXT;

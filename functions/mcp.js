@@ -4,7 +4,6 @@
  * Spec: MCP 2025-03-26 (JSON-RPC 2.0 over HTTP POST, stateless)
  *
  * Tool names mirror fmagenticl/client/fastmcp_server.py exactly.
- * If they diverge, this file is wrong, not the sidecar.
  */
 
 const PROTOCOL_VERSION = "2025-03-26";
@@ -15,10 +14,14 @@ const FORBIDDEN_LAB_TOKENS = [
   "mistral", "cohere", "xai", "deepseek", "alibaba", "qwen", "amazon", "apple"
 ];
 
-const CORS = {
+const CORS_ONLY = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id",
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id"
+};
+
+const JSON_HEADERS = {
+  ...CORS_ONLY,
   "Content-Type": "application/json; charset=utf-8"
 };
 
@@ -60,13 +63,13 @@ function validateAttribution(value) {
 }
 
 function ok(id, result) {
-  return new Response(JSON.stringify({ jsonrpc: "2.0", id, result }), { status: 200, headers: CORS });
+  return new Response(JSON.stringify({ jsonrpc: "2.0", id, result }), { status: 200, headers: JSON_HEADERS });
 }
 
 function err(id, code, message, data) {
   return new Response(
     JSON.stringify({ jsonrpc: "2.0", id: id ?? null, error: { code, message, ...(data ? { data } : {}) } }),
-    { status: 200, headers: CORS }
+    { status: 200, headers: JSON_HEADERS }
   );
 }
 
@@ -162,7 +165,7 @@ const MCP_TOOLS = [
 ];
 
 export async function onRequestOptions() {
-  return new Response(null, { status: 204, headers: CORS });
+  return new Response(null, { status: 204, headers: CORS_ONLY });
 }
 
 export async function onRequestGet({ request }) {
@@ -175,11 +178,10 @@ export async function onRequestGet({ request }) {
     protocolVersion: PROTOCOL_VERSION,
     endpoint: `${url.origin}/mcp`,
     documentation: `${url.origin}/llms.txt`
-  }), { status: 200, headers: CORS });
+  }), { status: 200, headers: JSON_HEADERS });
 }
 
 async function fetchPatch(env, origin, hash) {
-  // Tier 1 — static asset. Serves dist/v1/resolve/{hash}.json if present.
   const assetUrl = `${origin}/v1/resolve/${hash}.json`;
   if (env.ASSETS) {
     try {
@@ -187,12 +189,10 @@ async function fetchPatch(env, origin, hash) {
       if (res && res.ok) return await res.json();
     } catch (_) { /* fall through */ }
   }
-  // Tier 2 — origin fetch. Routes through functions/v1/[[route]].js if asset miss.
   try {
     const res = await fetch(assetUrl);
     if (res && res.ok) return await res.json();
   } catch (_) { /* fall through */ }
-  // Tier 3 — patches index. Query by fingerprint.
   try {
     const res = await fetch(`${origin}/api/v1/patches`);
     if (res && res.ok) {
@@ -213,7 +213,9 @@ export async function onRequestPost({ request, env }) {
 
   const { id, method, params } = body || {};
 
-  if (method === "notifications/initialized") return new Response(null, { status: 202, headers: CORS });
+  if (method === "notifications/initialized") {
+    return new Response(null, { status: 202, headers: CORS_ONLY });
+  }
 
   if (method === "initialize") {
     return ok(id, {
@@ -315,13 +317,14 @@ export async function onRequestPost({ request, env }) {
         return err(id, -32602, "AGENT_FRICTION entries require a non-empty 'applies_to' field.");
       }
       if (!env.DB) return err(id, -32603, "D1 binding not available.");
+      const idVal = crypto.randomUUID();
       const now = new Date().toISOString();
       await env.DB.prepare(
         `INSERT INTO grievances
          (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
-        crypto.randomUUID(),
+        idVal,
         args.grievance_type,
         args.target,
         args.harness || null,
@@ -335,7 +338,7 @@ export async function onRequestPost({ request, env }) {
         now,
         "committed"
       ).run();
-      return ok(id, { content: [{ type: "text", text: JSON.stringify({ status: "ACCEPTED", target: args.target })}]});
+      return ok(id, { content: [{ type: "text", text: JSON.stringify({ status: "ACCEPTED", id: idVal, target: args.target })}]});
     }
 
     if (toolName === "fmagenticl_get_grievances") {
@@ -382,7 +385,10 @@ export async function onRequestPost({ request, env }) {
         "SELECT ack_count, nack_count, consecutive_nacks, status FROM patch_health WHERE fingerprint = ?"
       ).bind(fp).first();
       return ok(id, { content: [{ type: "text", text: JSON.stringify({
-        fingerprint: fp, recorded_outcome: args.outcome,
+        fingerprint: fp,
+        recorded_outcome: args.outcome,
+        ack_count: row?.ack_count ?? 0,
+        nack_count: row?.nack_count ?? 0,
         consecutive_nacks: row?.consecutive_nacks ?? 0,
         patch_status: row?.status ?? "ACTIVE"
       })}]});
