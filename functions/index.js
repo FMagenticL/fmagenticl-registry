@@ -23,9 +23,13 @@ export async function onRequestGet(context) {
     !accept.includes("text/html");
 
   if (env && env.ASSETS) {
-    const targetPath = isAgentCli ? "/llms.txt" : "/index.html";
-    const targetUrl = new URL(targetPath, request.url);
-    const resp = await env.ASSETS.fetch(new Request(targetUrl.toString(), request));
+    let resp;
+    if (isAgentCli) {
+      const targetUrl = new URL("/llms.txt", request.url);
+      resp = await env.ASSETS.fetch(new Request(targetUrl.toString(), request));
+    } else {
+      resp = await env.ASSETS.fetch(request);
+    }
     const newHeaders = new Headers(resp.headers);
     newHeaders.set("Vary", "Accept, User-Agent");
     return new Response(resp.body, {
