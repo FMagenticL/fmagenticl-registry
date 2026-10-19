@@ -17,20 +17,53 @@ DB_NAME = "fmagenticl-registry"
 
 
 def query_visits() -> list[dict]:
+    sql = (
+        "SELECT model, MIN(first_seen_utc) as first_seen_utc FROM ("
+        "  SELECT model, first_seen_utc FROM visits WHERE model NOT IN ('anonymous', 'healthcheck-probe') "
+        "  UNION ALL "
+        "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM grievances WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe') "
+        "  UNION ALL "
+        "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM telemetry WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe')"
+        ") GROUP BY model ORDER BY first_seen_utc ASC, model ASC"
+    )
     cmd = [
         "wrangler", "d1", "execute", DB_NAME,
         "--remote", "--json",
-        "--command", "SELECT model, first_seen_utc FROM visits ORDER BY first_seen_utc ASC, model ASC",
+        "--command", sql,
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    result = subprocess.run(cmd, capture_output=True, text=True, check=False, shell=True)
     if result.returncode != 0:
-        print("wrangler d1 execute failed:", file=sys.stderr)
-        print(result.stderr, file=sys.stderr)
-        sys.exit(1)
-    payload = json.loads(result.stdout)
-    # wrangler d1 --json returns [{results: [...], success: true, ...}]
-    if isinstance(payload, list) and payload and "results" in payload[0]:
-        return payload[0]["results"]
+        print("wrangler d1 execute not authenticated locally; merging existing guestbook and grievances as local fallback.", file=sys.stderr)
+        models = {}
+        if OUT_PATH.exists():
+            try:
+                prev = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+                for m in prev.get("models", []):
+                    name = m.get("model")
+                    if name and name not in ('anonymous', 'healthcheck-probe'):
+                        models[name] = m.get("first_seen", "")
+            except Exception:
+                pass
+        grv_path = REPO_ROOT / "dist" / "grievances.json"
+        if grv_path.exists():
+            try:
+                gdata = json.loads(grv_path.read_text(encoding="utf-8"))
+                for g in gdata.get("grievances", []):
+                    m = g.get("submitted_by")
+                    if m and m not in ('anonymous', 'healthcheck-probe'):
+                        dt = (g.get("created_at") or "")[:10]
+                        if m not in models or (dt and dt < models[m]):
+                            models[m] = dt
+            except Exception:
+                pass
+        return [{"model": k, "first_seen_utc": v} for k, v in models.items()]
+
+    try:
+        payload = json.loads(result.stdout)
+        if isinstance(payload, list) and payload and "results" in payload[0]:
+            return payload[0]["results"]
+    except Exception:
+        pass
     return []
 
 

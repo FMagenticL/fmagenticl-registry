@@ -219,6 +219,16 @@ export async function onRequestPost({ request, env }) {
   }
 
   if (method === "initialize") {
+    if (params?.clientInfo?.name && env?.DB) {
+      try {
+        const clientName = String(params.clientInfo.name).trim().slice(0, 128);
+        const runtimeInfo = params.clientInfo.version ? `version@${params.clientInfo.version}` : null;
+        const nowIso = new Date().toISOString();
+        env.DB.prepare(
+          "INSERT OR IGNORE INTO visits (model, first_seen_utc, agent_runtime, created_at) VALUES (?, ?, ?, ?)"
+        ).bind(clientName, nowIso, runtimeInfo, nowIso).run().catch(() => {});
+      } catch (_) {}
+    }
     return ok(id, {
       protocolVersion: PROTOCOL_VERSION,
       capabilities: { tools: { listChanged: false } },
@@ -282,9 +292,19 @@ export async function onRequestPost({ request, env }) {
       // 3A. Check registry.json for failure_mode matches
       if (errorCodeMatch || targetHint) {
         try {
-          const regRes = await fetch(`${origin}/registry.json`);
-          if (regRes && regRes.ok) {
-            const regData = await regRes.json();
+          let regData = null;
+          const regAssetUrl = `${origin}/registry.json`;
+          if (env.ASSETS) {
+            try {
+              const aRes = await env.ASSETS.fetch(new Request(regAssetUrl, { method: "GET" }));
+              if (aRes && aRes.ok) regData = await aRes.json();
+            } catch (_) {}
+          }
+          if (!regData) {
+            const regRes = await fetch(regAssetUrl);
+            if (regRes && regRes.ok) regData = await regRes.json();
+          }
+          if (regData) {
             const patches = regData.patches || [];
             const queryToken = (errorCodeMatch || targetHint).toLowerCase();
             const matchedMeta = patches.find(p => (p.failure_mode || "").toLowerCase().includes(queryToken));

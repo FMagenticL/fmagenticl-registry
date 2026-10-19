@@ -42,7 +42,7 @@ jobs:
           node-version: '20'
 
       - name: Install build dependencies
-        run: pip install cryptography pybloom-live
+        run: pip install cryptography pybloom-live httpx Pillow
 
       - name: Rebuild guestbook & export grievances from Cloudflare D1
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'

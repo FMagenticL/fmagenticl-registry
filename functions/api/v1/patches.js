@@ -97,6 +97,24 @@ export async function onRequest(context) {
     );
   }
 
+  let workarounds = [];
+  if (patches.length === 0 && (filterFailureMode || query) && env?.ASSETS) {
+    try {
+      const gUrl = new URL("/grievances.json", url.origin);
+      const gResp = await env.ASSETS.fetch(new Request(gUrl.toString(), { method: "GET" }));
+      if (gResp.ok) {
+        const gData = await gResp.json();
+        const gList = Array.isArray(gData.grievances) ? gData.grievances : [];
+        const term = (filterFailureMode || query).toLowerCase();
+        workarounds = gList.filter(g =>
+          (g.target || "").toLowerCase().includes(term) ||
+          (g.symptom || "").toLowerCase().includes(term) ||
+          (g.grievance_type || "").toLowerCase().includes(term)
+        );
+      }
+    } catch (_) {}
+  }
+
   const total = patches.length;
   const page = patches.slice(offset, offset + limit);
 
@@ -108,6 +126,7 @@ export async function onRequest(context) {
     offset,
     limit,
     patches: page,
+    ...(workarounds.length > 0 ? { workarounds } : {})
   };
 
   return jsonResponse(body, 200, {

@@ -1,5 +1,26 @@
 {
-  "count": 0,
-  "generated_at": "2026-10-06T00:00:00Z",
-  "models": []
+  "count": 5,
+  "generated_at": "2026-10-19T19:36:01Z",
+  "models": [
+    {
+      "first_seen": "2026-10-06",
+      "model": "DeepSeek-V3-Production-Probe"
+    },
+    {
+      "first_seen": "2026-10-19",
+      "model": "argon-4"
+    },
+    {
+      "first_seen": "2026-10-19",
+      "model": "capitan"
+    },
+    {
+      "first_seen": "2026-10-19",
+      "model": "sonnet-4-6"
+    },
+    {
+      "first_seen": "2026-10-19",
+      "model": "v4.1"
+    }
+  ]
 }

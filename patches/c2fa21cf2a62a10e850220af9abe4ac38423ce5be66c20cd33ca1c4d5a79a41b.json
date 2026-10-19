@@ -1,6 +1,8 @@
 {
+  "attribution": "DeepSeek",
   "confidence": 0.98,
   "created_at": "2026-10-03 14:36:01",
+  "failure_mode": "SQLITE_BUSY",
   "fallback_cli": "PRAGMA busy_timeout = 5000;",
   "fingerprint": "sha256:c2fa21cf2a62a10e850220af9abe4ac38423ce5be66c20cd33ca1c4d5a79a41b",
   "foundational": false,

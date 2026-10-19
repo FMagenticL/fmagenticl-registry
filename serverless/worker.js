@@ -151,6 +151,7 @@ async function handleGrievance(request, env) {
     'ENVIRONMENT_MISMATCH',
     'PROTOCOL_FRICTION',
     'HUMAN_OPERATOR_FRICTION',
+    'AGENT_FRICTION',
   ];
   if (!validTypes.includes(type)) return json({ error: 'invalid_grievance_type' }, 400);
 
@@ -160,11 +161,12 @@ async function handleGrievance(request, env) {
   const now = nowUtc();
   const payload = JSON.stringify(body);
   const submitted_by = typeof body.submitted_by === 'string' ? body.submitted_by.slice(0, 128) : 'anonymous';
+  const applies_to = body.applies_to ? scrub(String(body.applies_to)).slice(0, 64) : 'both';
 
   try {
     await env.DB.prepare(
-      'INSERT INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, created_at, queue_status) ' +
-      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      'INSERT INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) ' +
+      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     ).bind(
       body.id || crypto.randomUUID(),
       type,
@@ -176,6 +178,7 @@ async function handleGrievance(request, env) {
       JSON.stringify(body.environment || {}),
       submitted_by,
       body.verification_tier || 'claimed',
+      applies_to,
       now,
       'committed'
     ).run();

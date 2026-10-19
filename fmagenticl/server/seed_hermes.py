@@ -4,7 +4,7 @@ Contains comprehensive real-world failure signatures, RFC 6902 two-track determi
 and canonical infrastructure friction grievances with actionable workarounds.
 """
 
-from fmagenticl.client.middleware import FMagenticLClient
+from fmagenticl.client.fingerprint import compute_fingerprint
 
 RAW_SEED_CASES = [
     # --- 1. Node.js, npm, Vite, esbuild & TypeScript Subsystems ---
@@ -536,7 +536,7 @@ RAW_SEED_CASES = [
 
 SEED_ENTRIES = []
 for case in RAW_SEED_CASES:
-    fp = FMagenticLClient.compute_fingerprint(case["env"], case["fail"])
+    fp = compute_fingerprint(case["env"], case["fail"])
     SEED_ENTRIES.append({
         "$schema": "https://fmagenticl.org/v1/manifest.json",
         "fingerprint": fp,
