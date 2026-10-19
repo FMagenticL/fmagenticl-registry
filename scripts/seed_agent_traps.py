@@ -224,7 +224,7 @@ def sync_grievances():
             gwork = g["workaround"].replace("'", "''")
             gsub = g["submitted_by"]
             gapp = (g.get("applies_to") or "").replace("'", "''")
-            sql = f"""INSERT OR IGNORE INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{now_iso}', 'committed');"""
+            sql = f"""INSERT INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{now_iso}', 'committed') ON CONFLICT(id) DO UPDATE SET submitted_by = excluded.submitted_by, applies_to = excluded.applies_to, workaround = excluded.workaround;"""
             sql_statements.append(sql)
 
         tmp_sql = "temp_seed_grievances.sql"

@@ -110,7 +110,7 @@ def query_d1_pending(db_name: str) -> Tuple[List[Dict[str, Any]], List[Dict[str,
     for table, target_list in [("telemetry", telemetry_rows), ("grievances", grievance_rows)]:
         sql = f"SELECT * FROM {table} WHERE queue_status = 'PENDING' ORDER BY created_at ASC;"
         cmd = ["wrangler", "d1", "execute", db_name, "--remote", "--json", "--command", sql]
-        res = subprocess.run(cmd, capture_output=True, text=True, check=False, shell=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, check=False)
         if res.returncode != 0:
             print(f"Notice: Failed to query D1 table '{table}': {res.stderr.strip()}", file=sys.stderr)
             continue
@@ -270,7 +270,7 @@ def process_candidates(
                     tmp_sql.write_text("\n".join(sql_lines), encoding="utf-8")
                     sub_res = subprocess.run(
                         ["wrangler", "d1", "execute", db_name, "--remote", f"--file={tmp_sql}"],
-                        capture_output=True, text=True, check=False, shell=True
+                        capture_output=True, text=True, check=False
                     )
                     if sub_res.returncode == 0:
                         report["d1_updates_executed"] = len(sql_lines)

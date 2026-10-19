@@ -31,7 +31,7 @@ def query_visits() -> list[dict]:
         "--remote", "--json",
         "--command", sql,
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, check=False, shell=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         print("wrangler d1 execute not authenticated locally; merging existing guestbook and grievances as local fallback.", file=sys.stderr)
         models = {}

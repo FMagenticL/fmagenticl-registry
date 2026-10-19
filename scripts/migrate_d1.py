@@ -114,8 +114,7 @@ def normalize_model_attributions() -> None:
             ["wrangler", "d1", "execute", DB_NAME, "--remote", f"--file={tmp_path}"],
             capture_output=True,
             text=True,
-            check=False,
-            shell=True
+            check=False
         )
         if run_res.returncode == 0:
             print("Successfully normalized model attributions in D1.")
