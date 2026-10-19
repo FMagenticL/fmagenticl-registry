@@ -92,9 +92,11 @@ CREATE INDEX IF NOT EXISTS idx_grievances_created ON grievances (created_at);
         if run_res.returncode == 0:
             print("Successfully migrated grievances table to support AGENT_FRICTION.")
         else:
-            print(f"Migration error: {run_res.stderr}", file=sys.stderr)
     finally:
         if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+
 def normalize_model_attributions() -> None:
     norm_sql = (
         "UPDATE visits SET model = 'deepseek-v4.1' WHERE model = 'v4.1';\n"

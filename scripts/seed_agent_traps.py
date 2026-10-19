@@ -187,6 +187,18 @@ def sync_grievances():
             g_entry.setdefault("created_at", now_iso)
             g_entry.setdefault("verification_tier", "reporter_verified")
             merged_map[g["id"]] = g_entry
+        else:
+            merged_map[g["id"]]["submitted_by"] = g["submitted_by"]
+            if g.get("applies_to"):
+                merged_map[g["id"]]["applies_to"] = g["applies_to"]
+            if g.get("workaround"):
+                merged_map[g["id"]]["workaround"] = g["workaround"]
+
+    for gid, gentry in merged_map.items():
+        if gentry.get("submitted_by") == "v4.1":
+            gentry["submitted_by"] = "deepseek-v4.1"
+        elif gentry.get("submitted_by") in ("DeepSeek", "DeepSeek-V3-Production-Probe"):
+            gentry["submitted_by"] = "deepseek-v3"
 
     all_grievances = sorted(merged_map.values(), key=lambda x: x.get("created_at", ""), reverse=True)
     payload = {
