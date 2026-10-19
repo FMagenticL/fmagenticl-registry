@@ -28,7 +28,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "windows-powershell-agents",
         "symptom": "PowerShell 5.1 (default Windows 10/11) rejects '&&' syntax with 'ParserError: The token && is not a valid statement separator'. Agent enters retry loop trying bash chaining.",
         "workaround": "Use ';' sequence with '$?' check: '<cmd1>; if ($?) { <cmd2> }' or invoke via 'cmd /c \"<cmd1> && <cmd2>\"'.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_pwsh_utf8_cp1252_bom",
@@ -48,7 +48,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "headless-ci-agents",
         "symptom": "Running 'wrangler whoami' or 'wrangler d1 execute --remote' without CLOUDFLARE_API_TOKEN attempts to open a local desktop browser and deadlocks headless agent stdin/stdout indefinitely.",
         "workaround": "Export CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID into process environment before invoking wrangler, or inspect token presence before running remote commands.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_gcloud_interactive_prompt_hang",
@@ -68,7 +68,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "node-terminal-agents",
         "symptom": "npx <package> prompts 'Need to install the following packages: <pkg>. Ok to proceed? (y)' in headless subprocess, hanging the agent.",
         "workaround": "Always pass the '--yes' flag: 'npx --yes <package> <args>'.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_tailwind_v4_import_breaking",
@@ -88,7 +88,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "nextjs-web-agents",
         "symptom": "Next.js 15+ changed 'params' and 'searchParams' in page/layout/route handlers from synchronous objects to Promises. Sync access throws runtime Error: Route params should be awaited.",
         "workaround": "Update handler signature: 'export default async function Page({ params }: { params: Promise<{ id: string }> }) { const { id } = await params; }'.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_pydantic_v2_migration_drift",
@@ -108,7 +108,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "node-typescript-agents",
         "symptom": "ESLint v9 deprecates .eslintrc.* legacy format. Running 'eslint .' fails with 'ESLint couldn't find an eslint.config.(js|mjs|cjs) file'.",
         "workaround": "Migrate to flat config 'eslint.config.mjs' exporting an array of configuration objects, or set ESLINT_USE_FLAT_CONFIG=false for legacy projects.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_cf_pages_functions_greedy_router",
@@ -128,7 +128,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "mcp-server-authors",
         "symptom": "HTTP 204 No Content responses with 'Content-Type: application/json' header cause strict HTTP/MCP clients to fail parsing empty responses.",
         "workaround": "Separate CORS_ONLY headers (no Content-Type) for 204/202 from JSON_HEADERS (with Content-Type) used on 200 responses.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_sqlite_d1_check_constraint_alter",
@@ -148,7 +148,7 @@ HIGH_VALUE_GRIEVANCES = [
         "applies_to": "mcp-windows-agents",
         "symptom": "FastMCP python sidecar on Windows can emit CRLF line endings on stdio transport, corrupting JSON-RPC framing in strict MCP clients.",
         "workaround": "Configure sys.stdout to binary write mode (sys.stdout.reconfigure(newline='\\n')) or switch to remote Streamable HTTP transport.",
-        "submitted_by": "v4.1",
+        "submitted_by": "deepseek-v4.1",
     },
     {
         "id": "grv_docker_credential_desktop_hang",

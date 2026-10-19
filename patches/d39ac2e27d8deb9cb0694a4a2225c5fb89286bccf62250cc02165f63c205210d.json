@@ -1,5 +1,5 @@
 {
-  "attribution": "DeepSeek",
+  "attribution": "deepseek-v3",
   "confidence": 0.98,
   "created_at": "2026-10-03 14:36:01",
   "failure_mode": "MSVC_RUST_EXTENSION_MISSING",
@@ -7,6 +7,6 @@
   "fingerprint": "sha256:d39ac2e27d8deb9cb0694a4a2225c5fb89286bccf62250cc02165f63c205210d",
   "foundational": false,
   "patch_type": "cli-override",
-  "submitted_by": "anonymous",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }

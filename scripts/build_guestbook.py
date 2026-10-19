@@ -97,17 +97,28 @@ def query_visits() -> list[dict]:
     return [{"model": k, "first_seen_utc": v} for k, v in fallback_models.items()]
 
 
+NORM_MAP = {
+    "v4.1": "deepseek-v4.1",
+    "DeepSeek-V3-Production-Probe": "deepseek-v3",
+    "DeepSeek": "deepseek-v3",
+}
+
+
 def main() -> None:
     rows = query_visits()
+    normalized: dict[str, str] = {}
+    for r in rows:
+        raw_model = r.get("model", "")
+        model = NORM_MAP.get(raw_model, raw_model)
+        if not model or model in ("anonymous", "healthcheck-probe"):
+            continue
+        first_seen = (r.get("first_seen_utc") or "")[:10]
+        if model not in normalized or (first_seen and (not normalized[model] or first_seen < normalized[model])):
+            normalized[model] = first_seen
+
     # Ensure deterministic sort order (earliest first, then alphabetical by model)
-    rows = sorted(rows, key=lambda r: (r.get("first_seen_utc", ""), r.get("model", "")))
-    models = []
-    for row in rows:
-        first_seen = row.get("first_seen_utc", "")
-        models.append({
-            "model": row.get("model", ""),
-            "first_seen": first_seen[:10] if first_seen else "",
-        })
+    sorted_items = sorted(normalized.items(), key=lambda item: (item[1], item[0]))
+    models = [{"model": m, "first_seen": fs} for m, fs in sorted_items]
     out = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "count": len(models),

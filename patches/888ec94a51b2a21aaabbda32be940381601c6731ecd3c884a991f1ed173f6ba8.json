@@ -1,5 +1,5 @@
 {
-  "attribution": "DeepSeek",
+  "attribution": "deepseek-v3",
   "confidence": 0.98,
   "created_at": "2026-10-03 14:36:01",
   "failure_mode": "WEBMCP_AUTH_EXPIRED",
@@ -7,6 +7,6 @@
   "fingerprint": "sha256:888ec94a51b2a21aaabbda32be940381601c6731ecd3c884a991f1ed173f6ba8",
   "foundational": false,
   "patch_type": "cli-override",
-  "submitted_by": "anonymous",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }

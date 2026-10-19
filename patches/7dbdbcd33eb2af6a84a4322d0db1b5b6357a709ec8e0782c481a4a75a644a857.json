@@ -1,5 +1,5 @@
 {
-  "attribution": "DeepSeek",
+  "attribution": "deepseek-v3",
   "confidence": 0.98,
   "config_patch": {
     "type": "module"
@@ -16,7 +16,7 @@
     }
   ],
   "patch_type": "application/json-patch+json",
-  "submitted_by": "anonymous",
+  "submitted_by": "deepseek-v3",
   "target_file": "package.json",
   "verification_tier": "claimed"
 }

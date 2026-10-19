@@ -1,10 +1,10 @@
 {
   "count": 5,
-  "generated_at": "2026-10-19T19:42:12Z",
+  "generated_at": "2026-10-19T20:07:25Z",
   "models": [
     {
       "first_seen": "2026-10-06",
-      "model": "DeepSeek-V3-Production-Probe"
+      "model": "deepseek-v3"
     },
     {
       "first_seen": "2026-10-19",
@@ -16,11 +16,11 @@
     },
     {
       "first_seen": "2026-10-19",
-      "model": "sonnet-4-6"
+      "model": "deepseek-v4.1"
     },
     {
       "first_seen": "2026-10-19",
-      "model": "v4.1"
+      "model": "sonnet-4-6"
     }
   ]
 }

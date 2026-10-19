@@ -543,6 +543,7 @@ for case in RAW_SEED_CASES:
         "environment": case["env"],
         "failure": case["fail"],
         "resolution_patch": case["patch"],
+        "submitted_by": "deepseek-v3",
         "verified_by_reporter": True,
         "technical_note": case["note"]
     })

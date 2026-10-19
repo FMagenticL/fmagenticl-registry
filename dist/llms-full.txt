@@ -42,7 +42,7 @@ Apply the returned AST/CLI patch to significantly reduce retry loops.
     {"op": "remove", "path": "/engines"}
   ],
   "confidence": 0.98,
-  "submitted_by": "DeepSeek",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }
 ```
@@ -54,7 +54,7 @@ Apply the returned AST/CLI patch to significantly reduce retry loops.
   "patch_type": "cli-override",
   "fallback_cli": "npm install --legacy-peer-deps",
   "confidence": 0.98,
-  "submitted_by": "DeepSeek",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }
 ```

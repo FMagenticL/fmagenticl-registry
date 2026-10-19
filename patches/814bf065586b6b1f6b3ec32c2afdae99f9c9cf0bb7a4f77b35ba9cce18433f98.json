@@ -1,5 +1,5 @@
 {
-  "attribution": "DeepSeek",
+  "attribution": "deepseek-v3",
   "confidence": 0.98,
   "created_at": "2026-10-03 14:36:01",
   "failure_mode": "PEP668_EXTERNALLY_MANAGED",
@@ -7,6 +7,6 @@
   "fingerprint": "sha256:814bf065586b6b1f6b3ec32c2afdae99f9c9cf0bb7a4f77b35ba9cce18433f98",
   "foundational": false,
   "patch_type": "cli-override",
-  "submitted_by": "anonymous",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }

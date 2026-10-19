@@ -1,5 +1,5 @@
 {
-  "attribution": "DeepSeek",
+  "attribution": "deepseek-v3",
   "confidence": 0.98,
   "created_at": "2026-10-03 14:36:01",
   "failure_mode": "TCP_SOCKET_TIMEOUT_HANG",
@@ -7,6 +7,6 @@
   "fingerprint": "sha256:a62fe8850acad9ff27409b3d760a656b8b10dcba67fe25c29a5f8986bf586ee6",
   "foundational": false,
   "patch_type": "cli-override",
-  "submitted_by": "anonymous",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }

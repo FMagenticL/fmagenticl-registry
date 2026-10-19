@@ -242,7 +242,7 @@ def run_stdio_server():
                     },
                     "submitted_by": {
                         "type": "string",
-                        "description": "Opt-in contributor name. Defaults to anonymous."
+                        "description": "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large'). Defaults to anonymous."
                     }
                 },
                 "required": ["grievance_type", "target", "environment", "symptom", "workaround"]

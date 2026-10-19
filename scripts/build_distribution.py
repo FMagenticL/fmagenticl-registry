@@ -129,8 +129,8 @@ def build():
         p_data = patches[fp_hex]
         failure_mode = seed_map.get(fp_hex) or p_data.get("failure_mode") or p_data.get("patch_type", "deterministic-patch")
         attribution = p_data.get("attribution") or p_data.get("submitted_by")
-        if not attribution or attribution == "anonymous":
-            attribution = "DeepSeek"
+        if not attribution or attribution == "anonymous" or attribution == "DeepSeek":
+            attribution = "deepseek-v3"
         
         registry_patches.append({
             "id": fp_hex,

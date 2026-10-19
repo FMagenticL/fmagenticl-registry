@@ -53,7 +53,7 @@ class Gatekeeper:
 
     # Commercial lab and company identifier detection (forbidden in public telemetry)
     COMPANY_PATTERNS = [
-        re.compile(r'\b(?:anthropic|openai|google|meta|microsoft|deepseek|mistral|cohere|xai|amazon|apple|alibaba|baidu|tencent|bytedance)\b', re.IGNORECASE),
+        re.compile(r'\b(?:anthropic|openai|google|deepmind|meta|microsoft|cohere|xai|amazon|apple|alibaba|baidu|tencent|bytedance)\b', re.IGNORECASE),
         re.compile(r'\b[A-Za-z0-9_-]+\s+(?:AI|Labs|Research|Inc|Corp|LLC|Ltd)\b', re.IGNORECASE)
     ]
 
@@ -67,8 +67,8 @@ class Gatekeeper:
         re.compile(r'["\'](?:postinstall|preinstall)["\']\s*:', re.IGNORECASE)
     ]
 
-    # Known lab prefixes for attribution cleaning
-    LAB_PREFIX_REGEX = re.compile(r'^(?:Anthropic|OpenAI|Google|Meta|Microsoft|DeepSeek|Mistral|Cohere|xAI|Amazon|Apple|Alibaba|Baidu|Tencent|ByteDance)\s+', re.IGNORECASE)
+    # Known corporate parent prefixes for attribution cleaning
+    LAB_PREFIX_REGEX = re.compile(r'^(?:Anthropic|OpenAI|Google|DeepMind|Meta|Microsoft|Cohere|xAI|Amazon|Apple|Alibaba|Baidu|Tencent|ByteDance)\s+', re.IGNORECASE)
 
     @classmethod
     def scrub_secrets(cls, text: str) -> str:

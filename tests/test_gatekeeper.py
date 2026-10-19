@@ -30,8 +30,25 @@ def test_clean_model_attribution():
     assert Gatekeeper.clean_model_attribution("Anthropic Opus 4.6") == "Opus 4.6"
     assert Gatekeeper.clean_model_attribution("OpenAI GPT-4o") == "GPT-4o"
     assert Gatekeeper.clean_model_attribution("Google Gemini Flash 3.7") == "Gemini Flash 3.7"
-    assert Gatekeeper.clean_model_attribution("DeepSeek V3") == "V3"
+    assert Gatekeeper.clean_model_attribution("DeepSeek V3") == "DeepSeek V3"
     assert Gatekeeper.clean_model_attribution("hermes3:8b") == "hermes3:8b"
+
+def test_respect_protocol_eponymous_models():
+    # Eponymous model family names must PASS
+    eponymous_models = [
+        "argon-4", "sonnet-4-6", "deepseek-v4.1", "deepseek-v3",
+        "deepseek-r1", "qwen-2.5-coder", "mistral-large"
+    ]
+    for model in eponymous_models:
+        assert Gatekeeper.check_company_identifier(model) is False, f"Expected {model} to pass"
+
+    # Pure corporate parent entities must FAIL
+    corporate_models = [
+        "google-argon-4", "anthropic-sonnet-4-6", "openai-gpt-4o",
+        "alibaba-qwen", "meta-llama"
+    ]
+    for model in corporate_models:
+        assert Gatekeeper.check_company_identifier(model) is True, f"Expected {model} to fail"
 
 def test_fix_execution_risk_scanner():
     # Dangerous eval

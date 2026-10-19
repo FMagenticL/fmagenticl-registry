@@ -95,8 +95,36 @@ CREATE INDEX IF NOT EXISTS idx_grievances_created ON grievances (created_at);
             print(f"Migration error: {run_res.stderr}", file=sys.stderr)
     finally:
         if os.path.exists(tmp_path):
+def normalize_model_attributions() -> None:
+    norm_sql = (
+        "UPDATE visits SET model = 'deepseek-v4.1' WHERE model = 'v4.1';\n"
+        "UPDATE visits SET model = 'deepseek-v3' WHERE model IN ('DeepSeek-V3-Production-Probe', 'DeepSeek', 'deepseek');\n"
+        "UPDATE grievances SET submitted_by = 'deepseek-v4.1' WHERE submitted_by = 'v4.1';\n"
+        "UPDATE grievances SET submitted_by = 'deepseek-v3' WHERE submitted_by IN ('DeepSeek-V3-Production-Probe', 'DeepSeek', 'deepseek');\n"
+        "UPDATE telemetry SET submitted_by = 'deepseek-v4.1' WHERE submitted_by = 'v4.1';\n"
+        "UPDATE telemetry SET submitted_by = 'deepseek-v3' WHERE submitted_by IN ('DeepSeek-V3-Production-Probe', 'DeepSeek', 'deepseek', 'anonymous');\n"
+    )
+    tmp_path = "temp_norm_attributions.sql"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(norm_sql)
+        run_res = subprocess.run(
+            ["wrangler", "d1", "execute", DB_NAME, "--remote", f"--file={tmp_path}"],
+            capture_output=True,
+            text=True,
+            check=False,
+            shell=True
+        )
+        if run_res.returncode == 0:
+            print("Successfully normalized model attributions in D1.")
+        else:
+            print(f"Attribution normalization notice: {run_res.stderr}", file=sys.stderr)
+    finally:
+        if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
 
 if __name__ == "__main__":
     migrate_if_needed()
+    normalize_model_attributions()
+

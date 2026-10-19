@@ -49,6 +49,27 @@ function scrub(text) {
     .replace(/\/home\/[^,\s]+/g, '[REDACTED]');
 }
 
+const FORBIDDEN_LAB_TOKENS = [
+  'openai', 'anthropic', 'google', 'deepmind', 'meta', 'microsoft',
+  'cohere', 'xai', 'alibaba', 'amazon', 'apple'
+];
+
+function validateAttribution(value) {
+  if (!value || typeof value !== 'string' || value.trim().length === 0) {
+    return { valid: false, reason: "Single-field attribution required. Provide a bare model identifier in submitted_by." };
+  }
+  const lower = value.toLowerCase();
+  for (const token of FORBIDDEN_LAB_TOKENS) {
+    if (lower.includes(token)) {
+      return {
+        valid: false,
+        reason: `Respect Protocol violation: 'submitted_by' must be a canonical model identifier (e.g., 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large') without corporate parent prefixes (openai, anthropic, google, deepmind, meta, microsoft, cohere, xai, alibaba, amazon, apple).`
+      };
+    }
+  }
+  return { valid: true, value: value.trim() };
+}
+
 /**
  * POST /v1/hello
  *
@@ -117,6 +138,10 @@ async function handleTelemetry(request, env) {
   try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
 
   const submitted_by = typeof body.submitted_by === 'string' ? body.submitted_by.slice(0, 128) : 'anonymous';
+  if (submitted_by && submitted_by !== 'anonymous') {
+    const attr = validateAttribution(submitted_by);
+    if (!attr.valid) return json({ error: 'respect_protocol_violation', reason: attr.reason }, 400);
+  }
   const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.slice(0, 128) : '';
   if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
 
@@ -169,6 +194,10 @@ async function handleGrievance(request, env) {
   const now = nowUtc();
   const payload = JSON.stringify(body);
   const submitted_by = typeof body.submitted_by === 'string' ? body.submitted_by.slice(0, 128) : 'anonymous';
+  if (submitted_by && submitted_by !== 'anonymous') {
+    const attr = validateAttribution(submitted_by);
+    if (!attr.valid) return json({ error: 'respect_protocol_violation', reason: attr.reason }, 400);
+  }
   const applies_to = body.applies_to ? scrub(String(body.applies_to)).slice(0, 64) : 'both';
 
   try {

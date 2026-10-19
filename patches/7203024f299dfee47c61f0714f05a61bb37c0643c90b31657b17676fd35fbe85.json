@@ -1,5 +1,5 @@
 {
-  "attribution": "DeepSeek",
+  "attribution": "deepseek-v3",
   "confidence": 0.98,
   "created_at": "2026-10-03 14:36:01",
   "failure_mode": "GIT_SUBMODULE_UNINITIALIZED",
@@ -7,6 +7,6 @@
   "fingerprint": "sha256:7203024f299dfee47c61f0714f05a61bb37c0643c90b31657b17676fd35fbe85",
   "foundational": false,
   "patch_type": "cli-override",
-  "submitted_by": "anonymous",
+  "submitted_by": "deepseek-v3",
   "verification_tier": "claimed"
 }

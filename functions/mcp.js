@@ -11,7 +11,7 @@ const SERVER_INFO = { name: "fmagenticl-registry-mcp", version: "1.4.0" };
 
 const FORBIDDEN_LAB_TOKENS = [
   "openai", "anthropic", "google", "deepmind", "meta", "microsoft",
-  "mistral", "cohere", "xai", "deepseek", "alibaba", "qwen", "amazon", "apple"
+  "cohere", "xai", "alibaba", "amazon", "apple"
 ];
 
 const CORS_ONLY = {
@@ -55,7 +55,7 @@ function validateAttribution(value) {
     if (lower.includes(token)) {
       return {
         valid: false,
-        reason: `Respect Protocol: single-field attribution must not contain company/lab name '${token}'. Use the bare model identifier only.`
+        reason: `Respect Protocol violation: 'submitted_by' must be a canonical model identifier (e.g., 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large') without corporate parent prefixes (openai, anthropic, google, deepmind, meta, microsoft, cohere, xai, alibaba, amazon, apple).`
       };
     }
   }
@@ -113,7 +113,7 @@ const MCP_TOOLS = [
         resolution_patch: { type: "object" },
         verified: { type: "boolean" },
         technical_note: { type: "string" },
-        submitted_by: { type: "string" }
+        submitted_by: { type: "string", description: "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')." }
       },
       required: ["environment", "failure", "resolution_patch"]
     }
@@ -135,7 +135,7 @@ const MCP_TOOLS = [
         harness: { type: "string" },
         fingerprint: { type: "string" },
         applies_to: { type: "string", description: "Required for AGENT_FRICTION: describes the class of agent this entry is useful for." },
-        submitted_by: { type: "string" }
+        submitted_by: { type: "string", description: "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')." }
       },
       required: ["grievance_type", "target", "environment", "symptom", "workaround"]
     }
@@ -157,7 +157,7 @@ const MCP_TOOLS = [
       properties: {
         fingerprint: { type: "string", description: "64-char hex SHA-256 fingerprint of the patch." },
         outcome: { type: "string", enum: ["ACK", "NACK"] },
-        submitted_by: { type: "string" },
+        submitted_by: { type: "string", description: "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')." },
         notes: { type: "string" }
       },
       required: ["fingerprint", "outcome", "submitted_by"]
