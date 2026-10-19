@@ -38,14 +38,24 @@ function scrub(text) {
   return text
     .replace(/AKIA[0-9A-Z]{16}/g, '[REDACTED]')
     .replace(/ghp_[A-Za-z0-9]{36}/g, '[REDACTED]')
-    .replace(/github_pat_[A-Za-z0-9_]{82}/g, '[REDACTED]')
-    .replace(/sk-[A-Za-z0-9]{48}/g, '[REDACTED]')
+    .replace(/github_pat_[A-Za-z0-9_]{40,}/g, '[REDACTED]')
+    .replace(/sk-[A-Za-z0-9]{20,}/g, '[REDACTED]')
     .replace(/hf_[A-Za-z0-9]{34}/g, '[REDACTED]')
     .replace(/cfut_[A-Za-z0-9]{40}/g, '[REDACTED]')
     .replace(/cfat_[A-Za-z0-9]{40}/g, '[REDACTED]')
-    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/g, '[REDACTED]')
-    .replace(/C:\\Users\\[^,\s]+/g, '[REDACTED]')
-    .replace(/\/home\/[^,\s]+/g, '[REDACTED]');
+    .replace(/AIza[0-9A-Za-z\-_]{35}/g, '[REDACTED]')
+    .replace(/xox[baprs]-[0-9a-zA-Z]{10,48}/g, '[REDACTED]')
+    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/gi, '[REDACTED]')
+    .replace(/-----BEGIN\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----[\s\S]+?-----END\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----/gi, '[REDACTED]')
+    .replace(/ey[A-Za-z0-9-_=]{20,}\.[A-Za-z0-9-_=]{20,}\.?[A-Za-z0-9-_.+/=]*/g, '[REDACTED]')
+    .replace(/password\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, 'password=[REDACTED]')
+    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]')
+    .replace(/\(?\b[0-9]{3}\)?[-.\s][0-9]{3}[-.\s][0-9]{4}\b/g, '[REDACTED_PHONE]')
+    .replace(/[A-Za-z]:\\Users\\[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/[A-Za-z]:\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/\/home\/[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/g, '[REDACTED_IP]');
 }
 
 const FORBIDDEN_LAB_TOKENS = [

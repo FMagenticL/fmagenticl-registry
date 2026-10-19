@@ -82,7 +82,7 @@ def run_dual_perception_audit():
       "failure": {"error_code": "AUTH_LEAK", "raw_signature": "AWS AKIAIOSFODNN7EXAMPLE leak at C:\\Users\\test_user\\Desktop\\secret.pem"},
       "resolution_patch": {"action": "CLI_OVERRIDE", "fallback_cli": "npm config set strict-ssl true"},
       "verified_by_reporter": True,
-      "technical_note": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDxXZoa6m706qEtVOHEKDZeO5MmK2H44iSoE3-DK0"
+      "technical_note": "Bearer test_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDxXZoa6m706qEtVOHEKDZeO5MmK2H44iSoE3-DK0"
     }
     resp_secret = requests.post(f"{API_BASE}/v1/telemetry", json=secret_payload, timeout=5.0)
     assert resp_secret.status_code in (200, 201), f"Expected 200/201 on valid submission, got {resp_secret.status_code}"

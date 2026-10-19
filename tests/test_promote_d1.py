@@ -67,7 +67,7 @@ def test_secret_scanner_quarantines():
     assert name == "GitHub PAT"
 
     # Leaked Bearer Token
-    dirty_bearer = {"header": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
+    dirty_bearer = {"header": "Bearer test_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
     has_sec, name = scan_for_secrets(dirty_bearer)
     assert has_sec is True
     assert name == "Bearer Token"

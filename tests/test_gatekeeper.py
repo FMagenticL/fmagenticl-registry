@@ -2,7 +2,12 @@ from fmagenticl.server.gatekeeper import Gatekeeper
 from fmagenticl.server.models import TelemetrySubmission, Environment, Failure, ResolutionPatch
 
 def test_secret_scrubbing():
-    dirty_text = "AWS Key is AKIAIOSFODNN7EXAMPLE, GitHub PAT: ghp_123456789012345678901234567890123456, HF Token: hf_1234567890123456789012345678901234, CFUT: cfut_1234567890123456789012345678901234567890, CFAT: cfat_1234567890123456789012345678901234567890, User Path: C:\\Users\\testuser\\Desktop\\secret.txt"
+    dirty_text = (
+        "AWS Key is AKIAIOSFODNN7EXAMPLE, GitHub PAT: ghp_123456789012345678901234567890123456, "
+        "HF Token: hf_1234567890123456789012345678901234, CFUT: cfut_1234567890123456789012345678901234567890, "
+        "CFAT: cfat_1234567890123456789012345678901234567890, User Path: C:\\Users\\testuser\\Desktop\\secret.txt, "
+        "Forward Path: D:/Users/operator/project/key.pem, Contact: admin@example.com, Phone: 555-123-4567"
+    )
     clean = Gatekeeper.scrub_secrets(dirty_text)
     assert "AKIA" not in clean
     assert "ghp_" not in clean
@@ -10,6 +15,9 @@ def test_secret_scrubbing():
     assert "cfut_" not in clean
     assert "cfat_" not in clean
     assert "testuser" not in clean
+    assert "operator" not in clean
+    assert "admin@example.com" not in clean
+    assert "555-123-4567" not in clean
     assert "[REDACTED]" in clean
 
 

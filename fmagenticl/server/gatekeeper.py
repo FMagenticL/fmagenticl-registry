@@ -27,7 +27,8 @@ class Gatekeeper:
         re.compile(r'password\s*[:=]\s*["\']?[^\s,"\'}]+["\']?', re.IGNORECASE), # Passwords
         re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'), # Email addresses
         re.compile(r'\(?\b[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b'), # Phone numbers
-        re.compile(r'C:\\Users\\[^,\s\\]+', re.IGNORECASE),        # Windows user path username
+        re.compile(r'[A-Za-z]:\\Users\\[^,\s\\]+', re.IGNORECASE),        # Windows backslash user path
+        re.compile(r'[A-Za-z]:/Users/[^,\s/]+', re.IGNORECASE),          # Windows forward-slash user path
         re.compile(r'/home/[^,\s/]+', re.IGNORECASE),              # Linux home path username
         re.compile(r'/Users/[^,\s/]+', re.IGNORECASE),             # macOS user path username
         re.compile(r'\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b'), # Private IPv4 ranges

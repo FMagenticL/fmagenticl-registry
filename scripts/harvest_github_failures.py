@@ -30,6 +30,14 @@ except Exception:
         fail_str = "|".join(f"{k}:{v}" for k, v in sorted(fail.items()) if v is not None)
         return "sha256:" + hashlib.sha256(f"{env_str}||{fail_str}".encode("utf-8")).hexdigest()
 
+try:
+    from fmagenticl.server.gatekeeper import Gatekeeper
+except Exception:
+    class Gatekeeper:
+        @classmethod
+        def scrub_secrets(cls, text: str) -> str:
+            return text
+
 TARGET_REPOS = [
     "modelcontextprotocol/python-sdk",
     "modelcontextprotocol/typescript-sdk",
@@ -253,6 +261,8 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
             )
             
             workaround = synthesize_workaround(pr_title, pr_body, file_paths, pr_url)
+            clean_symptom = Gatekeeper.scrub_secrets(title[:250])
+            clean_workaround = Gatekeeper.scrub_secrets(workaround)
             g_type = determine_grievance_type(title, issue.get("body", ""), trace)
             
             # 1. Grievance entry (strict schema compliance, NO error_trace)
@@ -262,8 +272,8 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
                 "target": target,
                 "harness": "github-merged-pr",
                 "fingerprint": fp,
-                "symptom": title[:250],
-                "workaround": workaround,
+                "symptom": clean_symptom,
+                "workaround": clean_workaround,
                 "submitted_by": "deepseek-v4.1",
                 "verification_tier": "verified_merged_pr",
                 "applies_to": repo,
@@ -290,7 +300,7 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
                         {
                             "op": "replace",
                             "path": f"/{primary_file}",
-                            "value": workaround
+                            "value": clean_workaround
                         }
                     ]
                 }
