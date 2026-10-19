@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-12T03:51:06Z",
+  "failure_mode": "CREWAI_ImportError",
+  "fingerprint": "sha256:e48b2b6828f243e134273d984e5ddb27608456aa006ead3b3f5d2b30d02d9f2d",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/lib/crewai-tools/src/crewai_tools/tools/rag/README.md",
+      "value": "Fix: docs: fix RagTool and XMLSearchTool README imports. Target files: lib/crewai-tools/src/crewai_tools/tools/rag/README.md, lib/crewai-tools/src/crewai_tools/tools/xml_search_tool/README.md. Two tool READMEs in `lib/crewai-tools` show imports that raise on the current package: (Ref: https://github.com/crewAIInc/crewAI/pull/8033)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "lib/crewai-tools/src/crewai_tools/tools/rag/README.md",
+  "verification_tier": "verified_merged_pr"
+}

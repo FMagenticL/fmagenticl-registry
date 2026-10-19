@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-08T06:03:59Z",
+  "failure_mode": "CREWAI_AssertionError",
+  "fingerprint": "sha256:959c7555abe5b6a1dec3b12d97b8c7f571f50ca853c47723d02a7c08dc1da070",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/lib/crewai/src/crewai/utilities/rw_lock.py",
+      "value": "Fix: fix(utilities): keep rwlock ownership when acquire is interrupted. Target files: lib/crewai/src/crewai/utilities/rw_lock.py, lib/crewai/tests/utilities/events/test_rw_lock.py. `r_locked()` and `w_locked()` called acquire inside the `try` that always releases in `finally`. If `Condition.wait()` is interrupted before acquire finishes, the context manager releases a lock it never held. The reader count can drop below zero, and the writer flag can be cleared while another writer still owns the lock. (Ref: https://github.com/crewAIInc/crewAI/pull/7944)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "lib/crewai/src/crewai/utilities/rw_lock.py",
+  "verification_tier": "verified_merged_pr"
+}

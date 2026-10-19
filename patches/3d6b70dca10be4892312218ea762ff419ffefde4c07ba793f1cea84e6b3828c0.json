@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-09T18:34:18Z",
+  "failure_mode": "PYDANTIC_ValidationError",
+  "fingerprint": "sha256:3d6b70dca10be4892312218ea762ff419ffefde4c07ba793f1cea84e6b3828c0",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/pydantic/_internal/_generate_schema.py",
+      "value": "Fix: Support `closed` and `extra_items` via inheritance in `TypedDict`. Target files: pydantic/_internal/_generate_schema.py, tests/test_types_typeddict.py. Fixes https://github.com/pydantic/pydantic/issues/13919. (Ref: https://github.com/pydantic/pydantic/pull/13967)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "pydantic/_internal/_generate_schema.py",
+  "verification_tier": "verified_merged_pr"
+}

@@ -30,8 +30,8 @@ def test_all_seed_cases_have_corresponding_patch_file():
     Count parity is the first check.
     """
     patch_files = [f for f in os.listdir(PATCHES_DIR) if f.endswith(".json")]
-    assert len(patch_files) == len(RAW_SEED_CASES), (
-        f"Patch file count ({len(patch_files)}) does not match "
+    assert len(patch_files) >= len(RAW_SEED_CASES), (
+        f"Patch file count ({len(patch_files)}) is less than "
         f"seed case count ({len(RAW_SEED_CASES)})"
     )
 

@@ -1,7 +1,21 @@
 {
-  "count": 47,
-  "generated": "2026-10-19T20:18:07Z",
+  "count": 70,
+  "generated": "2026-10-19T21:25:03Z",
   "patches": [
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ValueError",
+      "id": "009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0",
+      "patch_hash": "sha256:009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_KeyError",
+      "id": "0a22245549332a6e001488c744b4f78290b61557d7209f4f138d0a4800cae484",
+      "patch_hash": "sha256:0a22245549332a6e001488c744b4f78290b61557d7209f4f138d0a4800cae484",
+      "signed": true
+    },
     {
       "attribution": "deepseek-v3",
       "failure_mode": "STAT_S_IREAD_PACKFILE_LOCK",
@@ -21,6 +35,13 @@
       "failure_mode": "GIT_DETACHED_HEAD_COMMIT",
       "id": "1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
       "patch_hash": "sha256:1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "WORKERS_SDK_ERROR",
+      "id": "206531209aaf86d292dc9dfa1b829e0f16083774d4ff2a5724f5a9910aeb3963",
+      "patch_hash": "sha256:206531209aaf86d292dc9dfa1b829e0f16083774d4ff2a5724f5a9910aeb3963",
       "signed": true
     },
     {
@@ -45,10 +66,24 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_PicklingError",
+      "id": "30d93b3b99ff35a0c1ea984f090a35a368d386a945d27f29bf704b709ce654ea",
+      "patch_hash": "sha256:30d93b3b99ff35a0c1ea984f090a35a368d386a945d27f29bf704b709ce654ea",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "PLAYWRIGHT_BROWSERS_MISSING",
       "id": "30ef71ec9115e25e86e84040ac6dffbf9e58b613bc8a4cbad8d88e83238fc5dc",
       "patch_hash": "sha256:30ef71ec9115e25e86e84040ac6dffbf9e58b613bc8a4cbad8d88e83238fc5dc",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYTHON_SDK_MCPError",
+      "id": "328d138472fd31c9c2ca2f134c43f4c4ee620765859553bb7219e00037f7ceb8",
+      "patch_hash": "sha256:328d138472fd31c9c2ca2f134c43f4c4ee620765859553bb7219e00037f7ceb8",
       "signed": true
     },
     {
@@ -66,6 +101,34 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_ValidationError",
+      "id": "3d68fa5527971806a49b98c59013fd0c94443d6da50e1686ada5968c752e2666",
+      "patch_hash": "sha256:3d68fa5527971806a49b98c59013fd0c94443d6da50e1686ada5968c752e2666",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_ValidationError",
+      "id": "3d6b70dca10be4892312218ea762ff419ffefde4c07ba793f1cea84e6b3828c0",
+      "patch_hash": "sha256:3d6b70dca10be4892312218ea762ff419ffefde4c07ba793f1cea84e6b3828c0",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "WORKERS_SDK_EMAIL",
+      "id": "4155ccfc13e8f2d3a61de34d8c6fecefc58356e553e2e76068bdbd8fac5112a9",
+      "patch_hash": "sha256:4155ccfc13e8f2d3a61de34d8c6fecefc58356e553e2e76068bdbd8fac5112a9",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_ValidationError",
+      "id": "44421d18f1d7732abf3bec6d05c050c33dc0bce11b48d3a2eeb4284eaed7cc7c",
+      "patch_hash": "sha256:44421d18f1d7732abf3bec6d05c050c33dc0bce11b48d3a2eeb4284eaed7cc7c",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "WEBMCP_RATE_LIMIT_BLOCKED",
       "id": "451406f19f4763a86a4e489bffc1cea18bdc0615f45b933d28393f064cfa8849",
@@ -77,6 +140,13 @@
       "failure_mode": "EBADENGINE",
       "id": "49f800ca559979a58e778451778b318026853c0c37814f1880b64047db68fae6",
       "patch_hash": "sha256:49f800ca559979a58e778451778b318026853c0c37814f1880b64047db68fae6",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_TypeError",
+      "id": "4d3b9fb7c32bf44fb4332d353eb56151a10c1b1d9730fbc7ca6957d712bb9ba0",
+      "patch_hash": "sha256:4d3b9fb7c32bf44fb4332d353eb56151a10c1b1d9730fbc7ca6957d712bb9ba0",
       "signed": true
     },
     {
@@ -98,6 +168,13 @@
       "failure_mode": "ESLINT_INVALID_RULE",
       "id": "5d3625a347741f02e4fad18527a8d3ee236bdc407f06215a7ddacb86a499a143",
       "patch_hash": "sha256:5d3625a347741f02e4fad18527a8d3ee236bdc407f06215a7ddacb86a499a143",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "LANGCHAIN_ValueError",
+      "id": "5efc208e3408e7cf4f712be6f6de5942755dcb367d17d459ff93d12156ac8073",
+      "patch_hash": "sha256:5efc208e3408e7cf4f712be6f6de5942755dcb367d17d459ff93d12156ac8073",
       "signed": true
     },
     {
@@ -178,6 +255,13 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_OSError",
+      "id": "83401eef9112881faf7b1c4ab2490373709fb3301d339b666636ae8eed5adcfa",
+      "patch_hash": "sha256:83401eef9112881faf7b1c4ab2490373709fb3301d339b666636ae8eed5adcfa",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "HERMES_NON_LOOPBACK_REJECTED",
       "id": "85ea85d0bbc5b40b53d4c8943e287e1204c3bcfd5827cdf0477918ce15d43f36",
@@ -210,6 +294,34 @@
       "failure_mode": "POETRY_LOCK_HASH_INVALID",
       "id": "8b597b3815fe777485bea5c041932441f1e14d3946dc2a0eed79891b102b094c",
       "patch_hash": "sha256:8b597b3815fe777485bea5c041932441f1e14d3946dc2a0eed79891b102b094c",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ValueError",
+      "id": "92d16a56573b3cb8c06ac628bc4cc770ce09aa2a6793dcf17f2f64383da4b6b4",
+      "patch_hash": "sha256:92d16a56573b3cb8c06ac628bc4cc770ce09aa2a6793dcf17f2f64383da4b6b4",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_ValidationError",
+      "id": "956aeafd6ded49510b1b760295e7cc7478c92ff00298af7e131c0db3acce63d3",
+      "patch_hash": "sha256:956aeafd6ded49510b1b760295e7cc7478c92ff00298af7e131c0db3acce63d3",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_AssertionError",
+      "id": "959c7555abe5b6a1dec3b12d97b8c7f571f50ca853c47723d02a7c08dc1da070",
+      "patch_hash": "sha256:959c7555abe5b6a1dec3b12d97b8c7f571f50ca853c47723d02a7c08dc1da070",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_PanicException",
+      "id": "99a5851717247ef1d2f2238116c93b33a61dc5f377aa83ff3736091a530352a9",
+      "patch_hash": "sha256:99a5851717247ef1d2f2238116c93b33a61dc5f377aa83ff3736091a530352a9",
       "signed": true
     },
     {
@@ -248,6 +360,20 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYTHON_SDK_ToolError",
+      "id": "b107a8ee81dbd48e81b8d53ffc72cb9adf2f3a085db841718b0a2479a73d7524",
+      "patch_hash": "sha256:b107a8ee81dbd48e81b8d53ffc72cb9adf2f3a085db841718b0a2479a73d7524",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "TYPESCRIPT_SDK_InsecureTokenEndpointError",
+      "id": "b5ac482c3a5f308fbd5652f99ba744a53e2749bc47f299e8c7694111ee0b8780",
+      "patch_hash": "sha256:b5ac482c3a5f308fbd5652f99ba744a53e2749bc47f299e8c7694111ee0b8780",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "WEBMCP_SCHEMA_DRIFT",
       "id": "baa5a1bc1e87ae7eeb13d194dc99b3d194cff0db6734554ddd2102e038cc939b",
@@ -259,6 +385,13 @@
       "failure_mode": "NEXTJS_TELEMETRY_BLOCK",
       "id": "bb31807103bd069f200011789735fa7326f34329ddb27092b29d97812d4f50fb",
       "patch_hash": "sha256:bb31807103bd069f200011789735fa7326f34329ddb27092b29d97812d4f50fb",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_ValidationError",
+      "id": "c09861a0f7d2b5b074ab212bcf390c6290125c2514a1ec3b0433e3af71346f04",
+      "patch_hash": "sha256:c09861a0f7d2b5b074ab212bcf390c6290125c2514a1ec3b0433e3af71346f04",
       "signed": true
     },
     {
@@ -290,6 +423,13 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "TYPESCRIPT_SDK_SdkHttpError",
+      "id": "c80fcb0c4fe2169f09daf9707beeb23993ce2621b4fb2c3e02c1d588883bffeb",
+      "patch_hash": "sha256:c80fcb0c4fe2169f09daf9707beeb23993ce2621b4fb2c3e02c1d588883bffeb",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "POSTCSS_PLUGIN_CONFLICT",
       "id": "ca0cc669dc29e9cef2b06c6f8349c3f20bcaa6f89c4c48db05a8d683d406be8c",
@@ -304,10 +444,24 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "TYPESCRIPT_SDK_ERR_PNPM_PEER_DEP_ISSUES",
+      "id": "d718411440bca7b8970329a18014d8dd5f51f72ef3f2edf2b063a22e89ac1730",
+      "patch_hash": "sha256:d718411440bca7b8970329a18014d8dd5f51f72ef3f2edf2b063a22e89ac1730",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "NUMPY_2_C_ABI_INCOMPATIBLE",
       "id": "ddda919971d4fa4783c3a05675eab73171b257eae241fbbcb563f0e1400312bf",
       "patch_hash": "sha256:ddda919971d4fa4783c3a05675eab73171b257eae241fbbcb563f0e1400312bf",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ImportError",
+      "id": "e48b2b6828f243e134273d984e5ddb27608456aa006ead3b3f5d2b30d02d9f2d",
+      "patch_hash": "sha256:e48b2b6828f243e134273d984e5ddb27608456aa006ead3b3f5d2b30d02d9f2d",
       "signed": true
     },
     {
@@ -329,6 +483,13 @@
       "failure_mode": "PUPPETEER_NO_SANDBOX",
       "id": "fa72ddc0d8a703131985c51b08c490321f3823a770152aefe47ef8cfbc81cfc3",
       "patch_hash": "sha256:fa72ddc0d8a703131985c51b08c490321f3823a770152aefe47ef8cfbc81cfc3",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "WORKERS_SDK_EXAMPLE_BUCKET",
+      "id": "fde242855236980317d446b0ee43d0f4e074703e70025062a3b3fbe53622e64a",
+      "patch_hash": "sha256:fde242855236980317d446b0ee43d0f4e074703e70025062a3b3fbe53622e64a",
       "signed": true
     }
   ],

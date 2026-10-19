@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-09-27T12:42:49Z",
+  "failure_mode": "PYTHON_SDK_ToolError",
+  "fingerprint": "sha256:b107a8ee81dbd48e81b8d53ffc72cb9adf2f3a085db841718b0a2479a73d7524",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/Dockerfile",
+      "value": "Fix: mcp: migrate the server to the 2.x MCP SDK. Target files: Dockerfile, mcp/README.md, mcp/openaccountants_mcp/server.py. Moves `openaccountants-mcp` from the 1.x `FastMCP` API to the 2.x `MCPServer` API and lifts the `mcp<2` cap, so #153 can close. (Ref: https://github.com/openaccountants/openaccountants/pull/174)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "Dockerfile",
+  "verification_tier": "verified_merged_pr"
+}

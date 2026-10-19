@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-09-29T19:39:24Z",
+  "failure_mode": "PYDANTIC_ValidationError",
+  "fingerprint": "sha256:c09861a0f7d2b5b074ab212bcf390c6290125c2514a1ec3b0433e3af71346f04",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/docs/api/standard_library_types.md",
+      "value": "Fix: Correct documentation about IP address strict mode validation. Target files: docs/api/standard_library_types.md. Closes https://github.com/pydantic/pydantic/issues/13888. (Ref: https://github.com/pydantic/pydantic/pull/13894)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "docs/api/standard_library_types.md",
+  "verification_tier": "verified_merged_pr"
+}

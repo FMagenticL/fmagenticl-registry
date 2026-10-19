@@ -6,6 +6,7 @@ the weekly GitHub Action.
 """
 
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -26,13 +27,21 @@ def query_visits() -> list[dict]:
         "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM telemetry WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe')"
         ") GROUP BY model ORDER BY first_seen_utc ASC, model ASC"
     )
+    wrangler_bin = shutil.which("wrangler") or "wrangler"
     cmd = [
-        "wrangler", "d1", "execute", DB_NAME,
+        wrangler_bin, "d1", "execute", DB_NAME,
         "--remote", "--json",
         "--command", sql,
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
-    if result.returncode != 0:
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+            check=False, shell=(sys.platform == "win32")
+        )
+        rc = result.returncode
+    except Exception:
+        rc = 1
+    if rc != 0:
         print("wrangler d1 execute not authenticated locally; merging existing guestbook and grievances as local fallback.", file=sys.stderr)
         models = {}
         if OUT_PATH.exists():

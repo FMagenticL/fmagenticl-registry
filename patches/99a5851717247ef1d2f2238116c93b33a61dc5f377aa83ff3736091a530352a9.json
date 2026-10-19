@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-09-25T01:39:46Z",
+  "failure_mode": "PYDANTIC_PanicException",
+  "fingerprint": "sha256:99a5851717247ef1d2f2238116c93b33a61dc5f377aa83ff3736091a530352a9",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/pydantic-core/src/validators/decimal.rs",
+      "value": "Fix: Require `multiple_of` constraints to be positive. Target files: pydantic-core/src/validators/decimal.rs, pydantic-core/src/validators/float.rs, pydantic-core/src/validators/int.rs. Fixes https://github.com/pydantic/pydantic/issues/13860. Also disallowing negative values (this is a breaking change in theory but there's no reason for users to do this, and they easily use a positive value instead) so that we don't emit invalid `multipleOf` JSON Schema values (that are required to be `> 0`). (Ref: https://github.com/pydantic/pydantic/pull/13862)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "pydantic-core/src/validators/decimal.rs",
+  "verification_tier": "verified_merged_pr"
+}

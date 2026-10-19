@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-10T23:29:53Z",
+  "failure_mode": "PYDANTIC_ValidationError",
+  "fingerprint": "sha256:956aeafd6ded49510b1b760295e7cc7478c92ff00298af7e131c0db3acce63d3",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/pydantic/_internal/_known_annotated_metadata.py",
+      "value": "Fix: Enforce the `max_digits` whole-digits limit in the Python `Decimal` validator. Target files: pydantic/_internal/_known_annotated_metadata.py, pydantic/_internal/_validators.py, tests/types/test_decimal.py. Fixes https://github.com/pydantic/pydantic/issues/13965. (Ref: https://github.com/pydantic/pydantic/pull/13972)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "pydantic/_internal/_known_annotated_metadata.py",
+  "verification_tier": "verified_merged_pr"
+}

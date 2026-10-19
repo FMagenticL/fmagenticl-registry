@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-12T07:55:39Z",
+  "failure_mode": "WORKERS_SDK_EMAIL",
+  "fingerprint": "sha256:4155ccfc13e8f2d3a61de34d8c6fecefc58356e553e2e76068bdbd8fac5112a9",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/.changeset/ignore-dev-assets-wrangler-dir.md",
+      "value": "Fix: [wrangler] Ignore .wrangler writes in the dev assets watcher. Target files: .changeset/ignore-dev-assets-wrangler-dir.md, packages/wrangler/src/__tests__/api/startDevWorker/BundlerController.assets-watcher.test.ts, packages/wrangler/src/api/startDevWorker/BundlerController.ts. `wrangler dev` reloads in a loop when `assets.directory` is the project root, because the assets watcher treats the dev session's own `.wrangler` writes as asset changes. The watcher now passes those write directories to chokidar's `ignored` li... (Ref: https://github.com/cloudflare/workers-sdk/pull/16156)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": ".changeset/ignore-dev-assets-wrangler-dir.md",
+  "verification_tier": "verified_merged_pr"
+}
