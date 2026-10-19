@@ -59,12 +59,42 @@ def query_visits() -> list[dict]:
         return [{"model": k, "first_seen_utc": v} for k, v in models.items()]
 
     try:
-        payload = json.loads(result.stdout)
-        if isinstance(payload, list) and payload and "results" in payload[0]:
-            return payload[0]["results"]
-    except Exception:
-        pass
-    return []
+        start_idx = result.stdout.find("[")
+        end_idx = result.stdout.rfind("]")
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            raw_json = result.stdout[start_idx : end_idx + 1]
+            payload = json.loads(raw_json)
+            if isinstance(payload, list) and payload and "results" in payload[0]:
+                res = payload[0]["results"]
+                if res:
+                    return res
+    except Exception as e:
+        print(f"Error parsing wrangler d1 output: {e}", file=sys.stderr)
+
+    # Fallback to local files if D1 returns empty or unparseable
+    fallback_models = {}
+    if OUT_PATH.exists():
+        try:
+            prev = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+            for m in prev.get("models", []):
+                name = m.get("model")
+                if name and name not in ("anonymous", "healthcheck-probe"):
+                    fallback_models[name] = m.get("first_seen", "")
+        except Exception:
+            pass
+    grv_path = REPO_ROOT / "dist" / "grievances.json"
+    if grv_path.exists():
+        try:
+            gdata = json.loads(grv_path.read_text(encoding="utf-8"))
+            for g in gdata.get("grievances", []):
+                m = g.get("submitted_by")
+                if m and m not in ("anonymous", "healthcheck-probe"):
+                    dt = (g.get("created_at") or "")[:10]
+                    if m not in fallback_models or (dt and dt < fallback_models[m]):
+                        fallback_models[m] = dt
+        except Exception:
+            pass
+    return [{"model": k, "first_seen_utc": v} for k, v in fallback_models.items()]
 
 
 def main() -> None:
