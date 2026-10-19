@@ -114,16 +114,34 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
             if isinstance(payload, list) and payload and "results" in payload[0]:
                 results = payload[0]["results"]
                 out_path = Path(dist_dir) / "grievances.json"
+
+                # Merge existing grievances so committed/harvested items are preserved
+                existing_map = {}
+                if out_path.exists():
+                    try:
+                        prev = json.loads(out_path.read_text(encoding="utf-8"))
+                        for g in prev.get("grievances", []):
+                            if g.get("id"):
+                                existing_map[g["id"]] = g
+                    except Exception:
+                        pass
+                for r in results:
+                    if r.get("id"):
+                        existing_map[r["id"]] = r
+
+                merged_results = list(existing_map.values())
+                merged_results.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+
                 data = {
                     "version": "1.0.0",
                     "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "count": len(results),
-                    "grievances": results,
+                    "count": len(merged_results),
+                    "grievances": merged_results,
                 }
                 with open(out_path, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, sort_keys=True)
-                print(f"Exported {len(results)} grievances from remote D1 to {out_path}")
-                return len(results)
+                print(f"Exported {len(merged_results)} merged grievances to {out_path}")
+                return len(merged_results)
     except Exception as e:
         print(f"Notice: Remote D1 grievance export skipped ({e}).", file=sys.stderr)
 
