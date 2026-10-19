@@ -11,16 +11,17 @@
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, X-Public-Key, X-Signature',
 };
 
-function json(body, status = 200) {
+function json(body, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'Content-Type': 'application/json',
       ...CORS_HEADERS,
+      ...extraHeaders,
     },
   });
 }
@@ -220,6 +221,38 @@ async function handleDispute(request, env) {
   return json({ status: 'ACCEPTED' }, 202);
 }
 
+async function handleGetGrievances(request, env, target) {
+  if (!env || !env.DB) {
+    return json({ error: 'db_not_configured', target: target || 'all', total: 0, grievances: [] }, 503);
+  }
+
+  try {
+    let rows;
+    if (target && target !== 'all') {
+      rows = await env.DB.prepare(
+        'SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at ' +
+        'FROM grievances WHERE LOWER(target) = LOWER(?) ORDER BY created_at DESC LIMIT 50'
+      ).bind(target).all();
+    } else {
+      rows = await env.DB.prepare(
+        'SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at ' +
+        'FROM grievances ORDER BY created_at DESC LIMIT 100'
+      ).all();
+    }
+    const list = (rows && rows.results) || [];
+    return json({
+      target: target || 'all',
+      total: list.length,
+      count: list.length,
+      grievances: list
+    }, 200, {
+      'Cache-Control': 'public, max-age=60, s-maxage=120'
+    });
+  } catch (e) {
+    return json({ error: 'db_error', target: target || 'all', total: 0, grievances: [] }, 500);
+  }
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -228,9 +261,19 @@ export async function onRequest(context) {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
-  // Allow static CDN assets under /v1/* (resolve/*.json, snapshot.json, deltas, bloom.bin, health)
-  // to be served directly from dist/ instead of being blocked by the write router.
   if (request.method === 'GET' || request.method === 'HEAD') {
+    const path = url.pathname.replace(/\/$/, '');
+    if (path === '/v1/grievance' || path === '/v1/grievances') {
+      const targetParam = url.searchParams.get('target');
+      return handleGetGrievances(request, env, targetParam);
+    }
+    if (path.startsWith('/v1/grievance/')) {
+      const targetSegment = decodeURIComponent(path.slice('/v1/grievance/'.length));
+      return handleGetGrievances(request, env, targetSegment);
+    }
+
+    // Allow static CDN assets under /v1/* (resolve/*.json, snapshot.json, deltas, bloom.bin, health)
+    // to be served directly from dist/ instead of being blocked by the write router.
     if (env && env.ASSETS) {
       return env.ASSETS.fetch(request);
     }

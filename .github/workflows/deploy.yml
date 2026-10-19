@@ -44,11 +44,7 @@ jobs:
       - name: Install build dependencies
         run: pip install cryptography pybloom-live
 
-      - name: Export patches from DB (if running on master/main)
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        run: python scripts/export_db_to_static.py
-
-      - name: Rebuild guestbook from Cloudflare D1
+      - name: Rebuild guestbook & export grievances from Cloudflare D1
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -58,7 +54,9 @@ jobs:
           wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN applies_to TEXT" || true
           python scripts/migrate_d1.py || true
           wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql
+          python scripts/seed_agent_traps.py || true
           python scripts/build_guestbook.py || echo "Warning: D1 guestbook query failed, retaining static guestbook.json"
+          python scripts/export_db_to_static.py || true
 
 
       - name: Build static distribution & sign

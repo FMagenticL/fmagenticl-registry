@@ -92,7 +92,59 @@ def export_from_db(db_path: str, out_dir: str) -> int:
     return count
 
 
+import subprocess
+from datetime import datetime, timezone
+
+
+def export_from_remote_d1(dist_dir: str = "dist") -> int:
+    """
+    Export committed grievances from Cloudflare D1 to dist/grievances.json
+    so the static edge CDN and landing page have an immediate, un-gated snapshot.
+    """
+    os.makedirs(dist_dir, exist_ok=True)
+    cmd = [
+        "wrangler", "d1", "execute", "fmagenticl-registry",
+        "--remote", "--json",
+        "--command", "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE queue_status = 'committed' ORDER BY created_at DESC LIMIT 200",
+    ]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        if res.returncode == 0:
+            payload = json.loads(res.stdout)
+            if isinstance(payload, list) and payload and "results" in payload[0]:
+                results = payload[0]["results"]
+                out_path = Path(dist_dir) / "grievances.json"
+                data = {
+                    "version": "1.0.0",
+                    "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "count": len(results),
+                    "grievances": results,
+                }
+                with open(out_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, sort_keys=True)
+                print(f"Exported {len(results)} grievances from remote D1 to {out_path}")
+                return len(results)
+    except Exception as e:
+        print(f"Notice: Remote D1 grievance export skipped ({e}).", file=sys.stderr)
+
+    # Fallback: ensure dist/grievances.json exists
+    fallback_path = Path(dist_dir) / "grievances.json"
+    if not fallback_path.exists():
+        fallback_data = {
+            "version": "1.0.0",
+            "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "count": 0,
+            "grievances": [],
+        }
+        with open(fallback_path, "w", encoding="utf-8") as f:
+            json.dump(fallback_data, f, indent=2)
+    return 0
+
+
 def main() -> int:
+    if os.environ.get("CLOUDFLARE_API_TOKEN") or "--remote-d1" in sys.argv:
+        export_from_remote_d1("dist")
+
     if database_available(DB_PATH):
         count = export_from_db(DB_PATH, OUT_DIR)
         print(f"Exported {count} patches from {DB_PATH} into /{OUT_DIR}/")
@@ -115,3 +167,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

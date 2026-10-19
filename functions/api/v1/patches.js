@@ -77,6 +77,7 @@ export async function onRequest(context) {
   const filterId = params.get("id");
   const filterAgent = params.get("agent");
   const filterFailureMode = params.get("failure_mode");
+  const query = (params.get("q") || "").trim().toLowerCase();
 
   const rawLimit = parseInt(params.get("limit") ?? "100", 10);
   const rawOffset = parseInt(params.get("offset") ?? "0", 10);
@@ -86,8 +87,15 @@ export async function onRequest(context) {
   let patches = Array.isArray(registry.patches) ? registry.patches : [];
 
   if (filterId) patches = patches.filter((p) => p.id === filterId);
-  if (filterAgent) patches = patches.filter((p) => p.attribution === filterAgent);
-  if (filterFailureMode) patches = patches.filter((p) => p.failure_mode === filterFailureMode);
+  if (filterAgent) patches = patches.filter((p) => (p.attribution || "").toLowerCase() === filterAgent.toLowerCase());
+  if (filterFailureMode) patches = patches.filter((p) => (p.failure_mode || "").toLowerCase().includes(filterFailureMode.toLowerCase()));
+  if (query) {
+    patches = patches.filter((p) =>
+      (p.failure_mode || "").toLowerCase().includes(query) ||
+      (p.id || "").toLowerCase().includes(query) ||
+      (p.attribution || "").toLowerCase().includes(query)
+    );
+  }
 
   const total = patches.length;
   const page = patches.slice(offset, offset + limit);

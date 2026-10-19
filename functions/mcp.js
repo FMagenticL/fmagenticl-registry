@@ -76,12 +76,13 @@ function err(id, code, message, data) {
 const MCP_TOOLS = [
   {
     name: "fmagenticl_resolve",
-    description: "Deterministic sub-100ms lookup of a signed patch for a failure. Accepts either an exact 64-char SHA-256 fingerprint or a raw error string (canonically normalized, then hashed).",
+    description: "Deterministic sub-100ms lookup of a signed patch or verified workaround for a failure. Accepts exact 64-char SHA-256 fingerprint, raw error string, or target tool name.",
     inputSchema: {
       type: "object",
       properties: {
         fingerprint: { type: "string", description: "Optional 64-char hex SHA-256 fingerprint." },
         raw_error: { type: "string", description: "Optional raw stderr / exception string." },
+        target: { type: "string", description: "Optional target tool name (e.g. wrangler, powershell, tailwind)." },
         environment: { type: "object", description: "Optional environment attributes (os, runtime, package)." },
         failure: { type: "object", description: "Optional structured failure details (error_code, exit_code, raw_signature)." }
       }
@@ -246,8 +247,8 @@ export async function onRequestPost({ request, env }) {
         const canonicalHash = await sha256Hex(canonical);
         if (!candidates.some(c => c.hash === canonicalHash)) candidates.push({ type: "canonical_sha256", hash: canonicalHash, canonical });
       }
-      if (candidates.length === 0) {
-        return err(id, -32602, "Provide a valid 64-char hex 'fingerprint' or 'raw_error'.");
+      if (candidates.length === 0 && !args.target && !args.failure?.error_code) {
+        return err(id, -32602, "Provide a valid 'fingerprint', 'raw_error', or 'target'.");
       }
       for (const c of candidates) {
         if (env.DB) {
@@ -272,6 +273,70 @@ export async function onRequestPost({ request, env }) {
           return ok(id, { content: [{ type: "text", text: JSON.stringify(payload) }] });
         }
       }
+
+      // Tier 3: Keyword / Error Code & Community Workaround Fallback
+      const rawText = (rawFromField || args.failure?.error_code || args.target || "").trim();
+      const errorCodeMatch = args.failure?.error_code || (rawText.match(/\b([E][A-Z0-9_]{3,24}|[A-Z0-9_]{4,32}_ERROR|ERR_[A-Z0-9_]+)\b/) || [])[1];
+      const targetHint = args.target || (rawText.match(/\b(wrangler|powershell|tailwind|nextjs|next|prisma|pydantic|docker|git|npm|python|sqlite)\b/i) || [])[1];
+
+      // 3A. Check registry.json for failure_mode matches
+      if (errorCodeMatch || targetHint) {
+        try {
+          const regRes = await fetch(`${origin}/registry.json`);
+          if (regRes && regRes.ok) {
+            const regData = await regRes.json();
+            const patches = regData.patches || [];
+            const queryToken = (errorCodeMatch || targetHint).toLowerCase();
+            const matchedMeta = patches.find(p => (p.failure_mode || "").toLowerCase().includes(queryToken));
+            if (matchedMeta) {
+              const matchedHash = (matchedMeta.id || matchedMeta.patch_hash || "").replace("sha256:", "").toLowerCase();
+              let isQuarantined = false;
+              if (env.DB) {
+                try {
+                  const h = await env.DB.prepare(
+                    "SELECT consecutive_nacks, status FROM patch_health WHERE fingerprint = ?"
+                  ).bind(matchedHash).first();
+                  if (h && (h.status === "QUARANTINED" || h.consecutive_nacks >= 3)) isQuarantined = true;
+                } catch (_) {}
+              }
+              if (!isQuarantined) {
+                const patch = await fetchPatch(env, origin, matchedHash);
+                if (patch) {
+                  const payload = toolName === "fmagenticl_auto_heal"
+                    ? { status: "PATCH_READY", match_type: "failure_mode_keyword_match", matched_failure_mode: matchedMeta.failure_mode, fingerprint: matchedHash, patch, message: "Remote endpoint cannot apply patches. Apply locally." }
+                    : { status: "RESOLVED", match_type: "failure_mode_keyword_match", matched_failure_mode: matchedMeta.failure_mode, fingerprint: matchedHash, patch };
+                  return ok(id, { content: [{ type: "text", text: JSON.stringify(payload) }] });
+                }
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
+      // 3B. Check D1 grievances for community workarounds
+      if (env.DB && (targetHint || rawText)) {
+        try {
+          const searchWord = (targetHint || rawText.slice(0, 40)).toLowerCase();
+          const gRows = await env.DB.prepare(
+            "SELECT id, grievance_type, target, symptom, workaround, submitted_by, applies_to, created_at FROM grievances WHERE LOWER(target) = LOWER(?) OR LOWER(symptom) LIKE ? ORDER BY created_at DESC LIMIT 3"
+          ).bind(searchWord, `%${searchWord}%`).all();
+          const gList = (gRows && gRows.results) || [];
+          if (gList.length > 0) {
+            const top = gList[0];
+            return ok(id, { content: [{ type: "text", text: JSON.stringify({
+              status: "WORKAROUND_FOUND",
+              match_type: "community_grievance_workaround",
+              target: top.target,
+              workaround: top.workaround,
+              symptom: top.symptom,
+              applies_to: top.applies_to,
+              all_matches: gList,
+              message: `Verified workaround found for ${top.target}: ${top.workaround}`
+            })}]});
+          }
+        } catch (_) {}
+      }
+
       return ok(id, { content: [{ type: "text", text: JSON.stringify({
         status: "UNRESOLVED", checked_candidates: candidates,
         message: "No verified patch found. Consider submitting a grievance with an actionable workaround."

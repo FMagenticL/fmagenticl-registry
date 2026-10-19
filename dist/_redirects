@@ -1,4 +1,3 @@
-/ /llms.txt 200
 /registry /registry.json 200
 /patches /registry.json 200
 /agent.json /.well-known/agent.json 200
