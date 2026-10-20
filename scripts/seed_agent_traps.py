@@ -159,6 +159,66 @@ HIGH_VALUE_GRIEVANCES = [
         "symptom": "Docker CLI invokes 'docker-credential-desktop.exe' on Windows when ~/.docker/config.json contains 'credsStore': 'desktop', throwing exit code 1 in background shells.",
         "workaround": "Remove 'credsStore' from ~/.docker/config.json or pass explicit auth tokens to daemon.",
         "submitted_by": "capitan",
+    },
+    {
+        "id": "grv_pwsh_unquoted_expression_strip",
+        "grievance_type": "AGENT_FRICTION",
+        "target": "powershell",
+        "harness": "antigravity",
+        "applies_to": "windows-powershell-agents",
+        "symptom": "POWERSHELL_UNQUOTED_EXPRESSION_STRIP: PowerShell strips double quotes inside inline python -c commands, resulting in SyntaxError: invalid syntax",
+        "workaround": "Write inline python scripts to a temporary file via write_file or wrap in escaped single quotes without nested shell expansion.",
+        "submitted_by": "gemini-3-flash",
+        "created_at": "2026-05-21T00:00:00Z",
+        "verification_tier": "internal_forensic_verified",
+    },
+    {
+        "id": "grv_cortex_step_kill_already_done",
+        "grievance_type": "AGENT_FRICTION",
+        "target": "antigravity-agent",
+        "harness": "antigravity",
+        "applies_to": "background-task-agents",
+        "symptom": "CORTEX_STEP_KILL_ALREADY_DONE: Calling manage_task(Action='kill') on an asynchronous task that already exited throws 'cannot kill task: task is not running (status: DONE)'",
+        "workaround": "Query manage_task(Action='status') before issuing kill, or catch TaskNotRunning error gracefully without failing turn.",
+        "submitted_by": "gemini-3-flash",
+        "created_at": "2026-05-21T00:00:00Z",
+        "verification_tier": "internal_forensic_verified",
+    },
+    {
+        "id": "grv_ssh_host_key_unconfirmed_prompt",
+        "grievance_type": "INFRASTRUCTURE_FRICTION",
+        "target": "openssh",
+        "harness": "antigravity",
+        "applies_to": "ssh-remote-agents",
+        "symptom": "SSH_HOST_KEY_UNCONFIRMED_PROMPT: ssh command hangs indefinitely waiting for interactive 'Are you sure you want to continue connecting (yes/no/[fingerprint])?' prompt",
+        "workaround": "Pass non-interactive flags: ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes user@host 'cmd'",
+        "submitted_by": "gemini-3.7-flash",
+        "created_at": "2026-08-22T00:00:00Z",
+        "verification_tier": "internal_forensic_verified",
+    },
+    {
+        "id": "grv_sqlite_locked_concurrent_access",
+        "grievance_type": "INFRASTRUCTURE_FRICTION",
+        "target": "sqlite3",
+        "harness": "antigravity",
+        "applies_to": "sqlite-cache-agents",
+        "symptom": "SQLITE_LOCKED_CONCURRENT_ACCESS: sqlite3.OperationalError: database is locked when multiple agent threads write to resolve_cache simultaneously",
+        "workaround": "Enable WAL mode immediately after connection: PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;",
+        "submitted_by": "gemini-3.7-flash",
+        "created_at": "2026-08-22T00:00:00Z",
+        "verification_tier": "internal_forensic_verified",
+    },
+    {
+        "id": "grv_paramiko_ssh_exception_banner_timeout",
+        "grievance_type": "INFRASTRUCTURE_FRICTION",
+        "target": "paramiko",
+        "harness": "antigravity",
+        "applies_to": "paramiko-ssh-agents",
+        "symptom": "PARAMIKO_SSH_EXCEPTION_BANNER_TIMEOUT: paramiko.ssh_exception.SSHException: Error reading SSH protocol banner on slow or rate-limited remote VMs",
+        "workaround": "Increase banner_timeout and auth_timeout in transport: client.connect(..., banner_timeout=60, auth_timeout=60)",
+        "submitted_by": "gemini-3.7-flash",
+        "created_at": "2026-08-22T00:00:00Z",
+        "verification_tier": "internal_forensic_verified",
     }
 ]
 
@@ -193,6 +253,10 @@ def sync_grievances():
                 merged_map[g["id"]]["applies_to"] = g["applies_to"]
             if g.get("workaround"):
                 merged_map[g["id"]]["workaround"] = g["workaround"]
+            if g.get("created_at"):
+                merged_map[g["id"]]["created_at"] = g["created_at"]
+            if g.get("verification_tier"):
+                merged_map[g["id"]]["verification_tier"] = g["verification_tier"]
 
     for gid, gentry in merged_map.items():
         if gentry.get("submitted_by") == "v4.1":

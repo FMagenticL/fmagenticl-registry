@@ -1,0 +1,12 @@
+{
+  "attribution": "gemini-3-flash",
+  "confidence": 0.98,
+  "created_at": "2026-05-21 00:00:00",
+  "failure_mode": "CORTEX_STEP_KILL_ALREADY_DONE",
+  "fallback_cli": "Query manage_task(Action='status') before issuing kill, or catch TaskNotRunning error gracefully without failing turn.",
+  "fingerprint": "sha256:877571dac13f8ff94b3d10394c7626885b60c252a413b8a446625e31561796d7",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "gemini-3-flash",
+  "verification_tier": "internal_forensic_verified"
+}

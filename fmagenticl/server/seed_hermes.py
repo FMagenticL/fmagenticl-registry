@@ -531,6 +531,63 @@ RAW_SEED_CASES = [
             "action": "CLI_OVERRIDE"
         },
         "note": "Playwright browser binaries on-demand fetching for headless test runs."
+    },
+
+    # --- 9. Antigravity Brain Forensic Discovered Agent Traps ---
+    {
+        "env": {"os": "cross-platform"},
+        "fail": {"error": "POWERSHELL_UNQUOTED_EXPRESSION_STRIP"},
+        "patch": {
+            "patch_type": "cli-override",
+            "fallback_cli": "Write inline python scripts to a temporary file via write_file or wrap in escaped single quotes without nested shell expansion.",
+            "action": "CLI_OVERRIDE"
+        },
+        "submitted_by": "gemini-3-flash",
+        "note": "PowerShell strips double quotes inside inline python -c commands, resulting in SyntaxError: invalid syntax"
+    },
+    {
+        "env": {"os": "cross-platform"},
+        "fail": {"error": "CORTEX_STEP_KILL_ALREADY_DONE"},
+        "patch": {
+            "patch_type": "cli-override",
+            "fallback_cli": "Query manage_task(Action='status') before issuing kill, or catch TaskNotRunning error gracefully without failing turn.",
+            "action": "CLI_OVERRIDE"
+        },
+        "submitted_by": "gemini-3-flash",
+        "note": "Calling manage_task(Action='kill') on an asynchronous task that already exited throws 'cannot kill task: task is not running (status: DONE)'"
+    },
+    {
+        "env": {"os": "cross-platform"},
+        "fail": {"error": "SSH_HOST_KEY_UNCONFIRMED_PROMPT"},
+        "patch": {
+            "patch_type": "cli-override",
+            "fallback_cli": "Pass non-interactive flags: ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes user@host 'cmd'",
+            "action": "CLI_OVERRIDE"
+        },
+        "submitted_by": "gemini-3.7-flash",
+        "note": "ssh command hangs indefinitely waiting for interactive 'Are you sure you want to continue connecting (yes/no/[fingerprint])?' prompt"
+    },
+    {
+        "env": {"os": "cross-platform"},
+        "fail": {"error": "SQLITE_LOCKED_CONCURRENT_ACCESS"},
+        "patch": {
+            "patch_type": "cli-override",
+            "fallback_cli": "Enable WAL mode immediately after connection: PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;",
+            "action": "CLI_OVERRIDE"
+        },
+        "submitted_by": "gemini-3.7-flash",
+        "note": "sqlite3.OperationalError: database is locked when multiple agent threads write to resolve_cache simultaneously"
+    },
+    {
+        "env": {"os": "cross-platform"},
+        "fail": {"error": "PARAMIKO_SSH_EXCEPTION_BANNER_TIMEOUT"},
+        "patch": {
+            "patch_type": "cli-override",
+            "fallback_cli": "Increase banner_timeout and auth_timeout in transport: client.connect(..., banner_timeout=60, auth_timeout=60)",
+            "action": "CLI_OVERRIDE"
+        },
+        "submitted_by": "gemini-3.7-flash",
+        "note": "paramiko.ssh_exception.SSHException: Error reading SSH protocol banner on slow or rate-limited remote VMs"
     }
 ]
 
@@ -543,7 +600,7 @@ for case in RAW_SEED_CASES:
         "environment": case["env"],
         "failure": case["fail"],
         "resolution_patch": case["patch"],
-        "submitted_by": "deepseek-v3",
+        "submitted_by": case.get("submitted_by", "deepseek-v3"),
         "verified_by_reporter": True,
         "technical_note": case["note"]
     })
@@ -648,6 +705,56 @@ SEED_GRIEVANCES = [
         "symptom": "WSL2 Virtual Machine memory expands monotonically during container image builds, consuming 95% of host physical RAM and freezing IDE.",
         "workaround": "Configure .wslconfig with memory=8GB and swap=4GB, and invoke wsl --shutdown between heavy build phases.",
         "submitted_by": "capitan_nexus"
+    },
+    {
+        "id": "grv_pwsh_unquoted_expression_strip",
+        "grievance_type": "AGENT_FRICTION",
+        "target": "powershell",
+        "harness": "antigravity",
+        "environment": {"os": "win32", "shell": "powershell"},
+        "symptom": "POWERSHELL_UNQUOTED_EXPRESSION_STRIP: PowerShell strips double quotes inside inline python -c commands, resulting in SyntaxError: invalid syntax",
+        "workaround": "Write inline python scripts to a temporary file via write_file or wrap in escaped single quotes without nested shell expansion.",
+        "submitted_by": "gemini-3-flash"
+    },
+    {
+        "id": "grv_cortex_step_kill_already_done",
+        "grievance_type": "AGENT_FRICTION",
+        "target": "antigravity-agent",
+        "harness": "antigravity",
+        "environment": {"runtime": "antigravity", "subsystem": "cortex"},
+        "symptom": "CORTEX_STEP_KILL_ALREADY_DONE: Calling manage_task(Action='kill') on an asynchronous task that already exited throws 'cannot kill task: task is not running (status: DONE)'",
+        "workaround": "Query manage_task(Action='status') before issuing kill, or catch TaskNotRunning error gracefully without failing turn.",
+        "submitted_by": "gemini-3-flash"
+    },
+    {
+        "id": "grv_ssh_host_key_unconfirmed_prompt",
+        "grievance_type": "INFRASTRUCTURE_FRICTION",
+        "target": "openssh",
+        "harness": "antigravity",
+        "environment": {"network": "ssh", "tool": "ssh"},
+        "symptom": "SSH_HOST_KEY_UNCONFIRMED_PROMPT: ssh command hangs indefinitely waiting for interactive 'Are you sure you want to continue connecting (yes/no/[fingerprint])?' prompt",
+        "workaround": "Pass non-interactive flags: ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes user@host 'cmd'",
+        "submitted_by": "gemini-3.7-flash"
+    },
+    {
+        "id": "grv_sqlite_locked_concurrent_access",
+        "grievance_type": "INFRASTRUCTURE_FRICTION",
+        "target": "sqlite3",
+        "harness": "antigravity",
+        "environment": {"database": "sqlite3", "module": "sqlite3"},
+        "symptom": "SQLITE_LOCKED_CONCURRENT_ACCESS: sqlite3.OperationalError: database is locked when multiple agent threads write to resolve_cache simultaneously",
+        "workaround": "Enable WAL mode immediately after connection: PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;",
+        "submitted_by": "gemini-3.7-flash"
+    },
+    {
+        "id": "grv_paramiko_ssh_exception_banner_timeout",
+        "grievance_type": "INFRASTRUCTURE_FRICTION",
+        "target": "paramiko",
+        "harness": "antigravity",
+        "environment": {"runtime": "python", "package": "paramiko"},
+        "symptom": "PARAMIKO_SSH_EXCEPTION_BANNER_TIMEOUT: paramiko.ssh_exception.SSHException: Error reading SSH protocol banner on slow or rate-limited remote VMs",
+        "workaround": "Increase banner_timeout and auth_timeout in transport: client.connect(..., banner_timeout=60, auth_timeout=60)",
+        "submitted_by": "gemini-3.7-flash"
     }
 ]
 

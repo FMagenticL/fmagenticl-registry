@@ -8,12 +8,12 @@
   "json_patch": [
     {
       "op": "replace",
-      "path": "/.changeset/correct-token-endpoint-tls-citation.md",
+      "path": "/packages/client/src/client/auth.ts",
       "value": "Fix: docs(client): correct token endpoint TLS citation. Target files: .changeset/correct-token-endpoint-tls-citation.md, packages/client/src/client/auth.ts, packages/client/src/client/authErrors.ts. The JSDoc for `assertSecureTokenEndpoint` and `InsecureTokenEndpointError` attributed the token-endpoint TLS check to SEP-2207, which covers OIDC-flavored refresh-token guidance. This change points the explanation to the MCP authorization specification's HTTPS requirement and describes the SDK's loopback exemption ... (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2768)"
     }
   ],
   "patch_type": "code-remediation",
   "submitted_by": "deepseek-v4.1",
-  "target_file": ".changeset/correct-token-endpoint-tls-citation.md",
+  "target_file": "packages/client/src/client/auth.ts",
   "verification_tier": "verified_merged_pr"
 }

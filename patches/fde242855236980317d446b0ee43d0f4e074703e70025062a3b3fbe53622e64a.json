@@ -8,12 +8,12 @@
   "json_patch": [
     {
       "op": "replace",
-      "path": "/.changeset/strict-upload-absent-binding-fields.md",
+      "path": "/packages/deploy-helpers/src/deploy/helpers/config-diffs.ts",
       "value": "Fix: [deploy-helpers] Treat absent and undefined binding fields as equal in strict config diffs. Target files: .changeset/strict-upload-absent-binding-fields.md, packages/deploy-helpers/src/deploy/helpers/config-diffs.ts, packages/deploy-helpers/tests/config-diffs.test.ts. `wrangler versions upload --strict` (and `wrangler deploy --strict`) aborted on an unchanged config when a Worker had an R2 bucket in the default jurisdiction. The API omits `jurisdiction` in that case, but `mapWorkerMetadataBindings()` still sets an ow... (Ref: https://github.com/cloudflare/workers-sdk/pull/16359)"
     }
   ],
   "patch_type": "code-remediation",
   "submitted_by": "deepseek-v4.1",
-  "target_file": ".changeset/strict-upload-absent-binding-fields.md",
+  "target_file": "packages/deploy-helpers/src/deploy/helpers/config-diffs.ts",
   "verification_tier": "verified_merged_pr"
 }

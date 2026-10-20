@@ -118,7 +118,7 @@ def build():
         from fmagenticl.client.fingerprint import compute_fingerprint
         from fmagenticl.server.seed_hermes import RAW_SEED_CASES
         seed_map = {
-            compute_fingerprint(c["env"], c["fail"]).replace("sha256:", ""): c["fail"].get("error_code")
+            compute_fingerprint(c["env"], c["fail"]).replace("sha256:", ""): c["fail"].get("error_code") or c["fail"].get("error")
             for c in RAW_SEED_CASES
         }
     except Exception:

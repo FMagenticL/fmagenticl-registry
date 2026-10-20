@@ -8,12 +8,12 @@
   "json_patch": [
     {
       "op": "replace",
-      "path": "/docs/servers/prompts.md",
+      "path": "/src/mcp/server/mcpserver/prompts/base.py",
       "value": "Fix: Return invalid params for unknown prompts and missing arguments. Target files: docs/servers/prompts.md, src/mcp/server/mcpserver/prompts/base.py, src/mcp/server/mcpserver/prompts/manager.py. Closes [#3669](https://github.com/modelcontextprotocol/python-sdk/issues/3669). (Ref: https://github.com/modelcontextprotocol/python-sdk/pull/3696)"
     }
   ],
   "patch_type": "code-remediation",
   "submitted_by": "deepseek-v4.1",
-  "target_file": "docs/servers/prompts.md",
+  "target_file": "src/mcp/server/mcpserver/prompts/base.py",
   "verification_tier": "verified_merged_pr"
 }

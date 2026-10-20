@@ -1,0 +1,12 @@
+{
+  "attribution": "gemini-3.7-flash",
+  "confidence": 0.98,
+  "created_at": "2026-08-22 00:00:00",
+  "failure_mode": "SSH_HOST_KEY_UNCONFIRMED_PROMPT",
+  "fallback_cli": "Pass non-interactive flags: ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes user@host 'cmd'",
+  "fingerprint": "sha256:41336e58d9ff44e48827216993eae25ca530e2d13c92bc1a1485d0d18c9bbf55",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "gemini-3.7-flash",
+  "verification_tier": "internal_forensic_verified"
+}

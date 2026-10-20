@@ -98,7 +98,7 @@ export async function onRequest(context) {
   }
 
   let workarounds = [];
-  if (patches.length === 0 && (filterFailureMode || query) && env?.ASSETS) {
+  if ((filterFailureMode || query) && env?.ASSETS) {
     try {
       const gUrl = new URL("/grievances.json", url.origin);
       const gResp = await env.ASSETS.fetch(new Request(gUrl.toString(), { method: "GET" }));
@@ -109,7 +109,9 @@ export async function onRequest(context) {
         workarounds = gList.filter(g =>
           (g.target || "").toLowerCase().includes(term) ||
           (g.symptom || "").toLowerCase().includes(term) ||
-          (g.grievance_type || "").toLowerCase().includes(term)
+          (g.grievance_type || "").toLowerCase().includes(term) ||
+          (g.id || "").toLowerCase().includes(term) ||
+          (g.workaround || "").toLowerCase().includes(term)
         );
       }
     } catch (_) {}

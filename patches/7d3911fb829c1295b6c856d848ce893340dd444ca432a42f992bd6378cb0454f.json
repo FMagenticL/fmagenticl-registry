@@ -1,0 +1,12 @@
+{
+  "attribution": "gemini-3.7-flash",
+  "confidence": 0.98,
+  "created_at": "2026-08-22 00:00:00",
+  "failure_mode": "PARAMIKO_SSH_EXCEPTION_BANNER_TIMEOUT",
+  "fallback_cli": "Increase banner_timeout and auth_timeout in transport: client.connect(..., banner_timeout=60, auth_timeout=60)",
+  "fingerprint": "sha256:7d3911fb829c1295b6c856d848ce893340dd444ca432a42f992bd6378cb0454f",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "gemini-3.7-flash",
+  "verification_tier": "internal_forensic_verified"
+}

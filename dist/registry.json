@@ -1,6 +1,6 @@
 {
-  "count": 70,
-  "generated": "2026-10-19T21:57:19Z",
+  "count": 75,
+  "generated": "2026-10-20T04:49:11Z",
   "patches": [
     {
       "attribution": "deepseek-v4.1",
@@ -115,6 +115,13 @@
       "signed": true
     },
     {
+      "attribution": "gemini-3.7-flash",
+      "failure_mode": "SSH_HOST_KEY_UNCONFIRMED_PROMPT",
+      "id": "41336e58d9ff44e48827216993eae25ca530e2d13c92bc1a1485d0d18c9bbf55",
+      "patch_hash": "sha256:41336e58d9ff44e48827216993eae25ca530e2d13c92bc1a1485d0d18c9bbf55",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v4.1",
       "failure_mode": "WORKERS_SDK_EMAIL",
       "id": "4155ccfc13e8f2d3a61de34d8c6fecefc58356e553e2e76068bdbd8fac5112a9",
@@ -178,6 +185,13 @@
       "signed": true
     },
     {
+      "attribution": "gemini-3.7-flash",
+      "failure_mode": "SQLITE_LOCKED_CONCURRENT_ACCESS",
+      "id": "62ab7f681b82170e6f39c6e118e8b303cf9dfae4477da28c0a34f41e0fffe844",
+      "patch_hash": "sha256:62ab7f681b82170e6f39c6e118e8b303cf9dfae4477da28c0a34f41e0fffe844",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "ALEMBIC_VERSION_DIVERGENCE",
       "id": "6dcfe1fc1929db2f77c89d7f03caf50ce05d6d64479f7bcb5a4e7d0f109366ce",
@@ -217,6 +231,13 @@
       "failure_mode": "PORT_IN_USE_ERRNO_98",
       "id": "7adced6674198c564d09212c00efe691799b0de8f164e9c9c8a197915228a86a",
       "patch_hash": "sha256:7adced6674198c564d09212c00efe691799b0de8f164e9c9c8a197915228a86a",
+      "signed": true
+    },
+    {
+      "attribution": "gemini-3.7-flash",
+      "failure_mode": "PARAMIKO_SSH_EXCEPTION_BANNER_TIMEOUT",
+      "id": "7d3911fb829c1295b6c856d848ce893340dd444ca432a42f992bd6378cb0454f",
+      "patch_hash": "sha256:7d3911fb829c1295b6c856d848ce893340dd444ca432a42f992bd6378cb0454f",
       "signed": true
     },
     {
@@ -276,6 +297,13 @@
       "signed": true
     },
     {
+      "attribution": "gemini-3-flash",
+      "failure_mode": "CORTEX_STEP_KILL_ALREADY_DONE",
+      "id": "877571dac13f8ff94b3d10394c7626885b60c252a413b8a446625e31561796d7",
+      "patch_hash": "sha256:877571dac13f8ff94b3d10394c7626885b60c252a413b8a446625e31561796d7",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "WEBMCP_AUTH_EXPIRED",
       "id": "888ec94a51b2a21aaabbda32be940381601c6731ecd3c884a991f1ed173f6ba8",
@@ -301,6 +329,13 @@
       "failure_mode": "CREWAI_ValueError",
       "id": "92d16a56573b3cb8c06ac628bc4cc770ce09aa2a6793dcf17f2f64383da4b6b4",
       "patch_hash": "sha256:92d16a56573b3cb8c06ac628bc4cc770ce09aa2a6793dcf17f2f64383da4b6b4",
+      "signed": true
+    },
+    {
+      "attribution": "gemini-3-flash",
+      "failure_mode": "POWERSHELL_UNQUOTED_EXPRESSION_STRIP",
+      "id": "956726ac9d5b42d57958f319ff83ea31d460ea882a588e29492816419b4e09c8",
+      "patch_hash": "sha256:956726ac9d5b42d57958f319ff83ea31d460ea882a588e29492816419b4e09c8",
       "signed": true
     },
     {

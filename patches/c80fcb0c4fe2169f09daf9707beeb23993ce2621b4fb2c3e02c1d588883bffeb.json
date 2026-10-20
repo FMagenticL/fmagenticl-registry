@@ -8,12 +8,12 @@
   "json_patch": [
     {
       "op": "replace",
-      "path": "/.changeset/sse-connect-retry-once.md",
+      "path": "/packages/client/src/client/sse.ts",
       "value": "Fix: fix(client): retry the SSE connection once after onUnauthorized. Target files: .changeset/sse-connect-retry-once.md, packages/client/src/client/sse.ts, packages/client/test/client/sse.test.ts. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2905)"
     }
   ],
   "patch_type": "code-remediation",
   "submitted_by": "deepseek-v4.1",
-  "target_file": ".changeset/sse-connect-retry-once.md",
+  "target_file": "packages/client/src/client/sse.ts",
   "verification_tier": "verified_merged_pr"
 }

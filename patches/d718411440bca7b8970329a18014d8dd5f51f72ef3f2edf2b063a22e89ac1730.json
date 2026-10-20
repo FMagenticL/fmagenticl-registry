@@ -8,12 +8,12 @@
   "json_patch": [
     {
       "op": "replace",
-      "path": "/.changeset/node-hono-regular-dependency.md",
+      "path": "/packages/middleware/node/package.json",
       "value": "Fix: fix(node): make hono a regular dependency. Target files: .changeset/node-hono-regular-dependency.md, docs/migration/upgrade-to-v2.md, packages/middleware/node/package.json. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2897)"
     }
   ],
   "patch_type": "code-remediation",
   "submitted_by": "deepseek-v4.1",
-  "target_file": ".changeset/node-hono-regular-dependency.md",
+  "target_file": "packages/middleware/node/package.json",
   "verification_tier": "verified_merged_pr"
 }

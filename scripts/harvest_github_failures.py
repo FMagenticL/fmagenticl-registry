@@ -83,6 +83,44 @@ def execute_graphql(query: str, token: str, variables: dict = None) -> dict:
     return {}
 
 
+def select_primary_target_file(file_paths: list[str]) -> list[str]:
+    """
+    Ranks modified files by priority so core source and manifest files come first:
+    - Priority 1: .py, .ts, .js, .rs, .go, package.json, pyproject.toml, wrangler.toml, tsconfig.json outside docs/, tests/, .changeset/
+    - Priority 2: Files inside tests/ or test_* or .yml/.yaml/.json
+    - Priority 3: docs/*, *.md, *.txt, .changeset/*
+    """
+    if not file_paths:
+        return []
+
+    p1_manifests = {"package.json", "pyproject.toml", "wrangler.toml", "tsconfig.json"}
+    p1_exts = {".py", ".ts", ".js", ".rs", ".go"}
+    p3_dirs = ("docs/", ".changeset/")
+    p3_exts = {".md", ".txt"}
+
+    def rank_file(p: str) -> tuple[int, str]:
+        p_norm = p.replace("\\", "/").strip("/")
+        basename = p_norm.split("/")[-1].lower()
+        ext = os.path.splitext(p_norm)[1].lower()
+        parts = [part.lower() for part in p_norm.split("/")]
+
+        # Priority 3 (Documentation & Changesets - Last Resort Only)
+        if any(p_norm.lower().startswith(d) for d in p3_dirs) or ext in p3_exts or any(".changeset" in part for part in parts):
+            return (3, p_norm)
+
+        # Priority 2 (Tests & Secondary Configs)
+        if any(part in ("tests", "test", "__tests__") for part in parts) or basename.startswith("test_") or basename.endswith("_test") or ext in {".yml", ".yaml"} or (ext == ".json" and basename not in p1_manifests):
+            return (2, p_norm)
+
+        # Priority 1 (Core Source & Manifest Files)
+        if (basename in p1_manifests or ext in p1_exts) and not any(part in ("docs", "tests", "test", ".changeset") for part in parts):
+            return (1, p_norm)
+
+        return (2, p_norm)
+
+    return sorted(file_paths, key=rank_file)
+
+
 def extract_error_trace(body: str) -> str:
     """Extract the most likely error trace from an issue body."""
     if not body:
@@ -176,7 +214,7 @@ def fetch_issues_with_prs(repo: str, token: str, limit: int = 25) -> list:
                         merged
                         mergedAt
                         body
-                        files(first: 10) {
+                        files(first: 20) {
                           edges {
                             node {
                               path
@@ -244,12 +282,14 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
             merged_at = pr.get("mergedAt") or now_utc
             
             # Extract changed file paths
-            file_paths = []
+            raw_file_paths = []
             files_edges = pr.get("files", {}).get("edges", [])
             for fe in files_edges:
                 p = fe.get("node", {}).get("path")
                 if p:
-                    file_paths.append(p)
+                    raw_file_paths.append(p)
+                    
+            file_paths = select_primary_target_file(raw_file_paths)
                     
             error_code = extract_error_code(trace, title)
             symptom_first = title.split("\n")[0].strip()[:200]
