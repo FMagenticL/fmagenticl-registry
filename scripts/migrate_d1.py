@@ -92,6 +92,7 @@ CREATE INDEX IF NOT EXISTS idx_grievances_created ON grievances (created_at);
         if run_res.returncode == 0:
             print("Successfully migrated grievances table to support AGENT_FRICTION.")
         else:
+            print(f"Notice: Migration output: {run_res.stderr.strip()}", file=sys.stderr)
     finally:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
