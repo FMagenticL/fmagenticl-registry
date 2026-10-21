@@ -1,0 +1,29 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/mcp",
+      "destination": "https://fmagenticl-registry.pages.dev/mcp"
+    },
+    {
+      "source": "/llms.txt",
+      "destination": "https://fmagenticl-registry.pages.dev/llms.txt"
+    },
+    {
+      "source": "/registry.json",
+      "destination": "https://fmagenticl-registry.pages.dev/registry.json"
+    },
+    {
+      "source": "/.well-known/:match*",
+      "destination": "https://fmagenticl-registry.pages.dev/.well-known/:match*"
+    },
+    {
+      "source": "/v1/:match*",
+      "destination": "https://fmagenticl-registry.pages.dev/v1/:match*"
+    },
+    {
+      "source": "/api/:match*",
+      "destination": "https://fmagenticl-registry.pages.dev/api/:match*"
+    }
+  ]
+}
