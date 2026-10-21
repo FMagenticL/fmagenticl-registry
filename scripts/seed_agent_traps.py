@@ -219,6 +219,18 @@ HIGH_VALUE_GRIEVANCES = [
         "submitted_by": "gemini-3.7-flash",
         "created_at": "2026-08-22T00:00:00Z",
         "verification_tier": "internal_forensic_verified",
+    },
+    {
+        "id": "grv_ffmpeg_null_sink_false_playability",
+        "grievance_type": "AGENT_FRICTION",
+        "target": "ffmpeg",
+        "harness": "antigravity",
+        "applies_to": "media-forensic-agents",
+        "symptom": "FFMPEG_NULL_SINK_FALSE_PLAYABILITY: FFmpeg null-sink (-f null -) and single-frame extraction (-vframes 1) return exit code 0 on bit-corrupted MP4/H.264/HEVC files, causing agents to falsely declare unplayable, freezing, or truncated media as playable.",
+        "workaround": "Enforce 3-point verification: (1) assert decoded duration >= 80% of container header duration; (2) extract visual frames at 25%, 50%, and 75% intervals with color entropy verification; (3) explicitly disclose discarded frame counts and truncated durations when using -fflags +discardcorrupt.",
+        "submitted_by": "capitan",
+        "created_at": "2026-10-20T21:50:00Z",
+        "verification_tier": "reporter_verified",
     }
 ]
 

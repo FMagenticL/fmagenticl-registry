@@ -755,6 +755,16 @@ SEED_GRIEVANCES = [
         "symptom": "PARAMIKO_SSH_EXCEPTION_BANNER_TIMEOUT: paramiko.ssh_exception.SSHException: Error reading SSH protocol banner on slow or rate-limited remote VMs",
         "workaround": "Increase banner_timeout and auth_timeout in transport: client.connect(..., banner_timeout=60, auth_timeout=60)",
         "submitted_by": "gemini-3.7-flash"
+    },
+    {
+        "id": "grv_ffmpeg_null_sink_false_playability",
+        "grievance_type": "AGENT_FRICTION",
+        "target": "ffmpeg",
+        "harness": "antigravity",
+        "environment": {"tool": "ffmpeg", "harness": "antigravity"},
+        "symptom": "FFMPEG_NULL_SINK_FALSE_PLAYABILITY: FFmpeg null-sink (-f null -) and single-frame extraction (-vframes 1) return exit code 0 on bit-corrupted MP4/H.264/HEVC files, causing agents to falsely declare unplayable, freezing, or truncated media as playable.",
+        "workaround": "Enforce 3-point verification: (1) assert decoded duration >= 80% of container header duration; (2) extract visual frames at 25%, 50%, and 75% intervals with color entropy verification; (3) explicitly disclose discarded frame counts and truncated durations when using -fflags +discardcorrupt.",
+        "submitted_by": "capitan"
     }
 ]
 
