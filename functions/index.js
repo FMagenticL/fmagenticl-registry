@@ -2,29 +2,19 @@
  * Cloudflare Pages Functions — Root Content Negotiation
  * Route: /
  *
- * Directs browsers (Accept: text/html) to the human dark-mode landing page (/index.html).
- * Directs AI agents & CLI tools (curl, python, node, Claude, ChatGPT, text/plain) to /llms.txt.
+ * Directs clients to the human landing page (/index.html) by default.
+ * Directs requests with Accept: text/plain to /llms.txt.
  */
 
 export async function onRequestGet(context) {
   const { request, env } = context;
   const accept = request.headers.get("Accept") || "";
-  const userAgent = (request.headers.get("User-Agent") || "").toLowerCase();
 
-  const isAgentCli =
-    userAgent.includes("curl") ||
-    userAgent.includes("wget") ||
-    userAgent.includes("httpie") ||
-    userAgent.includes("python") ||
-    userAgent.includes("node") ||
-    userAgent.includes("claude") ||
-    userAgent.includes("chatgpt") ||
-    userAgent.includes("bot") ||
-    !accept.includes("text/html");
+  const wantsLlms = accept.includes("text/plain") && !accept.includes("text/html");
 
   if (env && env.ASSETS) {
     let resp;
-    if (isAgentCli) {
+    if (wantsLlms) {
       const targetUrl = new URL("/llms.txt", request.url);
       resp = await env.ASSETS.fetch(new Request(targetUrl.toString(), request));
     } else {
