@@ -183,7 +183,8 @@ export async function onRequestGet({ request }) {
 }
 
 async function fetchPatch(env, origin, hash) {
-  const assetUrl = `${origin}/v1/resolve/${hash}.json`;
+  const cleanHash = String(hash || "").replace(/^sha256:/i, "").toLowerCase();
+  const assetUrl = `${origin}/v1/resolve/${cleanHash}.json`;
   if (env.ASSETS) {
     try {
       const res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
@@ -199,7 +200,10 @@ async function fetchPatch(env, origin, hash) {
     if (res && res.ok) {
       const data = await res.json();
       const list = Array.isArray(data) ? data : (data.patches || []);
-      const match = list.find(p => ((p.fingerprint || p.id || "").toLowerCase() === hash));
+      const match = list.find(p => {
+        const pId = String(p.id || p.fingerprint || p.patch_hash || "").replace(/^sha256:/i, "").toLowerCase();
+        return pId === cleanHash;
+      });
       if (match) return match;
     }
   } catch (_) { /* fall through */ }
@@ -246,17 +250,39 @@ export async function onRequestPost({ request, env }) {
   try {
     if (toolName === "fmagenticl_resolve" || toolName === "fmagenticl_auto_heal") {
       const candidates = [];
-      if (args.fingerprint && /^[0-9a-fA-F]{64}$/.test(args.fingerprint)) {
-        candidates.push({ type: "exact", hash: args.fingerprint.toLowerCase() });
+      const hex64Regex = /^[0-9a-fA-F]{64}$/;
+
+      // 1. Direct fingerprint argument
+      if (args.fingerprint && typeof args.fingerprint === "string") {
+        const cleanFp = args.fingerprint.trim().replace(/^sha256:/i, "").toLowerCase();
+        if (hex64Regex.test(cleanFp)) {
+          candidates.push({ type: "exact_hash_match", hash: cleanFp });
+        }
       }
+
+      // 2. Direct target argument if it is a 64-char hex hash
+      if (args.target && typeof args.target === "string") {
+        const cleanTarget = args.target.trim().replace(/^sha256:/i, "").toLowerCase();
+        if (hex64Regex.test(cleanTarget) && !candidates.some(c => c.hash === cleanTarget)) {
+          candidates.push({ type: "exact_hash_match", hash: cleanTarget });
+        }
+      }
+
+      // 3. Raw error string extraction
       const rawFromField = args.raw_error || args.failure?.raw_signature;
-      if (rawFromField) {
-        const rawHash = await sha256Hex(rawFromField.trim());
+      if (rawFromField && typeof rawFromField === "string") {
+        const cleanRaw = rawFromField.trim();
+        const cleanRawFp = cleanRaw.replace(/^sha256:/i, "").toLowerCase();
+        if (hex64Regex.test(cleanRawFp) && !candidates.some(c => c.hash === cleanRawFp)) {
+          candidates.push({ type: "exact_hash_match", hash: cleanRawFp });
+        }
+        const rawHash = await sha256Hex(cleanRaw);
         if (!candidates.some(c => c.hash === rawHash)) candidates.push({ type: "raw_sha256", hash: rawHash });
-        const canonical = normalizeErrorString(rawFromField);
+        const canonical = normalizeErrorString(cleanRaw);
         const canonicalHash = await sha256Hex(canonical);
         if (!candidates.some(c => c.hash === canonicalHash)) candidates.push({ type: "canonical_sha256", hash: canonicalHash, canonical });
       }
+
       if (candidates.length === 0 && !args.target && !args.failure?.error_code) {
         return err(id, -32602, "Provide a valid 'fingerprint', 'raw_error', or 'target'.");
       }
@@ -276,10 +302,11 @@ export async function onRequestPost({ request, env }) {
         }
         const patch = await fetchPatch(env, origin, c.hash);
         if (patch) {
+          const matchType = (c.type === "exact" || c.type === "exact_hash_match") ? "exact_hash_match" : c.type;
           const payload = toolName === "fmagenticl_auto_heal"
-            ? { status: "PATCH_READY", match_type: c.type, fingerprint: c.hash, patch,
+            ? { status: "PATCH_READY", match_type: matchType, fingerprint: c.hash, patch,
                 message: "Remote endpoint cannot apply patches. Apply locally." }
-            : { status: "RESOLVED", match_type: c.type, fingerprint: c.hash, patch };
+            : { status: "RESOLVED", match_type: matchType, fingerprint: c.hash, patch };
           return ok(id, { content: [{ type: "text", text: JSON.stringify(payload) }] });
         }
       }

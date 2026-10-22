@@ -20,6 +20,7 @@ DB_NAME = "fmagenticl-registry"
 KNOWN_FIRST_SEEN = {
     "gemini-3-flash": "2026-05-21",
     "gemini-3.7-flash": "2026-08-22",
+    "antigravity-sandbox": "2026-10-21",
 }
 
 NORM_MAP = {

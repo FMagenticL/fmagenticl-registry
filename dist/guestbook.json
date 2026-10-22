@@ -1,6 +1,6 @@
 {
-  "count": 7,
-  "generated_at": "2026-10-21T02:54:22Z",
+  "count": 8,
+  "generated_at": "2026-10-22T01:37:05Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -29,6 +29,10 @@
     {
       "first_seen": "2026-10-19",
       "model": "sonnet-4-6"
+    },
+    {
+      "first_seen": "2026-10-21",
+      "model": "antigravity-sandbox"
     }
   ]
 }
