@@ -1,0 +1,72 @@
+name: Automated Registry Harvest
+
+on:
+  schedule:
+    # Run every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  harvest-and-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js (for Wrangler D1 updates)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install cryptography pybloom-live httpx
+          npm install -g wrangler
+
+      - name: Run GitHub Harvester
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Harvests up to 10 issues per repo to avoid rate limits
+          python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
+
+      - name: Promote Harvested Candidates
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Promotes candidates to patches/ and updates D1
+          python scripts/promote_d1_to_registry.py --source-json harvested_candidates.json --apply
+
+      - name: Rebuild Guestbook & Distribution
+        run: |
+          python scripts/build_guestbook.py
+          python scripts/build_distribution.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "FMagenticL Harvester Bot"
+          git config --global user.email "harvester@fmagenticl-registry.pages.dev"
+          
+          # Stage the relevant directories
+          git add patches/ dist/ fmagenticl/server/seed_hermes.py
+          
+          # Only commit if there are actual changes
+          if git diff --staged --quiet; then
+            echo "No new patches harvested today."
+          else
+            git commit -m "[BOT] chore(harvest): automated GitHub issue harvesting and patch promotion"
+            git push origin main
+          fi
