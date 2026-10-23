@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-23T05:10:28Z",
+  "failure_mode": "CREWAI_RuntimeError",
+  "fingerprint": "sha256:e96eabda756bbe4798fe05d41e010da886d0419ca11bd24278b6ad8226ba5d0e",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/lib/crewai/src/crewai/crew.py",
+      "value": "Fix: fix: replay emits CrewKickoffFailedEvent when the replayed run fails. Target files: lib/crewai/src/crewai/crew.py, lib/crewai/tests/test_crew.py. `Crew.replay`'s execution tail wraps `_execute_tasks` in try/except, emitting `CrewKickoffFailedEvent(started_event_id=self._kickoff_event_id)` before re-raising \u2014 mirroring `kickoff()`'s except-clause. (Ref: https://github.com/crewAIInc/crewAI/pull/8418)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "lib/crewai/src/crewai/crew.py",
+  "verification_tier": "verified_merged_pr"
+}

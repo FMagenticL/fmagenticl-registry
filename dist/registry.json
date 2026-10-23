@@ -1,12 +1,19 @@
 {
-  "count": 75,
-  "generated": "2026-10-22T01:37:04Z",
+  "count": 84,
+  "generated": "2026-10-23T19:07:46Z",
   "patches": [
     {
       "attribution": "deepseek-v4.1",
       "failure_mode": "CREWAI_ValueError",
       "id": "009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0",
       "patch_hash": "sha256:009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ValueError",
+      "id": "03bad51c2cc925d5feab519b3e51b8dd06e771f994dc46c68f78cb81e10ed3a1",
+      "patch_hash": "sha256:03bad51c2cc925d5feab519b3e51b8dd06e771f994dc46c68f78cb81e10ed3a1",
       "signed": true
     },
     {
@@ -21,6 +28,13 @@
       "failure_mode": "STAT_S_IREAD_PACKFILE_LOCK",
       "id": "1a9650da88f38a14cece93063e106af6f2dead38b4fff69af72d9f32d9120f42",
       "patch_hash": "sha256:1a9650da88f38a14cece93063e106af6f2dead38b4fff69af72d9f32d9120f42",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ToolExecutionFailedError",
+      "id": "1bfaa6c2aafb538218c25322c4070c077c9d72e75556f2a093d00d14cfd3b47d",
+      "patch_hash": "sha256:1bfaa6c2aafb538218c25322c4070c077c9d72e75556f2a093d00d14cfd3b47d",
       "signed": true
     },
     {
@@ -42,6 +56,13 @@
       "failure_mode": "WORKERS_SDK_ERROR",
       "id": "206531209aaf86d292dc9dfa1b829e0f16083774d4ff2a5724f5a9910aeb3963",
       "patch_hash": "sha256:206531209aaf86d292dc9dfa1b829e0f16083774d4ff2a5724f5a9910aeb3963",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_PydanticSchemaGenerationError",
+      "id": "21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
+      "patch_hash": "sha256:21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
       "signed": true
     },
     {
@@ -133,6 +154,13 @@
       "failure_mode": "PYDANTIC_ValidationError",
       "id": "44421d18f1d7732abf3bec6d05c050c33dc0bce11b48d3a2eeb4284eaed7cc7c",
       "patch_hash": "sha256:44421d18f1d7732abf3bec6d05c050c33dc0bce11b48d3a2eeb4284eaed7cc7c",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_NameError",
+      "id": "4477eec9732ee076cfdd0f48a77cac1a35665cc3c89a74e4befe334aacf8d81b",
+      "patch_hash": "sha256:4477eec9732ee076cfdd0f48a77cac1a35665cc3c89a74e4befe334aacf8d81b",
       "signed": true
     },
     {
@@ -354,6 +382,13 @@
     },
     {
       "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_RuntimeError",
+      "id": "98e9387b27d4869bd4a0aa43e3b8cc57fbcd6bfb3ad93b469f27dd5427cf6eb0",
+      "patch_hash": "sha256:98e9387b27d4869bd4a0aa43e3b8cc57fbcd6bfb3ad93b469f27dd5427cf6eb0",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
       "failure_mode": "PYDANTIC_PanicException",
       "id": "99a5851717247ef1d2f2238116c93b33a61dc5f377aa83ff3736091a530352a9",
       "patch_hash": "sha256:99a5851717247ef1d2f2238116c93b33a61dc5f377aa83ff3736091a530352a9",
@@ -364,6 +399,20 @@
       "failure_mode": "PNPM_SYMLINK_PERM_FAIL",
       "id": "9c3263db302aad2baa8135ce7438781442f4737f1739694d62b29e6001c1c64b",
       "patch_hash": "sha256:9c3263db302aad2baa8135ce7438781442f4737f1739694d62b29e6001c1c64b",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_ValidationError",
+      "id": "9cbabcc41f5f1a7ca9e071741267b2feb792fa8f0eb224f38e9d5aa0e13a9820",
+      "patch_hash": "sha256:9cbabcc41f5f1a7ca9e071741267b2feb792fa8f0eb224f38e9d5aa0e13a9820",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "PYDANTIC_PydanticSchemaGenerationError",
+      "id": "9d1368ff60ddee746a49b3a9e4d7d424709cf3793859f90ab29d2c3d07a8d808",
+      "patch_hash": "sha256:9d1368ff60ddee746a49b3a9e4d7d424709cf3793859f90ab29d2c3d07a8d808",
       "signed": true
     },
     {
@@ -472,6 +521,13 @@
       "signed": true
     },
     {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ToolExecutionFailedError",
+      "id": "cd25903f6f54de78ca6d1128a9c1385e70a0c3fea22d775ba020ab2445f3a98b",
+      "patch_hash": "sha256:cd25903f6f54de78ca6d1128a9c1385e70a0c3fea22d775ba020ab2445f3a98b",
+      "signed": true
+    },
+    {
       "attribution": "deepseek-v3",
       "failure_mode": "MSVC_RUST_EXTENSION_MISSING",
       "id": "d39ac2e27d8deb9cb0694a4a2225c5fb89286bccf62250cc02165f63c205210d",
@@ -504,6 +560,13 @@
       "failure_mode": "SQLITE_WAL_CHECKPOINT_COLLISION",
       "id": "e540cb063ad1d393e65b57168e9b3d6344aba1beb816cd5c1890ba0366225244",
       "patch_hash": "sha256:e540cb063ad1d393e65b57168e9b3d6344aba1beb816cd5c1890ba0366225244",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_RuntimeError",
+      "id": "e96eabda756bbe4798fe05d41e010da886d0419ca11bd24278b6ad8226ba5d0e",
+      "patch_hash": "sha256:e96eabda756bbe4798fe05d41e010da886d0419ca11bd24278b6ad8226ba5d0e",
       "signed": true
     },
     {

@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-22T09:37:05Z",
+  "failure_mode": "PYDANTIC_ValidationError",
+  "fingerprint": "sha256:9cbabcc41f5f1a7ca9e071741267b2feb792fa8f0eb224f38e9d5aa0e13a9820",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/pydantic-core/src/errors/validation_exception.rs",
+      "value": "Fix: Fix pickling of `PydanticCustomError` and `ValidationError`s containing custom errors. Target files: pydantic-core/src/errors/validation_exception.rs, pydantic-core/src/errors/value_exception.rs, tests/test_errors.py. Fixes https://github.com/pydantic/pydantic/issues/14034. (Ref: https://github.com/pydantic/pydantic/pull/14051)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "pydantic-core/src/errors/validation_exception.rs",
+  "verification_tier": "verified_merged_pr"
+}

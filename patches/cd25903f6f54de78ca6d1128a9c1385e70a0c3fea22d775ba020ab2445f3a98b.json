@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-23T07:11:49Z",
+  "failure_mode": "CREWAI_ToolExecutionFailedError",
+  "fingerprint": "sha256:cd25903f6f54de78ca6d1128a9c1385e70a0c3fea22d775ba020ab2445f3a98b",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/lib/crewai/src/crewai/flow/runtime/_actions.py",
+      "value": "Fix: fix(flow): tool actions honor the tool's tool_failure_policy. Target files: lib/crewai/src/crewai/flow/runtime/_actions.py, lib/crewai/tests/test_flow_tool_action_failure_policy.py. Stacked on #8424 (same area, `ToolAction.run`); only the second commit is new. (Ref: https://github.com/crewAIInc/crewAI/pull/8426)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "lib/crewai/src/crewai/flow/runtime/_actions.py",
+  "verification_tier": "verified_merged_pr"
+}
