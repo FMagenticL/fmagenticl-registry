@@ -1,0 +1,13 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.FMagenticL/fmagenticl",
+  "title": "FMagenticL",
+  "description": "Deterministic failure depository for AI agents. Fixes runtime crashes with signed RFC 6902 patches.",
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://fmagenticl-registry.pages.dev/mcp"
+    }
+  ]
+}
