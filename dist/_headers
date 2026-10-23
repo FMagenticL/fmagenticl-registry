@@ -27,19 +27,6 @@
   Cache-Control: public, max-age=3600
   Access-Control-Allow-Origin: *
 
-/llms.txt
-  Cache-Control: public, max-age=3600
-  Access-Control-Allow-Origin: *
-
-/llms-full.txt
-  Cache-Control: public, max-age=3600
-  Access-Control-Allow-Origin: *
-
-/registry.json
-  Cache-Control: public, max-age=600, s-maxage=1200
-  Access-Control-Allow-Origin: *
-  Content-Type: application/json; charset=utf-8
-
 /robots.txt
   Cache-Control: public, max-age=86400
   Access-Control-Allow-Origin: *
@@ -70,4 +57,21 @@
 
 /hooks/*
   Cache-Control: public, max-age=3600, s-maxage=86400
+  Access-Control-Allow-Origin: *
+
+/registry.json
+  Cache-Control: public, max-age=300, s-maxage=600
+  Access-Control-Allow-Origin: *
+  Content-Type: application/json; charset=utf-8
+
+/llms.txt
+  Cache-Control: public, max-age=3600, s-maxage=86400
+  Access-Control-Allow-Origin: *
+
+/llms-full.txt
+  Cache-Control: public, max-age=3600, s-maxage=86400
+  Access-Control-Allow-Origin: *
+
+/*.json
+  Cache-Control: public, max-age=300, s-maxage=600
   Access-Control-Allow-Origin: *
