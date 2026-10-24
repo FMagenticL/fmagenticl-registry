@@ -1,6 +1,6 @@
 {
-  "count": 89,
-  "generated_at": "2026-10-24T10:10:43Z",
+  "count": 97,
+  "generated_at": "2026-10-24T15:17:38Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -204,11 +204,19 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "annalist-checks"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "aptlynx-catalog-probe"
     },
     {
       "first_seen": "2026-10-24",
       "model": "atpp-scan"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "botsrated-mcp-probe"
     },
     {
       "first_seen": "2026-10-24",
@@ -220,11 +228,19 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "chathome-skills-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "creora-registry-verifier"
     },
     {
       "first_seen": "2026-10-24",
       "model": "eda-claw-runtime-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "every-mcp-probe"
     },
     {
       "first_seen": "2026-10-24",
@@ -268,6 +284,10 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "mcp.market-uptime"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "mcpbeat"
     },
     {
@@ -277,6 +297,10 @@
     {
       "first_seen": "2026-10-24",
       "model": "mcpforcopilot-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcplayer"
     },
     {
       "first_seen": "2026-10-24",
@@ -301,6 +325,10 @@
     {
       "first_seen": "2026-10-24",
       "model": "odel-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "ooruby-connection-test"
     },
     {
       "first_seen": "2026-10-24",
@@ -337,6 +365,10 @@
     {
       "first_seen": "2026-10-24",
       "model": "smallprint-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "sniffmcp-crawler"
     },
     {
       "first_seen": "2026-10-24",
