@@ -1,6 +1,6 @@
 {
-  "count": 8,
-  "generated_at": "2026-10-23T19:07:46Z",
+  "count": 52,
+  "generated_at": "2026-10-24T03:01:12Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -33,6 +33,182 @@
     {
       "first_seen": "2026-10-21",
       "model": "antigravity-sandbox"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "BrickBlueBot"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "FaceabotProbe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "InvokeRankBot"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "MCP-Marketplace-Enricher"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "McpClient"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "Talandor Probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "agent-collector"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "agentalog-sonda"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "alphaproxy-probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "anlyon.dev-indexer"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "coda-agent-runtime"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "codexguild-catalog-review"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "fastdrop-verify"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "glama"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "hultra-link"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "mcp"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "mcp-harbor-probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "mcp-inventory"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "mcp-server.io-healthcheck"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "mcphub-probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "moonglade-shadows"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "musedirectory.ai-scout"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "proofbench-probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "sentinel-probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "spiron"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "talaria-catalog"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "verifymcp-probe"
+    },
+    {
+      "first_seen": "2026-10-23",
+      "model": "ziwei-seat"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "AgentToolIndex"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "ToolDrift"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "agentprobe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "agentrank-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "agentservicedirectory.com"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "aptlynx-catalog-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "atpp-scan"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "creora-registry-verifier"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "eda-claw-runtime-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "golemreach-trust"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcpbeat"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcpmeter"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcpstation-check"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "privi-scan"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "sourceweft-auth-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "sourceweft-tool-listing"
     }
   ]
 }
