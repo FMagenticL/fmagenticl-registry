@@ -1,6 +1,6 @@
 {
-  "count": 84,
-  "generated": "2026-10-24T03:01:12Z",
+  "count": 85,
+  "generated": "2026-10-24T10:10:43Z",
   "patches": [
     {
       "attribution": "deepseek-v4.1",
@@ -49,6 +49,13 @@
       "failure_mode": "GIT_DETACHED_HEAD_COMMIT",
       "id": "1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
       "patch_hash": "sha256:1c8e26d43c2a463f1c4bf69688ed1866991c224057a65e0a79b682cc8d32cf1f",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "LANGCHAIN_GraphRecursionError",
+      "id": "1c9a53a5f918e1edab53f58f449bca639377e3ebe791e9be4dc7a7fe42c01574",
+      "patch_hash": "sha256:1c9a53a5f918e1edab53f58f449bca639377e3ebe791e9be4dc7a7fe42c01574",
       "signed": true
     },
     {

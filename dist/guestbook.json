@@ -1,6 +1,6 @@
 {
-  "count": 52,
-  "generated_at": "2026-10-24T03:01:12Z",
+  "count": 89,
+  "generated_at": "2026-10-24T10:10:43Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -148,11 +148,35 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "AgentIndexBot"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "AgentToolIndex"
     },
     {
       "first_seen": "2026-10-24",
+      "model": "AgentsJunction health checker"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "EndpointAudit"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "LEGION-tlog"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "ToolDrift"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "agent-index-prober"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "agent-world-probe"
     },
     {
       "first_seen": "2026-10-24",
@@ -168,11 +192,31 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "ai-pulse-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "aiagentboard-hub"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "aisec-registry-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "aptlynx-catalog-probe"
     },
     {
       "first_seen": "2026-10-24",
       "model": "atpp-scan"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "canopii-scanner"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "catalog-health"
     },
     {
       "first_seen": "2026-10-24",
@@ -184,7 +228,43 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "exorails-gateway"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "factanker-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "frndOS"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "golemreach-trust"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "guru-hub-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "lastseen-schema-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp-observatory"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp-status"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp-watch"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp.market-scanner"
     },
     {
       "first_seen": "2026-10-24",
@@ -192,7 +272,23 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "mcpcost"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcpforcopilot-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcplayer-gateway"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "mcpmeter"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcpserver-lol-probe"
     },
     {
       "first_seen": "2026-10-24",
@@ -200,7 +296,47 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "mcpwatch"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "odel-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "posthog-mcp-registry-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "privi-scan"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "proofhouse"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "protogrid-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "referencesource-mcp-health"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "rokmcp-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "rootz-mcp-registry-prober"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "sarnai-sales"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "smallprint-probe"
     },
     {
       "first_seen": "2026-10-24",
@@ -209,6 +345,18 @@
     {
       "first_seen": "2026-10-24",
       "model": "sourceweft-tool-listing"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "stackduke-mcp-scanner"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "tanod-mcp-check"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "teppi-probe"
     }
   ]
 }

@@ -1,7 +1,21 @@
 {
-  "count": 68,
-  "generated_at": "2026-10-24T03:01:08Z",
+  "count": 70,
+  "generated_at": "2026-10-24T10:10:40Z",
   "grievances": [
+    {
+      "applies_to": "langchain-ai/langchain",
+      "created_at": "2026-10-24T08:51:49Z",
+      "fingerprint": "sha256:1c9a53a5f918e1edab53f58f449bca639377e3ebe791e9be4dc7a7fe42c01574",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchain_41450",
+      "queue_status": "PENDING",
+      "submitted_by": "deepseek-v4.1",
+      "symptom": "`ModelCallLimitMiddleware` does not count a model call when a later-listed `after_model` hook jumps away, so `run_limit` is not a bound",
+      "target": "langchain",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Upstream reports: four filed, one a duplicate, two fixed upstream. Target files: docs/planning/BACKLOG.md, docs/planning/upstream-issues/01-langgraph-sync-durability-without-a-checkpointer.md, docs/planning/upstream-issues/02-deepagents-permissions-do-not-reach-a-replaced-filesystem-middleware.md. Every drafted repro in `docs/planning/upstream-issues/` was re-run on the latest releases first. (Ref: https://github.com/8fqycwdt8v-oss/Chemclaw3/pull/668)"
+    },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-23T17:33:51Z",
@@ -29,6 +43,20 @@
       "target": "pydantic",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix `Self` resolution in parametrized generics. Target files: pydantic/_internal/_generate_schema.py, tests/test_types_self.py. Fixes https://github.com/pydantic/pydantic/issues/14064, regression in https://github.com/pydantic/pydantic/pull/13614. (Ref: https://github.com/pydantic/pydantic/pull/14065)"
+    },
+    {
+      "applies_to": "crewAIInc/crewAI",
+      "created_at": "2026-10-23T07:28:25Z",
+      "fingerprint": "sha256:8e095344bc1fc43fe338294586af942a7118ea2f63175759cea28861a3906c8b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_crewAIInc_crewAI_8362",
+      "queue_status": "PENDING",
+      "submitted_by": "deepseek-v4.1",
+      "symptom": "ReAct text tool path swallows HookAborted from POST_TOOL_CALL hooks",
+      "target": "crewAI",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: re-raise HookAborted from the ReAct text tool path. Target files: lib/crewai/src/crewai/agents/agent_executor.py, lib/crewai/tests/agents/test_react_tool_hook_contract.py. `AgentExecutor.execute_tool_action` (the ReAct text-based tool route) now re-raises `HookAborted` instead of letting the generic `except Exception` handler fold it into an `\"Observation: Error executing tool: ...\"` recovery message for the LLM. Added an `except HookAborted: raise` clause ahead of the generic handler, mirroring the existing `ToolExecu... (Ref: https://github.com/crewAIInc/crewAI/pull/8363)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
