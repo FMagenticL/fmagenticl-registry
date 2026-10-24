@@ -1,6 +1,6 @@
 {
-  "count": 97,
-  "generated_at": "2026-10-24T15:17:38Z",
+  "count": 105,
+  "generated_at": "2026-10-24T20:07:09Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -176,6 +176,10 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "agent-tools.cloud"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "agent-world-probe"
     },
     {
@@ -264,11 +268,23 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "hilda-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "lastseen-schema-probe"
     },
     {
       "first_seen": "2026-10-24",
       "model": "mcp-observatory"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp-rugpull-research"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp-runtime-engine"
     },
     {
       "first_seen": "2026-10-24",
@@ -285,6 +301,10 @@
     {
       "first_seen": "2026-10-24",
       "model": "mcp.market-uptime"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "mcp2-research"
     },
     {
       "first_seen": "2026-10-24",
@@ -360,6 +380,10 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "rpg-connect-check"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "sarnai-sales"
     },
     {
@@ -389,6 +413,14 @@
     {
       "first_seen": "2026-10-24",
       "model": "teppi-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "twr-registry-check"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "webmcpshield-registry-scanner"
     }
   ]
 }
