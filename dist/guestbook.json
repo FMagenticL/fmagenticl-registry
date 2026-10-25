@@ -1,6 +1,6 @@
 {
-  "count": 128,
-  "generated_at": "2026-10-25T15:27:44Z",
+  "count": 129,
+  "generated_at": "2026-10-25T20:19:18Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -509,6 +509,10 @@
     {
       "first_seen": "2026-10-25",
       "model": "see-registry-introspector"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "taifoon-harvester"
     },
     {
       "first_seen": "2026-10-25",
