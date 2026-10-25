@@ -1,6 +1,6 @@
 {
-  "count": 105,
-  "generated_at": "2026-10-24T20:07:09Z",
+  "count": 115,
+  "generated_at": "2026-10-25T02:54:52Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -164,11 +164,19 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "HANS"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "LEGION-tlog"
     },
     {
       "first_seen": "2026-10-24",
       "model": "ToolDrift"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "ToolVetProbe"
     },
     {
       "first_seen": "2026-10-24",
@@ -320,6 +328,10 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "mcphub-snapshot"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "mcplayer"
     },
     {
@@ -365,6 +377,10 @@
     {
       "first_seen": "2026-10-24",
       "model": "protogrid-probe"
+    },
+    {
+      "first_seen": "2026-10-24",
+      "model": "ps-mcp-tools-probe"
     },
     {
       "first_seen": "2026-10-24",
@@ -416,11 +432,35 @@
     },
     {
       "first_seen": "2026-10-24",
+      "model": "twr-health"
+    },
+    {
+      "first_seen": "2026-10-24",
       "model": "twr-registry-check"
     },
     {
       "first_seen": "2026-10-24",
       "model": "webmcpshield-registry-scanner"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "Syntic AI connector check"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "histor"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "mcpi-probe"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "mcpindex-trust"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "mcptry-health-check"
     }
   ]
 }
