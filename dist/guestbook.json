@@ -1,6 +1,6 @@
 {
-  "count": 126,
-  "generated_at": "2026-10-25T10:36:08Z",
+  "count": 128,
+  "generated_at": "2026-10-25T15:27:44Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -460,11 +460,19 @@
     },
     {
       "first_seen": "2026-10-25",
+      "model": "assay-probe"
+    },
+    {
+      "first_seen": "2026-10-25",
       "model": "catalog-inspect"
     },
     {
       "first_seen": "2026-10-25",
       "model": "histor"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "mcp-scraper"
     },
     {
       "first_seen": "2026-10-25",
