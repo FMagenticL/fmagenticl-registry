@@ -1,6 +1,6 @@
 {
-  "count": 115,
-  "generated_at": "2026-10-25T02:54:52Z",
+  "count": 126,
+  "generated_at": "2026-10-25T10:36:08Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -448,7 +448,27 @@
     },
     {
       "first_seen": "2026-10-25",
+      "model": "agent-almanac-snapshot"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "agent-market-scanner"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "agora-probe"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "catalog-inspect"
+    },
+    {
+      "first_seen": "2026-10-25",
       "model": "histor"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "mcpatlas-verifier"
     },
     {
       "first_seen": "2026-10-25",
@@ -461,6 +481,30 @@
     {
       "first_seen": "2026-10-25",
       "model": "mcptry-health-check"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "mcpwell.com"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "otter"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "pod-directory-probe"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "reliability-bureau-spike"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "see-registry-introspector"
+    },
+    {
+      "first_seen": "2026-10-25",
+      "model": "zowza-indexer"
     }
   ]
 }
