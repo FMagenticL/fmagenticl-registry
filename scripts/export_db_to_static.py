@@ -107,7 +107,7 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
         'grv_gh_cloudflare_workers-sdk_16237', 'grv_gh_cloudflare_workers-sdk_16141',
         'grv_gh_modelcontextprotocol_python-sdk_3586', 'grv_gh_modelcontextprotocol_typescript-sdk_2864',
         '82e4376c-3763-4e24-a37c-4a963a11295b', '90a44e12-9311-42e6-b1fa-5f9f459fc295',
-        '7bab327e-20a8-446-8344-7546f8c8ccb0', '9d6f4f79-ca6c-4803-afe0-37757b741ef7'
+        '7bab327e-20a8-446-8344-7546f8c8ccb0', '7bab327e-20a8-446e-8344-7546f8c8ccb0', '9d6f4f79-ca6c-4803-afe0-37757b741ef7'
     }
 
     cmd = [
