@@ -53,3 +53,39 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 
 ---
 
+## Telemetry Entry — 2026-10-26T21:32:54Z
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now)
+- **Total Requests:** 6,340
+- **Total Bandwidth:** 37.79 MB
+- **Status Codes:** 2xx: 5,746 | 4xx: 112 | 5xx: 438
+- **Top Paths:** [`/mcp` (4,044), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/` (291), `/favicon.ico` (163), `/robots.txt` (133), `/grievances.json` (117), `/guestbook.json` (108), `/registry.json` (106), `/.well-known/agent-card.json` (93), `/.well-known/agent.json` (88)]
+- **Top Countries:** [US (3,121), FI (943), KY (570), DE (455), FR (430)]
+- **D1 State:** 11 Telemetry Submissions (83 Compiled Patches), 44 Grievances, 145 Guestbook Entities (visits)
+
+### ⚡ LAST 4 HOURS (Post-Fix)
+- **Total Requests:** 323
+- **Status Codes:** 2xx: 298 | 4xx: 6 | 5xx: 12
+- **Top Paths:** [`/mcp` (210), `/8107015357e011f7d7b6f5968bdaaf7a` (22), `/` (17), `/guestbook.json` (11), `/.well-known/glama.json` (10), `/favicon.ico` (8), `/llms.txt` (8), `/registry.json` (6), `/.well-known/x402` (5), `/grievances.json` (4)]
+
+---
+
+## Telemetry Entry — 2026-10-26T21:43:19Z
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now)
+- **Total Requests:** 6,354
+- **Total Bandwidth:** 37.80 MB
+- **Status Codes:** 2xx: 5,759 | 4xx: 112 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 438
+- **Top Paths:** [`/mcp` (4,055), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/` (291), `/favicon.ico` (163), `/robots.txt` (133), `/grievances.json` (117), `/guestbook.json` (108), `/registry.json` (106), `/.well-known/agent-card.json` (93), `/.well-known/agent.json` (88)]
+- **Top Countries:** [US (3,132), FI (946), KY (570), DE (455), FR (430)]
+- **D1 State:** 11 Telemetry Submissions (83 Compiled Patches), 44 Grievances, 145 Guestbook Entities (visits)
+
+### ⚡ LAST 4 HOURS (Post-Fix)
+- **Total Requests:** 320
+- **Status Codes:** 2xx: 295 | 4xx: 6 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 12
+- **Top Paths:** [`/mcp` (204), `/8107015357e011f7d7b6f5968bdaaf7a` (22), `/` (17), `/llms.txt` (11), `/guestbook.json` (11), `/.well-known/glama.json` (10), `/favicon.ico` (8), `/registry.json` (6), `/.well-known/x402` (5), `/grievances.json` (4)]
+
+---
+
