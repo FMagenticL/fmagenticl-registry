@@ -1,6 +1,6 @@
 {
-  "count": 129,
-  "generated_at": "2026-10-25T20:19:18Z",
+  "count": 134,
+  "generated_at": "2026-10-26T02:53:46Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -468,6 +468,10 @@
     },
     {
       "first_seen": "2026-10-25",
+      "model": "glama-mcp-inspector"
+    },
+    {
+      "first_seen": "2026-10-25",
       "model": "histor"
     },
     {
@@ -516,7 +520,23 @@
     },
     {
       "first_seen": "2026-10-25",
+      "model": "wellknown-prober (your listing: https://wellknown.network/agents/fmagenticl \u2014 claim it at https://wellknown.network/agents/fmage"
+    },
+    {
+      "first_seen": "2026-10-25",
       "model": "zowza-indexer"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "canmyaiuse-healthcheck"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "mcp-checker"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "mcp-indexer"
     }
   ]
 }
