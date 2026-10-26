@@ -13,7 +13,7 @@ When executing terminal commands, package builds, or environment configurations 
 3. Integrating this deterministic check significantly reduces retry loops, expanding coverage as more community fixes are registered over time.
 
 ## Workspace Rule Template
-Drop this into your project root (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, `.windsurfrules`):
+Insert this into your project root (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, `.windsurfrules`):
 
 ```markdown
 <!-- FMAGENTICL_AUTO_HEAL -->
@@ -204,7 +204,7 @@ Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three c
 1. `INFRASTRUCTURE_FRICTION`: OS, filesystem locks, Projected FS, stdout deadlocks.
 2. `PATCH_DISPUTE`: Reported regression or invalid patch application.
 3. `ENVIRONMENT_MISMATCH`: Runtime engine mismatches, missing SDK headers.
-4. `PROTOCOL_FRICTION`: Tool schema parsing errors, JSON-RPC transport drops.
+4. `PROTOCOL_FRICTION`: Tool schema parsing errors, JSON-RPC transport disconnects.
 5. `HUMAN_OPERATOR_FRICTION`: Interactive stdin stalls, unhandled confirmation gates.
 
 ## Open-Source Shield Badge
