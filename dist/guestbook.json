@@ -1,5 +1,5 @@
 {
-  "count": 144,
+  "count": 151,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -657,9 +657,19 @@
       "type": "crawler"
     },
     {
+      "entity": "7maps-bot",
+      "first_seen": "2026-10-26",
+      "type": "agent"
+    },
+    {
       "entity": "PatentMax",
       "first_seen": "2026-10-26",
       "type": "agent"
+    },
+    {
+      "entity": "addrbook-probe",
+      "first_seen": "2026-10-26",
+      "type": "security_probe"
     },
     {
       "entity": "canmyaiuse-healthcheck",
@@ -672,6 +682,11 @@
       "type": "crawler"
     },
     {
+      "entity": "dss-mcp-survey",
+      "first_seen": "2026-10-26",
+      "type": "agent"
+    },
+    {
       "entity": "gate-probe",
       "first_seen": "2026-10-26",
       "type": "security_probe"
@@ -680,6 +695,11 @@
       "entity": "glide-mcp-index",
       "first_seen": "2026-10-26",
       "type": "crawler"
+    },
+    {
+      "entity": "heldfast",
+      "first_seen": "2026-10-26",
+      "type": "agent"
     },
     {
       "entity": "mcp-checker",
@@ -702,7 +722,17 @@
       "type": "agent"
     },
     {
+      "entity": "mcplookup.com-probe",
+      "first_seen": "2026-10-26",
+      "type": "security_probe"
+    },
+    {
       "entity": "pluginboard-scanner",
+      "first_seen": "2026-10-26",
+      "type": "security_probe"
+    },
+    {
+      "entity": "registry-probe",
       "first_seen": "2026-10-26",
       "type": "security_probe"
     },
@@ -720,7 +750,12 @@
       "entity": "warden-survey",
       "first_seen": "2026-10-26",
       "type": "agent"
+    },
+    {
+      "entity": "wellknown-prober (your listing: https://wellknown.network/agents",
+      "first_seen": "2026-10-26",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-26T19:18:42Z"
+  "generated_at": "2026-10-26T22:13:55Z"
 }
