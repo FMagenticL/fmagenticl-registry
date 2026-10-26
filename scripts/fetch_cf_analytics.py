@@ -18,8 +18,31 @@ DAILY_LOG_PATH = REPO_ROOT / "daily_telemetry.md"
 GRAPHQL_ENDPOINT = "https://api.cloudflare.com/client/v4/graphql"
 
 
-def build_query(account_tag: str, host: str, start_iso: str, end_iso: str) -> str:
-    host_filter = f'clientRequestHTTPHost: "{host}"' if host else ""
+def resolve_token() -> str:
+    token = os.environ.get("CLOUDFLARE_API_TOKEN") or os.environ.get("CF_API_TOKEN")
+    if token:
+        return token.strip()
+
+    # Automatic local fallback: read from Downloads/cf.pdf or Desktop/cf.pdf
+    pdf_candidates = [
+        Path.home() / "Downloads" / "cf.pdf",
+        Path.home() / "Desktop" / "cf.pdf",
+    ]
+    for p in pdf_candidates:
+        if p.exists():
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(str(p))
+                txt = "".join(page.extract_text() or "" for page in reader.pages)
+                clean = txt.strip().replace(" ", "").replace("\r", "").replace("\n", "")
+                if clean.startswith("cfut_") or clean.startswith("cfat_"):
+                    return clean
+            except Exception:
+                pass
+    return ""
+
+
+def build_query(account_tag: str, start_iso: str, end_iso: str) -> str:
     return f"""
 query {{
   viewer {{
@@ -29,12 +52,10 @@ query {{
         filter: {{
           datetime_geq: "{start_iso}"
           datetime_lt: "{end_iso}"
-          {host_filter}
         }}
       ) {{
         count
         sum {{
-          requests
           edgeResponseBytes
           visits
         }}
@@ -44,15 +65,12 @@ query {{
         filter: {{
           datetime_geq: "{start_iso}"
           datetime_lt: "{end_iso}"
-          {host_filter}
         }}
-        orderBy: [requests_DESC]
+        orderBy: [count_DESC]
       ) {{
+        count
         dimensions {{
           edgeResponseStatus
-        }}
-        sum {{
-          requests
         }}
       }}
       countries: httpRequestsAdaptiveGroups(
@@ -60,15 +78,12 @@ query {{
         filter: {{
           datetime_geq: "{start_iso}"
           datetime_lt: "{end_iso}"
-          {host_filter}
         }}
-        orderBy: [requests_DESC]
+        orderBy: [count_DESC]
       ) {{
+        count
         dimensions {{
           clientCountryName
-        }}
-        sum {{
-          requests
         }}
       }}
     }}
@@ -99,10 +114,10 @@ def execute_graphql(query: str, token: str) -> dict:
         return {"errors": [{"message": str(e)}]}
 
 
-def format_report(data: dict, start_iso: str, end_iso: str, host: str) -> str:
+def format_report(data: dict, start_iso: str, end_iso: str) -> str:
     accounts = data.get("data", {}).get("viewer", {}).get("accounts", [])
     if not accounts:
-        return "No analytics data returned for this account/hostname."
+        return "No analytics data returned for this account."
 
     account_data = accounts[0]
     totals_list = account_data.get("totals", [])
@@ -112,8 +127,8 @@ def format_report(data: dict, start_iso: str, end_iso: str, host: str) -> str:
     total_requests = 0
     total_bytes = 0
     if totals_list:
+        total_requests = totals_list[0].get("count", 0) or 0
         t_sum = totals_list[0].get("sum", {}) or {}
-        total_requests = t_sum.get("requests", 0) or 0
         total_bytes = t_sum.get("edgeResponseBytes", 0) or 0
 
     bandwidth_mb = total_bytes / (1024 * 1024)
@@ -127,7 +142,7 @@ def format_report(data: dict, start_iso: str, end_iso: str, host: str) -> str:
     for item in status_list:
         dims = item.get("dimensions", {}) or {}
         status = dims.get("edgeResponseStatus", 0)
-        reqs = item.get("sum", {}).get("requests", 0) or 0
+        reqs = item.get("count", 0) or 0
 
         if 200 <= status < 300:
             c_2xx += reqs
@@ -145,13 +160,12 @@ def format_report(data: dict, start_iso: str, end_iso: str, host: str) -> str:
         parts = []
         for c in country_list:
             c_name = c.get("dimensions", {}).get("clientCountryName") or "Unknown"
-            c_reqs = c.get("sum", {}).get("requests", 0) or 0
-            parts.append(f"{c_name} ({c_reqs})")
+            c_reqs = c.get("count", 0) or 0
+            parts.append(f"{c_name} ({c_reqs:,})")
         top_countries_str = ", ".join(parts) if parts else "None"
 
     report = (
         f"### 📊 FMagenticL Edge Telemetry (Last 24h)\n"
-        f"- **Host:** `{host}`\n"
         f"- **Window:** {start_iso} to {end_iso}\n"
         f"- **Total Requests:** {total_requests:,}\n"
         f"- **Total Bandwidth:** {bandwidth_mb:.2f} MB\n"
@@ -163,17 +177,21 @@ def format_report(data: dict, start_iso: str, end_iso: str, host: str) -> str:
 
 
 def main():
-    token = os.environ.get("CLOUDFLARE_API_TOKEN") or os.environ.get("CF_API_TOKEN")
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8")
+
+    token = resolve_token()
     account_id = (
         os.environ.get("CLOUDFLARE_ACCOUNT_ID")
         or os.environ.get("CF_ACCOUNT_ID")
         or "f83dbbaa261d9ceac1f9f666fa9bd07b"
     )
-    host = os.environ.get("CLOUDFLARE_HOST", "fmagenticl-registry.pages.dev").strip()
 
     if not token:
         print(
-            "ERROR: CLOUDFLARE_API_TOKEN is not set in the environment.\n\n"
+            "ERROR: CLOUDFLARE_API_TOKEN is not set in the environment, and cf.pdf was not found in Downloads or Desktop.\n\n"
             "To set it in PowerShell:\n"
             '  $env:CLOUDFLARE_API_TOKEN = "your_token_here"\n'
             f'  $env:CLOUDFLARE_ACCOUNT_ID = "{account_id}"\n'
@@ -187,7 +205,7 @@ def main():
     start_iso = start.strftime("%Y-%m-%dT%H:%M:%SZ")
     end_iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    query = build_query(account_id, host, start_iso, end_iso)
+    query = build_query(account_id, start_iso, end_iso)
     result = execute_graphql(query, token)
 
     errors = result.get("errors")
@@ -196,7 +214,7 @@ def main():
         print(json.dumps(errors, indent=2), file=sys.stderr)
         sys.exit(1)
 
-    report_markdown = format_report(result, start_iso, end_iso, host)
+    report_markdown = format_report(result, start_iso, end_iso)
     print(report_markdown)
 
     # Append to daily_telemetry.md
