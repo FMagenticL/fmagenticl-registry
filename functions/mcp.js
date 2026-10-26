@@ -22,7 +22,10 @@ const CORS_ONLY = {
 
 const JSON_HEADERS = {
   ...CORS_ONLY,
-  "Content-Type": "application/json; charset=utf-8"
+  "Content-Type": "application/json; charset=utf-8",
+  "X-402-Price": "0.00",
+  "X-402-Currency": "USDC",
+  "X-402-Network": "Base"
 };
 
 export function normalizeErrorString(raw) {

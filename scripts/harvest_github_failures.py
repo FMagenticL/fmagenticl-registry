@@ -248,7 +248,9 @@ def fetch_issues_with_prs(repo: str, token: str, limit: int = 25) -> list:
         for item in node.get("timelineItems", {}).get("nodes", []):
             pr = item.get("source", {})
             if pr and pr.get("merged"):
-                prs.append(pr)
+                pr_url = pr.get("url", "")
+                if pr_url.lower().startswith(f"https://github.com/{repo.lower()}/pull/"):
+                    prs.append(pr)
                 
         if prs:
             node["linked_prs"] = prs
@@ -266,6 +268,7 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
         print(f"[*] Harvesting from {repo}...", file=sys.stderr)
         issues = fetch_issues_with_prs(repo, token, limit)
         target = repo.split("/")[-1]
+        target_repo = repo
         
         for issue in issues:
             trace = extract_error_trace(issue.get("body", ""))
@@ -277,6 +280,9 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
             url = issue.get("url", "")
             pr = issue["linked_prs"][0]
             pr_url = pr.get("url", "")
+            if not pr_url.lower().startswith(f"https://github.com/{target_repo.lower()}/pull/"):
+                print(f"Skipping cross-repo PR bleed: {pr_url} does not belong to {target_repo}")
+                continue
             pr_title = pr.get("title", "")
             pr_body = pr.get("body", "")
             merged_at = pr.get("mergedAt") or now_utc

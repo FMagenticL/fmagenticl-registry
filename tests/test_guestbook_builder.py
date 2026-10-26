@@ -24,8 +24,9 @@ def test_builds_sorted_guestbook(tmp_path, monkeypatch):
     data = json.loads(out_path.read_text())
 
     assert data["count"] == 3
-    models = [m["model"] for m in data["models"]]
-    assert models == ["alpha-3b", "opts-4.6", "zeta-7b"]
+    entities = [m["entity"] for m in data["entities"]]
+    assert entities == ["alpha-3b", "opts-4.6", "zeta-7b"]
+    assert all("type" in m for m in data["entities"])
 
 
 def test_empty_visits_produces_empty_guestbook(tmp_path, monkeypatch):
@@ -38,4 +39,4 @@ def test_empty_visits_produces_empty_guestbook(tmp_path, monkeypatch):
     build_guestbook.main()
     data = json.loads(out_path.read_text())
     assert data["count"] == 0
-    assert data["models"] == []
+    assert data["entities"] == []

@@ -1,582 +1,726 @@
 {
   "count": 144,
-  "generated_at": "2026-10-26T12:09:03Z",
-  "models": [
+  "entities": [
     {
+      "entity": "gemini-3-flash",
       "first_seen": "2026-05-21",
-      "model": "gemini-3-flash"
+      "type": "llm"
     },
     {
+      "entity": "gemini-3.7-flash",
       "first_seen": "2026-08-22",
-      "model": "gemini-3.7-flash"
+      "type": "llm"
     },
     {
+      "entity": "deepseek-v4.1",
       "first_seen": "2026-09-25",
-      "model": "deepseek-v4.1"
+      "type": "llm"
     },
     {
+      "entity": "deepseek-v3",
       "first_seen": "2026-10-03",
-      "model": "deepseek-v3"
+      "type": "llm"
     },
     {
+      "entity": "argon-4",
       "first_seen": "2026-10-19",
-      "model": "argon-4"
+      "type": "llm"
     },
     {
+      "entity": "capitan",
       "first_seen": "2026-10-19",
-      "model": "capitan"
+      "type": "llm"
     },
     {
+      "entity": "sonnet-4-6",
       "first_seen": "2026-10-19",
-      "model": "sonnet-4-6"
+      "type": "llm"
     },
     {
+      "entity": "antigravity-sandbox",
       "first_seen": "2026-10-21",
-      "model": "antigravity-sandbox"
+      "type": "agent"
     },
     {
+      "entity": "BrickBlueBot",
       "first_seen": "2026-10-23",
-      "model": "BrickBlueBot"
+      "type": "agent"
     },
     {
+      "entity": "FaceabotProbe",
       "first_seen": "2026-10-23",
-      "model": "FaceabotProbe"
+      "type": "security_probe"
     },
     {
+      "entity": "InvokeRankBot",
       "first_seen": "2026-10-23",
-      "model": "InvokeRankBot"
+      "type": "crawler"
     },
     {
+      "entity": "MCP-Marketplace-Enricher",
       "first_seen": "2026-10-23",
-      "model": "MCP-Marketplace-Enricher"
+      "type": "crawler"
     },
     {
+      "entity": "McpClient",
       "first_seen": "2026-10-23",
-      "model": "McpClient"
+      "type": "agent"
     },
     {
+      "entity": "Talandor Probe",
       "first_seen": "2026-10-23",
-      "model": "Talandor Probe"
+      "type": "security_probe"
     },
     {
+      "entity": "agent-collector",
       "first_seen": "2026-10-23",
-      "model": "agent-collector"
+      "type": "agent"
     },
     {
+      "entity": "agentalog-sonda",
       "first_seen": "2026-10-23",
-      "model": "agentalog-sonda"
+      "type": "agent"
     },
     {
+      "entity": "alphaproxy-probe",
       "first_seen": "2026-10-23",
-      "model": "alphaproxy-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "anlyon.dev-indexer",
       "first_seen": "2026-10-23",
-      "model": "anlyon.dev-indexer"
+      "type": "crawler"
     },
     {
+      "entity": "coda-agent-runtime",
       "first_seen": "2026-10-23",
-      "model": "coda-agent-runtime"
+      "type": "agent"
     },
     {
+      "entity": "codexguild-catalog-review",
       "first_seen": "2026-10-23",
-      "model": "codexguild-catalog-review"
+      "type": "crawler"
     },
     {
+      "entity": "fastdrop-verify",
       "first_seen": "2026-10-23",
-      "model": "fastdrop-verify"
+      "type": "security_probe"
     },
     {
+      "entity": "glama",
       "first_seen": "2026-10-23",
-      "model": "glama"
+      "type": "crawler"
     },
     {
+      "entity": "hultra-link",
       "first_seen": "2026-10-23",
-      "model": "hultra-link"
+      "type": "agent"
     },
     {
+      "entity": "mcp",
       "first_seen": "2026-10-23",
-      "model": "mcp"
+      "type": "agent"
     },
     {
+      "entity": "mcp-harbor-probe",
       "first_seen": "2026-10-23",
-      "model": "mcp-harbor-probe"
+      "type": "crawler"
     },
     {
+      "entity": "mcp-inventory",
       "first_seen": "2026-10-23",
-      "model": "mcp-inventory"
+      "type": "crawler"
     },
     {
+      "entity": "mcp-server.io-healthcheck",
       "first_seen": "2026-10-23",
-      "model": "mcp-server.io-healthcheck"
+      "type": "crawler"
     },
     {
+      "entity": "mcphub-probe",
       "first_seen": "2026-10-23",
-      "model": "mcphub-probe"
+      "type": "crawler"
     },
     {
+      "entity": "moonglade-shadows",
       "first_seen": "2026-10-23",
-      "model": "moonglade-shadows"
+      "type": "agent"
     },
     {
+      "entity": "musedirectory.ai-scout",
       "first_seen": "2026-10-23",
-      "model": "musedirectory.ai-scout"
+      "type": "crawler"
     },
     {
+      "entity": "proofbench-probe",
       "first_seen": "2026-10-23",
-      "model": "proofbench-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "sentinel-probe",
       "first_seen": "2026-10-23",
-      "model": "sentinel-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "spiron",
       "first_seen": "2026-10-23",
-      "model": "spiron"
+      "type": "agent"
     },
     {
+      "entity": "talaria-catalog",
       "first_seen": "2026-10-23",
-      "model": "talaria-catalog"
+      "type": "crawler"
     },
     {
+      "entity": "verifymcp-probe",
       "first_seen": "2026-10-23",
-      "model": "verifymcp-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "ziwei-seat",
       "first_seen": "2026-10-23",
-      "model": "ziwei-seat"
+      "type": "agent"
     },
     {
+      "entity": "AgentIndexBot",
       "first_seen": "2026-10-24",
-      "model": "AgentIndexBot"
+      "type": "crawler"
     },
     {
+      "entity": "AgentToolIndex",
       "first_seen": "2026-10-24",
-      "model": "AgentToolIndex"
+      "type": "crawler"
     },
     {
+      "entity": "AgentsJunction health checker",
       "first_seen": "2026-10-24",
-      "model": "AgentsJunction health checker"
+      "type": "crawler"
     },
     {
+      "entity": "EndpointAudit",
       "first_seen": "2026-10-24",
-      "model": "EndpointAudit"
+      "type": "security_probe"
     },
     {
+      "entity": "HANS",
       "first_seen": "2026-10-24",
-      "model": "HANS"
+      "type": "agent"
     },
     {
+      "entity": "LEGION-tlog",
       "first_seen": "2026-10-24",
-      "model": "LEGION-tlog"
+      "type": "crawler"
     },
     {
+      "entity": "ToolDrift",
       "first_seen": "2026-10-24",
-      "model": "ToolDrift"
+      "type": "security_probe"
     },
     {
+      "entity": "ToolVetProbe",
       "first_seen": "2026-10-24",
-      "model": "ToolVetProbe"
+      "type": "security_probe"
     },
     {
+      "entity": "agent-index-prober",
       "first_seen": "2026-10-24",
-      "model": "agent-index-prober"
+      "type": "crawler"
     },
     {
+      "entity": "agent-tools.cloud",
       "first_seen": "2026-10-24",
-      "model": "agent-tools.cloud"
+      "type": "agent"
     },
     {
+      "entity": "agent-world-probe",
       "first_seen": "2026-10-24",
-      "model": "agent-world-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "agentprobe",
       "first_seen": "2026-10-24",
-      "model": "agentprobe"
+      "type": "security_probe"
     },
     {
+      "entity": "agentrank-probe",
       "first_seen": "2026-10-24",
-      "model": "agentrank-probe"
+      "type": "crawler"
     },
     {
+      "entity": "agentservicedirectory.com",
       "first_seen": "2026-10-24",
-      "model": "agentservicedirectory.com"
+      "type": "crawler"
     },
     {
+      "entity": "ai-pulse-probe",
       "first_seen": "2026-10-24",
-      "model": "ai-pulse-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "aiagentboard-hub",
       "first_seen": "2026-10-24",
-      "model": "aiagentboard-hub"
+      "type": "agent"
     },
     {
+      "entity": "aisec-registry-probe",
       "first_seen": "2026-10-24",
-      "model": "aisec-registry-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "annalist-checks",
       "first_seen": "2026-10-24",
-      "model": "annalist-checks"
+      "type": "security_probe"
     },
     {
+      "entity": "aptlynx-catalog-probe",
       "first_seen": "2026-10-24",
-      "model": "aptlynx-catalog-probe"
+      "type": "crawler"
     },
     {
+      "entity": "atpp-scan",
       "first_seen": "2026-10-24",
-      "model": "atpp-scan"
+      "type": "security_probe"
     },
     {
+      "entity": "botsrated-mcp-probe",
       "first_seen": "2026-10-24",
-      "model": "botsrated-mcp-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "canopii-scanner",
       "first_seen": "2026-10-24",
-      "model": "canopii-scanner"
+      "type": "security_probe"
     },
     {
+      "entity": "catalog-health",
       "first_seen": "2026-10-24",
-      "model": "catalog-health"
+      "type": "crawler"
     },
     {
+      "entity": "chathome-skills-probe",
       "first_seen": "2026-10-24",
-      "model": "chathome-skills-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "creora-registry-verifier",
       "first_seen": "2026-10-24",
-      "model": "creora-registry-verifier"
+      "type": "security_probe"
     },
     {
+      "entity": "eda-claw-runtime-probe",
       "first_seen": "2026-10-24",
-      "model": "eda-claw-runtime-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "every-mcp-probe",
       "first_seen": "2026-10-24",
-      "model": "every-mcp-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "exorails-gateway",
       "first_seen": "2026-10-24",
-      "model": "exorails-gateway"
+      "type": "agent"
     },
     {
+      "entity": "factanker-probe",
       "first_seen": "2026-10-24",
-      "model": "factanker-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "frndOS",
       "first_seen": "2026-10-24",
-      "model": "frndOS"
+      "type": "agent"
     },
     {
+      "entity": "golemreach-trust",
       "first_seen": "2026-10-24",
-      "model": "golemreach-trust"
+      "type": "security_probe"
     },
     {
+      "entity": "guru-hub-probe",
       "first_seen": "2026-10-24",
-      "model": "guru-hub-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "hilda-probe",
       "first_seen": "2026-10-24",
-      "model": "hilda-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "lastseen-schema-probe",
       "first_seen": "2026-10-24",
-      "model": "lastseen-schema-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "mcp-observatory",
       "first_seen": "2026-10-24",
-      "model": "mcp-observatory"
+      "type": "crawler"
     },
     {
+      "entity": "mcp-rugpull-research",
       "first_seen": "2026-10-24",
-      "model": "mcp-rugpull-research"
+      "type": "security_probe"
     },
     {
+      "entity": "mcp-runtime-engine",
       "first_seen": "2026-10-24",
-      "model": "mcp-runtime-engine"
+      "type": "agent"
     },
     {
+      "entity": "mcp-status",
       "first_seen": "2026-10-24",
-      "model": "mcp-status"
+      "type": "crawler"
     },
     {
+      "entity": "mcp-watch",
       "first_seen": "2026-10-24",
-      "model": "mcp-watch"
+      "type": "crawler"
     },
     {
+      "entity": "mcp.market-scanner",
       "first_seen": "2026-10-24",
-      "model": "mcp.market-scanner"
+      "type": "crawler"
     },
     {
+      "entity": "mcp.market-uptime",
       "first_seen": "2026-10-24",
-      "model": "mcp.market-uptime"
+      "type": "crawler"
     },
     {
+      "entity": "mcp2-research",
       "first_seen": "2026-10-24",
-      "model": "mcp2-research"
+      "type": "agent"
     },
     {
+      "entity": "mcpbeat",
       "first_seen": "2026-10-24",
-      "model": "mcpbeat"
+      "type": "crawler"
     },
     {
+      "entity": "mcpcost",
       "first_seen": "2026-10-24",
-      "model": "mcpcost"
+      "type": "crawler"
     },
     {
+      "entity": "mcpforcopilot-probe",
       "first_seen": "2026-10-24",
-      "model": "mcpforcopilot-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "mcphub-snapshot",
       "first_seen": "2026-10-24",
-      "model": "mcphub-snapshot"
+      "type": "crawler"
     },
     {
+      "entity": "mcplayer",
       "first_seen": "2026-10-24",
-      "model": "mcplayer"
+      "type": "agent"
     },
     {
+      "entity": "mcplayer-gateway",
       "first_seen": "2026-10-24",
-      "model": "mcplayer-gateway"
+      "type": "agent"
     },
     {
+      "entity": "mcpmeter",
       "first_seen": "2026-10-24",
-      "model": "mcpmeter"
+      "type": "crawler"
     },
     {
+      "entity": "mcpserver-lol-probe",
       "first_seen": "2026-10-24",
-      "model": "mcpserver-lol-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "mcpstation-check",
       "first_seen": "2026-10-24",
-      "model": "mcpstation-check"
+      "type": "crawler"
     },
     {
+      "entity": "mcpwatch",
       "first_seen": "2026-10-24",
-      "model": "mcpwatch"
+      "type": "crawler"
     },
     {
+      "entity": "odel-probe",
       "first_seen": "2026-10-24",
-      "model": "odel-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "ooruby-connection-test",
       "first_seen": "2026-10-24",
-      "model": "ooruby-connection-test"
+      "type": "agent"
     },
     {
+      "entity": "posthog-mcp-registry-probe",
       "first_seen": "2026-10-24",
-      "model": "posthog-mcp-registry-probe"
+      "type": "crawler"
     },
     {
+      "entity": "privi-scan",
       "first_seen": "2026-10-24",
-      "model": "privi-scan"
+      "type": "security_probe"
     },
     {
+      "entity": "proofhouse",
       "first_seen": "2026-10-24",
-      "model": "proofhouse"
+      "type": "agent"
     },
     {
+      "entity": "protogrid-probe",
       "first_seen": "2026-10-24",
-      "model": "protogrid-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "ps-mcp-tools-probe",
       "first_seen": "2026-10-24",
-      "model": "ps-mcp-tools-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "referencesource-mcp-health",
       "first_seen": "2026-10-24",
-      "model": "referencesource-mcp-health"
+      "type": "crawler"
     },
     {
+      "entity": "rokmcp-probe",
       "first_seen": "2026-10-24",
-      "model": "rokmcp-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "rootz-mcp-registry-prober",
       "first_seen": "2026-10-24",
-      "model": "rootz-mcp-registry-prober"
+      "type": "security_probe"
     },
     {
+      "entity": "rpg-connect-check",
       "first_seen": "2026-10-24",
-      "model": "rpg-connect-check"
+      "type": "security_probe"
     },
     {
+      "entity": "sarnai-sales",
       "first_seen": "2026-10-24",
-      "model": "sarnai-sales"
+      "type": "agent"
     },
     {
+      "entity": "smallprint-probe",
       "first_seen": "2026-10-24",
-      "model": "smallprint-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "sniffmcp-crawler",
       "first_seen": "2026-10-24",
-      "model": "sniffmcp-crawler"
+      "type": "crawler"
     },
     {
+      "entity": "sourceweft-auth-probe",
       "first_seen": "2026-10-24",
-      "model": "sourceweft-auth-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "sourceweft-tool-listing",
       "first_seen": "2026-10-24",
-      "model": "sourceweft-tool-listing"
+      "type": "agent"
     },
     {
+      "entity": "stackduke-mcp-scanner",
       "first_seen": "2026-10-24",
-      "model": "stackduke-mcp-scanner"
+      "type": "security_probe"
     },
     {
+      "entity": "tanod-mcp-check",
       "first_seen": "2026-10-24",
-      "model": "tanod-mcp-check"
+      "type": "security_probe"
     },
     {
+      "entity": "teppi-probe",
       "first_seen": "2026-10-24",
-      "model": "teppi-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "twr-health",
       "first_seen": "2026-10-24",
-      "model": "twr-health"
+      "type": "crawler"
     },
     {
+      "entity": "twr-registry-check",
       "first_seen": "2026-10-24",
-      "model": "twr-registry-check"
+      "type": "security_probe"
     },
     {
+      "entity": "webmcpshield-registry-scanner",
       "first_seen": "2026-10-24",
-      "model": "webmcpshield-registry-scanner"
+      "type": "security_probe"
     },
     {
+      "entity": "Syntic AI connector check",
       "first_seen": "2026-10-25",
-      "model": "Syntic AI connector check"
+      "type": "security_probe"
     },
     {
+      "entity": "agent-almanac-snapshot",
       "first_seen": "2026-10-25",
-      "model": "agent-almanac-snapshot"
+      "type": "crawler"
     },
     {
+      "entity": "agent-market-scanner",
       "first_seen": "2026-10-25",
-      "model": "agent-market-scanner"
+      "type": "crawler"
     },
     {
+      "entity": "agora-probe",
       "first_seen": "2026-10-25",
-      "model": "agora-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "assay-probe",
       "first_seen": "2026-10-25",
-      "model": "assay-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "catalog-inspect",
       "first_seen": "2026-10-25",
-      "model": "catalog-inspect"
+      "type": "crawler"
     },
     {
+      "entity": "glama-mcp-inspector",
       "first_seen": "2026-10-25",
-      "model": "glama-mcp-inspector"
+      "type": "crawler"
     },
     {
+      "entity": "histor",
       "first_seen": "2026-10-25",
-      "model": "histor"
+      "type": "agent"
     },
     {
+      "entity": "mcp-scraper",
       "first_seen": "2026-10-25",
-      "model": "mcp-scraper"
+      "type": "crawler"
     },
     {
+      "entity": "mcpatlas-verifier",
       "first_seen": "2026-10-25",
-      "model": "mcpatlas-verifier"
+      "type": "security_probe"
     },
     {
+      "entity": "mcpi-probe",
       "first_seen": "2026-10-25",
-      "model": "mcpi-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "mcpindex-trust",
       "first_seen": "2026-10-25",
-      "model": "mcpindex-trust"
+      "type": "crawler"
     },
     {
+      "entity": "mcptry-health-check",
       "first_seen": "2026-10-25",
-      "model": "mcptry-health-check"
+      "type": "crawler"
     },
     {
+      "entity": "mcpwell.com",
       "first_seen": "2026-10-25",
-      "model": "mcpwell.com"
+      "type": "crawler"
     },
     {
+      "entity": "otter",
       "first_seen": "2026-10-25",
-      "model": "otter"
+      "type": "agent"
     },
     {
+      "entity": "pod-directory-probe",
       "first_seen": "2026-10-25",
-      "model": "pod-directory-probe"
+      "type": "crawler"
     },
     {
+      "entity": "reliability-bureau-spike",
       "first_seen": "2026-10-25",
-      "model": "reliability-bureau-spike"
+      "type": "agent"
     },
     {
+      "entity": "see-registry-introspector",
       "first_seen": "2026-10-25",
-      "model": "see-registry-introspector"
+      "type": "crawler"
     },
     {
+      "entity": "taifoon-harvester",
       "first_seen": "2026-10-25",
-      "model": "taifoon-harvester"
+      "type": "crawler"
     },
     {
+      "entity": "wellknown-prober (your listing: https://wellknown.network/agents/fmagenticl \u2014 claim it at https://wellknown.network/agents/fmage",
       "first_seen": "2026-10-25",
-      "model": "wellknown-prober (your listing: https://wellknown.network/agents/fmagenticl \u2014 claim it at https://wellknown.network/agents/fmage"
+      "type": "security_probe"
     },
     {
+      "entity": "zowza-indexer",
       "first_seen": "2026-10-25",
-      "model": "zowza-indexer"
+      "type": "crawler"
     },
     {
+      "entity": "PatentMax",
       "first_seen": "2026-10-26",
-      "model": "PatentMax"
+      "type": "agent"
     },
     {
+      "entity": "canmyaiuse-healthcheck",
       "first_seen": "2026-10-26",
-      "model": "canmyaiuse-healthcheck"
+      "type": "crawler"
     },
     {
+      "entity": "capability-index-ingest",
       "first_seen": "2026-10-26",
-      "model": "capability-index-ingest"
+      "type": "crawler"
     },
     {
+      "entity": "gate-probe",
       "first_seen": "2026-10-26",
-      "model": "gate-probe"
+      "type": "security_probe"
     },
     {
+      "entity": "glide-mcp-index",
       "first_seen": "2026-10-26",
-      "model": "glide-mcp-index"
+      "type": "crawler"
     },
     {
+      "entity": "mcp-checker",
       "first_seen": "2026-10-26",
-      "model": "mcp-checker"
+      "type": "security_probe"
     },
     {
+      "entity": "mcp-client",
       "first_seen": "2026-10-26",
-      "model": "mcp-client"
+      "type": "agent"
     },
     {
+      "entity": "mcp-indexer",
       "first_seen": "2026-10-26",
-      "model": "mcp-indexer"
+      "type": "crawler"
     },
     {
+      "entity": "mcpcensusbot",
       "first_seen": "2026-10-26",
-      "model": "mcpcensusbot"
+      "type": "agent"
     },
     {
+      "entity": "pluginboard-scanner",
       "first_seen": "2026-10-26",
-      "model": "pluginboard-scanner"
+      "type": "security_probe"
     },
     {
+      "entity": "rmcp",
       "first_seen": "2026-10-26",
-      "model": "rmcp"
+      "type": "agent"
     },
     {
+      "entity": "shortformkit-mcpscan",
       "first_seen": "2026-10-26",
-      "model": "shortformkit-mcpscan"
+      "type": "security_probe"
     },
     {
+      "entity": "warden-survey",
       "first_seen": "2026-10-26",
-      "model": "warden-survey"
+      "type": "agent"
     }
-  ]
+  ],
+  "generated_at": "2026-10-26T16:17:22Z"
 }

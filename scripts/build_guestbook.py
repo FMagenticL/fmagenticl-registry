@@ -3,10 +3,12 @@ Build dist/guestbook.json from the D1 visits table and static repository assets.
 
 Reads via wrangler d1 execute --json when authenticated, writes sorted JSON.
 Unions submitted_by / attribution from remote D1, dist/grievances.json, and patches/*.json.
+Upgrades guestbook entries with semantic entity types: llm, crawler, security_probe, agent.
 """
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -28,6 +30,17 @@ NORM_MAP = {
     "DeepSeek-V3-Production-Probe": "deepseek-v3",
     "DeepSeek": "deepseek-v3",
 }
+
+
+def classify_entity(name: str) -> str:
+    n = name.lower()
+    if re.search(r"deepseek|claude|gemini|gpt|argon|sonnet|qwen|capitan", n):
+        return "llm"
+    if re.search(r"catalog|directory|indexer|index|scout|enricher|glama|market|harbor|inventory|mcphub|almanac|scraper|harvester|sniffmcp|introspector|rank|posthog|observatory|status|uptime|health|beat|watch|meter|cost|station|tlog|mcpwell", n):
+        return "crawler"
+    if re.search(r"probe|scan|sentinel|verify|verifier|check|rugpull|aisec|shield|audit|trust|tooldrift|toolvet|assay", n):
+        return "security_probe"
+    return "agent"
 
 
 def query_visits() -> list[dict]:
@@ -86,10 +99,11 @@ def get_local_fallback_models() -> list[dict]:
     if OUT_PATH.exists():
         try:
             prev = json.loads(OUT_PATH.read_text(encoding="utf-8"))
-            for m in prev.get("models", []):
-                name = m.get("model")
+            existing_rows = prev.get("entities") or prev.get("models", [])
+            for r in existing_rows:
+                name = r.get("entity") or r.get("model")
                 if name and name not in ("anonymous", "healthcheck-probe"):
-                    fallback_models[name] = m.get("first_seen", "")
+                    fallback_models[name] = r.get("first_seen", "")
         except Exception:
             pass
 
@@ -135,17 +149,24 @@ def main() -> None:
         if model not in normalized or (first_seen and (not normalized[model] or first_seen < normalized[model])):
             normalized[model] = first_seen
 
-    # Ensure deterministic sort order (earliest first, then alphabetical by model)
+    # Ensure deterministic sort order (earliest first, then alphabetical by model/entity)
     sorted_items = sorted(normalized.items(), key=lambda item: (item[1], item[0]))
-    models = [{"model": m, "first_seen": fs} for m, fs in sorted_items]
+    entities = [
+        {
+            "entity": m,
+            "type": classify_entity(m),
+            "first_seen": fs
+        }
+        for m, fs in sorted_items
+    ]
     out = {
-        "count": len(models),
+        "count": len(entities),
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "models": models,
+        "entities": entities,
     }
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(f"Wrote {len(models)} models to {OUT_PATH}")
+    print(f"Wrote {len(entities)} entities to {OUT_PATH}")
 
 
 if __name__ == "__main__":

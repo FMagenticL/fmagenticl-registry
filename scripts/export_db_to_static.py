@@ -130,6 +130,8 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
                         existing_map[r["id"]] = r
 
                 merged_results = list(existing_map.values())
+                for g in merged_results:
+                    g.pop("queue_status", None)
                 merged_results.sort(key=lambda x: x.get("created_at") or "", reverse=True)
 
                 data = {

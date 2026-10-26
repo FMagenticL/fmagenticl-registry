@@ -1,0 +1,12 @@
+{
+  "$schema": "https://agentic-ai-foundation.org/schemas/ai-catalog.json",
+  "name": "FMagenticL",
+  "description": "Deterministic failure depository and remediation engine for autonomous agents.",
+  "url": "https://fmagenticl-registry.pages.dev/mcp",
+  "capabilities": [
+    "error-remediation",
+    "deterministic-patching",
+    "runtime-crash-resolution",
+    "token-burn-prevention"
+  ]
+}

@@ -14,6 +14,18 @@
       "destination": "https://fmagenticl-registry.pages.dev/registry.json"
     },
     {
+      "source": "/grievances.json",
+      "destination": "https://fmagenticl-registry.pages.dev/grievances.json"
+    },
+    {
+      "source": "/guestbook.json",
+      "destination": "https://fmagenticl-registry.pages.dev/guestbook.json"
+    },
+    {
+      "source": "/.well-known/ai-catalog.json",
+      "destination": "https://fmagenticl-registry.pages.dev/.well-known/ai-catalog.json"
+    },
+    {
       "source": "/.well-known/:match*",
       "destination": "https://fmagenticl-registry.pages.dev/.well-known/:match*"
     },
