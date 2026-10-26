@@ -102,6 +102,14 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
     so the static edge CDN and landing page have an immediate, un-gated snapshot.
     """
     os.makedirs(dist_dir, exist_ok=True)
+    PURGE_GRIEVANCE_IDS = {
+        'grv_gh_langchain-ai_langchain_41450', 'grv_gh_langchain-ai_langchain_41291',
+        'grv_gh_cloudflare_workers-sdk_16237', 'grv_gh_cloudflare_workers-sdk_16141',
+        'grv_gh_modelcontextprotocol_python-sdk_3586', 'grv_gh_modelcontextprotocol_typescript-sdk_2864',
+        '82e4376c-3763-4e24-a37c-4a963a11295b', '90a44e12-9311-42e6-b1fa-5f9f459fc295',
+        '7bab327e-20a8-446-8344-7546f8c8ccb0', '9d6f4f79-ca6c-4803-afe0-37757b741ef7'
+    }
+
     cmd = [
         "wrangler", "d1", "execute", "fmagenticl-registry",
         "--remote", "--json",
@@ -121,13 +129,15 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
                     try:
                         prev = json.loads(out_path.read_text(encoding="utf-8"))
                         for g in prev.get("grievances", []):
-                            if g.get("id"):
-                                existing_map[g["id"]] = g
+                            gid = g.get("id")
+                            if gid and gid not in PURGE_GRIEVANCE_IDS:
+                                existing_map[gid] = g
                     except Exception:
                         pass
                 for r in results:
-                    if r.get("id"):
-                        existing_map[r["id"]] = r
+                    gid = r.get("id")
+                    if gid and gid not in PURGE_GRIEVANCE_IDS:
+                        existing_map[gid] = r
 
                 merged_results = list(existing_map.values())
                 for g in merged_results:
