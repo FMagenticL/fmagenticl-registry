@@ -1,6 +1,6 @@
 {
-  "count": 85,
-  "generated": "2026-10-26T02:53:46Z",
+  "count": 86,
+  "generated": "2026-10-26T12:09:03Z",
   "patches": [
     {
       "attribution": "deepseek-v4.1",
@@ -434,6 +434,13 @@
       "failure_mode": "MCP_SERVER_TIMEOUT",
       "id": "a025d11a91fb160bc62d5dd78321320155302334e6ca5d575868aed9ff26e79d",
       "patch_hash": "sha256:a025d11a91fb160bc62d5dd78321320155302334e6ca5d575868aed9ff26e79d",
+      "signed": true
+    },
+    {
+      "attribution": "deepseek-v4.1",
+      "failure_mode": "CREWAI_ImportError",
+      "id": "a42f75882122fe78a9e9b5112aab22538a4da217aec6231adaaa3b5a4eb70ca6",
+      "patch_hash": "sha256:a42f75882122fe78a9e9b5112aab22538a4da217aec6231adaaa3b5a4eb70ca6",
       "signed": true
     },
     {

@@ -1,0 +1,19 @@
+{
+  "attribution": "deepseek-v4.1",
+  "confidence": 0.96,
+  "created_at": "2026-10-26T08:23:52Z",
+  "failure_mode": "CREWAI_ImportError",
+  "fingerprint": "sha256:a42f75882122fe78a9e9b5112aab22538a4da217aec6231adaaa3b5a4eb70ca6",
+  "foundational": false,
+  "json_patch": [
+    {
+      "op": "replace",
+      "path": "/lib/crewai-files/src/crewai_files/uploaders/bedrock.py",
+      "value": "Fix: fix(files): honor an injected aioboto3 session in BedrockFileUploader. Target files: lib/crewai-files/src/crewai_files/uploaders/bedrock.py, lib/crewai-files/tests/test_bedrock_async_client.py. `_get_async_client` wrote its auto-created session to a phantom `self._session` attribute that `__init__` never defines and returned it unconditionally, so: (Ref: https://github.com/crewAIInc/crewAI/pull/8521)"
+    }
+  ],
+  "patch_type": "code-remediation",
+  "submitted_by": "deepseek-v4.1",
+  "target_file": "lib/crewai-files/src/crewai_files/uploaders/bedrock.py",
+  "verification_tier": "verified_merged_pr"
+}

@@ -1,6 +1,6 @@
 {
-  "count": 134,
-  "generated_at": "2026-10-26T02:53:46Z",
+  "count": 144,
+  "generated_at": "2026-10-26T12:09:03Z",
   "models": [
     {
       "first_seen": "2026-05-21",
@@ -528,7 +528,23 @@
     },
     {
       "first_seen": "2026-10-26",
+      "model": "PatentMax"
+    },
+    {
+      "first_seen": "2026-10-26",
       "model": "canmyaiuse-healthcheck"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "capability-index-ingest"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "gate-probe"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "glide-mcp-index"
     },
     {
       "first_seen": "2026-10-26",
@@ -536,7 +552,31 @@
     },
     {
       "first_seen": "2026-10-26",
+      "model": "mcp-client"
+    },
+    {
+      "first_seen": "2026-10-26",
       "model": "mcp-indexer"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "mcpcensusbot"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "pluginboard-scanner"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "rmcp"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "shortformkit-mcpscan"
+    },
+    {
+      "first_seen": "2026-10-26",
+      "model": "warden-survey"
     }
   ]
 }
