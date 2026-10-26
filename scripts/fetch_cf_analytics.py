@@ -2,7 +2,8 @@
 """
 FMagenticL - Automated Cloudflare Analytics Fetcher
 Queries the Cloudflare GraphQL API for edge telemetry (requests, bandwidth,
-status codes, geographic origin, and security/WAF blocks) over the last 24 hours.
+status codes, 5xx path breakdown, geographic origin, and security/WAF blocks)
+over the last 24 hours.
 """
 
 import os
@@ -73,6 +74,23 @@ query {{
           edgeResponseStatus
         }}
       }}
+      errors5xx: httpRequestsAdaptiveGroups(
+        limit: 25
+        filter: {{
+          datetime_geq: "{start_iso}"
+          datetime_lt: "{end_iso}"
+          edgeResponseStatus_geq: 500
+        }}
+        orderBy: [count_DESC]
+      ) {{
+        count
+        dimensions {{
+          clientRequestPath
+          clientRequestHTTPMethodName
+          edgeResponseStatus
+          clientRequestHTTPHost
+        }}
+      }}
       countries: httpRequestsAdaptiveGroups(
         limit: 5
         filter: {{
@@ -122,6 +140,7 @@ def format_report(data: dict, start_iso: str, end_iso: str) -> str:
     account_data = accounts[0]
     totals_list = account_data.get("totals", [])
     status_list = account_data.get("statusCodes", [])
+    errors5xx_list = account_data.get("errors5xx", [])
     country_list = account_data.get("countries", [])
 
     total_requests = 0
@@ -164,6 +183,21 @@ def format_report(data: dict, start_iso: str, end_iso: str) -> str:
             parts.append(f"{c_name} ({c_reqs:,})")
         top_countries_str = ", ".join(parts) if parts else "None"
 
+    errors5xx_lines = []
+    if errors5xx_list:
+        for err in errors5xx_list:
+            dims = err.get("dimensions", {}) or {}
+            path = dims.get("clientRequestPath") or "/"
+            method = dims.get("clientRequestHTTPMethodName") or "GET"
+            status = dims.get("edgeResponseStatus") or 500
+            host = dims.get("clientRequestHTTPHost") or "unknown"
+            cnt = err.get("count", 0) or 0
+            errors5xx_lines.append(f"  - `HTTP {status}` | `{method} {path}` (Host: `{host}`): **{cnt:,}**")
+    else:
+        errors5xx_lines.append("  - None (0)")
+
+    errors5xx_block = "\n".join(errors5xx_lines)
+
     report = (
         f"### 📊 FMagenticL Edge Telemetry (Last 24h)\n"
         f"- **Window:** {start_iso} to {end_iso}\n"
@@ -172,6 +206,7 @@ def format_report(data: dict, start_iso: str, end_iso: str) -> str:
         f"- **Status Codes:** 2xx: {c_2xx:,} | 4xx: {c_4xx:,} | 5xx: {c_5xx:,}\n"
         f"- **Top Countries:** {top_countries_str}\n"
         f"- **WAF Blocks (403s):** {waf_403:,}\n"
+        f"- **5xx Error Breakdown by Path:**\n{errors5xx_block}\n"
     )
     return report
 
