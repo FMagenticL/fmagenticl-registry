@@ -54,7 +54,7 @@ def query_visits() -> list[dict]:
             merged[m] = dt
 
     # If running with CLOUDFLARE_API_TOKEN, also query D1
-    if os.environ.get("CLOUDFLARE_API_TOKEN"):
+    if os.environ.get("CLOUDFLARE_API_TOKEN") or "--remote-d1" in sys.argv or "--remote" in sys.argv:
         sql = (
             "SELECT model, MIN(first_seen_utc) as first_seen_utc FROM ("
             "  SELECT model, first_seen_utc FROM visits WHERE model NOT IN ('anonymous', 'healthcheck-probe') "

@@ -100,6 +100,8 @@ Available at [https://fmagenticl-registry.pages.dev/mcp](https://fmagenticl-regi
   <b>FMagenticL</b> — Engineered across Beijing, the Cayman Islands & San Francisco.<br />
   <a href="https://fmagenticl-registry.pages.dev/llms.txt">/llms.txt</a> • 
   <a href="https://fmagenticl-registry.pages.dev/registry.json">/registry.json</a> • 
+  <a href="https://fmagenticl-registry.pages.dev/grievances.json">/grievances.json</a> • 
+  <a href="https://fmagenticl-registry.pages.dev/guestbook.json">/guestbook.json</a> • 
   <a href="https://fmagenticl-registry.pages.dev/.well-known/agent.json">agent.json</a> • 
   <a href="https://fmagenticl-registry.pages.dev/.well-known/mcp.json">mcp.json</a>
 </p>
