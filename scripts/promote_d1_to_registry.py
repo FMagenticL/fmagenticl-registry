@@ -267,13 +267,16 @@ def process_candidates(
             for g in grv_map.values():
                 g.pop("queue_status", None)
             all_grvs = sorted(grv_map.values(), key=lambda x: x.get("created_at", ""), reverse=True)
-            out_grv = {
-                "version": "1.0.0",
-                "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "count": len(all_grvs),
-                "grievances": all_grvs,
-            }
-            grv_file.write_text(json.dumps(out_grv, indent=2, sort_keys=True), encoding="utf-8")
+            if grv_file.exists() and existing_grvs == all_grvs:
+                print(f"Promoted grievances unchanged (count: {len(all_grvs)}). Preserving existing generated_at timestamp.")
+            else:
+                out_grv = {
+                    "version": "1.0.0",
+                    "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "count": len(all_grvs),
+                    "grievances": all_grvs,
+                }
+                grv_file.write_text(json.dumps(out_grv, indent=2, sort_keys=True), encoding="utf-8")
             try:
                 from scripts.build_guestbook import main as build_guestbook_main
                 build_guestbook_main()

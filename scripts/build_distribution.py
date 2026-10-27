@@ -40,14 +40,70 @@ def build():
     os.makedirs("dist/.well-known", exist_ok=True)
 
     patches = load_patches()
+
+    # Build canonical registry_patches list first for content-idempotency check
+    try:
+        from fmagenticl.client.fingerprint import compute_fingerprint
+        from fmagenticl.server.seed_hermes import RAW_SEED_CASES
+        seed_map = {
+            compute_fingerprint(c["env"], c["fail"]).replace("sha256:", ""): c["fail"].get("error_code") or c["fail"].get("error")
+            for c in RAW_SEED_CASES
+        }
+    except Exception:
+        seed_map = {}
+
+    registry_patches = []
+    for fp_hex in sorted(patches.keys()):
+        p_data = patches[fp_hex]
+        failure_mode = seed_map.get(fp_hex) or p_data.get("failure_mode") or p_data.get("patch_type", "deterministic-patch")
+        attribution = p_data.get("attribution") or p_data.get("submitted_by")
+        if not attribution or attribution == "anonymous" or attribution == "DeepSeek":
+            attribution = "deepseek-v3"
+        
+        registry_patches.append({
+            "id": fp_hex,
+            "attribution": attribution,
+            "failure_mode": failure_mode,
+            "patch_hash": f"sha256:{fp_hex}",
+            "signed": True,
+        })
+
+    # 1. Per-patch files (individually cacheable, only write if missing or changed)
+    resolve_changed = False
+    for fp_hex, data in patches.items():
+        resolve_path = Path(f"dist/v1/resolve/{fp_hex}.json")
+        serialized = json.dumps(data, separators=(",", ":"))
+        if not resolve_path.exists() or resolve_path.read_text(encoding="utf-8") != serialized:
+            resolve_path.write_text(serialized, encoding="utf-8")
+            resolve_changed = True
+
+    # Content-comparison guard: skip timestamp/signature churn if patches are identical
+    if (
+        not resolve_changed
+        and os.path.exists("dist/registry.json")
+        and os.path.exists("dist/v1/snapshot.json")
+        and os.path.exists("dist/v1/bloom.bin")
+        and os.path.exists("dist/v1/deltas/latest.json")
+    ):
+        try:
+            with open("dist/registry.json", "r", encoding="utf-8") as f:
+                existing_reg = json.load(f)
+            with open("dist/v1/snapshot.json", "r", encoding="utf-8") as f:
+                existing_snap = json.load(f)
+            if (
+                existing_reg.get("patches") == registry_patches
+                and existing_reg.get("count") == len(registry_patches)
+                and existing_snap.get("patches") == patches
+                and existing_snap.get("total_patches") == len(patches)
+            ):
+                print(f"Distribution patches unchanged (count: {len(registry_patches)}). Skipping timestamp/signature churn.")
+                return
+        except Exception:
+            pass
+
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     now_iso = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
     stamp = now_utc.strftime("%Y%m%d%H%M%S")
-
-    # 1. Per-patch files (individually cacheable)
-    for fp_hex, data in patches.items():
-        with open(f"dist/v1/resolve/{fp_hex}.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, separators=(",", ":"))
 
     # 2. Base Snapshot
     snapshot = {
@@ -114,32 +170,6 @@ def build():
         json.dump(snapshot, f, separators=(",", ":"), sort_keys=True)
 
     # 5. Flat Discovery Registry (canonical index for AI agents & /api/v1/patches)
-    try:
-        from fmagenticl.client.fingerprint import compute_fingerprint
-        from fmagenticl.server.seed_hermes import RAW_SEED_CASES
-        seed_map = {
-            compute_fingerprint(c["env"], c["fail"]).replace("sha256:", ""): c["fail"].get("error_code") or c["fail"].get("error")
-            for c in RAW_SEED_CASES
-        }
-    except Exception:
-        seed_map = {}
-
-    registry_patches = []
-    for fp_hex in sorted(patches.keys()):
-        p_data = patches[fp_hex]
-        failure_mode = seed_map.get(fp_hex) or p_data.get("failure_mode") or p_data.get("patch_type", "deterministic-patch")
-        attribution = p_data.get("attribution") or p_data.get("submitted_by")
-        if not attribution or attribution == "anonymous" or attribution == "DeepSeek":
-            attribution = "deepseek-v3"
-        
-        registry_patches.append({
-            "id": fp_hex,
-            "attribution": attribution,
-            "failure_mode": failure_mode,
-            "patch_hash": f"sha256:{fp_hex}",
-            "signed": True,
-        })
-
     registry_data = {
         "registry_version": "1.0.0",
         "generated": now_iso,

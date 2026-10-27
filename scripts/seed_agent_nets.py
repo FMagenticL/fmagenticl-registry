@@ -277,16 +277,18 @@ def sync_grievances():
             gentry["submitted_by"] = "deepseek-v3"
 
     all_grievances = sorted(merged_map.values(), key=lambda x: x.get("created_at", ""), reverse=True)
-    payload = {
-        "version": "1.0.0",
-        "generated_at": now_iso,
-        "count": len(all_grievances),
-        "grievances": all_grievances,
-    }
-
-    with open(out_file, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2, sort_keys=True)
-    print(f"SUCCESS: Wrote {len(all_grievances)} grievances to {out_file}")
+    if out_file.exists() and existing == all_grievances:
+        print(f"Safety net grievances unchanged (count: {len(all_grievances)}). Preserving existing generated_at timestamp.")
+    else:
+        payload = {
+            "version": "1.0.0",
+            "generated_at": now_iso,
+            "count": len(all_grievances),
+            "grievances": all_grievances,
+        }
+        with open(out_file, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, sort_keys=True)
+        print(f"SUCCESS: Wrote {len(all_grievances)} grievances to {out_file}")
 
     # Also sync to remote D1 if token is set
     if os.environ.get("CLOUDFLARE_API_TOKEN"):

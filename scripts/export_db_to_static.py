@@ -125,10 +125,12 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
 
                 # Merge existing grievances so committed/harvested items are preserved
                 existing_map = {}
+                prev_grievances = []
                 if out_path.exists():
                     try:
                         prev = json.loads(out_path.read_text(encoding="utf-8"))
-                        for g in prev.get("grievances", []):
+                        prev_grievances = prev.get("grievances", [])
+                        for g in prev_grievances:
                             gid = g.get("id")
                             if gid and gid not in PURGE_GRIEVANCE_IDS:
                                 existing_map[gid] = g
@@ -143,6 +145,10 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
                 for g in merged_results:
                     g.pop("queue_status", None)
                 merged_results.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+
+                if out_path.exists() and prev_grievances == merged_results:
+                    print(f"Grievances unchanged (count: {len(merged_results)}). Preserving existing generated_at timestamp.")
+                    return len(merged_results)
 
                 data = {
                     "version": "1.0.0",
@@ -175,7 +181,7 @@ def main() -> int:
     if os.environ.get("CLOUDFLARE_API_TOKEN") or "--remote-d1" in sys.argv:
         export_from_remote_d1("dist")
 
-    if database_available(DB_PATH):
+    if "--from-local-sqlite" in sys.argv and database_available(DB_PATH):
         count = export_from_db(DB_PATH, OUT_DIR)
         print(f"Exported {count} patches from {DB_PATH} into /{OUT_DIR}/")
         return 0
@@ -183,8 +189,7 @@ def main() -> int:
     existing = [f for f in os.listdir(OUT_DIR) if f.endswith(".json")] if os.path.isdir(OUT_DIR) else []
     if existing:
         print(
-            f"Database not available at {DB_PATH}. Using existing {len(existing)} "
-            f"patches in /{OUT_DIR}/ as source of truth. No export performed."
+            f"Using existing {len(existing)} committed patches in /{OUT_DIR}/ as source of truth."
         )
         return 0
 

@@ -159,6 +159,15 @@ def main() -> None:
         }
         for m, fs in sorted_items
     ]
+    if OUT_PATH.exists():
+        try:
+            existing = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+            if existing.get("entities") == entities and existing.get("count") == len(entities):
+                print(f"Guestbook unchanged (count: {len(entities)}). Preserving existing generated_at timestamp.")
+                return
+        except Exception:
+            pass
+
     out = {
         "count": len(entities),
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

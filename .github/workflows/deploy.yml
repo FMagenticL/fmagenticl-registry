@@ -16,8 +16,6 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  schedule:
-    - cron: '0 0 * * 0'    # Weekly guestbook regeneration and redeploy every Sunday at 00:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -53,10 +51,10 @@ jobs:
           wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN applies_to TEXT" || true
           python scripts/migrate_d1.py || true
           wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql
-          python scripts/seed_agent_nets.py || true
-          python scripts/promote_d1_to_registry.py --apply || true
-          python scripts/build_guestbook.py || echo "Warning: D1 guestbook query failed, retaining static guestbook.json"
-          python scripts/export_db_to_static.py || true
+          python scripts/seed_agent_nets.py
+          python scripts/promote_d1_to_registry.py --apply
+          python scripts/build_guestbook.py
+          python scripts/export_db_to_static.py
 
 
       - name: Build static distribution & sign

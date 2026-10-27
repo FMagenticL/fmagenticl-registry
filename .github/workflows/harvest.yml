@@ -61,7 +61,10 @@ jobs:
       - name: Rebuild Guestbook & Distribution
         env:
           FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          python scripts/export_db_to_static.py
           python scripts/build_guestbook.py
           python scripts/build_distribution.py
 
