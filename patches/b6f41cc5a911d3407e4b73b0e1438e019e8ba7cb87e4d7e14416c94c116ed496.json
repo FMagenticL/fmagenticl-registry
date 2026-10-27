@@ -1,0 +1,13 @@
+{
+  "attribution": "harvester-v1",
+  "confidence": 0.95,
+  "created_at": "2026-10-11T18:39:44Z",
+  "failure_mode": "PYDANTIC_TypeError",
+  "fallback_cli": "pip install --upgrade pydantic>=2.14.1",
+  "fingerprint": "sha256:b6f41cc5a911d3407e4b73b0e1438e019e8ba7cb87e4d7e14416c94c116ed496",
+  "foundational": false,
+  "patch_type": "cli-override",
+  "submitted_by": "harvester-v1",
+  "target_file": "pydantic/__init__.py",
+  "verification_tier": "verified_merged_pr"
+}

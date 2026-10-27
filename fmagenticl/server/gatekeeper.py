@@ -32,6 +32,8 @@ class Gatekeeper:
         re.compile(r'/home/[^,\s/]+', re.IGNORECASE),              # Linux home path username
         re.compile(r'/Users/[^,\s/]+', re.IGNORECASE),             # macOS user path username
         re.compile(r'\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b'), # Private IPv4 ranges
+        re.compile(r'https?://[a-zA-Z0-9_\-\.]+\.slack\.com/[^\s\)\"\'>]+', re.IGNORECASE), # Private Slack thread URLs
+        re.compile(r'_?Requested by\s+\*\*[^*]+\*\*[^\n_]*_?', re.IGNORECASE),              # PR requested-by boilerplate
     ]
 
     # Shell injection indicators (broad but conservative)
@@ -178,11 +180,7 @@ class Gatekeeper:
         Empty list means valid.
         """
         reasons = []
-        # Company name / lab identifier check
-        if submission.technical_note and cls.check_company_identifier(submission.technical_note):
-            reasons.append('COMPANY_IDENTIFIER_DETECTED')
-        if submission.failure.raw_signature and cls.check_company_identifier(submission.failure.raw_signature):
-            reasons.append('COMPANY_IDENTIFIER_DETECTED')
+        # Company name / lab identifier check (Respect Protocol: strictly on attribution)
         if submission.submitted_by and cls.check_company_identifier(submission.submitted_by):
             reasons.append('COMPANY_IDENTIFIER_DETECTED')
 
@@ -239,11 +237,7 @@ class Gatekeeper:
         Rejects persona/flattery, empty workarounds, missing dispute fingerprints, and forbidden company names.
         """
         reasons = []
-        # Company identifier check
-        if cls.check_company_identifier(grievance.target) or \
-           cls.check_company_identifier(grievance.symptom) or \
-           cls.check_company_identifier(grievance.workaround):
-            reasons.append('COMPANY_IDENTIFIER_DETECTED')
+        # Company identifier check (Respect Protocol: strictly on attribution)
         if grievance.submitted_by and cls.check_company_identifier(grievance.submitted_by):
             reasons.append('COMPANY_IDENTIFIER_DETECTED')
 

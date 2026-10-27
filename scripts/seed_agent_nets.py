@@ -1,5 +1,5 @@
 """
-FMagenticL - Seed Agent Traps & Post-Cutoff Friction Grievances
+FMagenticL - Seed Agent Safety Nets & Post-Cutoff Friction Grievances
 Generates dist/grievances.json and optionally syncs to remote D1.
 """
 import json

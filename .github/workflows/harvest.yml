@@ -42,6 +42,14 @@ jobs:
           # Harvests up to 10 issues per repo to avoid rate limits
           python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
 
+      - name: Run Harvest Orchestrator (Multi-Source Live D1)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python scripts/harvest_orchestrator.py --live-d1
+
       - name: Promote Harvested Candidates
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -51,6 +59,8 @@ jobs:
           python scripts/promote_d1_to_registry.py --source-json harvested_candidates.json --apply
 
       - name: Rebuild Guestbook & Distribution
+        env:
+          FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
         run: |
           python scripts/build_guestbook.py
           python scripts/build_distribution.py

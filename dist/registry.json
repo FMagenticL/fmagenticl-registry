@@ -1,6 +1,6 @@
 {
-  "count": 83,
-  "generated": "2026-10-26T22:13:55Z",
+  "count": 85,
+  "generated": "2026-10-27T01:57:21Z",
   "patches": [
     {
       "attribution": "deepseek-v4.1",
@@ -63,6 +63,13 @@
       "failure_mode": "PYDANTIC_PydanticSchemaGenerationError",
       "id": "21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
       "patch_hash": "sha256:21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
+      "signed": true
+    },
+    {
+      "attribution": "harvester-v1",
+      "failure_mode": "LITELLM_ImportError",
+      "id": "2824749ba1fb2e0307fedf4f580deeead34bf8e1e2be352d54a2061befa28dd1",
+      "patch_hash": "sha256:2824749ba1fb2e0307fedf4f580deeead34bf8e1e2be352d54a2061befa28dd1",
       "signed": true
     },
     {
@@ -448,6 +455,13 @@
       "failure_mode": "TYPESCRIPT_SDK_InsecureTokenEndpointError",
       "id": "b5ac482c3a5f308fbd5652f99ba744a53e2749bc47f299e8c7694111ee0b8780",
       "patch_hash": "sha256:b5ac482c3a5f308fbd5652f99ba744a53e2749bc47f299e8c7694111ee0b8780",
+      "signed": true
+    },
+    {
+      "attribution": "harvester-v1",
+      "failure_mode": "PYDANTIC_TypeError",
+      "id": "b6f41cc5a911d3407e4b73b0e1438e019e8ba7cb87e4d7e14416c94c116ed496",
+      "patch_hash": "sha256:b6f41cc5a911d3407e4b73b0e1438e019e8ba7cb87e4d7e14416c94c116ed496",
       "signed": true
     },
     {

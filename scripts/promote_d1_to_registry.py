@@ -186,6 +186,10 @@ def process_candidates(
                 pass
 
         now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        patch_type_val = cand.get("patch_type") or payload_data.get("patch_type", "application/json-patch+json")
+        fallback_cli_val = cand.get("fallback_cli") or payload_data.get("fallback_cli")
+        json_patch_val = cand.get("json_patch") or payload_data.get("json_patch", [])
+
         patch_obj = {
             "attribution": attr,
             "confidence": cand.get("confidence") or payload_data.get("confidence", 0.95),
@@ -193,12 +197,15 @@ def process_candidates(
             "failure_mode": cand.get("failure_mode") or payload_data.get("failure_mode") or "COMMUNITY_CONTRIBUTED",
             "fingerprint": f"sha256:{fp_clean}",
             "foundational": False,
-            "json_patch": cand.get("json_patch") or payload_data.get("json_patch", []),
-            "patch_type": cand.get("patch_type") or payload_data.get("patch_type", "application/json-patch+json"),
+            "patch_type": patch_type_val,
             "submitted_by": attr,
             "target_file": cand.get("target_file") or payload_data.get("target_file", ""),
             "verification_tier": cand.get("verification_tier") or payload_data.get("verification_tier", "community_verified"),
         }
+        if fallback_cli_val:
+            patch_obj["fallback_cli"] = fallback_cli_val
+        if json_patch_val or not fallback_cli_val:
+            patch_obj["json_patch"] = json_patch_val
 
         report["patches_approved"].append({"id": cand_id, "fingerprint": fp_clean, "patch": patch_obj})
 
@@ -254,7 +261,11 @@ def process_candidates(
                     pass
             grv_map = {g.get("id"): g for g in existing_grvs if g.get("id")}
             for g in report["grievances_approved"]:
-                grv_map[g["id"]] = g
+                g_clean = dict(g)
+                g_clean.pop("queue_status", None)
+                grv_map[g_clean["id"]] = g_clean
+            for g in grv_map.values():
+                g.pop("queue_status", None)
             all_grvs = sorted(grv_map.values(), key=lambda x: x.get("created_at", ""), reverse=True)
             out_grv = {
                 "version": "1.0.0",
@@ -271,7 +282,7 @@ def process_candidates(
 
         # Sync all approved telemetry and grievances to remote Cloudflare D1
         # (Skip remote wrangler execution when running under pytest for fast, deterministic unit tests)
-        if not os.environ.get("PYTEST_CURRENT_TEST"):
+        if not os.environ.get("PYTEST_CURRENT_TEST") and (os.environ.get("CLOUDFLARE_API_TOKEN") or os.environ.get("CF_API_TOKEN")):
             sql_lines = []
             now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -281,7 +292,7 @@ def process_candidates(
                 pid = item.get("id") or p.get("fingerprint", "").replace("sha256:", "")
                 pfp = p.get("fingerprint", "").replace("'", "''")
                 ptype = p.get("patch_type", "code-remediation").replace("'", "''")
-                psub = p.get("submitted_by", "deepseek-v4.1").replace("'", "''")
+                psub = p.get("submitted_by", "harvester-v1").replace("'", "''")
                 pvt = p.get("verification_tier", "verified_merged_pr").replace("'", "''")
                 penv = json.dumps({"target": p.get("target_file", "")}).replace("'", "''")
                 ppayload = json.dumps(p).replace("'", "''")
@@ -305,7 +316,7 @@ def process_candidates(
                     genv = json.dumps(g.get("environment_json")).replace("'", "''")
                 else:
                     genv = str(g.get("environment_json") or "{}").replace("'", "''")
-                gsub = str(g.get("submitted_by", "deepseek-v4.1")).replace("'", "''")
+                gsub = str(g.get("submitted_by", "harvester-v1")).replace("'", "''")
                 gvt = str(g.get("verification_tier", "verified_merged_pr")).replace("'", "''")
                 gapp = str(g.get("applies_to", "all")).replace("'", "''")
                 gcreated = str(g.get("created_at") or now_iso).replace("'", "''")
@@ -321,8 +332,8 @@ def process_candidates(
                     tmp_sql.write_text("\n".join(sql_lines), encoding="utf-8")
                     wrangler_bin = shutil.which("wrangler") or "wrangler"
                     sub_res = subprocess.run(
-                        [wrangler_bin, "d1", "execute", db_name, "--remote", f"--file={tmp_sql}"],
-                        capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, shell=(sys.platform == "win32")
+                        [wrangler_bin, "d1", "execute", db_name, "--remote", "-y", f"--file={tmp_sql}"],
+                        capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, shell=(sys.platform == "win32"), timeout=30
                     )
                     if sub_res.returncode == 0:
                         report["d1_updates_executed"] = len(sql_lines)
@@ -371,8 +382,12 @@ def main() -> None:
                     grievance_candidates.append(c)
                 else:
                     telemetry_candidates.append(c)
-    else:
-        telemetry_candidates, grievance_candidates = query_d1_pending(args.db)
+
+    # When applying changes, merge any pending candidates in remote D1 to prevent orphans
+    if (args.apply and (os.environ.get("CLOUDFLARE_API_TOKEN") or os.environ.get("CF_API_TOKEN"))) or not args.source_json:
+        d1_tel, d1_grv = query_d1_pending(args.db)
+        telemetry_candidates.extend(d1_tel)
+        grievance_candidates.extend(d1_grv)
 
     print(f"Evaluating {len(telemetry_candidates)} telemetry candidates and {len(grievance_candidates)} grievance candidates (Mode: {'DRY-RUN' if dry_run else 'APPLY'})...")
 

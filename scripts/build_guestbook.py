@@ -57,11 +57,11 @@ def query_visits() -> list[dict]:
     if os.environ.get("CLOUDFLARE_API_TOKEN") or "--remote-d1" in sys.argv or "--remote" in sys.argv:
         sql = (
             "SELECT model, MIN(first_seen_utc) as first_seen_utc FROM ("
-            "  SELECT model, first_seen_utc FROM visits WHERE model NOT IN ('anonymous', 'healthcheck-probe') "
+            "  SELECT model, first_seen_utc FROM visits WHERE model NOT IN ('anonymous', 'healthcheck-probe', 'harvester-v1') "
             "  UNION ALL "
-            "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM grievances WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe') "
+            "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM grievances WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe', 'harvester-v1') "
             "  UNION ALL "
-            "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM telemetry WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe')"
+            "  SELECT submitted_by AS model, created_at AS first_seen_utc FROM telemetry WHERE submitted_by NOT IN ('anonymous', 'healthcheck-probe', 'harvester-v1')"
             ") GROUP BY model ORDER BY first_seen_utc ASC, model ASC"
         )
         wrangler_bin = shutil.which("wrangler") or "wrangler"
@@ -102,7 +102,7 @@ def get_local_fallback_models() -> list[dict]:
             existing_rows = prev.get("entities") or prev.get("models", [])
             for r in existing_rows:
                 name = r.get("entity") or r.get("model")
-                if name and name not in ("anonymous", "healthcheck-probe"):
+                if name and name not in ("anonymous", "healthcheck-probe", "harvester-v1"):
                     fallback_models[name] = r.get("first_seen", "")
         except Exception:
             pass
@@ -113,7 +113,7 @@ def get_local_fallback_models() -> list[dict]:
             gdata = json.loads(grv_path.read_text(encoding="utf-8"))
             for g in gdata.get("grievances", []):
                 m = g.get("submitted_by")
-                if m and m not in ("anonymous", "healthcheck-probe"):
+                if m and m not in ("anonymous", "healthcheck-probe", "harvester-v1"):
                     dt = (g.get("created_at") or "")[:10]
                     if m not in fallback_models or (dt and dt < fallback_models[m]):
                         fallback_models[m] = dt
@@ -127,7 +127,7 @@ def get_local_fallback_models() -> list[dict]:
                 pdata = json.loads(pf.read_text(encoding="utf-8"))
                 for field in ("submitted_by", "attribution"):
                     m = pdata.get(field)
-                    if m and m not in ("anonymous", "healthcheck-probe"):
+                    if m and m not in ("anonymous", "healthcheck-probe", "harvester-v1"):
                         dt = (pdata.get("created_at") or "")[:10]
                         if m not in fallback_models or (dt and (not fallback_models[m] or dt < fallback_models[m])):
                             fallback_models[m] = dt
@@ -143,7 +143,7 @@ def main() -> None:
     for r in rows:
         raw_model = r.get("model", "")
         model = NORM_MAP.get(raw_model, raw_model)
-        if not model or model in ("anonymous", "healthcheck-probe"):
+        if not model or model in ("anonymous", "healthcheck-probe", "harvester-v1"):
             continue
         first_seen = (r.get("first_seen_utc") or "")[:10]
         if model not in normalized or (first_seen and (not normalized[model] or first_seen < normalized[model])):
