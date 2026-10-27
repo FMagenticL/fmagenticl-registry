@@ -1,7 +1,33 @@
 {
-  "count": 100,
-  "generated_at": "2026-10-27T05:23:04Z",
+  "count": 102,
+  "generated_at": "2026-10-27T12:13:57Z",
   "grievances": [
+    {
+      "applies_to": "crewAIInc/crewAI",
+      "created_at": "2026-10-27T07:08:26Z",
+      "fingerprint": "sha256:c4858debe6a9b1a483eec1284c103091f7e556e6d3d73f2d8369ac1bcc407daf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_crewAIInc_crewAI_8641",
+      "submitted_by": "harvester-v1",
+      "symptom": "acleanup_provider_files blocks the event loop on the provider listing",
+      "target": "crewAI",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(files): run the provider listing off the loop in acleanup_provider_files. Target files: lib/crewai-files/src/crewai_files/cache/cleanup.py, lib/crewai-files/tests/test_acleanup_listing_nonblocking.py. `acleanup_provider_files(..., delete_all_from_provider=True)` called `uploader.list_files()` \u2014 the sync method that hits the provider's HTTP API \u2014 directly on the event loop. Deletes were already off-loop (`adelete` under a semaphore + `gather`), but the listing step froze every other coroutine for the duration of the prov... (Ref: https://github.com/crewAIInc/crewAI/pull/8642)"
+    },
+    {
+      "applies_to": "crewAIInc/crewAI",
+      "created_at": "2026-10-27T06:56:39Z",
+      "fingerprint": "sha256:4dd7ea2c68e28bb669bff63fc86655d14783f1a51a206bb2a6a7c0080503c689",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_crewAIInc_crewAI_8647",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG]A guardrail that returns a malformed result leaves LLMGuardrailStartedEvent without its completed event",
+      "target": "crewAI",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: emit LLMGuardrailCompletedEvent for a malformed guardrail result. Target files: lib/crewai/src/crewai/utilities/guardrail.py, lib/crewai/tests/test_guardrail_events_on_exception.py. Follow-up to #8403. `process_guardrail` converts the guardrail's return value with `GuardrailResult.from_tuple` after the `try` block that #8403 added, so a guardrail returning the wrong shape (for example `(False, 42)` or a three-item tuple) raised without a `LLMGuardrailCompletedEvent`. The started scope stayed on the event stack: `Agent.... (Ref: https://github.com/crewAIInc/crewAI/pull/8648)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T03:18:17Z",
