@@ -1,5 +1,5 @@
 {
-  "count": 158,
+  "count": 160,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -782,6 +782,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "mcp-history",
+      "first_seen": "2026-10-27",
+      "type": "agent"
+    },
+    {
       "entity": "mcp-registry-census",
       "first_seen": "2026-10-27",
       "type": "agent"
@@ -790,7 +795,12 @@
       "entity": "probe",
       "first_seen": "2026-10-27",
       "type": "security_probe"
+    },
+    {
+      "entity": "unreached-probe",
+      "first_seen": "2026-10-27",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-27T12:13:58Z"
+  "generated_at": "2026-10-27T18:03:45Z"
 }
