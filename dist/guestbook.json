@@ -1,5 +1,5 @@
 {
-  "count": 151,
+  "count": 154,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -755,7 +755,22 @@
       "entity": "wellknown-prober (your listing: https://wellknown.network/agents",
       "first_seen": "2026-10-26",
       "type": "security_probe"
+    },
+    {
+      "entity": "AgentsJunction tool indexer",
+      "first_seen": "2026-10-27",
+      "type": "crawler"
+    },
+    {
+      "entity": "ElectraIndexBot",
+      "first_seen": "2026-10-27",
+      "type": "crawler"
+    },
+    {
+      "entity": "lowdown-scanner",
+      "first_seen": "2026-10-27",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-26T22:13:55Z"
+  "generated_at": "2026-10-27T05:23:02Z"
 }
