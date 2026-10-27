@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -83,6 +84,7 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
             git commit -m "[BOT] chore(harvest): automated GitHub issue harvesting and patch promotion"
+            git pull --rebase origin main || (git rebase --abort && git pull --no-rebase origin main)
             git push origin main
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi

@@ -430,9 +430,12 @@ def main():
     # 1. Run GitLab Adapter
     print("[*] Running Adapter 1: GitLab Merged MRs...", file=sys.stderr)
     for proj in TARGET_GITLAB_PROJECTS:
-        t_items, g_items = harvest_gitlab_mr(proj, known_fps, known_urls)
-        all_telemetry.extend(t_items)
-        all_grievances.extend(g_items)
+        try:
+            t_items, g_items = harvest_gitlab_mr(proj, known_fps, known_urls)
+            all_telemetry.extend(t_items)
+            all_grievances.extend(g_items)
+        except Exception as e:
+            print(f"[WARN] GitLab adapter error for {proj}: {e}", file=sys.stderr)
         time.sleep(1.0)
 
     # 2. Run GitHub Releases Adapter
@@ -450,9 +453,12 @@ def main():
             pass
 
     for repo in TARGET_GITHUB_REPOS:
-        t_items, g_items = harvest_github_releases(repo, gh_token, known_fps, known_urls)
-        all_telemetry.extend(t_items)
-        all_grievances.extend(g_items)
+        try:
+            t_items, g_items = harvest_github_releases(repo, gh_token, known_fps, known_urls)
+            all_telemetry.extend(t_items)
+            all_grievances.extend(g_items)
+        except Exception as e:
+            print(f"[WARN] GitHub releases adapter error for {repo}: {e}", file=sys.stderr)
         time.sleep(1.0)
 
     # Task 4: Deduplicate within current batch by both fingerprint and PR URL

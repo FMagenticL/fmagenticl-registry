@@ -169,7 +169,11 @@ def execute_graphql(query: str, token: str, variables: dict = None) -> dict:
             elif e.code >= 500:
                 time.sleep(2 ** attempt)
             else:
-                raise
+                print(f"[WARN] GraphQL HTTP error: {e}", file=sys.stderr)
+                return {}
+        except Exception as e:
+            print(f"[WARN] GraphQL unexpected network error: {e}", file=sys.stderr)
+            return {}
     return {}
 
 
@@ -361,7 +365,11 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
     
     for repo in repos:
         print(f"[*] Harvesting from {repo}...", file=sys.stderr)
-        issues = fetch_issues_with_prs(repo, token, limit)
+        try:
+            issues = fetch_issues_with_prs(repo, token, limit)
+        except Exception as e:
+            print(f"[WARN] Error harvesting from {repo}: {e}", file=sys.stderr)
+            continue
         target = repo.split("/")[-1]
         target_repo = repo
         
