@@ -1,7 +1,20 @@
 {
-  "count": 102,
-  "generated_at": "2026-10-27T12:13:57Z",
+  "count": 103,
+  "generated_at": "2026-10-27T22:16:23Z",
   "grievances": [
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-27T21:46:16Z",
+      "fingerprint": "sha256:049e2c595cdec59ce01991caa5764397abb089c06f1623031705ccea14bf30ae",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_45964",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: MCP REST OpenAPI loader rejects YAML documents",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(mcp): accept YAML OpenAPI documents. Target files: litellm/proxy/mcp_server/openapi_to_mcp_generator.py, tests/unit/proxy/mcp_server/test_mcp_server_manager.py, tests/unit/proxy/mcp_server/test_openapi_spec_path_url.py. YAML OpenAPI specs now generate MCP tools from URLs and local files. JSON keeps its existing decoding behavior, and both formats use the same loader for preview, registration, and health checks (Ref: https://github.com/BerriAI/litellm/pull/48622)"
+    },
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-27T07:08:26Z",
