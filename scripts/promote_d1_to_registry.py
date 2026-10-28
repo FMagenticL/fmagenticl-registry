@@ -56,8 +56,10 @@ SECRET_PATTERNS = [
 # Active auto-promotable tiers in current repo:
 #   - "verified_merged_pr"         (emitted by scripts/harvest_orchestrator.py; 33 patches)
 #   - "internal_forensic_verified" (in-house audited remediations; 5 patches)
-# Reserved for Phase 11+ verification harnesses (no active emitter in Phase 10.2):
-#   - "verified_harness_sandbox", "cryptographic_proof"
+# Reserved for Phase 11+ (as of 2026-10-28):
+#   verified_harness_sandbox — to be emitted by automated sandbox runners (no emitter today)
+#   cryptographic_proof      — to be emitted by future attestation flows (no emitter today)
+# See docs/POLICY_CHANGELOG.md.
 #
 # NOTE on REVIEW_REQUIRED:
 #   REVIEW_REQUIRED is a deliberate parking state with NO automated consumer in Phase 10.2.

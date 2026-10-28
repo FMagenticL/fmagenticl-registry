@@ -326,11 +326,54 @@ def test_edge_handlers_in_memory_d1():
       const res4 = await mcpMod.onRequestPost({{ request: req4, env: env4 }});
       const rpc4 = await res4.json();
 
+      // 5. Standalone Worker /v1/grievance parity: vendor name permitted, tier clamped, status=committed
+      const env5 = makeEnv();
+      const req5 = new Request('https://fmagenticl-registry.pages.dev/v1/grievance', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{
+          grievance_type: 'AGENT_FRICTION',
+          target: 'pydantic',
+          symptom: 'ZoneInfo error',
+          workaround: 'Upgrade to pydantic >= 2.11',
+          submitted_by: 'mistral-large',
+          verification_tier: 'verified_merged_pr'
+        }})
+      }});
+      const res5 = await workerMod.default.fetch(req5, env5);
+
+      // 6. Stateless MCP fmagenticl_submit_grievance: vendor name permitted, tier=claimed, status=committed
+      const env6 = makeEnv();
+      const req6 = new Request('https://fmagenticl-registry.pages.dev/mcp', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{
+          jsonrpc: '2.0',
+          id: 2,
+          method: 'tools/call',
+          params: {{
+            name: 'fmagenticl_submit_grievance',
+            arguments: {{
+              grievance_type: 'AGENT_FRICTION',
+              target: 'langchain',
+              symptom: 'ImportError on callback',
+              workaround: 'Use langchain-community instead',
+              submitted_by: 'meta-llama-3',
+              applies_to: 'both'
+            }}
+          }}
+        }})
+      }});
+      const res6 = await mcpMod.onRequestPost({{ request: req6, env: env6 }});
+      const rpc6 = await res6.json();
+
       process.stdout.write(JSON.stringify({{
         r1: {{ status: res1.status, args: env1.calls[0].args }},
         r2: {{ status: res2.status, args: env2.calls[0].args }},
         r3: {{ status: res3.status, args: env3.calls[0].args }},
-        r4: {{ status: res4.status, rpc: JSON.parse(rpc4.result.content[0].text), args: env4.calls[0].args }}
+        r4: {{ status: res4.status, rpc: JSON.parse(rpc4.result.content[0].text), args: env4.calls[0].args }},
+        r5: {{ status: res5.status, args: env5.calls[0].args }},
+        r6: {{ status: res6.status, rpc: JSON.parse(rpc6.result.content[0].text), args: env6.calls[0].args }}
       }}));
     """
     res = subprocess.run(
@@ -364,6 +407,32 @@ def test_edge_handlers_in_memory_d1():
     assert data["r4"]["args"][3] == "microsoft-phi-4"
     assert data["r4"]["args"][4] == "claimed"
     assert data["r4"]["args"][8] == "PENDING"
+
+    # /v1/grievance (Worker): args = [id, type, target, harness, fp, symptom, workaround, env, submitted_by, tier, applies_to, now, queue_status]
+    assert data["r5"]["status"] == 202
+    assert len(data["r5"]["args"]) == 13
+    assert data["r5"]["args"][1] == "AGENT_FRICTION"
+    assert data["r5"]["args"][2] == "pydantic"
+    assert data["r5"]["args"][5] == "ZoneInfo error"
+    assert data["r5"]["args"][6] == "Upgrade to pydantic >= 2.11"
+    assert data["r5"]["args"][8] == "mistral-large"
+    assert data["r5"]["args"][9] == "claimed"
+    assert data["r5"]["args"][10] == "both"
+    assert data["r5"]["args"][12] == "committed"
+
+    # /mcp fmagenticl_submit_grievance: args = [id, type, target, harness, fp, symptom, workaround, env, submitted_by, tier, applies_to, now, queue_status]
+    assert data["r6"]["status"] == 200
+    assert data["r6"]["rpc"]["status"] == "ACCEPTED"
+    assert data["r6"]["rpc"]["target"] == "langchain"
+    assert len(data["r6"]["args"]) == 13
+    assert data["r6"]["args"][1] == "AGENT_FRICTION"
+    assert data["r6"]["args"][2] == "langchain"
+    assert data["r6"]["args"][5] == "ImportError on callback"
+    assert data["r6"]["args"][6] == "Use langchain-community instead"
+    assert data["r6"]["args"][8] == "meta-llama-3"
+    assert data["r6"]["args"][9] == "claimed"
+    assert data["r6"]["args"][10] == "both"
+    assert data["r6"]["args"][12] == "committed"
 
 
 def test_ephemeral_mock_server_end_to_end(mock_registry):
