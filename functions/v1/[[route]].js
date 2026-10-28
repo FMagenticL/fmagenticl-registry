@@ -73,6 +73,108 @@ function validateAttribution(value) {
   return { valid: true, value: clean || 'anonymous' };
 }
 
+export const TARGET_ALIASES = {
+  "gitlab-cli": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "cli": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "glab": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "gitlab": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "mcp": ["mcp", "typescript-sdk", "python-sdk", "fastmcp"],
+  "fastmcp": ["fastmcp", "mcp"],
+  "typescript-sdk": ["typescript-sdk", "mcp"],
+  "python-sdk": ["python-sdk", "mcp"],
+  "workers-sdk": ["workers-sdk", "wrangler"],
+  "wrangler": ["wrangler", "workers-sdk"],
+  "sqlite": ["sqlite", "sqlite3"],
+  "sqlite3": ["sqlite3", "sqlite"],
+  "crewai": ["crewai", "crewAI"],
+  "crewAI": ["crewai", "crewAI"],
+  "uv": ["uv", "astral-sh"],
+  "astral-sh": ["uv", "astral-sh"],
+  "langchain": ["langchain", "langgraph"],
+  "langgraph": ["langgraph"]
+};
+
+export function expandTargetAliases(target) {
+  if (!target || typeof target !== "string") return [];
+  const clean = target.trim();
+  const lower = clean.toLowerCase();
+  const directAliases = TARGET_ALIASES[lower] || TARGET_ALIASES[clean];
+  if (directAliases && directAliases.length > 0) {
+    return Array.from(new Set(directAliases.map(t => t.toLowerCase())));
+  }
+  return [lower];
+}
+
+export async function getUnifiedWorkarounds(env, origin, target = null) {
+  const mergedMap = new Map();
+  const aliases = target ? expandTargetAliases(target) : [];
+  const targetLower = target ? target.trim().toLowerCase() : null;
+
+  // 1. Static feed fetch (from /workarounds.json via env.ASSETS or origin fetch)
+  let staticItems = [];
+  try {
+    let res = null;
+    if (env?.ASSETS) {
+      try {
+        const assetUrl = origin ? `${origin}/workarounds.json` : "https://fmagenticl-registry.pages.dev/workarounds.json";
+        res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
+      } catch (_) {}
+    }
+    if ((!res || !res.ok) && origin) {
+      try {
+        res = await fetch(`${origin}/workarounds.json`);
+      } catch (_) {}
+    }
+    if (res && res.ok) {
+      const data = await res.json();
+      staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+    }
+  } catch (_) {}
+
+  for (const item of staticItems) {
+    if (!item || !item.id) continue;
+    if (targetLower) {
+      const itemTarget = (item.target || "").trim().toLowerCase();
+      const itemAppliesTo = (item.applies_to || "").trim().toLowerCase();
+      const matchesTarget = aliases.includes(itemTarget) || (itemAppliesTo && aliases.some(a => itemAppliesTo.includes(a)));
+      if (!matchesTarget) continue;
+    }
+    mergedMap.set(item.id, item);
+  }
+
+  // 2. Live D1 query (if env.DB is available)
+  if (env?.DB) {
+    try {
+      let d1Items = [];
+      if (aliases.length > 0) {
+        const placeholders = aliases.map(() => "?").join(", ");
+        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE LOWER(target) IN (${placeholders}) ORDER BY created_at DESC LIMIT 50`;
+        const stmt = env.DB.prepare(sql).bind(...aliases);
+        const res = await stmt.all();
+        d1Items = (res && res.results) || [];
+      } else {
+        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances ORDER BY created_at DESC LIMIT 100`;
+        const res = await env.DB.prepare(sql).all();
+        d1Items = (res && res.results) || [];
+      }
+      for (const item of d1Items) {
+        if (!item || !item.id) continue;
+        mergedMap.set(item.id, item);
+      }
+    } catch (_) {}
+  }
+
+  const results = Array.from(mergedMap.values());
+  results.sort((a, b) => {
+    const da = a.created_at || "";
+    const db = b.created_at || "";
+    return db.localeCompare(da);
+  });
+
+  return results;
+}
+
+
 // Phase 10.2: callers may not self-assign privileged verification tiers.
 // Privileged tiers (verified_merged_pr, etc.) are only written by the harvester via the D1 REST API.
 const CALLER_ASSIGNABLE_TIERS = ['claimed', 'reporter_verified'];
@@ -256,36 +358,18 @@ async function handleDispute(request, env) {
 }
 
 async function handleGetGrievances(request, env, target) {
-  if (!env || !env.DB) {
-    return json({ error: 'db_not_configured', target: target || 'all', total: 0, count: 0, workarounds: [], grievances: [] }, 503);
-  }
-
-  try {
-    let rows;
-    if (target && target !== 'all') {
-      rows = await env.DB.prepare(
-        'SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at ' +
-        'FROM grievances WHERE LOWER(target) = LOWER(?) ORDER BY created_at DESC LIMIT 50'
-      ).bind(target).all();
-    } else {
-      rows = await env.DB.prepare(
-        'SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at ' +
-        'FROM grievances ORDER BY created_at DESC LIMIT 100'
-      ).all();
-    }
-    const list = (rows && rows.results) || [];
-    return json({
-      target: target || 'all',
-      total: list.length,
-      count: list.length,
-      workarounds: list,
-      grievances: list
-    }, 200, {
-      'Cache-Control': 'public, max-age=60, s-maxage=120'
-    });
-  } catch (e) {
-    return json({ error: 'db_error', target: target || 'all', total: 0, count: 0, workarounds: [], grievances: [] }, 500);
-  }
+  const url = new URL(request.url);
+  const origin = url.origin;
+  const list = await getUnifiedWorkarounds(env, origin, target);
+  return json({
+    target: target || 'all',
+    total: list.length,
+    count: list.length,
+    workarounds: list,
+    grievances: list
+  }, 200, {
+    'Cache-Control': 'public, max-age=60, s-maxage=120'
+  });
 }
 
 export async function onRequest(context) {

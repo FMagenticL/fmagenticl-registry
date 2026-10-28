@@ -552,3 +552,64 @@ def test_static_json_dual_key_parity():
     assert w_data["workarounds"] == w_data["grievances"]
     assert g_data == w_data
 
+def test_advertised_surface_served_surface():
+    """Rule P5: Every package advertised in tools/list must return count > 0.
+    Empty targets (e.g. openai, anthropic, httpx, instructor, playwright) must never be advertised.
+    """
+    mcp_js_path = REPO_ROOT / "functions" / "mcp.js"
+    mcp_content = mcp_js_path.read_text(encoding="utf-8")
+    wrk_path = REPO_ROOT / "dist" / "workarounds.json"
+
+    # Extract advertised targets
+    matches = re.findall(r"Top supported targets:\s*([^\.]+)\.", mcp_content)
+    assert len(matches) >= 2, "Failed to find advertised targets in tools/list descriptions"
+    targets_resolve = [t.strip() for t in matches[0].split(",")]
+    targets_workarounds = [t.strip() for t in matches[1].split(",")]
+    assert targets_resolve == targets_workarounds, "Advertised targets in resolve and get_workarounds must match"
+
+    # Rule P5: Prohibit advertising empty targets
+    forbidden_empty = {"openai", "anthropic", "httpx", "instructor", "playwright"}
+    for t in targets_resolve:
+        assert t not in forbidden_empty, f"Target '{t}' has 0 entries and must not be advertised"
+
+    # Exercise getUnifiedWorkarounds in Node.js ESM to verify each advertised target returns count > 0
+    mcp_uri = mcp_js_path.as_uri()
+    wrk_file_str = str(wrk_path).replace("\\", "/")
+    test_node_script = f"""
+      import fs from 'node:fs';
+      const mcpMod = await import({json.dumps(mcp_uri)});
+      const wrkData = JSON.parse(fs.readFileSync({json.dumps(wrk_file_str)}, 'utf-8'));
+      const env = {{
+        ASSETS: {{
+          async fetch(req) {{
+            return new Response(JSON.stringify(wrkData), {{ status: 200, headers: {{ 'Content-Type': 'application/json' }} }});
+          }}
+        }}
+      }};
+      const targets = {json.dumps(targets_resolve)};
+      const results = {{}};
+      for (const t of targets) {{
+        const items = await mcpMod.getUnifiedWorkarounds(env, 'https://fmagenticl-registry.pages.dev', t);
+        results[t] = items.length;
+      }}
+      process.stdout.write(JSON.stringify(results));
+    """
+    res = subprocess.run(
+        [NODE, "--input-type=module", "-e", test_node_script],
+        capture_output=True, text=True, encoding="utf-8", cwd=str(REPO_ROOT), timeout=30,
+    )
+    assert res.returncode == 0, f"Node script failed: {res.stderr}"
+    results = json.loads(res.stdout)
+
+    for target, count in results.items():
+        assert count > 0, f"Advertised target '{target}' returned count 0 from getUnifiedWorkarounds"
+
+    # Also verify critical Phase 10 targets return expected non-zero counts
+    assert results["langgraph"] >= 6
+    assert results["uv"] >= 4
+    assert results["gitlab-cli"] >= 10
+    assert results["mcp"] >= 11
+    assert results["workers-sdk"] >= 9
+    assert results["wrangler"] >= 9
+    assert results["sqlite"] >= 2
+

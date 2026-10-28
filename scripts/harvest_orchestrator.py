@@ -176,6 +176,8 @@ def harvest_gitlab_mr(project_path: str, known_fps: Set[str], known_urls: Set[st
         return telemetry, grievances
 
     target = project_path.split("/")[-1]
+    if project_path in ("gitlab-org/cli", "gitlab/cli", "glab"):
+        target = "gitlab-cli"
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     for mr in mrs:

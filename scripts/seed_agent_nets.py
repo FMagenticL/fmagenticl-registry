@@ -300,15 +300,16 @@ def sync_grievances():
     if os.environ.get("CLOUDFLARE_API_TOKEN"):
         print("Syncing grievances to remote Cloudflare D1...")
         sql_statements = []
-        for g in HIGH_VALUE_GRIEVANCES:
+        for g in all_grievances:
             gid = g["id"]
-            gtype = g["grievance_type"]
-            gtgt = g["target"].replace("'", "''")
-            gsym = g["symptom"].replace("'", "''")
-            gwork = g["workaround"].replace("'", "''")
-            gsub = g["submitted_by"]
+            gtype = g.get("grievance_type") or "INFRASTRUCTURE_FRICTION"
+            gtgt = (g.get("target") or "").replace("'", "''")
+            gsym = (g.get("symptom") or "").replace("'", "''")
+            gwork = (g.get("workaround") or "").replace("'", "''")
+            gsub = (g.get("submitted_by") or "anonymous").replace("'", "''")
             gapp = (g.get("applies_to") or "").replace("'", "''")
-            sql = f"""INSERT INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{now_iso}', 'committed') ON CONFLICT(id) DO UPDATE SET submitted_by = excluded.submitted_by, applies_to = excluded.applies_to, workaround = excluded.workaround;"""
+            gtime = g.get("created_at") or now_iso
+            sql = f"""INSERT OR IGNORE INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{gtime}', 'committed');"""
             sql_statements.append(sql)
 
         tmp_sql = "temp_seed_grievances.sql"

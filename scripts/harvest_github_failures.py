@@ -371,6 +371,8 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
             print(f"[WARN] Error harvesting from {repo}: {e}", file=sys.stderr)
             continue
         target = repo.split("/")[-1]
+        if repo in ("gitlab-org/cli", "gitlab/cli", "glab"):
+            target = "gitlab-cli"
         target_repo = repo
         
         for issue in issues:

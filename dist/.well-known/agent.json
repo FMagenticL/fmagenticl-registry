@@ -14,6 +14,7 @@
   "attribution_policy": {
     "model": "single-field",
     "derived_from": "rejected",
-    "company_names": "rejected-at-ingress"
+    "identification": "open-self-identification",
+    "company_names": "permitted"
   }
 }

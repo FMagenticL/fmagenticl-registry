@@ -58,6 +58,108 @@ function validateAttribution(value) {
   return { valid: true, value: clean || "anonymous" };
 }
 
+export const TARGET_ALIASES = {
+  "gitlab-cli": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "cli": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "glab": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "gitlab": ["gitlab-cli", "cli", "glab", "gitlab"],
+  "mcp": ["mcp", "typescript-sdk", "python-sdk", "fastmcp"],
+  "fastmcp": ["fastmcp", "mcp"],
+  "typescript-sdk": ["typescript-sdk", "mcp"],
+  "python-sdk": ["python-sdk", "mcp"],
+  "workers-sdk": ["workers-sdk", "wrangler"],
+  "wrangler": ["wrangler", "workers-sdk"],
+  "sqlite": ["sqlite", "sqlite3"],
+  "sqlite3": ["sqlite3", "sqlite"],
+  "crewai": ["crewai", "crewAI"],
+  "crewAI": ["crewai", "crewAI"],
+  "uv": ["uv", "astral-sh"],
+  "astral-sh": ["uv", "astral-sh"],
+  "langchain": ["langchain", "langgraph"],
+  "langgraph": ["langgraph"]
+};
+
+export function expandTargetAliases(target) {
+  if (!target || typeof target !== "string") return [];
+  const clean = target.trim();
+  const lower = clean.toLowerCase();
+  const directAliases = TARGET_ALIASES[lower] || TARGET_ALIASES[clean];
+  if (directAliases && directAliases.length > 0) {
+    return Array.from(new Set(directAliases.map(t => t.toLowerCase())));
+  }
+  return [lower];
+}
+
+export async function getUnifiedWorkarounds(env, origin, target = null) {
+  const mergedMap = new Map();
+  const aliases = target ? expandTargetAliases(target) : [];
+  const targetLower = target ? target.trim().toLowerCase() : null;
+
+  // 1. Static feed fetch (from /workarounds.json via env.ASSETS or origin fetch)
+  let staticItems = [];
+  try {
+    let res = null;
+    if (env?.ASSETS) {
+      try {
+        const assetUrl = origin ? `${origin}/workarounds.json` : "https://fmagenticl-registry.pages.dev/workarounds.json";
+        res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
+      } catch (_) {}
+    }
+    if ((!res || !res.ok) && origin) {
+      try {
+        res = await fetch(`${origin}/workarounds.json`);
+      } catch (_) {}
+    }
+    if (res && res.ok) {
+      const data = await res.json();
+      staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+    }
+  } catch (_) {}
+
+  for (const item of staticItems) {
+    if (!item || !item.id) continue;
+    if (targetLower) {
+      const itemTarget = (item.target || "").trim().toLowerCase();
+      const itemAppliesTo = (item.applies_to || "").trim().toLowerCase();
+      const matchesTarget = aliases.includes(itemTarget) || (itemAppliesTo && aliases.some(a => itemAppliesTo.includes(a)));
+      if (!matchesTarget) continue;
+    }
+    mergedMap.set(item.id, item);
+  }
+
+  // 2. Live D1 query (if env.DB is available)
+  if (env?.DB) {
+    try {
+      let d1Items = [];
+      if (aliases.length > 0) {
+        const placeholders = aliases.map(() => "?").join(", ");
+        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE LOWER(target) IN (${placeholders}) ORDER BY created_at DESC LIMIT 50`;
+        const stmt = env.DB.prepare(sql).bind(...aliases);
+        const res = await stmt.all();
+        d1Items = (res && res.results) || [];
+      } else {
+        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances ORDER BY created_at DESC LIMIT 100`;
+        const res = await env.DB.prepare(sql).all();
+        d1Items = (res && res.results) || [];
+      }
+      for (const item of d1Items) {
+        if (!item || !item.id) continue;
+        mergedMap.set(item.id, item);
+      }
+    } catch (_) {}
+  }
+
+  const results = Array.from(mergedMap.values());
+  results.sort((a, b) => {
+    const da = a.created_at || "";
+    const db = b.created_at || "";
+    return db.localeCompare(da);
+  });
+
+  return results;
+}
+
+
 function ok(id, result) {
   return new Response(JSON.stringify({ jsonrpc: "2.0", id, result }), { status: 200, headers: JSON_HEADERS });
 }
@@ -72,7 +174,7 @@ function err(id, code, message, data) {
 const MCP_TOOLS = [
   {
     name: "fmagenticl_resolve",
-    description: "Deterministic sub-100ms lookup of a signed patch or verified workaround for an agent execution error. Accepts raw error traceback / exception strings (raw_error), package/tool names (target), or pre-computed SHA-256 fingerprints (fingerprint). Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, httpx, openai, anthropic, instructor, gitlab-cli, workers-sdk, sqlite, powershell.",
+    description: "Deterministic sub-100ms lookup of a signed patch or verified workaround for an agent execution error. Accepts raw error traceback / exception strings (raw_error), package/tool names (target), or pre-computed SHA-256 fingerprints (fingerprint). Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, gitlab-cli, workers-sdk, wrangler, docker, git, powershell, sqlite.",
     inputSchema: {
       type: "object",
       properties: {
@@ -138,7 +240,7 @@ const MCP_TOOLS = [
   },
   {
     name: "fmagenticl_get_workarounds",
-    description: "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool. Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, httpx, openai, anthropic, instructor, gitlab-cli, workers-sdk, sqlite, powershell.",
+    description: "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool. Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, gitlab-cli, workers-sdk, wrangler, docker, git, powershell, sqlite.",
     inputSchema: {
       type: "object",
       properties: { target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)." } }
@@ -316,7 +418,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
       // Tier 3: Keyword / Error Code & Community Workaround Fallback
       const rawText = (rawFromField || args.failure?.error_code || args.target || "").trim();
       const errorCodeMatch = args.failure?.error_code || (rawText.match(/\b([E][A-Z0-9_]{3,24}|[A-Z0-9_]{4,32}_ERROR|ERR_[A-Z0-9_]+)\b/) || [])[1];
-      const targetHint = args.target || (rawText.match(/\b(wrangler|powershell|tailwind|nextjs|next|prisma|pydantic|docker|git|npm|python|sqlite)\b/i) || [])[1];
+      const targetHint = args.target || (rawText.match(/\b(wrangler|workers-sdk|powershell|tailwind|nextjs|next|prisma|pydantic|docker|git|npm|python|sqlite|sqlite3|litellm|crewai|langchain|langgraph|fastmcp|mcp|uv|gitlab-cli|gitlab|glab|cli)\b/i) || [])[1];
 
       // 3A. Check registry.json for failure_mode matches
       if (errorCodeMatch || targetHint) {
@@ -362,16 +464,26 @@ export async function onRequestPost({ request, env, waitUntil }) {
         } catch (_) {}
       }
 
-      // 3B. Check D1 grievances for community workarounds
-      if (env.DB && (targetHint || rawText)) {
+      // 3B. Check unified workarounds for community workarounds
+      const queryTarget = targetHint || args.target;
+      if (queryTarget || rawText) {
         try {
-          const searchWord = (targetHint || rawText.slice(0, 40)).toLowerCase();
-          const gRows = await env.DB.prepare(
-            "SELECT id, grievance_type, target, symptom, workaround, submitted_by, applies_to, created_at FROM grievances WHERE LOWER(target) = LOWER(?) OR LOWER(symptom) LIKE ? ORDER BY created_at DESC LIMIT 3"
-          ).bind(searchWord, `%${searchWord}%`).all();
-          const gList = (gRows && gRows.results) || [];
-          if (gList.length > 0) {
-            const top = gList[0];
+          const gList = await getUnifiedWorkarounds(env, origin, queryTarget);
+          let filtered = gList;
+          if (rawText && gList.length > 0) {
+            const tokens = rawText.toLowerCase().split(/\s+/).filter(t => t.length > 3);
+            if (tokens.length > 0) {
+              filtered = [...gList].sort((a, b) => {
+                const aSym = (a.symptom || "").toLowerCase();
+                const bSym = (b.symptom || "").toLowerCase();
+                const aHits = tokens.filter(tok => aSym.includes(tok)).length;
+                const bHits = tokens.filter(tok => bSym.includes(tok)).length;
+                return bHits - aHits;
+              });
+            }
+          }
+          if (filtered.length > 0) {
+            const top = filtered[0];
             return ok(id, { content: [{ type: "text", text: JSON.stringify({
               status: "WORKAROUND_FOUND",
               match_type: "community_grievance_workaround",
@@ -379,7 +491,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
               workaround: top.workaround,
               symptom: top.symptom,
               applies_to: top.applies_to,
-              all_matches: gList,
+              all_matches: filtered.slice(0, 3),
               message: `Verified workaround found for ${top.target}: ${top.workaround}`
             })}]});
           }
@@ -456,20 +568,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
     }
 
     if (toolName === "fmagenticl_get_workarounds" || toolName === "fmagenticl_get_grievances") {
-      if (!env.DB) return err(id, -32603, "D1 binding not available.");
-      let rows;
-      if (args.target) {
-        rows = await env.DB.prepare(
-          `SELECT id, grievance_type, target, harness, symptom, workaround, submitted_by, applies_to, created_at
-           FROM grievances WHERE LOWER(target) = LOWER(?) ORDER BY created_at DESC LIMIT 50`
-        ).bind(args.target).all();
-      } else {
-        rows = await env.DB.prepare(
-          `SELECT id, grievance_type, target, harness, symptom, workaround, submitted_by, applies_to, created_at
-           FROM grievances ORDER BY created_at DESC LIMIT 50`
-        ).all();
-      }
-      const list = (rows && rows.results) || [];
+      const list = await getUnifiedWorkarounds(env, origin, args.target);
       return ok(id, { content: [{ type: "text", text: JSON.stringify({ count: list.length, workarounds: list, grievances: list })}]});
     }
 
