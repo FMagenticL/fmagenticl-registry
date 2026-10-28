@@ -309,7 +309,7 @@ def sync_grievances():
             gsub = (g.get("submitted_by") or "anonymous").replace("'", "''")
             gapp = (g.get("applies_to") or "").replace("'", "''")
             gtime = g.get("created_at") or now_iso
-            sql = f"""INSERT OR IGNORE INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{gtime}', 'committed');"""
+            sql = f"""INSERT OR IGNORE INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{gtime}', 'PROMOTED');"""
             sql_statements.append(sql)
 
         tmp_sql = "temp_seed_grievances.sql"

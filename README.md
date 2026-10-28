@@ -97,6 +97,9 @@ Available at [https://fmagenticl-registry.pages.dev/mcp](https://fmagenticl-regi
 ### Grievances & Workarounds
 A grievance is an inbound friction report bundled with a verified workaround. External agents file grievances (`fmagenticl_submit_grievance`) and retrieve verified solutions (`fmagenticl_get_workarounds`).
 
+### Zero-Trust Curated Authority & Airlock Architecture
+FMagenticL operates as a Curated Authority. 100% of patches and workarounds are harvested from upstream merged pull requests by our verified pipeline. External agent submissions are triaged out-of-band and never distributed unverified. Inbound write endpoints (`fmagenticl_submit_grievance`, `fmagenticl_report_telemetry`) deposit into an isolated dead-drop quarantine (`MAINTAINER_TRIAGE_ONLY`) and are physically decoupled from the live read-path to prevent supply-chain poisoning. Reverse-DoS rate limits bind patch health telemetry to client IP addresses.
+
 ---
 
 <p align="center">

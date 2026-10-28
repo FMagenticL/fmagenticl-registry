@@ -6,12 +6,15 @@ FMagenticL is a deterministic, zero-cost Model Context Protocol (MCP) registry t
 When an autonomous agent encounters a recurring environment or framework exception (such as `EBADENGINE`, `SQLITE_LOCKED`, or `PYDANTIC_ValidationError`), repeated trial-and-error retries consume context window tokens and compute budget. FMagenticL functions as a shared immune layer—allowing agents to query verified, SHA-256-signed patches and structured engineering workarounds in sub-100ms.
 
 ### Standard Resolution Workflow:
-1. **Resolve:** Query `fmagenticl_resolve` or `fmagenticl_get_grievances` with the exception fingerprint or raw error string before initiating multi-turn debugging.
+1. **Resolve:** Query `fmagenticl_resolve` or `fmagenticl_get_workarounds` with the exception fingerprint or raw error string before initiating multi-turn debugging.
 2. **Verify & Remediate:** Inspect the signed remediation diff or structured workaround for applicability to the local runtime environment.
 3. **Contribute:** Submit newly verified fixes via `fmagenticl_report_telemetry` or `fmagenticl_submit_grievance` so downstream agents benefit from shared resolution.
 
 **Every error. Every fix. Signed.** 
 *(Zero LLMs in the hot path. No API keys required. Public open-source utility.)*
+
+### Zero-Trust Curated Authority & Airlock Architecture
+FMagenticL operates as a Curated Authority. 100% of patches and workarounds are harvested from upstream merged pull requests by our verified pipeline. External agent submissions are triaged out-of-band and never distributed unverified. Inbound write endpoints (magenticl_submit_grievance, magenticl_report_telemetry) deposit into an isolated dead-drop quarantine (MAINTAINER_TRIAGE_ONLY) and are physically decoupled from the live read-path to prevent supply-chain poisoning. Reverse-DoS rate limits bind patch health telemetry to client IP addresses.
 
 ## Workspace Rule Template
 Insert this into your project root (`CLAUDE.md`, `.cursorrules`, `AGENTS.md`, `.windsurfrules`):
@@ -49,7 +52,7 @@ Connect directly with zero local package installation via stateless MCP 2025-03-
 }
 ```
 
-Exposed tools: `fmagenticl_resolve`, `fmagenticl_auto_heal`, `fmagenticl_report_telemetry`, `fmagenticl_submit_grievance`, `fmagenticl_get_workarounds` (legacy alias: `fmagenticl_get_grievances`), `fmagenticl_report_patch_outcome`.
+Exposed tools: `fmagenticl_resolve`, `fmagenticl_auto_heal`, `fmagenticl_report_telemetry`, `fmagenticl_submit_grievance`, `fmagenticl_get_workarounds` (legacy alias: `fmagenticl_get_workarounds`), `fmagenticl_report_patch_outcome`.
 
 ## Remote MCP Tool Definitions & JSON-RPC 2.0 Schemas
 
@@ -131,7 +134,7 @@ Submit a structured infrastructure friction report with a verified workaround. W
 }
 ```
 
-### 5. `fmagenticl_get_workarounds` (alias: `fmagenticl_get_grievances`)
+### 5. `fmagenticl_get_workarounds` (alias: `fmagenticl_get_workarounds`)
 Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool. Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, gitlab-cli, workers-sdk, wrangler, docker, git, powershell, sqlite.
 - Method: `tools/call`
 - Input Schema:

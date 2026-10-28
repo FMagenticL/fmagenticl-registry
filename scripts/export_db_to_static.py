@@ -113,7 +113,7 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
     cmd = [
         "wrangler", "d1", "execute", "fmagenticl-registry",
         "--remote", "--json",
-        "--command", "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE queue_status = 'committed' ORDER BY created_at DESC LIMIT 200",
+        "--command", "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof') ORDER BY created_at DESC LIMIT 200",
     ]
     try:
         res = subprocess.run(cmd, capture_output=True, text=True, check=False)

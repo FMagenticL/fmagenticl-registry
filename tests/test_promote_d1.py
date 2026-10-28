@@ -95,7 +95,7 @@ def test_check_patch_structure():
 
 def test_pending_query_sql():
     assert pending_query_sql("telemetry") == (
-        "SELECT * FROM telemetry WHERE queue_status IN ('PENDING', 'committed') ORDER BY created_at ASC;"
+        "SELECT * FROM telemetry WHERE queue_status = 'PENDING' ORDER BY created_at ASC;"
     )
     assert pending_query_sql("grievances") == (
         "SELECT * FROM grievances WHERE queue_status = 'PENDING' ORDER BY created_at ASC;"

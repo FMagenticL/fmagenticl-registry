@@ -193,10 +193,8 @@ def is_duplicate_patch(fp_hex: str, repo_root: Path) -> bool:
 
 
 def pending_query_sql(table: str) -> str:
-    """Telemetry: PENDING plus legacy 'committed' rows (pre-Phase-10.2 edge default).
-    Grievances: PENDING only ('committed' grievances are already published by export_db_to_static.py)."""
-    if table == "telemetry":
-        return "SELECT * FROM telemetry WHERE queue_status IN ('PENDING', 'committed') ORDER BY created_at ASC;"
+    """Query strictly 'PENDING' queue_status for both tables.
+    'DEAD_LETTER_QUARANTINE' rows are isolated out-of-band and never processed by the harvester."""
     return f"SELECT * FROM {table} WHERE queue_status = 'PENDING' ORDER BY created_at ASC;"
 
 
@@ -459,7 +457,7 @@ def process_candidates(
 
                 sql_lines.append(
                     f"INSERT OR REPLACE INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) "
-                    f"VALUES ('{gid}', '{gtype}', '{gtgt}', '{gharness}', '{gfp}', '{gsym}', '{gwork}', '{genv}', '{gsub}', '{gvt}', '{gapp}', '{gcreated}', 'committed');"
+                    f"VALUES ('{gid}', '{gtype}', '{gtgt}', '{gharness}', '{gfp}', '{gsym}', '{gwork}', '{genv}', '{gsub}', '{gvt}', '{gapp}', '{gcreated}', 'PROMOTED');"
                 )
 
             if sql_lines:
