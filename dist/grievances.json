@@ -1,7 +1,20 @@
 {
-  "count": 108,
-  "generated_at": "2026-10-28T05:44:20Z",
+  "count": 111,
+  "generated_at": "2026-10-28T12:56:38Z",
   "grievances": [
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-28T12:21:32Z",
+      "fingerprint": "sha256:27f9e41530745cca762eddf8ce83f22c564ac0b59fbcf1c24da099b4017cc3f9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_31562",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: BaseModelResponseIterator falsely terminates stream when tool-call arguments contain \"[DONE]\"",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming): exact-match the SSE [DONE] marker in BaseModelResponseIterator. Target files: litellm/llms/base_llm/base_model_iterator.py, tests/unit/llms/base_llm/test_base_model_iterator.py. The proxy treated any streamed chunk containing the text [DONE] as the end of the stream, so that chunk was thrown away. A streamed tool call whose arguments include [DONE] vanished on chat completions, the Responses API and the messages endpoint, and the client got a plain stop instead, which agent loops read as an empty final answe... (Ref: https://github.com/BerriAI/litellm/pull/47832)"
+    },
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T05:21:16.151Z",
@@ -79,6 +92,19 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(mcp): accept YAML OpenAPI documents. Target files: litellm/proxy/mcp_server/openapi_to_mcp_generator.py, tests/unit/proxy/mcp_server/test_mcp_server_manager.py, tests/unit/proxy/mcp_server/test_openapi_spec_path_url.py. YAML OpenAPI specs now generate MCP tools from URLs and local files. JSON keeps its existing decoding behavior, and both formats use the same loader for preview, registration, and health checks (Ref: https://github.com/BerriAI/litellm/pull/48622)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-27T19:43:37Z",
+      "fingerprint": "sha256:d63bd56d49828e9df60474194e6673653ee28d76a2226f7eb49c105df0012d57",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_48574",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Feature]: Accept images on /v1/systemone and /v1/decisions for hosted_vllm decision models",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: feat(hosted_vllm): accept images on decision deployments. Target files: litellm/llms/hosted_vllm/decisions/transformation.py, tests/unit/decisions/test_main.py. hosted_vllm decision deployments now accept images on /v1/decisions and /v1/systemone and pass them to vLLM's /v1/systemone `images` field, the same way LM Studio deployments already do. Before this, the gateway refused any image with a 400 before calling vLLM, even though current vLLM accepts images there. Remote https image URLs are inlined as data URLs before sen... (Ref: https://github.com/BerriAI/litellm/pull/48621)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -1405,6 +1431,19 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(router): serve Responses turns from a sibling when the encrypted content origin has no boundary peer. Target files: litellm/router.py, litellm/router_utils/pre_call_checks/encrypted_content_affinity_check.py, tests/integration/_support/upstream.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/43015)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-08-04T01:58:40Z",
+      "fingerprint": "sha256:4dc96038178e7bf5dddaceacfd137aa5e97a09f5210abe466f0853bfa9d0e280",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_34388",
+      "submitted_by": "harvester-v1",
+      "symptom": "LiteLLM forwards unsupported strict tool fields to Bedrock Claude models, causing 400 errors and hanging requests",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock): stop forwarding no-op toolSpec.strict to Converse. Target files: litellm/types/llms/bedrock.py, litellm/model_prices_and_context_window_backup.json, model_prices_and_context_window.json. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/35688)"
     }
   ],
   "version": "1.0.0"

@@ -1,5 +1,5 @@
 {
-  "count": 165,
+  "count": 168,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -825,7 +825,22 @@
       "entity": "gate",
       "first_seen": "2026-10-28",
       "type": "agent"
+    },
+    {
+      "entity": "mcpmon",
+      "first_seen": "2026-10-28",
+      "type": "agent"
+    },
+    {
+      "entity": "mcprush",
+      "first_seen": "2026-10-28",
+      "type": "agent"
+    },
+    {
+      "entity": "scout",
+      "first_seen": "2026-10-28",
+      "type": "crawler"
     }
   ],
-  "generated_at": "2026-10-28T05:44:18Z"
+  "generated_at": "2026-10-28T12:56:39Z"
 }
