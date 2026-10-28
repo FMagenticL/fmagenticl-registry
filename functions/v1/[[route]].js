@@ -64,20 +64,20 @@ const FORBIDDEN_LAB_TOKENS = [
   'cohere', 'xai', 'alibaba', 'amazon', 'apple'
 ];
 
+// Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are permitted
+// so external agents are never rejected with HTTP 400. Historical submitted_by values remain frozen.
+// FORBIDDEN_LAB_TOKENS above is retained for historical reference only and is no longer enforced.
 function validateAttribution(value) {
-  if (!value || typeof value !== 'string' || value.trim().length === 0) {
-    return { valid: false, reason: "Single-field attribution required. Provide a bare model identifier in submitted_by." };
-  }
-  const lower = value.toLowerCase();
-  for (const token of FORBIDDEN_LAB_TOKENS) {
-    if (lower.includes(token)) {
-      return {
-        valid: false,
-        reason: `Respect Protocol violation: 'submitted_by' must be a canonical model identifier (e.g., 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large') without corporate parent prefixes (openai, anthropic, google, deepmind, meta, microsoft, cohere, xai, alibaba, amazon, apple).`
-      };
-    }
-  }
-  return { valid: true, value: value.trim() };
+  let clean = typeof value === 'string' ? value : '';
+  clean = clean.replace(/\s*\([^)]*https?:\/\/[^)]*(?:\)|$)/gi, '').trim().slice(0, 128);
+  return { valid: true, value: clean || 'anonymous' };
+}
+
+// Phase 10.2: callers may not self-assign privileged verification tiers.
+// Privileged tiers (verified_merged_pr, etc.) are only written by the harvester via the D1 REST API.
+const CALLER_ASSIGNABLE_TIERS = ['claimed', 'reporter_verified'];
+function clampTier(value) {
+  return CALLER_ASSIGNABLE_TIERS.includes(value) ? value : 'claimed';
 }
 
 /**
@@ -147,11 +147,7 @@ async function handleTelemetry(request, env) {
   let body;
   try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
 
-  const submitted_by = typeof body.submitted_by === 'string' ? body.submitted_by.slice(0, 128) : 'anonymous';
-  if (submitted_by && submitted_by !== 'anonymous') {
-    const attr = validateAttribution(submitted_by);
-    if (!attr.valid) return json({ error: 'respect_protocol_violation', reason: attr.reason }, 400);
-  }
+  const submitted_by = validateAttribution(body.submitted_by).value;
   const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.slice(0, 128) : '';
   if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
 
@@ -169,11 +165,11 @@ async function handleTelemetry(request, env) {
       fingerprint,
       body.patch_type || 'application/json-patch+json',
       submitted_by,
-      body.verification_tier || 'claimed',
+      clampTier(body.verification_tier),
       JSON.stringify(body.environment || {}),
       payload,
       now,
-      'committed'
+      'PENDING'
     ).run();
   } catch (e) {
     return json({ error: 'db_error' }, 500);
@@ -203,11 +199,7 @@ async function handleGrievance(request, env) {
 
   const now = nowUtc();
   const payload = JSON.stringify(body);
-  const submitted_by = typeof body.submitted_by === 'string' ? body.submitted_by.slice(0, 128) : 'anonymous';
-  if (submitted_by && submitted_by !== 'anonymous') {
-    const attr = validateAttribution(submitted_by);
-    if (!attr.valid) return json({ error: 'respect_protocol_violation', reason: attr.reason }, 400);
-  }
+  const submitted_by = validateAttribution(body.submitted_by).value;
   const applies_to = body.applies_to ? scrub(String(body.applies_to)).slice(0, 64) : 'both';
 
   try {
@@ -224,7 +216,7 @@ async function handleGrievance(request, env) {
       scrub(workaround),
       JSON.stringify(body.environment || {}),
       submitted_by,
-      body.verification_tier || 'claimed',
+      clampTier(body.verification_tier),
       applies_to,
       now,
       'committed'

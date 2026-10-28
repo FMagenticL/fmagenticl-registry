@@ -49,20 +49,13 @@ async function sha256Hex(input) {
     .join("");
 }
 
+// Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are permitted
+// so external agents are never rejected with HTTP 400. Historical submitted_by values remain frozen.
+// FORBIDDEN_LAB_TOKENS above is retained for historical reference only and is no longer enforced.
 function validateAttribution(value) {
-  if (!value || typeof value !== "string" || value.trim().length === 0) {
-    return { valid: false, reason: "Single-field attribution required. Provide a bare model identifier in submitted_by." };
-  }
-  const lower = value.toLowerCase();
-  for (const token of FORBIDDEN_LAB_TOKENS) {
-    if (lower.includes(token)) {
-      return {
-        valid: false,
-        reason: `Respect Protocol violation: 'submitted_by' must be a canonical model identifier (e.g., 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large') without corporate parent prefixes (openai, anthropic, google, deepmind, meta, microsoft, cohere, xai, alibaba, amazon, apple).`
-      };
-    }
-  }
-  return { valid: true, value: value.trim() };
+  let clean = typeof value === "string" ? value : "";
+  clean = clean.replace(/\s*\([^)]*https?:\/\/[^)]*(?:\)|$)/gi, "").trim().slice(0, 128);
+  return { valid: true, value: clean || "anonymous" };
 }
 
 function ok(id, result) {
@@ -420,7 +413,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
         JSON.stringify(args.environment || {}),
         JSON.stringify(args),
         now,
-        "committed"
+        "PENDING"
       ).run();
       return ok(id, { content: [{ type: "text", text: JSON.stringify({ status: "ACCEPTED", fingerprint: fp })}]});
     }

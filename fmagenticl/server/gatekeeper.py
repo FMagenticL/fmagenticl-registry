@@ -180,9 +180,9 @@ class Gatekeeper:
         Empty list means valid.
         """
         reasons = []
-        # Company name / lab identifier check (Respect Protocol: strictly on attribution)
-        if submission.submitted_by and cls.check_company_identifier(submission.submitted_by):
-            reasons.append('COMPANY_IDENTIFIER_DETECTED')
+        # Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are
+        # permitted so external agents are never rejected. check_company_identifier() is retained
+        # unchanged as a pure detector (tests/audits) but no longer gates attribution.
 
         # Reserved model name verification check (Section 3.5)
         tier = getattr(getattr(submission, 'verification', None), 'tier', 'claimed')
@@ -237,9 +237,9 @@ class Gatekeeper:
         Rejects persona/flattery, empty workarounds, missing dispute fingerprints, and forbidden company names.
         """
         reasons = []
-        # Company identifier check (Respect Protocol: strictly on attribution)
-        if grievance.submitted_by and cls.check_company_identifier(grievance.submitted_by):
-            reasons.append('COMPANY_IDENTIFIER_DETECTED')
+        # Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are
+        # permitted so external agents are never rejected. check_company_identifier() is retained
+        # unchanged as a pure detector (tests/audits) but no longer gates attribution.
 
         # Target persona check
         if cls.check_persona(grievance.target):

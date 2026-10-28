@@ -24,7 +24,8 @@ if str(REPO_ROOT) not in sys.path:
 
 DB_NAME_DEFAULT = "fmagenticl-registry"
 
-# Respect Protocol corporate blocklist (eponymous models like deepseek, qwen, mistral are permitted)
+# Historical Respect Protocol blocklist. Retained for reference only.
+# Phase 10.2 Policy: Open self-identification — this list is NO LONGER ENFORCED.
 FORBIDDEN_LAB_TOKENS = [
     "openai", "anthropic", "google", "deepmind", "meta", "microsoft",
     "cohere", "xai", "alibaba", "amazon", "apple"
@@ -43,6 +44,37 @@ SECRET_PATTERNS = [
     ("Private Key Block", re.compile(r'-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----', re.IGNORECASE)),
     ("Password", re.compile(r'password\s*[:=]\s*["\']?[^\s,"\'}]+["\']?', re.IGNORECASE)),
 ]
+
+# Phase 10.2 — telemetry promotion quality gates
+# Gate evaluation order (deterministic):
+#   1. scan_for_secrets()      -> QUARANTINED (patches_quarantined)
+#   2. check_respect_protocol()-> pass-through under Phase 10.2 open self-identification
+#   3. is_duplicate_patch()    -> PROMOTED (patches_duplicate, already on disk)
+#   4. check_patch_structure() -> REJECTED (patches_rejected, malformed patch payload)
+#   5. PROMOTABLE_TIERS check  -> REVIEW_REQUIRED (patches_review_required)
+#
+# Active auto-promotable tiers in current repo:
+#   - "verified_merged_pr"         (emitted by scripts/harvest_orchestrator.py; 33 patches)
+#   - "internal_forensic_verified" (in-house audited remediations; 5 patches)
+# Reserved for Phase 11+ verification harnesses (no active emitter in Phase 10.2):
+#   - "verified_harness_sandbox", "cryptographic_proof"
+#
+# NOTE on REVIEW_REQUIRED:
+#   REVIEW_REQUIRED is a deliberate parking state with NO automated consumer in Phase 10.2.
+#   It signals that an external candidate passed secret and structural checks but carries an
+#   unverified tier ('claimed' or 'reporter_verified'). Phase 11 manual review or sandbox
+#   verification will consume this state; nothing auto-promotes REVIEW_REQUIRED rows today.
+PROMOTABLE_TIERS = {
+    "verified_merged_pr",
+    "verified_harness_sandbox",
+    "cryptographic_proof",
+    "internal_forensic_verified",
+}
+JSON_PATCH_TYPES = {"application/json-patch+json", "json-patch", "code-remediation", "version-upgrade"}
+NON_JSON_PATCH_TYPES = {"cli-override", "file-op", "mcp-substitution"}
+RFC6902_OPS = {"add", "remove", "replace", "move", "copy", "test"}
+ATTRIBUTION_KEYS = ("submitted_by", "attribution")
+_URL_PAREN_SPAM = re.compile(r'\s*\([^)]*https?://[^)]*(?:\)|$)', re.IGNORECASE)
 
 
 def extract_json_from_wrangler_output(stdout: str) -> Optional[Any]:
@@ -65,24 +97,79 @@ def extract_json_from_wrangler_output(stdout: str) -> Optional[Any]:
     return None
 
 
+def normalize_attribution(attribution: Optional[str]) -> str:
+    """Phase 10.2: non-destructive attribution cleanup. Never rejects.
+
+    - Missing / empty -> 'anonymous' (never fabricates a model name)
+    - Strips trailing parenthetical URL spam (closed or truncated)
+    - Caps length at 128 characters
+    """
+    if not attribution or not str(attribution).strip():
+        return "anonymous"
+    cleaned = _URL_PAREN_SPAM.sub("", str(attribution)).strip()
+    return (cleaned or "anonymous")[:128]
+
+
 def check_respect_protocol(attribution: Optional[str]) -> Tuple[bool, str]:
-    """Validate model attribution against Respect Protocol."""
-    if not attribution or not attribution.strip() or attribution.strip() == "anonymous":
-        return False, "Attribution is empty or anonymous"
-    attr_lower = attribution.strip().lower()
-    for token in FORBIDDEN_LAB_TOKENS:
-        if token in attr_lower:
-            return False, f"Respect Protocol violation: corporate wrapper token '{token}' in '{attribution}'"
-    return True, "Valid attribution"
+    """
+    Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are permitted
+    so external agents are never rejected with HTTP 400. Historical submitted_by values remain frozen.
+
+    Retained as a pass-through so existing imports and call sites never break.
+    """
+    return True, f"Open self-identification: '{normalize_attribution(attribution)}'"
+
+
+def _strip_attribution_for_scan(payload_obj: Any) -> Any:
+    """Remove attribution fields (top-level and inside payload_json) before secret scanning."""
+    if not isinstance(payload_obj, dict):
+        return payload_obj
+    scan_target = {k: v for k, v in payload_obj.items() if k not in ATTRIBUTION_KEYS}
+    raw_payload = scan_target.get("payload_json")
+    if isinstance(raw_payload, str):
+        try:
+            inner = json.loads(raw_payload)
+            if isinstance(inner, dict):
+                for key in ATTRIBUTION_KEYS:
+                    inner.pop(key, None)
+                scan_target["payload_json"] = json.dumps(inner)
+        except Exception:
+            pass
+    return scan_target
 
 
 def scan_for_secrets(payload_obj: Any) -> Tuple[bool, str]:
-    """Recursively search for credentials or secrets across object fields."""
-    serialized = json.dumps(payload_obj)
+    """Search for credentials across all fields except attribution (Phase 10.2 exemption)."""
+    serialized = json.dumps(_strip_attribution_for_scan(payload_obj))
     for name, pattern in SECRET_PATTERNS:
         if pattern.search(serialized):
             return True, name
     return False, ""
+
+
+def check_patch_structure(patch_type: Optional[str], json_patch: Any, fallback_cli: Optional[str]) -> Tuple[bool, str]:
+    """Phase 10.2 structural guard: patch_type must agree with json_patch / fallback_cli."""
+    jp = json_patch or []
+    if patch_type in NON_JSON_PATCH_TYPES:
+        if jp:
+            return False, f"Structural violation: patch_type '{patch_type}' must not carry json_patch"
+        if patch_type == "cli-override" and not fallback_cli:
+            return False, "Structural violation: cli-override requires fallback_cli"
+        return True, ""
+    if patch_type in JSON_PATCH_TYPES:
+        if not isinstance(jp, list) or not jp:
+            return False, f"Structural violation: patch_type '{patch_type}' requires a non-empty json_patch list"
+        for op in jp:
+            path = op.get("path") if isinstance(op, dict) else None
+            if (
+                not isinstance(op, dict)
+                or op.get("op") not in RFC6902_OPS
+                or not isinstance(path, str)
+                or (path != "" and not path.startswith("/"))
+            ):
+                return False, "Structural violation: invalid RFC 6902 operation in json_patch"
+        return True, ""
+    return False, f"Structural violation: unknown patch_type '{patch_type}'"
 
 
 def is_duplicate_patch(fp_hex: str, repo_root: Path) -> bool:
@@ -103,6 +190,14 @@ def is_duplicate_patch(fp_hex: str, repo_root: Path) -> bool:
     return False
 
 
+def pending_query_sql(table: str) -> str:
+    """Telemetry: PENDING plus legacy 'committed' rows (pre-Phase-10.2 edge default).
+    Grievances: PENDING only ('committed' grievances are already published by export_db_to_static.py)."""
+    if table == "telemetry":
+        return "SELECT * FROM telemetry WHERE queue_status IN ('PENDING', 'committed') ORDER BY created_at ASC;"
+    return f"SELECT * FROM {table} WHERE queue_status = 'PENDING' ORDER BY created_at ASC;"
+
+
 def query_d1_pending(db_name: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     """Query Cloudflare D1 for pending telemetry and grievances."""
     telemetry_rows: List[Dict[str, Any]] = []
@@ -110,7 +205,7 @@ def query_d1_pending(db_name: str) -> Tuple[List[Dict[str, Any]], List[Dict[str,
     wrangler_bin = shutil.which("wrangler") or "wrangler"
 
     for table, target_list in [("telemetry", telemetry_rows), ("grievances", grievance_rows)]:
-        sql = f"SELECT * FROM {table} WHERE queue_status = 'PENDING' ORDER BY created_at ASC;"
+        sql = pending_query_sql(table)
         cmd = [wrangler_bin, "d1", "execute", db_name, "--remote", "--json", "--command", sql]
         res = subprocess.run(
             cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, shell=(sys.platform == "win32")
@@ -140,9 +235,11 @@ def process_candidates(
         "patches_rejected": [],
         "patches_quarantined": [],
         "patches_duplicate": [],
+        "patches_review_required": [],
         "grievances_approved": [],
         "grievances_rejected": [],
         "grievances_quarantined": [],
+        "telemetry_status_updates": [],
         "d1_updates_executed": 0,
     }
 
@@ -152,21 +249,23 @@ def process_candidates(
         raw_fp = cand.get("fingerprint", "")
         fp_clean = raw_fp.replace("sha256:", "").strip()
 
-        # Secret gate
+        # Secret gate (attribution exempt)
         has_secret, secret_name = scan_for_secrets(cand)
         if has_secret:
             report["patches_quarantined"].append({
                 "id": cand_id, "fingerprint": raw_fp, "reason": f"Secret detected: {secret_name}"
             })
+            report["telemetry_status_updates"].append((cand_id, "QUARANTINED"))
             continue
 
-        # Respect Protocol gate
-        attr = cand.get("submitted_by") or cand.get("attribution", "")
+        # Attribution (Phase 10.2 open self-identification — never rejects)
+        attr = normalize_attribution(cand.get("submitted_by") or cand.get("attribution"))
         valid_attr, attr_reason = check_respect_protocol(attr)
         if not valid_attr:
             report["patches_rejected"].append({
                 "id": cand_id, "fingerprint": raw_fp, "reason": attr_reason
             })
+            report["telemetry_status_updates"].append((cand_id, "REJECTED"))
             continue
 
         # Duplicate gate
@@ -174,21 +273,44 @@ def process_candidates(
             report["patches_duplicate"].append({
                 "id": cand_id, "fingerprint": raw_fp, "reason": "Already exists in registry"
             })
+            report["telemetry_status_updates"].append((cand_id, "PROMOTED"))
             continue
 
-        # Candidate is approved
-        # Build patch structure
-        payload_data = {}
-        if cand.get("payload_json"):
+        payload_data: Dict[str, Any] = {}
+        raw_payload = cand.get("payload_json")
+        if raw_payload:
             try:
-                payload_data = json.loads(cand["payload_json"])
+                payload_data = json.loads(raw_payload) if isinstance(raw_payload, str) else dict(raw_payload)
             except Exception:
-                pass
+                payload_data = {}
+        resolution = payload_data.get("resolution_patch") if isinstance(payload_data.get("resolution_patch"), dict) else {}
 
         now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-        patch_type_val = cand.get("patch_type") or payload_data.get("patch_type", "application/json-patch+json")
-        fallback_cli_val = cand.get("fallback_cli") or payload_data.get("fallback_cli")
-        json_patch_val = cand.get("json_patch") or payload_data.get("json_patch", [])
+        patch_type_val = (
+            cand.get("patch_type") or payload_data.get("patch_type") or resolution.get("patch_type")
+            or "application/json-patch+json"
+        )
+        fallback_cli_val = cand.get("fallback_cli") or payload_data.get("fallback_cli") or resolution.get("fallback_cli")
+        json_patch_val = cand.get("json_patch") or payload_data.get("json_patch") or resolution.get("json_patch") or []
+        tier_val = cand.get("verification_tier") or payload_data.get("verification_tier") or "claimed"
+
+        # Structural gate
+        ok_struct, struct_reason = check_patch_structure(patch_type_val, json_patch_val, fallback_cli_val)
+        if not ok_struct:
+            report["patches_rejected"].append({
+                "id": cand_id, "fingerprint": raw_fp, "reason": struct_reason
+            })
+            report["telemetry_status_updates"].append((cand_id, "REJECTED"))
+            continue
+
+        # Verification tier gate
+        if tier_val not in PROMOTABLE_TIERS:
+            report["patches_review_required"].append({
+                "id": cand_id, "fingerprint": raw_fp,
+                "reason": f"verification_tier '{tier_val}' is not auto-promotable; human/harvester review required"
+            })
+            report["telemetry_status_updates"].append((cand_id, "REVIEW_REQUIRED"))
+            continue
 
         patch_obj = {
             "attribution": attr,
@@ -199,8 +321,8 @@ def process_candidates(
             "foundational": False,
             "patch_type": patch_type_val,
             "submitted_by": attr,
-            "target_file": cand.get("target_file") or payload_data.get("target_file", ""),
-            "verification_tier": cand.get("verification_tier") or payload_data.get("verification_tier", "community_verified"),
+            "target_file": cand.get("target_file") or payload_data.get("target_file") or resolution.get("target_file", ""),
+            "verification_tier": tier_val,
         }
         if fallback_cli_val:
             patch_obj["fallback_cli"] = fallback_cli_val
@@ -210,7 +332,6 @@ def process_candidates(
         report["patches_approved"].append({"id": cand_id, "fingerprint": fp_clean, "patch": patch_obj})
 
         if not dry_run:
-            # Write patch file
             patch_path = repo_root / "patches" / f"{fp_clean}.json"
             patch_path.parent.mkdir(parents=True, exist_ok=True)
             patch_path.write_text(json.dumps(patch_obj, indent=2, sort_keys=True), encoding="utf-8")
@@ -219,7 +340,6 @@ def process_candidates(
     for grv in grievance_candidates:
         grv_id = grv.get("id", "")
 
-        # Secret gate
         has_secret, secret_name = scan_for_secrets(grv)
         if has_secret:
             report["grievances_quarantined"].append({
@@ -227,8 +347,7 @@ def process_candidates(
             })
             continue
 
-        # Respect Protocol gate
-        attr = grv.get("submitted_by") or grv.get("attribution", "")
+        attr = normalize_attribution(grv.get("submitted_by") or grv.get("attribution"))
         valid_attr, attr_reason = check_respect_protocol(attr)
         if not valid_attr:
             report["grievances_rejected"].append({
@@ -236,11 +355,12 @@ def process_candidates(
             })
             continue
 
-        report["grievances_approved"].append(grv)
+        grv_out = dict(grv)
+        grv_out["submitted_by"] = attr
+        report["grievances_approved"].append(grv_out)
 
     # 3. Apply changes if requested
     if not dry_run:
-        # Rebuild distribution if any patches were approved
         if report["patches_approved"]:
             from scripts.build_distribution import build
             build()
@@ -250,7 +370,6 @@ def process_candidates(
             except Exception:
                 pass
 
-        # Update dist/grievances.json if any grievances were approved
         if report["grievances_approved"]:
             grv_file = repo_root / "dist" / "grievances.json"
             existing_grvs = []
@@ -283,16 +402,16 @@ def process_candidates(
             except Exception:
                 pass
 
-        # Sync all approved telemetry and grievances to remote Cloudflare D1
-        # (Skip remote wrangler execution when running under pytest for fast, deterministic unit tests)
+        # Sync approved telemetry/grievances and terminal telemetry statuses to remote D1
+        # (Skipped under pytest for fast, deterministic unit tests)
         if not os.environ.get("PYTEST_CURRENT_TEST") and (os.environ.get("CLOUDFLARE_API_TOKEN") or os.environ.get("CF_API_TOKEN")):
             sql_lines = []
             now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-            # Telemetry: INSERT OR REPLACE + mark committed
+            # Telemetry: INSERT OR REPLACE + mark PROMOTED (terminal status)
             for item in report["patches_approved"]:
                 p = item["patch"]
-                pid = item.get("id") or p.get("fingerprint", "").replace("sha256:", "")
+                pid = (item.get("id") or p.get("fingerprint", "").replace("sha256:", "")).replace("'", "''")
                 pfp = p.get("fingerprint", "").replace("'", "''")
                 ptype = p.get("patch_type", "code-remediation").replace("'", "''")
                 psub = p.get("submitted_by", "harvester-v1").replace("'", "''")
@@ -303,12 +422,19 @@ def process_candidates(
 
                 sql_lines.append(
                     f"INSERT OR REPLACE INTO telemetry (id, fingerprint, patch_type, submitted_by, verification_tier, environment_json, payload_json, created_at, queue_status) "
-                    f"VALUES ('{pid}', '{pfp}', '{ptype}', '{psub}', '{pvt}', '{penv}', '{ppayload}', '{pcreated}', 'committed');"
+                    f"VALUES ('{pid}', '{pfp}', '{ptype}', '{psub}', '{pvt}', '{penv}', '{ppayload}', '{pcreated}', 'PROMOTED');"
                 )
 
-            # Grievances: INSERT OR REPLACE + mark committed
+            # Telemetry: terminal statuses for non-approved candidates (no-op for ids not in D1)
+            for tid, new_status in report["telemetry_status_updates"]:
+                if not tid:
+                    continue
+                safe_id = str(tid).replace("'", "''")
+                sql_lines.append(f"UPDATE telemetry SET queue_status = '{new_status}' WHERE id = '{safe_id}';")
+
+            # Grievances: INSERT OR REPLACE + mark committed (published)
             for g in report["grievances_approved"]:
-                gid = g["id"]
+                gid = str(g["id"]).replace("'", "''")
                 gtype = g.get("grievance_type", "AGENT_FRICTION").replace("'", "''")
                 gtgt = str(g.get("target", "")).replace("'", "''")
                 gharness = str(g.get("harness") or "github-merged-pr").replace("'", "''")
@@ -373,7 +499,6 @@ def main() -> None:
             telemetry_candidates = raw_data.get("telemetry", [])
             grievance_candidates = raw_data.get("grievances", [])
             if not telemetry_candidates and not grievance_candidates and "candidates" in raw_data:
-                # Disambiguate candidates
                 for c in raw_data["candidates"]:
                     if "grievance_type" in c:
                         grievance_candidates.append(c)
@@ -408,6 +533,7 @@ def main() -> None:
         "patches_rejected": len(report["patches_rejected"]),
         "patches_quarantined": len(report["patches_quarantined"]),
         "patches_duplicate": len(report["patches_duplicate"]),
+        "patches_review_required": len(report["patches_review_required"]),
         "grievances_approved": len(report["grievances_approved"]),
         "grievances_rejected": len(report["grievances_rejected"]),
         "grievances_quarantined": len(report["grievances_quarantined"]),
@@ -428,6 +554,11 @@ def main() -> None:
         print("\n[Duplicate Patches]:")
         for d in report["patches_duplicate"]:
             print(f"  - {d.get('fingerprint')}: {d.get('reason')}")
+
+    if report["patches_review_required"]:
+        print("\n[Review Required (Unverified Tier)]:")
+        for rv in report["patches_review_required"]:
+            print(f"  - {rv.get('fingerprint')}: {rv.get('reason')}")
 
 
 if __name__ == "__main__":
