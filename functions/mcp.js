@@ -72,14 +72,14 @@ function err(id, code, message, data) {
 const MCP_TOOLS = [
   {
     name: "fmagenticl_resolve",
-    description: "Deterministic sub-100ms lookup of a signed patch or verified workaround for a failure. Accepts exact 64-char SHA-256 fingerprint, raw error string, or target tool name.",
+    description: "Deterministic sub-100ms lookup of a signed patch or verified workaround for an agent execution error. Accepts raw error traceback / exception strings (raw_error), package/tool names (target), or pre-computed SHA-256 fingerprints (fingerprint). Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, httpx, openai, anthropic, instructor, gitlab-cli, workers-sdk, sqlite, powershell.",
     inputSchema: {
       type: "object",
       properties: {
-        fingerprint: { type: "string", description: "Optional 64-char hex SHA-256 fingerprint." },
-        raw_error: { type: "string", description: "Optional raw stderr / exception string." },
-        target: { type: "string", description: "Optional target tool name (e.g. wrangler, powershell, tailwind)." },
-        environment: { type: "object", description: "Optional environment attributes (os, runtime, package)." },
+        raw_error: { type: "string", description: "Raw stderr, exception traceback, or error message (e.g. 'ZoneInfo validation error', 'ImportError: cannot import name ...')." },
+        target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp, uv, httpx, wrangler)." },
+        fingerprint: { type: "string", description: "Optional 64-char hex SHA-256 fingerprint for direct cache lookup." },
+        environment: { type: "object", description: "Optional environment attributes (os, runtime, package, version)." },
         failure: { type: "object", description: "Optional structured failure details (error_code, exit_code, raw_signature)." }
       }
     }
@@ -138,10 +138,10 @@ const MCP_TOOLS = [
   },
   {
     name: "fmagenticl_get_grievances",
-    description: "Query open grievances and workarounds for a specific infrastructure target.",
+    description: "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool. Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, httpx, openai, anthropic, instructor, gitlab-cli, workers-sdk, sqlite, powershell.",
     inputSchema: {
       type: "object",
-      properties: { target: { type: "string" } },
+      properties: { target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)." } },
       required: ["target"]
     }
   },
