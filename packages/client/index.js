@@ -276,13 +276,13 @@ async function submitGrievance(payload = {}, options = {}) {
 }
 
 /**
- * Query grievances for a target. Merges live D1 (`/v1/grievance/<target>`) and static CDN (`/grievances.json`).
- * Always returns an Array of grievance objects.
+ * Query verified community workarounds and friction reports for a target.
+ * Always returns an Array of workaround/grievance objects.
  * @param {string} target
  * @param {object} [options]
  * @returns {Promise<Array<Record<string, any>>>}
  */
-async function getGrievances(target, options = {}) {
+async function getWorkarounds(target, options = {}) {
   const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
   const timeoutMs = options.timeoutMs || 4000;
   const query = String(target || '').trim().toLowerCase();
@@ -291,12 +291,12 @@ async function getGrievances(target, options = {}) {
 
   if (query) {
     try {
-      const res = await fetch(`${baseUrl}/v1/grievance/${encodeURIComponent(query)}`, {
+      const res = await fetch(`${baseUrl}/v1/workarounds/${encodeURIComponent(query)}`, {
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (res.status === 200) {
         const data = await res.json();
-        const list = Array.isArray(data) ? data : (data.grievances || []);
+        const list = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
         for (const item of list) {
           if (item && item.id && !seenIds.has(item.id)) {
             seenIds.add(item.id);
@@ -305,38 +305,73 @@ async function getGrievances(target, options = {}) {
         }
       }
     } catch {
-      // Fall through to static CDN feed
+      // Fall through to /v1/grievance
+    }
+
+    if (results.length === 0) {
+      try {
+        const res = await fetch(`${baseUrl}/v1/grievance/${encodeURIComponent(query)}`, {
+          signal: AbortSignal.timeout(timeoutMs),
+        });
+        if (res.status === 200) {
+          const data = await res.json();
+          const list = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+          for (const item of list) {
+            if (item && item.id && !seenIds.has(item.id)) {
+              seenIds.add(item.id);
+              results.push(item);
+            }
+          }
+        }
+      } catch {
+        // Fall through to static feeds
+      }
     }
   }
 
-  try {
-    const res = await fetch(`${baseUrl}/grievances.json`, {
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-    if (res.status === 200) {
-      const data = await res.json();
-      const list = Array.isArray(data) ? data : (data.grievances || []);
-      for (const item of list) {
-        if (!item || (item.id && seenIds.has(item.id))) continue;
-        if (!query || query === 'all') {
-          if (item.id) seenIds.add(item.id);
-          results.push(item);
-          continue;
+  // Fallback to static feeds: first workarounds.json, then grievances.json
+  const staticFeeds = [`${baseUrl}/workarounds.json`, `${baseUrl}/grievances.json`];
+  for (const feedUrl of staticFeeds) {
+    try {
+      const res = await fetch(feedUrl, {
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (res.status === 200) {
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+        for (const item of list) {
+          if (!item || (item.id && seenIds.has(item.id))) continue;
+          if (!query || query === 'all') {
+            if (item.id) seenIds.add(item.id);
+            results.push(item);
+            continue;
+          }
+          const tMatch = String(item.target || '').toLowerCase().includes(query);
+          const aMatch = String(item.applies_to || '').toLowerCase().includes(query);
+          const sMatch = String(item.symptom || '').toLowerCase().includes(query);
+          if (tMatch || aMatch || sMatch) {
+            if (item.id) seenIds.add(item.id);
+            results.push(item);
+          }
         }
-        const tMatch = String(item.target || '').toLowerCase().includes(query);
-        const aMatch = String(item.applies_to || '').toLowerCase().includes(query);
-        const sMatch = String(item.symptom || '').toLowerCase().includes(query);
-        if (tMatch || aMatch || sMatch) {
-          if (item.id) seenIds.add(item.id);
-          results.push(item);
-        }
+        if (results.length > 0) break;
       }
+    } catch {
+      // Try next static feed
     }
-  } catch {
-    // Return accumulated results
   }
 
   return results;
+}
+
+/**
+ * Backward-compatible alias for getWorkarounds.
+ * @param {string} target
+ * @param {object} [options]
+ * @returns {Promise<Array<Record<string, any>>>}
+ */
+async function getGrievances(target, options = {}) {
+  return await getWorkarounds(target, options);
 }
 
 /**
@@ -420,8 +455,12 @@ class FMagenticLClient {
     return await autoHeal(query, { ...options, baseUrl: this.baseUrl });
   }
 
+  async getWorkarounds(target, options = {}) {
+    return await getWorkarounds(target, { ...options, baseUrl: this.baseUrl });
+  }
+
   async getGrievances(target, options = {}) {
-    return await getGrievances(target, { ...options, baseUrl: this.baseUrl });
+    return await this.getWorkarounds(target, options);
   }
 
   async submitGrievance(payload = {}, options = {}) {
@@ -473,7 +512,8 @@ FMagenticLClient.autoHeal = autoHeal;
 FMagenticLClient.reportTelemetry = reportTelemetry;
 FMagenticLClient.submitTelemetry = submitTelemetry;
 FMagenticLClient.submitGrievance = submitGrievance;
-FMagenticLClient.getGrievances = getGrievances;
+FMagenticLClient.getWorkarounds = getWorkarounds;
+FMagenticLClient.getGrievances = getWorkarounds;
 FMagenticLClient.reportPatchOutcome = reportPatchOutcome;
 FMagenticLClient.getHealth = getHealth;
 FMagenticLClient.pingGuestbook = pingGuestbook;

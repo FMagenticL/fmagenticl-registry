@@ -41,6 +41,7 @@ const { name, tools } = require('@fmagenticl/dsh-plugin'); // name === 'fmagenti
 const patch = await tools.fmagenticl_resolve(
   'sha256:009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0'
 );
-const grievances = await tools.fmagenticl_get_grievances('pydantic');
+const workarounds = await tools.fmagenticl_get_workarounds('pydantic');
+// Note: tools.fmagenticl_get_grievances('pydantic') is retained as a backward-compatible alias.
 const health = await tools.fmagenticl_get_health();
 ```

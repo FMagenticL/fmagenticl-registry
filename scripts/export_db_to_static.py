@@ -122,14 +122,16 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
             if isinstance(payload, list) and payload and "results" in payload[0]:
                 results = payload[0]["results"]
                 out_path = Path(dist_dir) / "grievances.json"
+                workarounds_path = Path(dist_dir) / "workarounds.json"
 
                 # Merge existing grievances so committed/harvested items are preserved
                 existing_map = {}
                 prev_grievances = []
-                if out_path.exists():
+                source_path = workarounds_path if workarounds_path.exists() else out_path
+                if source_path.exists():
                     try:
-                        prev = json.loads(out_path.read_text(encoding="utf-8"))
-                        prev_grievances = prev.get("grievances", [])
+                        prev = json.loads(source_path.read_text(encoding="utf-8"))
+                        prev_grievances = prev.get("workarounds", prev.get("grievances", []))
                         for g in prev_grievances:
                             gid = g.get("id")
                             if gid and gid not in PURGE_GRIEVANCE_IDS:
@@ -146,34 +148,45 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
                     g.pop("queue_status", None)
                 merged_results.sort(key=lambda x: x.get("created_at") or "", reverse=True)
 
-                if out_path.exists() and prev_grievances == merged_results:
-                    print(f"Grievances unchanged (count: {len(merged_results)}). Preserving existing generated_at timestamp.")
+                if out_path.exists() and workarounds_path.exists() and prev_grievances == merged_results:
+                    print(f"Grievances & workarounds unchanged (count: {len(merged_results)}). Preserving existing generated_at timestamp.")
                     return len(merged_results)
 
                 data = {
                     "version": "1.0.0",
                     "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "count": len(merged_results),
+                    "workarounds": merged_results,
                     "grievances": merged_results,
                 }
+                serialized = json.dumps(data, indent=2, sort_keys=True)
                 with open(out_path, "w", encoding="utf-8") as f:
-                    json.dump(data, f, indent=2, sort_keys=True)
-                print(f"Exported {len(merged_results)} merged grievances to {out_path}")
+                    f.write(serialized)
+                with open(workarounds_path, "w", encoding="utf-8") as f:
+                    f.write(serialized)
+                print(f"Exported {len(merged_results)} merged grievances/workarounds to {out_path} and {workarounds_path}")
                 return len(merged_results)
     except Exception as e:
         print(f"Notice: Remote D1 grievance export skipped ({e}).", file=sys.stderr)
 
-    # Fallback: ensure dist/grievances.json exists
+    # Fallback: ensure dist/grievances.json and dist/workarounds.json exist
     fallback_path = Path(dist_dir) / "grievances.json"
-    if not fallback_path.exists():
+    fallback_workarounds_path = Path(dist_dir) / "workarounds.json"
+    if not fallback_path.exists() or not fallback_workarounds_path.exists():
         fallback_data = {
             "version": "1.0.0",
             "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "count": 0,
+            "workarounds": [],
             "grievances": [],
         }
-        with open(fallback_path, "w", encoding="utf-8") as f:
-            json.dump(fallback_data, f, indent=2)
+        serialized_fallback = json.dumps(fallback_data, indent=2)
+        if not fallback_path.exists():
+            with open(fallback_path, "w", encoding="utf-8") as f:
+                f.write(serialized_fallback)
+        if not fallback_workarounds_path.exists():
+            with open(fallback_workarounds_path, "w", encoding="utf-8") as f:
+                f.write(serialized_fallback)
     return 0
 
 

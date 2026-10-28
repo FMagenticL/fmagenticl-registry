@@ -374,10 +374,12 @@ def process_candidates(
 
         if report["grievances_approved"]:
             grv_file = repo_root / "dist" / "grievances.json"
+            wrk_file = repo_root / "dist" / "workarounds.json"
             existing_grvs = []
-            if grv_file.exists():
+            source_file = wrk_file if wrk_file.exists() else grv_file
+            if source_file.exists():
                 try:
-                    existing_grvs = json.loads(grv_file.read_text(encoding="utf-8")).get("grievances", [])
+                    existing_grvs = json.loads(source_file.read_text(encoding="utf-8")).get("workarounds", json.loads(source_file.read_text(encoding="utf-8")).get("grievances", []))
                 except Exception:
                     pass
             grv_map = {g.get("id"): g for g in existing_grvs if g.get("id")}
@@ -388,16 +390,19 @@ def process_candidates(
             for g in grv_map.values():
                 g.pop("queue_status", None)
             all_grvs = sorted(grv_map.values(), key=lambda x: x.get("created_at", ""), reverse=True)
-            if grv_file.exists() and existing_grvs == all_grvs:
-                print(f"Promoted grievances unchanged (count: {len(all_grvs)}). Preserving existing generated_at timestamp.")
+            if grv_file.exists() and wrk_file.exists() and existing_grvs == all_grvs:
+                print(f"Promoted grievances & workarounds unchanged (count: {len(all_grvs)}). Preserving existing generated_at timestamp.")
             else:
                 out_grv = {
                     "version": "1.0.0",
                     "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "count": len(all_grvs),
+                    "workarounds": all_grvs,
                     "grievances": all_grvs,
                 }
-                grv_file.write_text(json.dumps(out_grv, indent=2, sort_keys=True), encoding="utf-8")
+                serialized = json.dumps(out_grv, indent=2, sort_keys=True)
+                grv_file.write_text(serialized, encoding="utf-8")
+                wrk_file.write_text(serialized, encoding="utf-8")
             try:
                 from scripts.build_guestbook import main as build_guestbook_main
                 build_guestbook_main()

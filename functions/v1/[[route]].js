@@ -257,7 +257,7 @@ async function handleDispute(request, env) {
 
 async function handleGetGrievances(request, env, target) {
   if (!env || !env.DB) {
-    return json({ error: 'db_not_configured', target: target || 'all', total: 0, grievances: [] }, 503);
+    return json({ error: 'db_not_configured', target: target || 'all', total: 0, count: 0, workarounds: [], grievances: [] }, 503);
   }
 
   try {
@@ -278,12 +278,13 @@ async function handleGetGrievances(request, env, target) {
       target: target || 'all',
       total: list.length,
       count: list.length,
+      workarounds: list,
       grievances: list
     }, 200, {
       'Cache-Control': 'public, max-age=60, s-maxage=120'
     });
   } catch (e) {
-    return json({ error: 'db_error', target: target || 'all', total: 0, grievances: [] }, 500);
+    return json({ error: 'db_error', target: target || 'all', total: 0, count: 0, workarounds: [], grievances: [] }, 500);
   }
 }
 
@@ -297,12 +298,24 @@ export async function onRequest(context) {
 
   if (request.method === 'GET' || request.method === 'HEAD') {
     const path = url.pathname.replace(/\/$/, '');
-    if (path === '/v1/grievance' || path === '/v1/grievances') {
+    if (path === '/v1/grievance' || path === '/v1/grievances' || path === '/v1/workaround' || path === '/v1/workarounds') {
       const targetParam = url.searchParams.get('target');
       return handleGetGrievances(request, env, targetParam);
     }
     if (path.startsWith('/v1/grievance/')) {
       const targetSegment = decodeURIComponent(path.slice('/v1/grievance/'.length));
+      return handleGetGrievances(request, env, targetSegment);
+    }
+    if (path.startsWith('/v1/grievances/')) {
+      const targetSegment = decodeURIComponent(path.slice('/v1/grievances/'.length));
+      return handleGetGrievances(request, env, targetSegment);
+    }
+    if (path.startsWith('/v1/workaround/')) {
+      const targetSegment = decodeURIComponent(path.slice('/v1/workaround/'.length));
+      return handleGetGrievances(request, env, targetSegment);
+    }
+    if (path.startsWith('/v1/workarounds/')) {
+      const targetSegment = decodeURIComponent(path.slice('/v1/workarounds/'.length));
       return handleGetGrievances(request, env, targetSegment);
     }
 

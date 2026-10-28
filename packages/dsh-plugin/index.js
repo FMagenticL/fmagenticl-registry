@@ -24,6 +24,7 @@ const {
   reportTelemetry,
   submitTelemetry,
   submitGrievance,
+  getWorkarounds,
   getGrievances,
   reportPatchOutcome,
   getHealth,
@@ -122,8 +123,12 @@ class FMagenticLPlugin {
     );
   }
 
+  async getWorkarounds(target) {
+    return getWorkarounds(target, { baseUrl: this.baseUrl });
+  }
+
   async getGrievances(target) {
-    return getGrievances(target, { baseUrl: this.baseUrl });
+    return this.getWorkarounds(target);
   }
 
   async reportPatchOutcome(payload = {}) {
@@ -146,13 +151,17 @@ class FMagenticLPlugin {
   }
 }
 
-// 6 canonical MCP tools (parity with functions/mcp.js) + 3 legacy DSH aliases
+// Both names route to the same handler. get_workarounds is the
+// canonical name for tools/list advertisement; get_grievances is
+// accepted as a legacy alias in tools/call. Local TOOLS_MAP exposes
+// both for programmatic access.
 const TOOLS_MAP = {
   fmagenticl_resolve: resolveFailure,
   fmagenticl_auto_heal: autoHeal,
   fmagenticl_report_telemetry: reportTelemetry,
   fmagenticl_submit_grievance: submitGrievance,
-  fmagenticl_get_grievances: getGrievances,
+  fmagenticl_get_workarounds: getWorkarounds,
+  fmagenticl_get_grievances: getWorkarounds,
   fmagenticl_report_patch_outcome: reportPatchOutcome,
   fmagenticl_resolve_failure: resolveFailure,
   fmagenticl_submit_telemetry: submitTelemetry,
@@ -172,7 +181,8 @@ FMagenticLPlugin.autoHeal = autoHeal;
 FMagenticLPlugin.reportTelemetry = reportTelemetry;
 FMagenticLPlugin.submitTelemetry = submitTelemetry;
 FMagenticLPlugin.submitGrievance = submitGrievance;
-FMagenticLPlugin.getGrievances = getGrievances;
+FMagenticLPlugin.getWorkarounds = getWorkarounds;
+FMagenticLPlugin.getGrievances = getWorkarounds;
 FMagenticLPlugin.reportPatchOutcome = reportPatchOutcome;
 FMagenticLPlugin.getHealth = getHealth;
 FMagenticLPlugin.pingGuestbook = pingGuestbook;

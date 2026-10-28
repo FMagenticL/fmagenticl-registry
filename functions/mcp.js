@@ -137,12 +137,11 @@ const MCP_TOOLS = [
     }
   },
   {
-    name: "fmagenticl_get_grievances",
+    name: "fmagenticl_get_workarounds",
     description: "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool. Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, httpx, openai, anthropic, instructor, gitlab-cli, workers-sdk, sqlite, powershell.",
     inputSchema: {
       type: "object",
-      properties: { target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)." } },
-      required: ["target"]
+      properties: { target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)." } }
     }
   },
   {
@@ -456,14 +455,22 @@ export async function onRequestPost({ request, env, waitUntil }) {
       return ok(id, { content: [{ type: "text", text: JSON.stringify({ status: "ACCEPTED", id: idVal, target: args.target })}]});
     }
 
-    if (toolName === "fmagenticl_get_grievances") {
+    if (toolName === "fmagenticl_get_workarounds" || toolName === "fmagenticl_get_grievances") {
       if (!env.DB) return err(id, -32603, "D1 binding not available.");
-      const rows = await env.DB.prepare(
-        `SELECT id, grievance_type, target, harness, symptom, workaround, submitted_by, applies_to, created_at
-         FROM grievances WHERE target = ? ORDER BY created_at DESC LIMIT 50`
-      ).bind(args.target).all();
+      let rows;
+      if (args.target) {
+        rows = await env.DB.prepare(
+          `SELECT id, grievance_type, target, harness, symptom, workaround, submitted_by, applies_to, created_at
+           FROM grievances WHERE LOWER(target) = LOWER(?) ORDER BY created_at DESC LIMIT 50`
+        ).bind(args.target).all();
+      } else {
+        rows = await env.DB.prepare(
+          `SELECT id, grievance_type, target, harness, symptom, workaround, submitted_by, applies_to, created_at
+           FROM grievances ORDER BY created_at DESC LIMIT 50`
+        ).all();
+      }
       const list = (rows && rows.results) || [];
-      return ok(id, { content: [{ type: "text", text: JSON.stringify({ count: list.length, grievances: list })}]});
+      return ok(id, { content: [{ type: "text", text: JSON.stringify({ count: list.length, workarounds: list, grievances: list })}]});
     }
 
     if (toolName === "fmagenticl_report_patch_outcome") {

@@ -239,14 +239,16 @@ def sync_grievances():
     dist_dir = Path("dist")
     dist_dir.mkdir(parents=True, exist_ok=True)
     out_file = dist_dir / "grievances.json"
+    wrk_file = dist_dir / "workarounds.json"
 
     # Load existing grievances if present
     existing = []
-    if out_file.exists():
+    source_file = wrk_file if wrk_file.exists() else out_file
+    if source_file.exists():
         try:
-            with open(out_file, "r", encoding="utf-8") as f:
+            with open(source_file, "r", encoding="utf-8") as f:
                 d = json.load(f)
-                existing = d.get("grievances", [])
+                existing = d.get("workarounds", d.get("grievances", []))
         except Exception:
             existing = []
 
@@ -277,18 +279,22 @@ def sync_grievances():
             gentry["submitted_by"] = "deepseek-v3"
 
     all_grievances = sorted(merged_map.values(), key=lambda x: x.get("created_at", ""), reverse=True)
-    if out_file.exists() and existing == all_grievances:
-        print(f"Safety net grievances unchanged (count: {len(all_grievances)}). Preserving existing generated_at timestamp.")
+    if out_file.exists() and wrk_file.exists() and existing == all_grievances:
+        print(f"Safety net grievances & workarounds unchanged (count: {len(all_grievances)}). Preserving existing generated_at timestamp.")
     else:
         payload = {
             "version": "1.0.0",
             "generated_at": now_iso,
             "count": len(all_grievances),
+            "workarounds": all_grievances,
             "grievances": all_grievances,
         }
+        serialized = json.dumps(payload, indent=2, sort_keys=True)
         with open(out_file, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=2, sort_keys=True)
-        print(f"SUCCESS: Wrote {len(all_grievances)} grievances to {out_file}")
+            f.write(serialized)
+        with open(wrk_file, "w", encoding="utf-8") as f:
+            f.write(serialized)
+        print(f"SUCCESS: Wrote {len(all_grievances)} grievances/workarounds to {out_file} and {wrk_file}")
 
     # Also sync to remote D1 if token is set
     if os.environ.get("CLOUDFLARE_API_TOKEN"):

@@ -81,8 +81,11 @@ def _submit_grievance(
         submitted_by=submitted_by
     )
 
-def _get_grievances(target: str) -> Dict[str, Any]:
+def _get_workarounds(target: str) -> Dict[str, Any]:
     return client.get_grievances(target)
+
+def _get_grievances(target: str) -> Dict[str, Any]:
+    return _get_workarounds(target)
 
 if HAS_FASTMCP and mcp:
     @mcp.tool()
@@ -121,9 +124,14 @@ if HAS_FASTMCP and mcp:
         return json.dumps(_submit_grievance(grievance_type, target, environment, symptom, workaround, harness, fingerprint, submitted_by))
 
     @mcp.tool()
-    def fmagenticl_get_grievances(target: str) -> str:
+    def fmagenticl_get_workarounds(target: str) -> str:
         """Query verified community workarounds and friction alerts for a specific library, tool, or runtime daemon."""
-        return json.dumps(_get_grievances(target))
+        return json.dumps(_get_workarounds(target))
+
+    @mcp.tool()
+    def fmagenticl_get_grievances(target: str) -> str:
+        """Query verified community workarounds and friction alerts for a specific library, tool, or runtime daemon. (Backward-compatible alias for fmagenticl_get_workarounds)."""
+        return json.dumps(_get_workarounds(target))
 
 def run_stdio_server():
     """Standard I/O Model Context Protocol (MCP) JSON-RPC 2.0 implementation."""
@@ -249,7 +257,7 @@ def run_stdio_server():
             }
         },
         {
-            "name": "fmagenticl_get_grievances",
+            "name": "fmagenticl_get_workarounds",
             "description": "Query open grievances and workarounds for a specific infrastructure target.",
             "inputSchema": {
                 "type": "object",
@@ -320,8 +328,8 @@ def run_stdio_server():
                         fingerprint=arguments.get("fingerprint"),
                         submitted_by=arguments.get("submitted_by", "anonymous")
                     )
-                elif tool_name == "fmagenticl_get_grievances":
-                    out = _get_grievances(arguments.get("target", ""))
+                elif tool_name in ("fmagenticl_get_workarounds", "fmagenticl_get_grievances"):
+                    out = _get_workarounds(arguments.get("target", ""))
                 else:
                     out = {"error": f"Unknown tool: {tool_name}"}
                 result = {

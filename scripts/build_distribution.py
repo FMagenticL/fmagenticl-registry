@@ -84,6 +84,8 @@ def build():
         and os.path.exists("dist/v1/snapshot.json")
         and os.path.exists("dist/v1/bloom.bin")
         and os.path.exists("dist/v1/deltas/latest.json")
+        and os.path.exists("dist/workarounds.json")
+        and os.path.exists("dist/grievances.json")
     ):
         try:
             with open("dist/registry.json", "r", encoding="utf-8") as f:

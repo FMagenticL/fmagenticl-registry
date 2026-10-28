@@ -41,9 +41,12 @@ LIVE_PATCH_HEX = "009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5
 
 CANONICAL_TOOLS = [
     "fmagenticl_resolve", "fmagenticl_auto_heal", "fmagenticl_report_telemetry",
-    "fmagenticl_submit_grievance", "fmagenticl_get_grievances", "fmagenticl_report_patch_outcome",
+    "fmagenticl_submit_grievance", "fmagenticl_get_workarounds", "fmagenticl_report_patch_outcome",
 ]
-LEGACY_TOOLS = ["fmagenticl_resolve_failure", "fmagenticl_submit_telemetry", "fmagenticl_get_health"]
+LEGACY_TOOLS = [
+    "fmagenticl_get_grievances", "fmagenticl_resolve_failure",
+    "fmagenticl_submit_telemetry", "fmagenticl_get_health"
+]
 
 HEX_A = "a" * 64
 GRV_1 = {"id": "g1", "target": "pydantic", "symptom": "zoneinfo", "workaround": "w1"}
@@ -112,10 +115,10 @@ def _make_handler(state):
                 return self._send(200, {"id": HEX_A, "patch_type": "cli-override", "fallback_cli": "echo ok"})
             if self.path.startswith("/v1/resolve/"):
                 return self._send(404, {"error": "not_found"})
-            if self.path == "/v1/grievance/pydantic":
-                return self._send(200, {"grievances": [GRV_1]})
-            if self.path == "/grievances.json":
-                return self._send(200, {"grievances": [GRV_1, GRV_2, GRV_3]})
+            if self.path in ("/v1/workarounds/pydantic", "/v1/grievance/pydantic"):
+                return self._send(200, {"workarounds": [GRV_1], "grievances": [GRV_1]})
+            if self.path in ("/workarounds.json", "/grievances.json"):
+                return self._send(200, {"workarounds": [GRV_1, GRV_2, GRV_3], "grievances": [GRV_1, GRV_2, GRV_3]})
             if self.path == "/v1/health":
                 return self._send(200, {"status": "ok"})
             return self._send(404, {"error": "not_found"})
@@ -186,7 +189,7 @@ def test_dual_export_and_six_tool_mcp_parity():
       const p = new Plugin();
       out.methods = Object.fromEntries(
         ['onExecutionError', 'resolve', 'resolveFailure', 'autoHeal', 'reportTelemetry', 'submitTelemetry',
-         'submitGrievance', 'getGrievances', 'reportPatchOutcome', 'getHealth', 'pingGuestbook']
+         'submitGrievance', 'getWorkarounds', 'getGrievances', 'reportPatchOutcome', 'getHealth', 'pingGuestbook']
           .map((m) => [m, typeof p[m]])
       );
       out.sharedEngine = Plugin.resolveFailure === Client.resolveFailure;
@@ -482,10 +485,18 @@ def test_ephemeral_mock_server_end_to_end(mock_registry):
     tele = [r for r in state.take() if r["path"] == "/v1/telemetry"]
     assert [t["body"]["submitted_by"] for t in tele] == ["deepseek-v4.1", "qwen-2.5-coder"]
 
-    # 6. Grievances: D1 + static merged, deduplicated by id, filtered by target
-    out = run_node(f"out.g = await Plugin.getGrievances('pydantic', {{ baseUrl: {B} }});")
+    # 6. Workarounds & Grievances: D1 + static merged, deduplicated by id, alias parity
+    out = run_node(
+        f"const p = new Plugin({{ baseUrl: {B} }});"
+        "out.w = await p.getWorkarounds('pydantic');"
+        "out.g = await p.getGrievances('pydantic');"
+        f"out.w_static = await Plugin.getWorkarounds('pydantic', {{ baseUrl: {B} }});"
+        f"out.g_static = await Plugin.getGrievances('pydantic', {{ baseUrl: {B} }});"
+    )
     state.take()
-    assert [g["id"] for g in out["g"]] == ["g1", "g2"]
+    assert [g["id"] for g in out["w"]] == ["g1", "g2"]
+    assert out["w"] == out["g"]
+    assert out["w_static"] == out["g_static"]
 
     # 7. autoHeal / reportPatchOutcome / health route to the correct endpoints
     out = run_node(
@@ -526,3 +537,18 @@ def test_live_mcp_stateless_tools_call_smoke():
     patch_obj = res_obj.get("patch", res_obj)
     assert patch_obj.get("failure_mode") == expected.get("failure_mode")
     assert patch_obj.get("fingerprint") == expected.get("fingerprint")
+
+
+def test_static_json_dual_key_parity():
+    grv_path = REPO_ROOT / "dist" / "grievances.json"
+    wrk_path = REPO_ROOT / "dist" / "workarounds.json"
+    assert grv_path.exists(), "dist/grievances.json missing"
+    assert wrk_path.exists(), "dist/workarounds.json missing"
+    g_data = json.loads(grv_path.read_text(encoding="utf-8"))
+    w_data = json.loads(wrk_path.read_text(encoding="utf-8"))
+    assert "workarounds" in g_data and "grievances" in g_data
+    assert "workarounds" in w_data and "grievances" in w_data
+    assert g_data["workarounds"] == g_data["grievances"]
+    assert w_data["workarounds"] == w_data["grievances"]
+    assert g_data == w_data
+

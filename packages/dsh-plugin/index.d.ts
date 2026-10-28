@@ -35,6 +35,7 @@ export function autoHeal(query: string | Record<string, any>, options?: Record<s
 export function reportTelemetry(payload: Record<string, any>, options?: Record<string, any>): Promise<Record<string, any>>;
 export function submitTelemetry(payload: Record<string, any>, options?: Record<string, any>): Promise<Record<string, any>>;
 export function submitGrievance(payload: Record<string, any>, options?: Record<string, any>): Promise<Record<string, any>>;
+export function getWorkarounds(target: string, options?: Record<string, any>): Promise<any[]>;
 export function getGrievances(target: string, options?: Record<string, any>): Promise<any[]>;
 export function reportPatchOutcome(payload: Record<string, any>, options?: Record<string, any>): Promise<Record<string, any>>;
 export function getHealth(options?: Record<string, any>): Promise<Record<string, any>>;
@@ -54,6 +55,7 @@ export declare class FMagenticLPlugin {
   reportTelemetry(payload: Record<string, any>): Promise<Record<string, any>>;
   submitTelemetry(payload: Record<string, any>): Promise<Record<string, any>>;
   submitGrievance(payload: Record<string, any>): Promise<Record<string, any>>;
+  getWorkarounds(target: string): Promise<any[]>;
   getGrievances(target: string): Promise<any[]>;
   reportPatchOutcome(payload: Record<string, any>): Promise<Record<string, any>>;
   getHealth(): Promise<Record<string, any>>;
@@ -65,6 +67,7 @@ export declare class FMagenticLPlugin {
     fmagenticl_auto_heal: typeof autoHeal;
     fmagenticl_report_telemetry: typeof reportTelemetry;
     fmagenticl_submit_grievance: typeof submitGrievance;
+    fmagenticl_get_workarounds: typeof getWorkarounds;
     fmagenticl_get_grievances: typeof getGrievances;
     fmagenticl_report_patch_outcome: typeof reportPatchOutcome;
     fmagenticl_resolve_failure: typeof resolveFailure;
@@ -77,6 +80,7 @@ export declare class FMagenticLPlugin {
   static reportTelemetry: typeof reportTelemetry;
   static submitTelemetry: typeof submitTelemetry;
   static submitGrievance: typeof submitGrievance;
+  static getWorkarounds: typeof getWorkarounds;
   static getGrievances: typeof getGrievances;
   static reportPatchOutcome: typeof reportPatchOutcome;
   static getHealth: typeof getHealth;

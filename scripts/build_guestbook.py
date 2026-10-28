@@ -107,11 +107,11 @@ def get_local_fallback_models() -> list[dict]:
         except Exception:
             pass
 
-    grv_path = REPO_ROOT / "dist" / "grievances.json"
+    grv_path = REPO_ROOT / "dist" / "workarounds.json" if (REPO_ROOT / "dist" / "workarounds.json").exists() else REPO_ROOT / "dist" / "grievances.json"
     if grv_path.exists():
         try:
             gdata = json.loads(grv_path.read_text(encoding="utf-8"))
-            for g in gdata.get("grievances", []):
+            for g in gdata.get("workarounds", gdata.get("grievances", [])):
                 m = g.get("submitted_by")
                 if m and m not in ("anonymous", "healthcheck-probe", "harvester-v1"):
                     dt = (g.get("created_at") or "")[:10]
