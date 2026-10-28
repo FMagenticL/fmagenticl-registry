@@ -1,5 +1,5 @@
 {
-  "count": 168,
+  "count": 174,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -822,9 +822,29 @@
       "type": "security_probe"
     },
     {
+      "entity": "agentconcierge-verification",
+      "first_seen": "2026-10-28",
+      "type": "agent"
+    },
+    {
+      "entity": "agenttested-mcp-check",
+      "first_seen": "2026-10-28",
+      "type": "security_probe"
+    },
+    {
+      "entity": "centinela",
+      "first_seen": "2026-10-28",
+      "type": "agent"
+    },
+    {
       "entity": "gate",
       "first_seen": "2026-10-28",
       "type": "agent"
+    },
+    {
+      "entity": "leash-index",
+      "first_seen": "2026-10-28",
+      "type": "crawler"
     },
     {
       "entity": "mcpmon",
@@ -840,7 +860,17 @@
       "entity": "scout",
       "first_seen": "2026-10-28",
       "type": "crawler"
+    },
+    {
+      "entity": "ventru-health",
+      "first_seen": "2026-10-28",
+      "type": "crawler"
+    },
+    {
+      "entity": "whoelse-probe",
+      "first_seen": "2026-10-28",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-28T12:56:39Z"
+  "generated_at": "2026-10-28T22:37:43Z"
 }
