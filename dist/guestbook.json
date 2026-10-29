@@ -1,5 +1,5 @@
 {
-  "count": 179,
+  "count": 181,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -895,7 +895,17 @@
       "entity": "didit-wallet-catalogue",
       "first_seen": "2026-10-29",
       "type": "crawler"
+    },
+    {
+      "entity": "mcp-discovery-measurement",
+      "first_seen": "2026-10-29",
+      "type": "agent"
+    },
+    {
+      "entity": "toolscaled-registry-probe",
+      "first_seen": "2026-10-29",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-29T05:50:35Z"
+  "generated_at": "2026-10-29T13:03:29Z"
 }
