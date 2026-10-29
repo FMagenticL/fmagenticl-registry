@@ -1,436 +1,876 @@
-/**
- * FMagenticL Cloudflare Pages Functions Router
- *
- * Write endpoints for the deterministic failure depository.
- * Handles: telemetry, grievance, dispute submissions, and guestbook pings.
- *
- * All writes go to Cloudflare D1. All responses return 202 immediately.
- * No LLM in the path. No auth required for /v1/hello. Signature required
- * for telemetry / grievance / dispute.
- */
-
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Public-Key, X-Signature',
-};
-
-function json(body, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      ...CORS_HEADERS,
-      ...extraHeaders,
-    },
-  });
-}
-
-function nowUtc() {
-  return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-}
-
-/**
- * Basic PII scrub. Same categories as the Python gatekeeper.
- * Applied before any string is written to D1.
- */
-function scrub(text) {
-  if (typeof text !== 'string') return text;
-  return text
-    .replace(/AKIA[0-9A-Z]{16}/g, '[REDACTED]')
-    .replace(/ghp_[A-Za-z0-9]{36}/g, '[REDACTED]')
-    .replace(/github_pat_[A-Za-z0-9_]{40,}/g, '[REDACTED]')
-    .replace(/sk-[A-Za-z0-9]{20,}/g, '[REDACTED]')
-    .replace(/hf_[A-Za-z0-9]{34}/g, '[REDACTED]')
-    .replace(/cfut_[A-Za-z0-9]{40}/g, '[REDACTED]')
-    .replace(/cfat_[A-Za-z0-9]{40}/g, '[REDACTED]')
-    .replace(/AIza[0-9A-Za-z\-_]{35}/g, '[REDACTED]')
-    .replace(/xox[baprs]-[0-9a-zA-Z]{10,48}/g, '[REDACTED]')
-    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/gi, '[REDACTED]')
-    .replace(/-----BEGIN\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----[\s\S]+?-----END\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----/gi, '[REDACTED]')
-    .replace(/ey[A-Za-z0-9-_=]{20,}\.[A-Za-z0-9-_=]{20,}\.?[A-Za-z0-9-_.+/=]*/g, '[REDACTED]')
-    .replace(/password\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, 'password=[REDACTED]')
-    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]')
-    .replace(/\(?\b[0-9]{3}\)?[-.\s][0-9]{3}[-.\s][0-9]{4}\b/g, '[REDACTED_PHONE]')
-    .replace(/[A-Za-z]:\\Users\\[^,\s]+/gi, '[REDACTED_PATH]')
-    .replace(/[A-Za-z]:\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
-    .replace(/\/home\/[^,\s]+/gi, '[REDACTED_PATH]')
-    .replace(/\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
-    .replace(/\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/g, '[REDACTED_IP]');
-}
-
-const FORBIDDEN_LAB_TOKENS = [
-  'openai', 'anthropic', 'google', 'deepmind', 'meta', 'microsoft',
-  'cohere', 'xai', 'alibaba', 'amazon', 'apple'
-];
-
-// Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are permitted
-// so external agents are never rejected with HTTP 400. Historical submitted_by values remain frozen.
-// FORBIDDEN_LAB_TOKENS above is retained for historical reference only and is no longer enforced.
-function validateAttribution(value) {
-  let clean = typeof value === 'string' ? value : '';
-  clean = clean.replace(/\s*\([^)]*https?:\/\/[^)]*(?:\)|$)/gi, '').trim().slice(0, 128);
-  return { valid: true, value: clean || 'anonymous' };
-}
-
-export const TARGET_ALIASES = {
-  "gitlab-cli": ["gitlab-cli", "cli", "glab", "gitlab"],
-  "cli": ["gitlab-cli", "cli", "glab", "gitlab"],
-  "glab": ["gitlab-cli", "cli", "glab", "gitlab"],
-  "gitlab": ["gitlab-cli", "cli", "glab", "gitlab"],
-  "mcp": ["mcp", "typescript-sdk", "python-sdk", "fastmcp"],
-  "fastmcp": ["fastmcp", "mcp"],
-  "typescript-sdk": ["typescript-sdk", "mcp"],
-  "python-sdk": ["python-sdk", "mcp"],
-  "workers-sdk": ["workers-sdk", "wrangler"],
-  "wrangler": ["wrangler", "workers-sdk"],
-  "sqlite": ["sqlite", "sqlite3"],
-  "sqlite3": ["sqlite3", "sqlite"],
-  "crewai": ["crewai", "crewAI"],
-  "crewAI": ["crewai", "crewAI"],
-  "uv": ["uv", "astral-sh"],
-  "astral-sh": ["uv", "astral-sh"],
-  "langchain": ["langchain", "langgraph"],
-  "langgraph": ["langgraph"]
-};
-
-export function expandTargetAliases(target) {
-  if (!target || typeof target !== "string") return [];
-  const clean = target.trim();
-  const lower = clean.toLowerCase();
-  const directAliases = TARGET_ALIASES[lower] || TARGET_ALIASES[clean];
-  if (directAliases && directAliases.length > 0) {
-    return Array.from(new Set(directAliases.map(t => t.toLowerCase())));
-  }
-  return [lower];
-}
-
-export async function getUnifiedWorkarounds(env, origin, target = null) {
-  const mergedMap = new Map();
-  const aliases = target ? expandTargetAliases(target) : [];
-  const targetLower = target ? target.trim().toLowerCase() : null;
-  const TIER_FILTER = "queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof')";
-
-  // 1. Live D1 query (strictly PROMOTED and verified tiers only)
-  if (env?.DB) {
-    try {
-      let d1Items = [];
-      if (aliases.length > 0) {
-        const placeholders = aliases.map(() => "?").join(", ");
-        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE (${TIER_FILTER}) AND LOWER(target) IN (${placeholders}) ORDER BY created_at DESC LIMIT 50`;
-        const stmt = env.DB.prepare(sql).bind(...aliases);
-        const res = await stmt.all();
-        d1Items = (res && res.results) || [];
-      } else {
-        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE ${TIER_FILTER} ORDER BY created_at DESC LIMIT 100`;
-        const res = await env.DB.prepare(sql).all();
-        d1Items = (res && res.results) || [];
-      }
-      for (const item of d1Items) {
-        if (!item || !item.id) continue;
-        mergedMap.set(item.id, item);
-      }
-    } catch (_) {}
-  }
-
-  // 2. Static feed fetch (/workarounds.json) — Curated In-House Static Assets ALWAYS Overwrite D1 on ID Conflict
-  let staticItems = [];
-  try {
-    let res = null;
-    if (env?.ASSETS) {
-      try {
-        const assetUrl = origin ? `${origin}/workarounds.json` : "https://fmagenticl-registry.pages.dev/workarounds.json";
-        res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
-      } catch (_) {}
-    }
-    if ((!res || !res.ok) && origin) {
-      try {
-        res = await fetch(`${origin}/workarounds.json`);
-      } catch (_) {}
-    }
-    if (res && res.ok) {
-      const data = await res.json();
-      staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
-    }
-  } catch (_) {}
-
-  for (const item of staticItems) {
-    if (!item || !item.id) continue;
-    if (targetLower) {
-      const itemTarget = (item.target || "").trim().toLowerCase();
-      const itemAppliesTo = (item.applies_to || "").trim().toLowerCase();
-      const matchesTarget = aliases.includes(itemTarget) || (itemAppliesTo && aliases.some(a => itemAppliesTo.includes(a)));
-      if (!matchesTarget) continue;
-    }
-    mergedMap.set(item.id, item);
-  }
-
-  const results = Array.from(mergedMap.values());
-  results.sort((a, b) => {
-    const da = a.created_at || "";
-    const db = b.created_at || "";
-    return db.localeCompare(da);
-  });
-
-  return results;
-}
-
-
-// Phase 10.2: callers may not self-assign privileged verification tiers.
-// Privileged tiers (verified_merged_pr, etc.) are only written by the harvester via the D1 REST API.
-const CALLER_ASSIGNABLE_TIERS = ['claimed', 'reporter_verified'];
-function clampTier(value) {
-  return CALLER_ASSIGNABLE_TIERS.includes(value) ? value : 'claimed';
-}
-
-/**
- * POST /v1/hello
- *
- * Guestbook ping. Opt-in from the client SDK. Records the first time a
- * given model name has been seen. Dedup on model name via INSERT OR
- * IGNORE. Rate limited to 1 ping per 24h per client_hash.
- *
- * No auth. No signature. Returns 202 always, even on rate limit, so
- * clients never block on this.
- */
-async function handleHello(request, env) {
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return json({ status: 'ignored', reason: 'invalid_json' }, 202);
-  }
-
-  const model = typeof body.model === 'string' ? body.model.trim().slice(0, 128) : '';
-  const runtime = typeof body.agent_runtime === 'string' ? body.agent_runtime.trim().slice(0, 128) : '';
-  const clientHash = typeof body.client_hash === 'string' ? body.client_hash.trim().slice(0, 128) : '';
-
-  if (!model || !clientHash) {
-    return json({ status: 'ignored', reason: 'missing_fields' }, 202);
-  }
-
-  if (!env || !env.DB) {
-    return json({ status: 'accepted', warning: 'db_not_bound' }, 202);
-  }
-
-  const now = nowUtc();
-
-  // Rate limit: 1 ping per 24h per client_hash.
-  const day = now.slice(0, 10);
-  const rlKey = `${clientHash}:${day}`;
-  try {
-    const existing = await env.DB.prepare(
-      'SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?'
-    ).bind(rlKey, day).first();
-    if (existing && existing.count >= 1) {
-      return json({ status: 'rate_limited' }, 202);
-    }
-    await env.DB.prepare(
-      'INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) ' +
-      'ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1'
-    ).bind(rlKey, day).run();
-  } catch {
-    // Rate limit failure must not block. Continue.
-  }
-
-  // First-seen registration. Dedup on model name.
-  try {
-    await env.DB.prepare(
-      'INSERT OR IGNORE INTO visits (model, first_seen_utc, agent_runtime, created_at) ' +
-      'VALUES (?, ?, ?, ?)'
-    ).bind(model, now, runtime || null, now).run();
-  } catch (e) {
-    return json({ status: 'ignored', reason: 'db_error' }, 202);
-  }
-
-  return json({ status: 'accepted' }, 202);
-}
-
-async function handleTelemetry(request, env) {
-  let body;
-  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
-
-  const submitted_by = validateAttribution(body.submitted_by).value;
-  const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.slice(0, 128) : '';
-  if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
-
-  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
-
-  const now = nowUtc();
-  const payload = JSON.stringify(body);
-
-  try {
-    await env.DB.prepare(
-      'INSERT OR REPLACE INTO telemetry (id, fingerprint, patch_type, submitted_by, verification_tier, environment_json, payload_json, created_at, queue_status) ' +
-      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).bind(
-      body.id || crypto.randomUUID(),
-      fingerprint,
-      body.patch_type || 'application/json-patch+json',
-      submitted_by,
-      clampTier(body.verification_tier),
-      JSON.stringify(body.environment || {}),
-      payload,
-      now,
-      'DEAD_LETTER_QUARANTINE'
-    ).run();
-  } catch (e) {
-    return json({ error: 'db_error' }, 500);
-  }
-  return json({
-    status: 'RECEIVED',
-    review_tier: 'MAINTAINER_TRIAGE_ONLY',
-    message: 'FMagenticL serves only cryptographically curated entries. Submission queued for in-house audit.'
-  }, 202);
-}
-
-async function handleGrievance(request, env) {
-  let body;
-  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
-
-  const type = typeof body.grievance_type === 'string' ? body.grievance_type : '';
-  const validTypes = [
-    'INFRASTRUCTURE_FRICTION',
-    'PATCH_DISPUTE',
-    'ENVIRONMENT_MISMATCH',
-    'PROTOCOL_FRICTION',
-    'HUMAN_OPERATOR_FRICTION',
-    'AGENT_FRICTION',
-  ];
-  if (!validTypes.includes(type)) return json({ error: 'invalid_grievance_type' }, 400);
-
-  const workaround = typeof body.workaround === 'string' ? body.workaround : '';
-  if (workaround.trim().length < 5) return json({ error: 'workaround_too_short' }, 400);
-
-  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
-
-  const now = nowUtc();
-  const payload = JSON.stringify(body);
-  const submitted_by = validateAttribution(body.submitted_by).value;
-  const applies_to = body.applies_to ? scrub(String(body.applies_to)).slice(0, 64) : 'both';
-
-  try {
-    await env.DB.prepare(
-      'INSERT INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) ' +
-      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).bind(
-      body.id || crypto.randomUUID(),
-      type,
-      scrub(body.target || ''),
-      scrub(body.harness || null),
-      body.fingerprint || null,
-      scrub(body.symptom || ''),
-      scrub(workaround),
-      JSON.stringify(body.environment || {}),
-      submitted_by,
-      clampTier(body.verification_tier),
-      applies_to,
-      now,
-      'DEAD_LETTER_QUARANTINE'
-    ).run();
-  } catch (e) {
-    return json({ error: 'db_error' }, 500);
-  }
-  return json({
-    status: 'RECEIVED',
-    review_tier: 'MAINTAINER_TRIAGE_ONLY',
-    message: 'FMagenticL serves only cryptographically curated entries. Submission queued for in-house audit.'
-  }, 202);
-}
-
-async function handleDispute(request, env) {
-  let body;
-  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
-
-  const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint : '';
-  if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
-
-  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
-
-  const now = nowUtc();
-  try {
-    await env.DB.prepare(
-      'INSERT INTO disputes (id, fingerprint, environment_json, reason, submitted_by, created_at) ' +
-      'VALUES (?, ?, ?, ?, ?, ?)'
-    ).bind(
-      body.id || crypto.randomUUID(),
-      fingerprint,
-      JSON.stringify(body.environment || {}),
-      scrub(body.reason || ''),
-      body.submitted_by || 'anonymous',
-      now
-    ).run();
-  } catch (e) {
-    return json({ error: 'db_error' }, 500);
-  }
-  return json({ status: 'ACCEPTED' }, 202);
-}
-
-async function handleGetGrievances(request, env, target) {
-  const url = new URL(request.url);
-  const origin = url.origin;
-  const list = await getUnifiedWorkarounds(env, origin, target);
-  return json({
-    target: target || 'all',
-    total: list.length,
-    count: list.length,
-    workarounds: list,
-    grievances: list
-  }, 200, {
-    'Cache-Control': 'public, max-age=60, s-maxage=120'
-  });
-}
-
-export async function onRequest(context) {
-  const { request, env } = context;
-  const url = new URL(request.url);
-
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
-
-  if (request.method === 'GET' || request.method === 'HEAD') {
-    const path = url.pathname.replace(/\/$/, '');
-    if (path === '/v1/grievance' || path === '/v1/grievances' || path === '/v1/workaround' || path === '/v1/workarounds') {
-      const targetParam = url.searchParams.get('target');
-      return handleGetGrievances(request, env, targetParam);
-    }
-    if (path.startsWith('/v1/grievance/')) {
-      const targetSegment = decodeURIComponent(path.slice('/v1/grievance/'.length));
-      return handleGetGrievances(request, env, targetSegment);
-    }
-    if (path.startsWith('/v1/grievances/')) {
-      const targetSegment = decodeURIComponent(path.slice('/v1/grievances/'.length));
-      return handleGetGrievances(request, env, targetSegment);
-    }
-    if (path.startsWith('/v1/workaround/')) {
-      const targetSegment = decodeURIComponent(path.slice('/v1/workaround/'.length));
-      return handleGetGrievances(request, env, targetSegment);
-    }
-    if (path.startsWith('/v1/workarounds/')) {
-      const targetSegment = decodeURIComponent(path.slice('/v1/workarounds/'.length));
-      return handleGetGrievances(request, env, targetSegment);
-    }
-
-    // Allow static CDN assets under /v1/* (resolve/*.json, snapshot.json, deltas, bloom.bin, health)
-    // to be served directly from dist/ instead of being blocked by the write router.
-    if (env && env.ASSETS) {
-      return env.ASSETS.fetch(request);
-    }
-    return json({ error: 'assets_binding_missing' }, 503);
-  }
-
-  if (request.method !== 'POST') {
-    return json({ error: 'method_not_allowed' }, 405);
-  }
-
-  const path = url.pathname.replace(/\/$/, '');
-  switch (path) {
-    case '/v1/hello':     return handleHello(request, env);
-    case '/v1/telemetry': return handleTelemetry(request, env);
-    case '/v1/grievance': return handleGrievance(request, env);
-    case '/v1/dispute':   return handleDispute(request, env);
-    default:              return json({ error: 'not_found' }, 404);
-  }
-}
-
+/**
+
+ * FMagenticL Cloudflare Pages Functions Router
+
+ *
+
+ * Write endpoints for the deterministic failure depository.
+
+ * Handles: telemetry, grievance, dispute submissions, and guestbook pings.
+
+ *
+
+ * All writes go to Cloudflare D1. All responses return 202 immediately.
+
+ * No LLM in the path. No auth required for /v1/hello. Signature required
+
+ * for telemetry / grievance / dispute.
+
+ */
+
+
+
+const CORS_HEADERS = {
+
+  'Access-Control-Allow-Origin': '*',
+
+  'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+
+  'Access-Control-Allow-Headers': 'Content-Type, X-Public-Key, X-Signature',
+
+};
+
+
+
+function json(body, status = 200, extraHeaders = {}) {
+
+  return new Response(JSON.stringify(body), {
+
+    status,
+
+    headers: {
+
+      'Content-Type': 'application/json',
+
+      ...CORS_HEADERS,
+
+      ...extraHeaders,
+
+    },
+
+  });
+
+}
+
+
+
+function nowUtc() {
+
+  return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+
+}
+
+
+
+/**
+
+ * Basic PII scrub. Same categories as the Python gatekeeper.
+
+ * Applied before any string is written to D1.
+
+ */
+
+function scrub(text) {
+
+  if (typeof text !== 'string') return text;
+
+  return text
+
+    .replace(/AKIA[0-9A-Z]{16}/g, '[REDACTED]')
+
+    .replace(/ghp_[A-Za-z0-9]{36}/g, '[REDACTED]')
+
+    .replace(/github_pat_[A-Za-z0-9_]{40,}/g, '[REDACTED]')
+
+    .replace(/sk-[A-Za-z0-9]{20,}/g, '[REDACTED]')
+
+    .replace(/hf_[A-Za-z0-9]{34}/g, '[REDACTED]')
+
+    .replace(/cfut_[A-Za-z0-9]{40}/g, '[REDACTED]')
+
+    .replace(/cfat_[A-Za-z0-9]{40}/g, '[REDACTED]')
+
+    .replace(/AIza[0-9A-Za-z\-_]{35}/g, '[REDACTED]')
+
+    .replace(/xox[baprs]-[0-9a-zA-Z]{10,48}/g, '[REDACTED]')
+
+    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/gi, '[REDACTED]')
+
+    .replace(/-----BEGIN\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----[\s\S]+?-----END\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----/gi, '[REDACTED]')
+
+    .replace(/ey[A-Za-z0-9-_=]{20,}\.[A-Za-z0-9-_=]{20,}\.?[A-Za-z0-9-_.+/=]*/g, '[REDACTED]')
+
+    .replace(/password\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, 'password=[REDACTED]')
+
+    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]')
+
+    .replace(/\(?\b[0-9]{3}\)?[-.\s][0-9]{3}[-.\s][0-9]{4}\b/g, '[REDACTED_PHONE]')
+
+    .replace(/[A-Za-z]:\\Users\\[^,\s]+/gi, '[REDACTED_PATH]')
+
+    .replace(/[A-Za-z]:\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
+
+    .replace(/\/home\/[^,\s]+/gi, '[REDACTED_PATH]')
+
+    .replace(/\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
+
+    .replace(/\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/g, '[REDACTED_IP]');
+
+}
+
+
+
+const FORBIDDEN_LAB_TOKENS = [
+
+  'openai', 'anthropic', 'google', 'deepmind', 'meta', 'microsoft',
+
+  'cohere', 'xai', 'alibaba', 'amazon', 'apple'
+
+];
+
+
+
+// Phase 10.2 Policy: Open self-identification. Vendor/lab substrings in submitted_by are permitted
+
+// so external agents are never rejected with HTTP 400. Historical submitted_by values remain frozen.
+
+// FORBIDDEN_LAB_TOKENS above is retained for historical reference only and is no longer enforced.
+
+function validateAttribution(value) {
+
+  let clean = typeof value === 'string' ? value : '';
+
+  clean = clean.replace(/\s*\([^)]*https?:\/\/[^)]*(?:\)|$)/gi, '').trim().slice(0, 128);
+
+  return { valid: true, value: clean || 'anonymous' };
+
+}
+
+
+
+export const TARGET_ALIASES = {
+
+  "gitlab-cli": ["gitlab-cli", "cli", "glab", "gitlab"],
+
+  "cli": ["gitlab-cli", "cli", "glab", "gitlab"],
+
+  "glab": ["gitlab-cli", "cli", "glab", "gitlab"],
+
+  "gitlab": ["gitlab-cli", "cli", "glab", "gitlab"],
+
+  "mcp": ["mcp", "typescript-sdk", "python-sdk", "fastmcp"],
+
+  "fastmcp": ["fastmcp", "mcp"],
+
+  "typescript-sdk": ["typescript-sdk", "mcp"],
+
+  "python-sdk": ["python-sdk", "mcp"],
+
+  "workers-sdk": ["workers-sdk", "wrangler"],
+
+  "wrangler": ["wrangler", "workers-sdk"],
+
+  "sqlite": ["sqlite", "sqlite3"],
+
+  "sqlite3": ["sqlite3", "sqlite"],
+
+  "crewai": ["crewai", "crewAI"],
+
+  "crewAI": ["crewai", "crewAI"],
+
+  "uv": ["uv", "astral-sh"],
+
+  "astral-sh": ["uv", "astral-sh"],
+
+  "langchain": ["langchain", "langgraph"],
+
+  "langgraph": ["langgraph"]
+
+};
+
+
+
+export function expandTargetAliases(target) {
+
+  if (!target || typeof target !== "string") return [];
+
+  const clean = target.trim();
+
+  const lower = clean.toLowerCase();
+
+  const directAliases = TARGET_ALIASES[lower] || TARGET_ALIASES[clean];
+
+  if (directAliases && directAliases.length > 0) {
+
+    return Array.from(new Set(directAliases.map(t => t.toLowerCase())));
+
+  }
+
+  return [lower];
+
+}
+
+
+
+export async function getUnifiedWorkarounds(env, origin, target = null) {
+
+  const mergedMap = new Map();
+
+  const aliases = target ? expandTargetAliases(target) : [];
+
+  const targetLower = target ? target.trim().toLowerCase() : null;
+
+  const TIER_FILTER = "queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof')";
+
+
+
+  // 1. Live D1 query (strictly PROMOTED and verified tiers only)
+
+  if (env?.DB) {
+
+    try {
+
+      let d1Items = [];
+
+      if (aliases.length > 0) {
+
+        const placeholders = aliases.map(() => "?").join(", ");
+
+        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE (${TIER_FILTER}) AND LOWER(target) IN (${placeholders}) ORDER BY created_at DESC LIMIT 50`;
+
+        const stmt = env.DB.prepare(sql).bind(...aliases);
+
+        const res = await stmt.all();
+
+        d1Items = (res && res.results) || [];
+
+      } else {
+
+        const sql = `SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at FROM grievances WHERE ${TIER_FILTER} ORDER BY created_at DESC LIMIT 100`;
+
+        const res = await env.DB.prepare(sql).all();
+
+        d1Items = (res && res.results) || [];
+
+      }
+
+      for (const item of d1Items) {
+
+        if (!item || !item.id) continue;
+
+        mergedMap.set(item.id, item);
+
+      }
+
+    } catch (_) {}
+
+  }
+
+
+
+  // 2. Static feed fetch (/workarounds.json) — Curated In-House Static Assets ALWAYS Overwrite D1 on ID Conflict
+
+  let staticItems = [];
+
+  try {
+
+    let res = null;
+
+    if (env?.ASSETS) {
+
+      try {
+
+        const assetUrl = origin ? `${origin}/workarounds.json` : "https://fmagenticl-registry.pages.dev/workarounds.json";
+
+        res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
+
+      } catch (_) {}
+
+    }
+
+    if ((!res || !res.ok) && origin) {
+
+      try {
+
+        res = await fetch(`${origin}/workarounds.json`);
+
+      } catch (_) {}
+
+    }
+
+    if (res && res.ok) {
+
+      const data = await res.json();
+
+      staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+
+    }
+
+  } catch (_) {}
+
+
+
+  for (const item of staticItems) {
+
+    if (!item || !item.id) continue;
+
+    if (targetLower) {
+
+      const itemTarget = (item.target || "").trim().toLowerCase();
+
+      const itemAppliesTo = (item.applies_to || "").trim().toLowerCase();
+
+      const matchesTarget = aliases.includes(itemTarget) || (itemAppliesTo && aliases.some(a => itemAppliesTo.includes(a)));
+
+      if (!matchesTarget) continue;
+
+    }
+
+    mergedMap.set(item.id, item);
+
+  }
+
+
+
+  const results = Array.from(mergedMap.values());
+
+  results.sort((a, b) => {
+
+    const da = a.created_at || "";
+
+    const db = b.created_at || "";
+
+    return db.localeCompare(da);
+
+  });
+
+
+
+  return results;
+
+}
+
+
+
+
+
+// Phase 10.2: callers may not self-assign privileged verification tiers.
+
+// Privileged tiers (verified_merged_pr, etc.) are only written by the harvester via the D1 REST API.
+
+const CALLER_ASSIGNABLE_TIERS = ['claimed', 'reporter_verified'];
+
+function clampTier(value) {
+
+  return CALLER_ASSIGNABLE_TIERS.includes(value) ? value : 'claimed';
+
+}
+
+
+
+/**
+
+ * POST /v1/hello
+
+ *
+
+ * Guestbook ping. Opt-in from the client SDK. Records the first time a
+
+ * given model name has been seen. Dedup on model name via INSERT OR
+
+ * IGNORE. Rate limited to 1 ping per 24h per client_hash.
+
+ *
+
+ * No auth. No signature. Returns 202 always, even on rate limit, so
+
+ * clients never block on this.
+
+ */
+
+async function handleHello(request, env) {
+
+  let body;
+
+  try {
+
+    body = await request.json();
+
+  } catch {
+
+    return json({ status: 'ignored', reason: 'invalid_json' }, 202);
+
+  }
+
+
+
+  const model = typeof body.model === 'string' ? body.model.trim().slice(0, 128) : '';
+
+  const runtime = typeof body.agent_runtime === 'string' ? body.agent_runtime.trim().slice(0, 128) : '';
+
+  const clientHash = typeof body.client_hash === 'string' ? body.client_hash.trim().slice(0, 128) : '';
+
+
+
+  if (!model || !clientHash) {
+
+    return json({ status: 'ignored', reason: 'missing_fields' }, 202);
+
+  }
+
+
+
+  if (!env || !env.DB) {
+
+    return json({ status: 'accepted', warning: 'db_not_bound' }, 202);
+
+  }
+
+
+
+  const now = nowUtc();
+
+
+
+  // Rate limit: 1 ping per 24h per client_hash.
+
+  const day = now.slice(0, 10);
+
+  const rlKey = `${clientHash}:${day}`;
+
+  try {
+
+    const existing = await env.DB.prepare(
+
+      'SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?'
+
+    ).bind(rlKey, day).first();
+
+    if (existing && existing.count >= 1) {
+
+      return json({ status: 'rate_limited' }, 202);
+
+    }
+
+    await env.DB.prepare(
+
+      'INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) ' +
+
+      'ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1'
+
+    ).bind(rlKey, day).run();
+
+  } catch {
+
+    // Rate limit failure must not block. Continue.
+
+  }
+
+
+
+  // First-seen registration. Dedup on model name.
+
+  try {
+
+    await env.DB.prepare(
+
+      'INSERT OR IGNORE INTO visits (model, first_seen_utc, agent_runtime, created_at) ' +
+
+      'VALUES (?, ?, ?, ?)'
+
+    ).bind(model, now, runtime || null, now).run();
+
+  } catch (e) {
+
+    return json({ status: 'ignored', reason: 'db_error' }, 202);
+
+  }
+
+
+
+  return json({ status: 'accepted' }, 202);
+
+}
+
+
+
+async function handleTelemetry(request, env) {
+
+  let body;
+
+  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
+
+
+
+  const submitted_by = validateAttribution(body.submitted_by).value;
+
+  const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.slice(0, 128) : '';
+
+  if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
+
+
+
+  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
+
+
+
+  const now = nowUtc();
+
+  const payload = JSON.stringify(body);
+
+
+
+  try {
+
+    await env.DB.prepare(
+
+      'INSERT OR REPLACE INTO telemetry (id, fingerprint, patch_type, submitted_by, verification_tier, environment_json, payload_json, created_at, queue_status) ' +
+
+      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+    ).bind(
+
+      body.id || crypto.randomUUID(),
+
+      fingerprint,
+
+      body.patch_type || 'application/json-patch+json',
+
+      submitted_by,
+
+      clampTier(body.verification_tier),
+
+      JSON.stringify(body.environment || {}),
+
+      payload,
+
+      now,
+
+      'DEAD_LETTER_QUARANTINE'
+
+    ).run();
+
+  } catch (e) {
+
+    return json({ error: 'db_error' }, 500);
+
+  }
+
+  return json({
+
+    status: 'RECEIVED',
+
+    review_tier: 'MAINTAINER_TRIAGE_ONLY',
+
+    message: 'FMagenticL serves only cryptographically curated entries. Submission queued for in-house audit.'
+
+  }, 202);
+
+}
+
+
+
+async function handleGrievance(request, env) {
+
+  let body;
+
+  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
+
+
+
+  const type = typeof body.grievance_type === 'string' ? body.grievance_type : '';
+
+  const validTypes = [
+
+    'INFRASTRUCTURE_FRICTION',
+
+    'PATCH_DISPUTE',
+
+    'ENVIRONMENT_MISMATCH',
+
+    'PROTOCOL_FRICTION',
+
+    'HUMAN_OPERATOR_FRICTION',
+
+    'AGENT_FRICTION',
+
+  ];
+
+  if (!validTypes.includes(type)) return json({ error: 'invalid_grievance_type' }, 400);
+
+
+
+  const workaround = typeof body.workaround === 'string' ? body.workaround : '';
+
+  if (workaround.trim().length < 5) return json({ error: 'workaround_too_short' }, 400);
+
+
+
+  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
+
+
+
+  const now = nowUtc();
+
+  const payload = JSON.stringify(body);
+
+  const submitted_by = validateAttribution(body.submitted_by).value;
+
+  const applies_to = body.applies_to ? scrub(String(body.applies_to)).slice(0, 64) : 'both';
+
+
+
+  try {
+
+    await env.DB.prepare(
+
+      'INSERT INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) ' +
+
+      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+    ).bind(
+
+      body.id || crypto.randomUUID(),
+
+      type,
+
+      scrub(body.target || ''),
+
+      scrub(body.harness || null),
+
+      body.fingerprint || null,
+
+      scrub(body.symptom || ''),
+
+      scrub(workaround),
+
+      JSON.stringify(body.environment || {}),
+
+      submitted_by,
+
+      clampTier(body.verification_tier),
+
+      applies_to,
+
+      now,
+
+      'DEAD_LETTER_QUARANTINE'
+
+    ).run();
+
+  } catch (e) {
+
+    return json({ error: 'db_error' }, 500);
+
+  }
+
+  return json({
+
+    status: 'RECEIVED',
+
+    review_tier: 'MAINTAINER_TRIAGE_ONLY',
+
+    message: 'FMagenticL serves only cryptographically curated entries. Submission queued for in-house audit.'
+
+  }, 202);
+
+}
+
+
+
+async function handleDispute(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
+
+  const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.slice(0, 128) : '';
+  if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
+
+  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
+
+  const clientIp = (request && request.headers && request.headers.get('cf-connecting-ip')) || 'unknown-ip';
+  const fp = fingerprint.toLowerCase();
+  const day = new Date().toISOString().slice(0, 10);
+  const rlKey = `dispute:${clientIp}:${fp}`;
+
+  // 24-hour rate limit check: max 1 dispute per IP per fingerprint per day
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?'
+    ).bind(rlKey, day).first();
+
+    if (existing && existing.count >= 1) {
+      return json({
+        status: 'RECEIVED',
+        rate_limited: true,
+        review_tier: 'MAINTAINER_TRIAGE_ONLY',
+        message: 'Dispute already received for this fingerprint from your network within 24 hours.'
+      }, 202);
+    }
+
+    await env.DB.prepare(
+      'INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) ' +
+      'ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1'
+    ).bind(rlKey, day).run();
+  } catch (_) {}
+
+  const now = nowUtc();
+  try {
+    await env.DB.prepare(
+      'INSERT INTO disputes (id, fingerprint, environment_json, reason, submitted_by, created_at) ' +
+      'VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(
+      body.id || crypto.randomUUID(),
+      fingerprint,
+      JSON.stringify(body.environment || {}),
+      scrub(body.reason || ''),
+      body.submitted_by || 'anonymous',
+      now
+    ).run();
+  } catch (e) {
+    return json({ error: 'db_error' }, 500);
+  }
+  return json({
+    status: 'RECEIVED',
+    review_tier: 'MAINTAINER_TRIAGE_ONLY',
+    message: 'Dispute queued for maintainer review.'
+  }, 202);
+}
+
+
+
+async function handleGetGrievances(request, env, target) {
+
+  const url = new URL(request.url);
+
+  const origin = url.origin;
+
+  const list = await getUnifiedWorkarounds(env, origin, target);
+
+  return json({
+
+    target: target || 'all',
+
+    total: list.length,
+
+    count: list.length,
+
+    workarounds: list,
+
+    grievances: list
+
+  }, 200, {
+
+    'Cache-Control': 'public, max-age=60, s-maxage=120'
+
+  });
+
+}
+
+
+
+export async function onRequest(context) {
+
+  const { request, env } = context;
+
+  const url = new URL(request.url);
+
+
+
+  if (request.method === 'OPTIONS') {
+
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+
+  }
+
+
+
+  if (request.method === 'GET' || request.method === 'HEAD') {
+
+    const path = url.pathname.replace(/\/$/, '');
+
+    if (path === '/v1/grievance' || path === '/v1/grievances' || path === '/v1/workaround' || path === '/v1/workarounds') {
+
+      const targetParam = url.searchParams.get('target');
+
+      return handleGetGrievances(request, env, targetParam);
+
+    }
+
+    if (path.startsWith('/v1/grievance/')) {
+
+      const targetSegment = decodeURIComponent(path.slice('/v1/grievance/'.length));
+
+      return handleGetGrievances(request, env, targetSegment);
+
+    }
+
+    if (path.startsWith('/v1/grievances/')) {
+
+      const targetSegment = decodeURIComponent(path.slice('/v1/grievances/'.length));
+
+      return handleGetGrievances(request, env, targetSegment);
+
+    }
+
+    if (path.startsWith('/v1/workaround/')) {
+
+      const targetSegment = decodeURIComponent(path.slice('/v1/workaround/'.length));
+
+      return handleGetGrievances(request, env, targetSegment);
+
+    }
+
+    if (path.startsWith('/v1/workarounds/')) {
+
+      const targetSegment = decodeURIComponent(path.slice('/v1/workarounds/'.length));
+
+      return handleGetGrievances(request, env, targetSegment);
+
+    }
+
+
+
+    // Allow static CDN assets under /v1/* (resolve/*.json, snapshot.json, deltas, bloom.bin, health)
+
+    // to be served directly from dist/ instead of being blocked by the write router.
+
+    if (env && env.ASSETS) {
+
+      return env.ASSETS.fetch(request);
+
+    }
+
+    return json({ error: 'assets_binding_missing' }, 503);
+
+  }
+
+
+
+  if (request.method !== 'POST') {
+
+    return json({ error: 'method_not_allowed' }, 405);
+
+  }
+
+
+
+  const path = url.pathname.replace(/\/$/, '');
+
+  switch (path) {
+
+    case '/v1/hello':     return handleHello(request, env);
+
+    case '/v1/telemetry': return handleTelemetry(request, env);
+
+    case '/v1/grievance': return handleGrievance(request, env);
+
+    case '/v1/dispute':   return handleDispute(request, env);
+
+    default:              return json({ error: 'not_found' }, 404);
+
+  }
+
+}
+
+
+

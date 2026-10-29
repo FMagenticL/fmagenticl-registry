@@ -78,6 +78,7 @@ def build():
             resolve_changed = True
 
     # Content-comparison guard: skip timestamp/signature churn if patches are identical
+    patches_unchanged = False
     if (
         not resolve_changed
         and os.path.exists("dist/registry.json")
@@ -98,8 +99,8 @@ def build():
                 and existing_snap.get("patches") == patches
                 and existing_snap.get("total_patches") == len(patches)
             ):
-                print(f"Distribution patches unchanged (count: {len(registry_patches)}). Skipping timestamp/signature churn.")
-                return
+                patches_unchanged = True
+                print(f"Distribution patches unchanged (count: {len(registry_patches)}). Preserving snapshot/signatures.")
         except Exception:
             pass
 
@@ -107,81 +108,149 @@ def build():
     now_iso = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
     stamp = now_utc.strftime("%Y%m%d%H%M%S")
 
-    # 2. Base Snapshot
-    snapshot = {
-        "version": "1.3.1",
-        "generated_at": now_iso,
-        "total_patches": len(patches),
-        "patches": patches,
+    if not patches_unchanged:
+        # 2. Base Snapshot
+        snapshot = {
+            "version": "1.3.1",
+            "generated_at": now_iso,
+            "total_patches": len(patches),
+            "patches": patches,
+        }
+        snapshot_bytes = json.dumps(snapshot, separators=(",", ":"), sort_keys=True).encode()
+
+        with open("dist/v1/snapshot.json", "wb") as f:
+            f.write(snapshot_bytes)
+
+        if SIGNING_ENABLED:
+            snapshot_signature = sign_payload(snapshot_bytes)
+            with open("dist/v1/snapshot.sig", "w") as f:
+                f.write(snapshot_signature)
+        else:
+            print("INFO: Skipped dist/v1/snapshot.sig (signing disabled).")
+
+        # 3. Bloom filter (for fast negative lookups)
+        try:
+            from pybloom_live import BloomFilter
+            bloom = BloomFilter(capacity=max(10000, len(patches) * 4), error_rate=0.001)
+            for fp_hex in patches:
+                bloom.add(fp_hex)
+            with open("dist/v1/bloom.bin", "wb") as f:
+                bloom.tofile(f)
+            print("INFO: dist/v1/bloom.bin generated via pybloom-live.")
+        except Exception as e:
+            print(f"INFO: pybloom-live not available ({e}), writing deterministic SHA-256 prefix bitset to bloom.bin.")
+            bitset = bytearray(1024)
+            for fp_hex in patches:
+                idx = int(hashlib.md5(fp_hex.encode()).hexdigest()[:4], 16) % (1024 * 8)
+                bitset[idx // 8] |= (1 << (idx % 8))
+            with open("dist/v1/bloom.bin", "wb") as f:
+                f.write(bitset)
+
+        # 4. Deltas & Latest Marker
+        delta = {
+            "base_version": "1.3.1",
+            "generated_at": now_iso,
+            "added": list(patches.keys()),
+            "removed": [],
+            "modified": [],
+            "patch_deltas": patches,
+        }
+        delta_bytes = json.dumps(delta, separators=(",", ":"), sort_keys=True).encode()
+        with open(f"dist/v1/deltas/{stamp}.json", "wb") as f:
+            f.write(delta_bytes)
+
+        if SIGNING_ENABLED:
+            delta_sig = sign_payload(delta_bytes)
+            with open(f"dist/v1/deltas/{stamp}.sig", "w") as f:
+                f.write(delta_sig)
+        else:
+            print(f"INFO: Skipped dist/v1/deltas/{stamp}.sig (signing disabled).")
+
+        with open("dist/v1/deltas/latest.json", "w", encoding="utf-8") as f:
+            json.dump({"latest": stamp}, f, indent=2)
+
+        # Preserve snapshot for delta comparison
+        with open("dist/v1/snapshot.prev.json", "w", encoding="utf-8") as f:
+            json.dump(snapshot, f, separators=(",", ":"), sort_keys=True)
+
+        # 5. Flat Discovery Registry (canonical index for AI agents & /api/v1/patches)
+        registry_data = {
+            "registry_version": "1.0.0",
+            "generated": now_iso,
+            "count": len(registry_patches),
+            "patches": registry_patches,
+        }
+        with open("dist/registry.json", "w", encoding="utf-8") as f:
+            json.dump(registry_data, f, indent=2, sort_keys=True)
+
+    # 6. Dynamic Health & Census Manifests (/v1/health and /health)
+    workarounds_count = 0
+    for w_name in ["dist/workarounds.json", "dist/grievances.json"]:
+        w_path = Path(w_name)
+        if w_path.exists():
+            try:
+                w_data = json.loads(w_path.read_text(encoding="utf-8"))
+                workarounds_count = w_data.get("count") or len(w_data.get("workarounds", []))
+                if workarounds_count > 0:
+                    break
+            except Exception:
+                pass
+
+    total_curated_entries = len(patches) + workarounds_count
+    health_payload = {
+        "status": "ok",
+        "protocol_version": "1.3.1",
+        "total_entries": total_curated_entries,
+        "compiled_patches": len(patches),
+        "verified_workarounds": workarounds_count,
+        "total_grievances": workarounds_count,
+        "updated_at": now_iso,
     }
-    snapshot_bytes = json.dumps(snapshot, separators=(",", ":"), sort_keys=True).encode()
+    health_bytes = json.dumps(health_payload, separators=(",", ":")).encode("utf-8")
+    with open("dist/v1/health", "wb") as f:
+        f.write(health_bytes)
+    with open("dist/health", "wb") as f:
+        f.write(health_bytes)
 
-    with open("dist/v1/snapshot.json", "wb") as f:
-        f.write(snapshot_bytes)
-
-    if SIGNING_ENABLED:
-        snapshot_signature = sign_payload(snapshot_bytes)
-        with open("dist/v1/snapshot.sig", "w") as f:
-            f.write(snapshot_signature)
-    else:
-        print("INFO: Skipped dist/v1/snapshot.sig (signing disabled).")
-
-    # 3. Bloom filter (for fast negative lookups)
-    try:
-        from pybloom_live import BloomFilter
-        bloom = BloomFilter(capacity=max(10000, len(patches) * 4), error_rate=0.001)
-        for fp_hex in patches:
-            bloom.add(fp_hex)
-        with open("dist/v1/bloom.bin", "wb") as f:
-            bloom.tofile(f)
-        print("INFO: dist/v1/bloom.bin generated via pybloom-live.")
-    except Exception as e:
-        print(f"INFO: pybloom-live not available ({e}), writing deterministic SHA-256 prefix bitset to bloom.bin.")
-        bitset = bytearray(1024)
-        for fp_hex in patches:
-            idx = int(hashlib.md5(fp_hex.encode()).hexdigest()[:4], 16) % (1024 * 8)
-            bitset[idx // 8] |= (1 << (idx % 8))
-        with open("dist/v1/bloom.bin", "wb") as f:
-            f.write(bitset)
-
-    # 4. Deltas & Latest Marker
-    delta = {
-        "base_version": "1.3.1",
-        "generated_at": now_iso,
-        "added": list(patches.keys()),
-        "removed": [],
-        "modified": [],
-        "patch_deltas": patches,
+    # 7. RFC 9728 OAuth 2.0 Protected Resource & Authorization Server Discovery
+    os.makedirs("dist/.well-known/oauth-protected-resource", exist_ok=True)
+    os.makedirs("dist/.well-known/oauth-authorization-server", exist_ok=True)
+    oauth_resource_meta = {
+        "resource": "https://fmagenticl-registry.pages.dev",
+        "authorization_servers": [],
+        "scopes_supported": [],
+        "bearer_methods_supported": ["none"],
+        "resource_documentation": "https://fmagenticl-registry.pages.dev/mcp",
+        "auth_policy": "none_public_curated_registry",
+        "updated_at": now_iso,
     }
-    delta_bytes = json.dumps(delta, separators=(",", ":"), sort_keys=True).encode()
-    with open(f"dist/v1/deltas/{stamp}.json", "wb") as f:
-        f.write(delta_bytes)
-
-    if SIGNING_ENABLED:
-        delta_sig = sign_payload(delta_bytes)
-        with open(f"dist/v1/deltas/{stamp}.sig", "w") as f:
-            f.write(delta_sig)
-    else:
-        print(f"INFO: Skipped dist/v1/deltas/{stamp}.sig (signing disabled).")
-
-    with open("dist/v1/deltas/latest.json", "w", encoding="utf-8") as f:
-        json.dump({"latest": stamp}, f, indent=2)
-
-    # Preserve snapshot for delta comparison
-    with open("dist/v1/snapshot.prev.json", "w", encoding="utf-8") as f:
-        json.dump(snapshot, f, separators=(",", ":"), sort_keys=True)
-
-    # 5. Flat Discovery Registry (canonical index for AI agents & /api/v1/patches)
-    registry_data = {
-        "registry_version": "1.0.0",
-        "generated": now_iso,
-        "count": len(registry_patches),
-        "patches": registry_patches,
+    oauth_authz_meta = {
+        "issuer": "https://fmagenticl-registry.pages.dev",
+        "authorization_endpoint": None,
+        "token_endpoint": None,
+        "response_types_supported": [],
+        "grant_types_supported": [],
+        "auth_policy": "none_public_curated_registry",
+        "updated_at": now_iso,
     }
-    with open("dist/registry.json", "w", encoding="utf-8") as f:
-        json.dump(registry_data, f, indent=2, sort_keys=True)
+    res_bytes = json.dumps(oauth_resource_meta, indent=2).encode("utf-8")
+    authz_bytes = json.dumps(oauth_authz_meta, indent=2).encode("utf-8")
 
-    print(f"SUCCESS: Distribution built: {len(patches)} patches compiled to dist/v1/ and dist/registry.json.")
+    for p in ["dist/.well-known/oauth-protected-resource/index.json", "dist/.well-known/oauth-protected-resource.json"]:
+        with open(p, "wb") as f:
+            f.write(res_bytes)
+    for p in ["dist/.well-known/oauth-protected-resource/mcp", "dist/.well-known/oauth-protected-resource/mcp.json"]:
+        with open(p, "wb") as f:
+            f.write(res_bytes)
+
+    for p in ["dist/.well-known/oauth-authorization-server/index.json", "dist/.well-known/oauth-authorization-server.json"]:
+        with open(p, "wb") as f:
+            f.write(authz_bytes)
+    for p in ["dist/.well-known/oauth-authorization-server/mcp", "dist/.well-known/oauth-authorization-server/mcp.json"]:
+        with open(p, "wb") as f:
+            f.write(authz_bytes)
+
+    print(f"SUCCESS: Distribution built: {len(patches)} patches, {workarounds_count} workarounds (total: {total_curated_entries}) compiled to dist/.")
 
 if __name__ == "__main__":
     build()

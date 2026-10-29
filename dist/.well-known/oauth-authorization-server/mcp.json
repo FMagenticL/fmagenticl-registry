@@ -1,0 +1,9 @@
+{
+  "issuer": "https://fmagenticl-registry.pages.dev",
+  "authorization_endpoint": null,
+  "token_endpoint": null,
+  "response_types_supported": [],
+  "grant_types_supported": [],
+  "auth_policy": "none_public_curated_registry",
+  "updated_at": "2026-10-29T13:11:47Z"
+}

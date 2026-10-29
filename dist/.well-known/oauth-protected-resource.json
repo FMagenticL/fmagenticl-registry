@@ -1,0 +1,11 @@
+{
+  "resource": "https://fmagenticl-registry.pages.dev",
+  "authorization_servers": [],
+  "scopes_supported": [],
+  "bearer_methods_supported": [
+    "none"
+  ],
+  "resource_documentation": "https://fmagenticl-registry.pages.dev/mcp",
+  "auth_policy": "none_public_curated_registry",
+  "updated_at": "2026-10-29T13:11:47Z"
+}

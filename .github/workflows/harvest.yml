@@ -69,28 +69,32 @@ jobs:
           python scripts/build_guestbook.py
           python scripts/build_distribution.py
 
-      - name: Commit and Push Changes
-        id: commit-step
+      - name: Stage Changes & Run CI Seatbelts
+        id: seatbelt-step
         run: |
-          git config --global user.name "FMagenticL Harvester Bot"
-          git config --global user.email "harvester@fmagenticl-registry.pages.dev"
-          
-          # Stage the relevant directories
           git add patches/ dist/ fmagenticl/server/seed_hermes.py
-          
-          # Only commit if there are actual changes
           if git diff --staged --quiet; then
-            echo "No new patches harvested today."
+            echo "No changes staged. Skipping test gates."
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
-            git commit -m "[BOT] chore(harvest): automated GitHub issue harvesting and patch promotion"
-            git pull --rebase origin main || (git rebase --abort && git pull --no-rebase origin main)
-            git push origin main
+            echo "Changes detected. Running load-bearing CI seatbelt gates..."
+            python scripts/air_gap_scan.py --staged
+            python -m pytest tests/test_promote_d1.py -v
+            python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Commit and Push Changes
+        if: steps.seatbelt-step.outputs.has_changes == 'true'
+        run: |
+          git config --global user.name "FMagenticL Harvester Bot"
+          git config --global user.email "harvester@fmagenticl-registry.pages.dev"
+          git commit -m "[BOT] chore(harvest): automated GitHub issue harvesting and patch promotion"
+          git pull --rebase origin main || (git rebase --abort && git pull --no-rebase origin main)
+          git push origin main
+
       - name: Deploy to Cloudflare Pages CDN
-        if: steps.commit-step.outputs.has_changes == 'true'
+        if: steps.seatbelt-step.outputs.has_changes == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

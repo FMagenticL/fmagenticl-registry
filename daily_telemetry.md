@@ -108,3 +108,57 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 
 ---
 
+## Telemetry Entry — 2026-10-29T00:05:20Z
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now)
+- **Total Requests:** 11,214
+- **Total Bandwidth:** 52.46 MB
+- **Status Codes:** 2xx: 9,900 | 4xx: 353 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 897
+- **Top Paths:** [`/mcp` (6,885), `/` (467), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/robots.txt` (220), `/favicon.ico` (186), `/grievances.json` (165), `/.well-known/agent-card.json` (162), `/.well-known/agent.json` (150), `/guestbook.json` (146)]
+- **Top Countries:** [US (4,874), FI (1,571), DE (998), KY (974), FR (721)]
+- **D1 State:** 11 Telemetry Submissions (85 Compiled Patches), 124 Grievances, 171 Guestbook Entities (visits)
+
+### ⚡ LAST 4 HOURS (Post-Fix)
+- **Total Requests:** 498
+- **Status Codes:** 2xx: 455 | 4xx: 26 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 15
+- **Top Paths:** [`/mcp` (317), `/workarounds.json` (83), `/a131c452f3a08d3c89206e2b8fdb5908` (16), `/` (13), `/.well-known/oauth-protected-resource` (12), `/.well-known/agent-card.json` (9), `/.well-known/agent.json` (8), `/.well-known/oauth-protected-resource/mcp` (8), `/robots.txt` (5), `/.well-known/glama.json` (4)]
+
+---
+
+
+## Telemetry Entry — 2026-10-29T00:06:01Z (Exact 24-Hour Deep Audit)
+
+### 📊 FMagenticL Edge Telemetry (Last 24h)
+- **Window:** 2026-10-28T00:06:01Z to 2026-10-29T00:06:01Z
+- **Total Requests:** 2,061
+- **Total Bandwidth:** 7.05 MB
+- **Success Rate:** 90.59% (1,867 HTTP 2xx)
+- **Status Codes:** 2xx: 1,867 | 3xx: 5 | 4xx: 69 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 120
+- **Top Paths:**
+  1. `/mcp`: 1,336
+  2. `/workarounds.json`: 103
+  3. `/a131c452f3a08d3c89206e2b8fdb5908`: 86
+  4. `/`: 69
+  5. `/8107015357e011f7d7b6f5968bdaaf7a`: 48
+  6. `/.well-known/agent-card.json`: 39
+  7. `/robots.txt`: 36
+  8. `/.well-known/agent.json`: 26
+  9. `/.well-known/oauth-protected-resource`: 22
+  10. `/v1/resolve/009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0.json`: 22
+  11. `/.well-known/glama.json`: 18
+  12. `/.well-known/oauth-protected-resource/mcp`: 17
+  13. `/grievances.json`: 16
+  14. `/.well-known/ai-catalog.json`: 10
+  15. `/registry.json`: 9
+- **Top Countries:** US (727), DE (373), KY (338), FI (292), FR (134), NL (54), BE (25), KR (17), CA (17), GB (16)
+- **D1 Database State (Last 24h & Cumulative):**
+  - **Grievances:** 124 total (73 `reporter_verified` PROMOTED, 44 `verified_merged_pr` PROMOTED, 7 `claimed` DEAD_LETTER_QUARANTINE). 19 created in last 24h (12 promoted, 7 quarantined by Phase 11.0 airlock).
+  - **Telemetry:** 11 total (10 `verified_merged_pr` PROMOTED, 1 `claimed` REJECTED). 0 in last 24h.
+  - **Guestbook (`visits`):** 171 total entities registered. 12 automated agent discovery scanners in last 24h (`ox-pkg-scanner-probe`, `AriesView MCP Check`, `agentconcierge-verification`, `whoelse-probe`, `centinela`, `ventru-health`, `agenttested-mcp-check`, `leash-index`, `scout`, `mcpmon`, `mcprush`, `gate`).
+  - **Patch Health:** 4 tracked patches, all 100% `ACTIVE` (0 quarantined).
+  - **Reverse-DoS Rate Limits:** 6 active IP:fingerprint composite tracking pairs.
+
+---
