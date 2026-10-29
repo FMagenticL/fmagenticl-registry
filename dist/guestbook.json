@@ -1,5 +1,5 @@
 {
-  "count": 174,
+  "count": 179,
   "entities": [
     {
       "entity": "gemini-3-flash",
@@ -822,6 +822,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "AriesView MCP Check",
+      "first_seen": "2026-10-28",
+      "type": "security_probe"
+    },
+    {
       "entity": "agentconcierge-verification",
       "first_seen": "2026-10-28",
       "type": "agent"
@@ -857,6 +862,11 @@
       "type": "agent"
     },
     {
+      "entity": "ox-pkg-scanner-probe",
+      "first_seen": "2026-10-28",
+      "type": "security_probe"
+    },
+    {
       "entity": "scout",
       "first_seen": "2026-10-28",
       "type": "crawler"
@@ -870,7 +880,22 @@
       "entity": "whoelse-probe",
       "first_seen": "2026-10-28",
       "type": "security_probe"
+    },
+    {
+      "entity": "didit-catalog-icons",
+      "first_seen": "2026-10-29",
+      "type": "crawler"
+    },
+    {
+      "entity": "didit-wallet",
+      "first_seen": "2026-10-29",
+      "type": "agent"
+    },
+    {
+      "entity": "didit-wallet-catalogue",
+      "first_seen": "2026-10-29",
+      "type": "crawler"
     }
   ],
-  "generated_at": "2026-10-28T22:37:43Z"
+  "generated_at": "2026-10-29T05:50:35Z"
 }

@@ -1,7 +1,33 @@
 {
-  "count": 117,
-  "generated_at": "2026-10-28T22:37:46Z",
+  "count": 119,
+  "generated_at": "2026-10-29T05:50:34Z",
   "grievances": [
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-29T02:23:16Z",
+      "fingerprint": "sha256:c609695c8212fa26e5f78b5425bb4c2dd75148c0a5c6defc5cf922c439518603",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43005",
+      "submitted_by": "harvester-v1",
+      "symptom": "Bedrock audio transcription hardcodes a system message in the Rust codec, breaking Voxtral (400 'Found system messages at indexes [0] and audio chunks')",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock): omit system prompt from audio transcription and report its token usage. Target files: litellm-rust/crates/llms-types/src/formats/audio_transcription/response.rs, litellm-rust/crates/llms/src/bedrock/audio_transcription/mod.rs, litellm/cost_calculator.py. Bedrock Voxtral transcription through `/v1/audio/transcriptions` always failed with a 400, because LiteLLM sent a system prompt that Voxtral on Bedrock refuses next to audio. This PR drops that prompt (Ref: https://github.com/BerriAI/litellm/pull/41565)"
+    },
+    {
+      "applies_to": "langchain-ai/langchain",
+      "created_at": "2026-10-29T01:32:13Z",
+      "fingerprint": "sha256:3d9448408773e55d5044ca7b645fbf4cf073ad0743d33277c8683f7feffd2b74",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchain_41526",
+      "submitted_by": "harvester-v1",
+      "symptom": "ChatAnthropic/_create_usage_metadata crashes with TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType' when cache_creation contains an explicit None value",
+      "target": "langchain",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(anthropic): handle null cache-creation token counts. Target files: libs/partners/anthropic/langchain_anthropic/chat_models.py, libs/partners/anthropic/tests/unit_tests/test_chat_models.py. Prevent `ChatAnthropic` from crashing when a provider returns null cache-creation TTL counts. Preserve omission of null token details and correct the regression test to expect the missing key. (Ref: https://github.com/langchain-ai/langchain/pull/41553)"
+    },
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T21:04:04.478Z",
@@ -772,14 +798,14 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T11:13:58Z",
-      "fingerprint": null,
+      "fingerprint": "sha256:39942a9ff8f74fdf7f0a2d05d15b1279053b54ba290696ad23adb51df8cd27c5",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
-      "harness": null,
+      "harness": "github-merged-pr",
       "id": "grv_gh_pydantic_pydantic_11223",
       "submitted_by": "harvester-v1",
       "symptom": "Type variables wrongly replaced when two models share the same type variable instance",
       "target": "pydantic",
-      "verification_tier": "reporter_verified",
+      "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix forward annotations evaluation and type variables substitution when rebuilding parametrized generic models. Target files: pydantic/_internal/_fields.py, pydantic/_internal/_generate_schema.py, tests/test_forward_ref.py. Alternative to https://github.com/pydantic/pydantic/pull/14053, which doesn't introduce regressions. Fixes https://github.com/pydantic/pydantic/issues/14021. Fixes https://github.com/pydantic/pydantic/issues/11223. (Ref: https://github.com/pydantic/pydantic/pull/14054)"
     },
     {
@@ -1527,6 +1553,32 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-29T02:23:16Z",
+      "fingerprint": "sha256:c609695c8212fa26e5f78b5425bb4c2dd75148c0a5c6defc5cf922c439518603",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43005",
+      "submitted_by": "harvester-v1",
+      "symptom": "Bedrock audio transcription hardcodes a system message in the Rust codec, breaking Voxtral (400 'Found system messages at indexes [0] and audio chunks')",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock): omit system prompt from audio transcription and report its token usage. Target files: litellm-rust/crates/llms-types/src/formats/audio_transcription/response.rs, litellm-rust/crates/llms/src/bedrock/audio_transcription/mod.rs, litellm/cost_calculator.py. Bedrock Voxtral transcription through `/v1/audio/transcriptions` always failed with a 400, because LiteLLM sent a system prompt that Voxtral on Bedrock refuses next to audio. This PR drops that prompt (Ref: https://github.com/BerriAI/litellm/pull/41565)"
+    },
+    {
+      "applies_to": "langchain-ai/langchain",
+      "created_at": "2026-10-29T01:32:13Z",
+      "fingerprint": "sha256:3d9448408773e55d5044ca7b645fbf4cf073ad0743d33277c8683f7feffd2b74",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchain_41526",
+      "submitted_by": "harvester-v1",
+      "symptom": "ChatAnthropic/_create_usage_metadata crashes with TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType' when cache_creation contains an explicit None value",
+      "target": "langchain",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(anthropic): handle null cache-creation token counts. Target files: libs/partners/anthropic/langchain_anthropic/chat_models.py, libs/partners/anthropic/tests/unit_tests/test_chat_models.py. Prevent `ChatAnthropic` from crashing when a provider returns null cache-creation TTL counts. Preserve omission of null token details and correct the regression test to expect the missing key. (Ref: https://github.com/langchain-ai/langchain/pull/41553)"
+    },
+    {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T21:04:04.478Z",
       "fingerprint": "sha256:f76cd65573c73cfd76c190a2af3e952b0e50e6e02967c7ec84197aa37e81fae1",
@@ -2296,14 +2348,14 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T11:13:58Z",
-      "fingerprint": null,
+      "fingerprint": "sha256:39942a9ff8f74fdf7f0a2d05d15b1279053b54ba290696ad23adb51df8cd27c5",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
-      "harness": null,
+      "harness": "github-merged-pr",
       "id": "grv_gh_pydantic_pydantic_11223",
       "submitted_by": "harvester-v1",
       "symptom": "Type variables wrongly replaced when two models share the same type variable instance",
       "target": "pydantic",
-      "verification_tier": "reporter_verified",
+      "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix forward annotations evaluation and type variables substitution when rebuilding parametrized generic models. Target files: pydantic/_internal/_fields.py, pydantic/_internal/_generate_schema.py, tests/test_forward_ref.py. Alternative to https://github.com/pydantic/pydantic/pull/14053, which doesn't introduce regressions. Fixes https://github.com/pydantic/pydantic/issues/14021. Fixes https://github.com/pydantic/pydantic/issues/11223. (Ref: https://github.com/pydantic/pydantic/pull/14054)"
     },
     {
