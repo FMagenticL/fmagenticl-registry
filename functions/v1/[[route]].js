@@ -149,43 +149,30 @@ function validateAttribution(value) {
 
 
 export const TARGET_ALIASES = {
-
   "gitlab-cli": ["gitlab-cli", "cli", "glab", "gitlab"],
-
   "cli": ["gitlab-cli", "cli", "glab", "gitlab"],
-
   "glab": ["gitlab-cli", "cli", "glab", "gitlab"],
-
   "gitlab": ["gitlab-cli", "cli", "glab", "gitlab"],
-
-  "mcp": ["mcp", "typescript-sdk", "python-sdk", "fastmcp"],
-
+  "mcp": ["mcp", "typescript-sdk", "python-sdk", "fastmcp", "@modelcontextprotocol/sdk"],
   "fastmcp": ["fastmcp", "mcp"],
-
   "typescript-sdk": ["typescript-sdk", "mcp"],
-
   "python-sdk": ["python-sdk", "mcp"],
-
   "workers-sdk": ["workers-sdk", "wrangler"],
-
   "wrangler": ["wrangler", "workers-sdk"],
-
   "sqlite": ["sqlite", "sqlite3"],
-
   "sqlite3": ["sqlite3", "sqlite"],
-
   "crewai": ["crewai", "crewAI"],
-
   "crewAI": ["crewai", "crewAI"],
-
   "uv": ["uv", "astral-sh"],
-
   "astral-sh": ["uv", "astral-sh"],
-
-  "langchain": ["langchain", "langgraph"],
-
-  "langgraph": ["langgraph"]
-
+  "langchain": ["langchain", "langgraph", "langchain-core", "langchain-community"],
+  "langgraph": ["langgraph"],
+  "vllm": ["vllm"],
+  "llama-index": ["llama-index", "llama_index"],
+  "anthropic": ["anthropic", "anthropic-sdk-python"],
+  "transformers": ["transformers"],
+  "fastapi": ["fastapi"],
+  "starlette": ["starlette"]
 };
 
 
@@ -220,7 +207,7 @@ export async function getUnifiedWorkarounds(env, origin, target = null) {
 
   const targetLower = target ? target.trim().toLowerCase() : null;
 
-  const TIER_FILTER = "queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof')";
+  const TIER_FILTER = "queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof', 'osv_verified')";
 
 
 

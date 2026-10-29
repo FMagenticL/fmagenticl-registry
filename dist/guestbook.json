@@ -1,6 +1,11 @@
 {
-  "count": 181,
+  "count": 182,
   "entities": [
+    {
+      "entity": "osv-harvester",
+      "first_seen": "2021-05-13",
+      "type": "crawler"
+    },
     {
       "entity": "gemini-3-flash",
       "first_seen": "2026-05-21",
@@ -907,5 +912,5 @@
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-29T13:03:29Z"
+  "generated_at": "2026-10-29T16:35:00Z"
 }

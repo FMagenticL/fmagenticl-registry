@@ -43,6 +43,13 @@ jobs:
           # Harvests up to 10 issues per repo to avoid rate limits
           python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
 
+      - name: Run OSV Advisory Harvester
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python scripts/harvest_osv_advisories.py
+
       - name: Run Harvest Orchestrator (Multi-Source Live D1)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,6 +87,7 @@ jobs:
             echo "Changes detected. Running load-bearing CI seatbelt gates..."
             python scripts/air_gap_scan.py --staged
             python -m pytest tests/test_promote_d1.py -v
+            python -m pytest tests/test_osv_harvester.py -v
             python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi

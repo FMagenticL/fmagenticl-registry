@@ -1,10 +1,11 @@
 {
-  "count": 123,
-  "generated_at": "2026-10-29T13:03:28Z",
+  "count": 185,
+  "generated_at": "2026-10-29T16:29:07Z",
   "grievances": [
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T11:47:19Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3013cf290b2b93e0ac51e0b63fc91a123d956857b6e4179d2c9e0aabc5a1572d",
       "grievance_type": "AGENT_FRICTION",
       "harness": "github-merged-pr",
@@ -18,6 +19,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T11:12:14Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:ff58efbf27ac237da832ec5e1bc021b8375539c3a6fb1a228b6174031fb68f4c",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -31,6 +33,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T10:46:36Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:06f63d2ed1cccb4c95e51470f1a4a8904734e6de348b585f6e5c9634a514bf0b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -44,6 +47,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T05:51:40Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a798d1537b52bc71bb2bc44df0e2d7e198c319d83cc8a9a6b6a0639ba8fa28bd",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -57,6 +61,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T02:23:16Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c609695c8212fa26e5f78b5425bb4c2dd75148c0a5c6defc5cf922c439518603",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -70,6 +75,7 @@
     {
       "applies_to": "langchain-ai/langchain",
       "created_at": "2026-10-29T01:32:13Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3d9448408773e55d5044ca7b645fbf4cf073ad0743d33277c8683f7feffd2b74",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -81,8 +87,93 @@
       "workaround": "Fix: fix(anthropic): handle null cache-creation token counts. Target files: libs/partners/anthropic/langchain_anthropic/chat_models.py, libs/partners/anthropic/tests/unit_tests/test_chat_models.py. Prevent `ChatAnthropic` from crashing when a provider returns null cache-creation TTL counts. Preserve omission of null token details and correct the regression test to expect the missing key. (Ref: https://github.com/langchain-ai/langchain/pull/41553)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:49Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-vvpg-rrww-wpmh\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115917\", \"PYSEC-2026-4348\"]}",
+      "fingerprint": "sha256:e37ea139c6dfd0156752b094e55d595fa89add25d680dff9f2715659384130b1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_vvpg_rrww_wpmh",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-vvpg-rrww-wpmh] vLLM: Permissive default CORS origins allow cross-origin requests to the vLLM HTTP server (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-vvpg-rrww-wpmh)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:29Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-h3rc-j82p-2c3h\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115915\", \"PYSEC-2026-4346\"]}",
+      "fingerprint": "sha256:49d1946e9e068b5f2ed7a00f8c1803073cb6936c6094653f0b888001bd37d70c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_h3rc_j82p_2c3h",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-h3rc-j82p-2c3h] vLLM: Untrusted EPS inputs can trigger denial of service or Ghostscript RCE (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-h3rc-j82p-2c3h)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:15Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-6757-hggm-hp2w\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115912\", \"PYSEC-2026-4345\"]}",
+      "fingerprint": "sha256:ac8fc4fb8509382a569ae1d5795e49ed7e0831b53e0e44a6ec8dbebaa2707c4c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_6757_hggm_hp2w",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-6757-hggm-hp2w] vLLM: Public multimodal SHM handle forgery reaches worker-side `pickle.loads()` with insecure serialization disabled (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-6757-hggm-hp2w)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:08Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-q97c-p368-75c4\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115916\", \"PYSEC-2026-4347\"]}",
+      "fingerprint": "sha256:7314518e5393806c25569f9cd4192f4593ef645bc33917be69c0fcc0cb2efc7e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_q97c_p368_75c4",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-q97c-p368-75c4] vLLM: Out-of-vocabulary prompt token id passes input validation and triggers a CUDA device-side assert (engine crash / DoS) (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-q97c-p368-75c4)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:14:59Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-x567-49g5-p4cf\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115918\", \"PYSEC-2026-4349\"]}",
+      "fingerprint": "sha256:04107f14f008181d4217f12bd3a41dbc5d48e53c029e433f0e027a2ba0b5dddf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_x567_49g5_p4cf",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-x567-49g5-p4cf] vLLM: Responses API bypasses trust_request_chat_template for chat_template_kwargs (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-x567-49g5-p4cf)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-10-28T21:05:47Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3fx2-cqw9-xr3c\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.14\", \"aliases\": [\"CVE-2026-118667\"]}",
+      "fingerprint": "sha256:2f4fdfdbe8430306407e3f0c05ddf44de9f7607a9b0ce2c8ab96216f9567a8d7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3fx2_cqw9_xr3c",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3fx2-cqw9-xr3c] LangGraph: Unencoded identifiers in LangGraph SDK v3 streaming can redirect authenticated GET requests (Affects langgraph < 1.2.14)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 1.2.14: pip install --upgrade 'langgraph>=1.2.14' (Advisory: GHSA-3fx2-cqw9-xr3c)"
+    },
+    {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T21:04:04.478Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:f76cd65573c73cfd76c190a2af3e952b0e50e6e02967c7ec84197aa37e81fae1",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -96,6 +187,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T19:35:27Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:9e843b0634bd3d041223bbb449102f540567419109ba939380eb360c41060b4e",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -109,6 +201,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T19:10:54Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:8e3b074811de7fd6b313a7a66bd9ec12ea68a473ee31d4fb153eaea2f4dd8db1",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -122,6 +215,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T18:41:34Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3cc82de616cb5fdc453bb9bedd780a3a1579e2a29d5904aeda574bfa084d3e2a",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -135,6 +229,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T18:28:55Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c450fd3144780d90616c36e2483961579f2901a179cf9c2f580ad024a3f21f1e",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -148,6 +243,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-28T17:27:31Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:853682ef1a5fb812209773f4b2387f01c9c302f769508490c6e9bf8cd402531f",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -161,6 +257,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T12:21:32Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:27f9e41530745cca762eddf8ce83f22c564ac0b59fbcf1c24da099b4017cc3f9",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -174,6 +271,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T05:21:16.151Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:bd5a2a71294ac11b1f7604af35cedce5a824c17f54abc229b7408be4d77d5122",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -187,6 +285,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T03:09:35.581Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a107897bc398a5b7fdf030db4f0b621ef56a8fcd1ce7598733bc751b06c4801f",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -200,6 +299,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T02:33:38Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1cfee6c0c89bd4b1303e37e4205ad228c993ca644ef5671d8a7b85cce5aad75e",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -213,6 +313,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T02:01:55Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:006e4631a77aacc685fc7f0d08f7a0c4baef1c6556a954450669fb612ff4e6f4",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -226,6 +327,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T01:58:25.853Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:e4740a8295045ca9310c8f2fbeeb87271c25a8afa62a1465032db4ba76b34d1f",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -239,6 +341,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T21:46:16Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:049e2c595cdec59ce01991caa5764397abb089c06f1623031705ccea14bf30ae",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -250,8 +353,51 @@
       "workaround": "Fix: fix(mcp): accept YAML OpenAPI documents. Target files: litellm/proxy/mcp_server/openapi_to_mcp_generator.py, tests/unit/proxy/mcp_server/test_mcp_server_manager.py, tests/unit/proxy/mcp_server/test_openapi_spec_path_url.py. YAML OpenAPI specs now generate MCP tools from URLs and local files. JSON keeps its existing decoding behavior, and both formats use the same loader for preview, registration, and health checks (Ref: https://github.com/BerriAI/litellm/pull/48622)"
     },
     {
+      "applies_to": "mcp",
+      "created_at": "2026-10-27T21:06:59Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-w4fh-qvv9-3v23\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-116684\"]}",
+      "fingerprint": "sha256:f7d758cade63867f28b61bbae3738fcadc44b12c11a8bcfb8bcc75cc7797dfd2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_w4fh_qvv9_3v23",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-w4fh-qvv9-3v23] Model Context Protocol Python SDK: Server bearer-token authentication accepts tokens issued for a different resource server (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-w4fh-qvv9-3v23)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-10-27T21:05:34Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5h93-6whr-6q8j\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-116685\"]}",
+      "fingerprint": "sha256:476b8c08f04e211468dc2d8148a90914d8baeca728a5082835dd9a03279c61b1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_5h93_6whr_6q8j",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-5h93-6whr-6q8j] Model Context Protocol Python SDK: HTTP client transports followed cross-origin redirects carrying custom headers and bodies (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-5h93-6whr-6q8j)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-10-27T21:05:29Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-rwrf-2pqf-9j8j\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-116686\"]}",
+      "fingerprint": "sha256:b5e32c489fe50291e2a53fabdb3b779dff65691351205cbd5cfa7934450afd85",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_rwrf_2pqf_9j8j",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-rwrf-2pqf-9j8j] Model Context Protocol Python SDK: Client fetched server-chosen $ref URLs while validating tool results against output schemas (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-rwrf-2pqf-9j8j)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T19:43:37Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:d63bd56d49828e9df60474194e6673653ee28d76a2226f7eb49c105df0012d57",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -263,8 +409,65 @@
       "workaround": "Fix: feat(hosted_vllm): accept images on decision deployments. Target files: litellm/llms/hosted_vllm/decisions/transformation.py, tests/unit/decisions/test_main.py. hosted_vllm decision deployments now accept images on /v1/decisions and /v1/systemone and pass them to vLLM's /v1/systemone `images` field, the same way LM Studio deployments already do. Before this, the gateway refused any image with a 400 before calling vLLM, even though current vLLM accepts images there. Remote https image URLs are inlined as data URLs before sen... (Ref: https://github.com/BerriAI/litellm/pull/48621)"
     },
     {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-27T19:02:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-f897-62hf-6gxq\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.30.1\", \"aliases\": []}",
+      "fingerprint": "sha256:b415fc5a83db1c658afc6e92231d1628db636c90fdb85b3c07cdf6eea79cc1ff",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_f897_62hf_6gxq",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-f897-62hf-6gxq] MCP TypeScript SDK: HTTP server transports and handlers did not limit request body size or JSON-RPC batch length (Affects @modelcontextprotocol/sdk < 1.30.1)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.30.1: npm install '@modelcontextprotocol/sdk@>=1.30.1' (Advisory: GHSA-f897-62hf-6gxq)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-10-27T15:32:36Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-g5ff-637f-6q2m\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.95.0\", \"aliases\": []}",
+      "fingerprint": "sha256:f6267044bfa185a0e2e53a07af9a6e95af43e032c2cb56e9b8e75a107a101d0d",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_g5ff_637f_6q2m",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-g5ff-637f-6q2m] LiteLLM: internal_user_viewer arbitrary local file read via `vertex_ai_credentials` (Affects litellm < 1.95.0)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.95.0: pip install --upgrade 'litellm>=1.95.0' (Advisory: GHSA-g5ff-637f-6q2m)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-10-27T15:31:56Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hhww-mrg2-969h\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.85.0\", \"aliases\": []}",
+      "fingerprint": "sha256:b1344863e54d6ea20590a69abffc17c04f5f7efaf3973ae1169a6beb5e607ce7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_hhww_mrg2_969h",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-hhww-mrg2-969h] LiteLLM vulnerable to reflected XSS in /sso/debug/callback (Affects litellm < 1.85.0)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.85.0: pip install --upgrade 'litellm>=1.85.0' (Advisory: GHSA-hhww-mrg2-969h)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-10-27T15:04:14Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-7hp6-4w63-5g45\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.104.0rc2\", \"aliases\": [\"CVE-2026-114612\"]}",
+      "fingerprint": "sha256:9f5758a96bad3330d4875a5c07f9e8f249cd1c7148efc20280d457f7bdf57424",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_7hp6_4w63_5g45",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-7hp6-4w63-5g45] LiteLLM: Privilege Escalation to Proxy Admin via Cross-Domain Reuse of the Salt Key (Affects litellm < 1.104.0rc2)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.104.0rc2: pip install --upgrade 'litellm>=1.104.0rc2' (Advisory: GHSA-7hp6-4w63-5g45)"
+    },
+    {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-27T07:08:26Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c4858debe6a9b1a483eec1284c103091f7e556e6d3d73f2d8369ac1bcc407daf",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -278,6 +481,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-27T06:56:39Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4dd7ea2c68e28bb669bff63fc86655d14783f1a51a206bb2a6a7c0080503c689",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -291,6 +495,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T03:18:17Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4da8ff8beacd0d69656535b6f8386abbec72c881a5aff5ad3bdd5a195103bce0",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -304,6 +509,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T02:24:10Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:800376a0a44b32b89b89811b4cccbbc3166a0feef918e25f6a44d47c207d3017",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -317,6 +523,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-27T00:34:00.907Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -330,6 +537,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T23:59:15.066Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -343,6 +551,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T23:35:14Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -356,6 +565,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-26T23:11:38Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:bddcff4645219652a3bb181b33bfa1514909f554bc36edb9160e2525de5c1f37",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -369,6 +579,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-26T21:21:52Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -382,6 +593,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T20:29:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -395,6 +607,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T18:15:26Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -408,6 +621,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T17:11:58Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -421,6 +635,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-26T15:35:24Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -434,6 +649,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-26T13:36:05Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -447,6 +663,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T13:07:43.435Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -460,6 +677,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T12:56:50Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -473,6 +691,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T12:56:38Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -486,6 +705,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T12:56:27Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -499,6 +719,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-26T12:35:35Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c408d3e376c7a68107792665391cce11d67e1c1f4b548f3b326eb260c6a238d1",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -512,6 +733,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-26T11:03:13Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:0c1b0e08fc4798979df9f67c716eb7b68a9b455fe06a2e497ee69174f82686b6",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -525,6 +747,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T08:23:52Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a42f75882122fe78a9e9b5112aab22538a4da217aec6231adaaa3b5a4eb70ca6",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -538,6 +761,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T07:30:48Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:f48a50c53dcf0f04b570670b2e8d171a8206da4efa587b376f71723445db9b38",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -551,6 +775,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T07:01:51Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:58462711484b513da687e59c27415fe4fcb99ea067ece12be67ff96d0796fcb6",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -564,6 +789,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T06:20:02Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:fb8a38844afcaeac690e3be6c4cc7fa896507e710d37c65f92f668574f6ab5f8",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -577,6 +803,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T06:04:24.451Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -590,6 +817,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T05:46:52Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1e00b17334d6d2cc795f212da8312c7ed25f658a90acde64c60bb6743b4a72be",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -603,6 +831,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T05:28:26.931Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -616,6 +845,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T00:53:08.719Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -629,6 +859,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-25T09:39:15Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -642,6 +873,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-25T08:10:28Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -653,8 +885,37 @@
       "workaround": "Fix: [vitest-plugin] Pass the import kind to Vite so `require()` picks the `require` export condition. Target files: packages/vitest-plugin/src/pool/module-fallback.ts, packages/vitest-plugin/test/cjs-require.test.ts, packages/vitest-plugin/test/module-fallback.test.ts. On Vite 8, a `require()` in a CommonJS dependency resolved to the `import` entry of packages that ship both an `import` and a `require` entry. CommonJS code then got an ES module. With `pg`, for example, tests fail with `SyntaxError: Cannot use import stat... (Ref: https://github.com/cloudflare/workers-sdk/pull/16335)"
     },
     {
+      "applies_to": "fastmcp",
+      "created_at": "2026-10-23T21:32:06Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-7xgj-8392-5q4r\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.1.2\", \"aliases\": []}",
+      "fingerprint": "sha256:4aad558f8262741fcd59d3b271cfb62a98024f7383a7f912223c8217385503f9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_7xgj_8392_5q4r",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-7xgj-8392-5q4r] FastMCP: Post-transform component authorization is skipped on direct calls (Affects fastmcp < 4.1.2)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 4.1.2: pip install --upgrade 'fastmcp>=4.1.2' (Advisory: GHSA-7xgj-8392-5q4r)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-10-23T21:31:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-vqqp-x5qm-5qp4\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.1.2\", \"aliases\": []}",
+      "fingerprint": "sha256:5a7993e56f73e6ec770c03031a2b1dd2dc240357dcbe3af055aaff2127160b6f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_vqqp_x5qm_5qp4",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-vqqp-x5qm-5qp4] FastMCP MCP client wrappers construct M2M OAuth providers without issuer binding \u2014 client secret redirectable to attacker-advertised authorization server (Affects fastmcp < 4.1.2)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 4.1.2: pip install --upgrade 'fastmcp>=4.1.2' (Advisory: GHSA-vqqp-x5qm-5qp4)"
+    },
+    {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-23T17:33:51Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1ff0237a12b5e69ea121bc56202565b09717ceea31ea9000ef151817fc5ef1bc",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -668,6 +929,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-23T17:25:13Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -681,6 +943,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-23T17:23:30Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -694,6 +957,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-23T13:16:21Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:9d1368ff60ddee746a49b3a9e4d7d424709cf3793859f90ab29d2c3d07a8d808",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -707,6 +971,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T07:28:25Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:8e095344bc1fc43fe338294586af942a7118ea2f63175759cea28861a3906c8b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -720,6 +985,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T07:11:49Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:cd25903f6f54de78ca6d1128a9c1385e70a0c3fea22d775ba020ab2445f3a98b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -733,6 +999,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T06:45:18Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1bfaa6c2aafb538218c25322c4070c077c9d72e75556f2a093d00d14cfd3b47d",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -746,6 +1013,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T05:20:30Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:98e9387b27d4869bd4a0aa43e3b8cc57fbcd6bfb3ad93b469f27dd5427cf6eb0",
       "grievance_type": "AGENT_FRICTION",
       "harness": "github-merged-pr",
@@ -759,6 +1027,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T05:10:28Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:e96eabda756bbe4798fe05d41e010da886d0419ca11bd24278b6ad8226ba5d0e",
       "grievance_type": "AGENT_FRICTION",
       "harness": "github-merged-pr",
@@ -772,6 +1041,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T04:18:19Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:03bad51c2cc925d5feab519b3e51b8dd06e771f994dc46c68f78cb81e10ed3a1",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -785,6 +1055,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T03:56:32Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:6a943b576c615bdde50b4e0b6a9b0cb9e8e71442e97f6a76cf13b24e17358d17",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -798,6 +1069,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-23T02:35:05.014Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -811,6 +1083,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-22T14:49:25Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a9ed35aa5282e3b541535d37d1e1909718f97df47bf68d31920887f4ba1869e0",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -824,6 +1097,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T13:45:59Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -837,6 +1111,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T11:13:58Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4477eec9732ee076cfdd0f48a77cac1a35665cc3c89a74e4befe334aacf8d81b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -850,6 +1125,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T11:13:58Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:39942a9ff8f74fdf7f0a2d05d15b1279053b54ba290696ad23adb51df8cd27c5",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -863,6 +1139,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T09:37:05Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:9cbabcc41f5f1a7ca9e071741267b2feb792fa8f0eb224f38e9d5aa0e13a9820",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -876,6 +1153,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-21T22:37:04Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -889,6 +1167,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-21T22:24:13Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -902,6 +1181,7 @@
     {
       "applies_to": "langchain-ai/langchain",
       "created_at": "2026-10-21T16:53:42Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:ca4d84a0e7a32d1d8e8d6046c1ef5b3d902382ecbc0b495bb31f2b17074398ed",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -915,6 +1195,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-21T14:19:15Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:13e272cd72a349178f682c2daa7b356e8820bc825fc7a2acd6fde5088908bee7",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -928,6 +1209,7 @@
     {
       "applies_to": "media-forensic-agents",
       "created_at": "2026-10-21T02:58:13Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -941,6 +1223,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-20T22:09:58Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3468f25bb313dfb8af1b7f9a0dd99b882227bfe71540b20ff589709e082ebdb3",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -952,8 +1235,79 @@
       "workaround": "Fix: fix(server): preserve forwarded params and support modern low-level connections. Target files: packages/server/src/server/perRequestTransport.ts, packages/server/src/server/server.ts, packages/server/src/server/serverEventBus.ts. A gateway cannot forward a change notification faithfully through `ServerEventBus`: the event carries only a kind/URI, so the listen router drops custom `_meta` and extension params. A manually connected `Server` also rejects a correctly classified modern request because advertis... (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/3057)"
     },
     {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T20:06:35Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-46jr-4wx8-v453\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111768\"]}",
+      "fingerprint": "sha256:38fce360b3febfb184ad66e583d6431300155170ce1c8c268fe4a283290fe2a5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_46jr_4wx8_v453",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-46jr-4wx8-v453] MCP TypeScript SDK: One HTTP request within the default size limit could exhaust server memory during validation (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-46jr-4wx8-v453)"
+    },
+    {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T19:43:36Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-rvq5-wwqv-78pq\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111771\"]}",
+      "fingerprint": "sha256:263607a466cd3477f0e387ef97305e30aadf732a11082b60c30ae44dbe79bd7f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_rvq5_wwqv_78pq",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-rvq5-wwqv-78pq] MCP TypeScript SDK: Server bearer authentication accepted tokens issued for another service (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-rvq5-wwqv-78pq)"
+    },
+    {
+      "applies_to": "uv",
+      "created_at": "2026-10-20T19:37:52Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hq85-5cpj-mr62\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.13.4\", \"aliases\": [\"PYSEC-2026-4321\"]}",
+      "fingerprint": "sha256:7d9e64e3f75d494fb0435586dbbb9d102e9b7d6e0c6814fcafcc9867f0624002",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_hq85_5cpj_mr62",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-hq85-5cpj-mr62] uv's bundled CA store trusts an emSign root whose intermediate CA keys are compromised (Affects uv < 0.13.4)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.13.4: pip install --upgrade 'uv>=0.13.4' (Advisory: GHSA-hq85-5cpj-mr62)"
+    },
+    {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T18:26:54Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-22jm-h49p-29qw\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111767\"]}",
+      "fingerprint": "sha256:db3ee97af10824502f015bbad5fafeab5e4014e016f518d588ae79bd3f04d538",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_22jm_h49p_29qw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-22jm-h49p-29qw] MCP TypeScript SDK: Experimental tasks were not tied to the session that created them (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-22jm-h49p-29qw)"
+    },
+    {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T18:26:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-6prh-2h8m-c8cw\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111769\"]}",
+      "fingerprint": "sha256:ad01fdb007f3c99afcb4174f168b39e82fd9275f3e9b507a6639039eb4faa9c4",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_6prh_2h8m_c8cw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-6prh-2h8m-c8cw] MCP TypeScript client SDK: HTTP client transports and OAuth requests followed cross-origin redirects and re-sent custom headers and request bodies (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-6prh-2h8m-c8cw)"
+    },
+    {
       "applies_to": "ssh-remote-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -967,6 +1321,7 @@
     {
       "applies_to": "sqlite-cache-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -980,6 +1335,7 @@
     {
       "applies_to": "paramiko-ssh-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -993,6 +1349,7 @@
     {
       "applies_to": "windows-powershell-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -1006,6 +1363,7 @@
     {
       "applies_to": "background-task-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -1019,6 +1377,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-19T13:35:42Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1032,6 +1391,7 @@
     {
       "applies_to": "windows-powershell-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -1045,6 +1405,7 @@
     {
       "applies_to": "windows-powershell-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -1058,6 +1419,7 @@
     {
       "applies_to": "windows-python-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1071,6 +1433,7 @@
     {
       "applies_to": "headless-ci-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1084,6 +1447,7 @@
     {
       "applies_to": "cli-terminal-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "HUMAN_OPERATOR_FRICTION",
       "harness": null,
@@ -1097,6 +1461,7 @@
     {
       "applies_to": "node-terminal-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1110,6 +1475,7 @@
     {
       "applies_to": "frontend-web-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1123,6 +1489,7 @@
     {
       "applies_to": "nextjs-web-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1136,6 +1503,7 @@
     {
       "applies_to": "python-fastapi-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1149,6 +1517,7 @@
     {
       "applies_to": "node-typescript-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1162,6 +1531,7 @@
     {
       "applies_to": "cloudflare-pages-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1175,6 +1545,7 @@
     {
       "applies_to": "mcp-server-authors",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -1188,6 +1559,7 @@
     {
       "applies_to": "d1-database-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1201,6 +1573,7 @@
     {
       "applies_to": "mcp-windows-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -1214,6 +1587,7 @@
     {
       "applies_to": "docker-container-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1225,8 +1599,23 @@
       "workaround": "Remove 'credsStore' from ~/.docker/config.json or pass explicit auth tokens to daemon."
     },
     {
+      "applies_to": "mcp",
+      "created_at": "2026-10-15T20:13:13Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-84m7-p3x7-pcfv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-59951\"]}",
+      "fingerprint": "sha256:01e6c9fe3178332073b298d6a5b21f699b7cd1a14936a3a96cc6a1ae5f16b6e6",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_84m7_p3x7_pcfv",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-84m7-p3x7-pcfv] MCP Python SDK: Unbounded Session Accumulation in StreamableHTTP Transport Enables Resource Exhaustion (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-84m7-p3x7-pcfv)"
+    },
+    {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-14T09:27:21Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1240,6 +1629,7 @@
     {
       "applies_to": "modelcontextprotocol/python-sdk",
       "created_at": "2026-10-13T09:20:59Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:328d138472fd31c9c2ca2f134c43f4c4ee620765859553bb7219e00037f7ceb8",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1253,6 +1643,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-12T07:55:39Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1266,6 +1657,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-12T03:51:06Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1279,6 +1671,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-12T03:36:04Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1292,6 +1685,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T18:39:44Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1305,6 +1699,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T18:21:15Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1318,6 +1713,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T16:33:30Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1331,6 +1727,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T00:53:58Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1344,6 +1741,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-10T23:29:53Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1357,6 +1755,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-09T18:34:18Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1370,6 +1769,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-09T13:16:56Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1383,6 +1783,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-08T23:19:31Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1396,6 +1797,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-08T11:39:07Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1409,6 +1811,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-08T06:03:59Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1422,6 +1825,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-06T18:46:21Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1435,6 +1839,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-06T13:52:52Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1446,8 +1851,23 @@
       "workaround": "Fix: [wrangler] Add --source-namespace and --source-repo-name for artifacts.repo queue subscriptions. Target files: .changeset/artifacts-repo-subscription-flags.md, packages/wrangler/src/__tests__/queues/queues-subscription.test.ts, packages/wrangler/src/queues/cli/commands/subscription/create.ts. `wrangler queues subscription create --source artifacts.repo` could never succeed. The Event Subscriptions API requires `source.namespace` and `source.repo_name` for this source (\"Validation error: Required at \"source.namespace\"... (Ref: https://github.com/cloudflare/workers-sdk/pull/16051)"
     },
     {
+      "applies_to": "uv",
+      "created_at": "2026-10-05T23:42:09Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-2cv4-cqwr-gwf7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.18\", \"aliases\": [\"CVE-2026-104843\", \"PYSEC-2026-4305\"]}",
+      "fingerprint": "sha256:614c6b63198234368c2ef4d6e65e49abec342f1e5bbc4f56f2ca994f5b1ee077",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_2cv4_cqwr_gwf7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-2cv4-cqwr-gwf7] uv: Path traversal on Windows through wheel extraction (Affects uv < 0.12.18)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.12.18: pip install --upgrade 'uv>=0.12.18' (Advisory: GHSA-2cv4-cqwr-gwf7)"
+    },
+    {
       "applies_to": "modelcontextprotocol/python-sdk",
       "created_at": "2026-10-02T12:51:06Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -1461,6 +1881,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-01T21:11:33Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1474,6 +1895,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-30T14:37:16Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -1487,6 +1909,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-30T13:53:35Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1500,6 +1923,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-30T12:45:09Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1513,6 +1937,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-29T20:43:27Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1526,6 +1951,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-29T19:39:24Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1539,6 +1965,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-28T15:07:26Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -1552,6 +1979,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-25T19:41:22Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1565,6 +1993,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-25T01:39:46Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1578,6 +2007,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-09-25T00:31:43Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1591,6 +2021,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-08-04T01:58:40Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4dc96038178e7bf5dddaceacfd137aa5e97a09f5210abe466f0853bfa9d0e280",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -1600,6 +2031,566 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(bedrock): stop forwarding no-op toolSpec.strict to Converse. Target files: litellm/types/llms/bedrock.py, litellm/model_prices_and_context_window_backup.json, model_prices_and_context_window.json. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/35688)"
+    },
+    {
+      "applies_to": "transformers",
+      "created_at": "2026-08-02T18:30:20Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-xrqw-3rrv-vx5w\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"5.10.0\", \"aliases\": [\"CVE-2026-9856\", \"PYSEC-2026-3929\"]}",
+      "fingerprint": "sha256:3cd176ceef283d8ae7e4819a3b422b70737424539e15e0c6168e9f87a08d4bbe",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_xrqw_3rrv_vx5w",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-xrqw-3rrv-vx5w] Transformers save_pretrained path traversal allows arbitrary file writes through chat template names (Affects transformers < 5.10.0)",
+      "target": "transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade transformers to patched release >= 5.10.0: pip install --upgrade 'transformers>=5.10.0' (Advisory: GHSA-xrqw-3rrv-vx5w)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-07-16T19:56:12Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hvrp-rf83-w775\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.27.2\", \"aliases\": [\"CVE-2026-52870\", \"PYSEC-2026-3481\"]}",
+      "fingerprint": "sha256:675d5bbee5e3d015b7b41aa36a6fd124b3f9b7e8366b12ec400fa41466e2dbb5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_hvrp_rf83_w775",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-hvrp-rf83-w775] MCP Python SDK: Experimental task handlers allow any client to access and cancel other clients' tasks (Affects mcp < 1.27.2)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 1.27.2: pip install --upgrade 'mcp>=1.27.2' (Advisory: GHSA-hvrp-rf83-w775)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2026-07-13T15:15:46.836675Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2555\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.30\", \"aliases\": [\"CVE-2026-45134\", \"GHSA-3644-q5cj-c5c7\", \"PYSEC-2026-2560\", \"PYSEC-2026-2582\"]}",
+      "fingerprint": "sha256:bd2177fd4f966a3c40722f6d23aad714cdd81b01d54623a4fd92d8ad0d3becfb",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2555",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2555] LangSmith SDK: Public prompt pull deserializes untrusted manifests without trust boundary warning (Affects langchain < 0.3.30)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.3.30: pip install --upgrade 'langchain>=0.3.30' (Advisory: PYSEC-2026-2555)"
+    },
+    {
+      "applies_to": "pydantic",
+      "created_at": "2026-07-07T11:45:38.517274Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1812\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.4.0\", \"aliases\": [\"CVE-2024-3772\", \"GHSA-mr82-8j83-vxmv\"]}",
+      "fingerprint": "sha256:b21b5c9e247d7dc85c7ac1d8943b94a12c6e7c91078dddcef0cdb1fc2a9d1d3e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_1812",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-1812] Pydantic regular expression denial of service (Affects pydantic < 2.4.0)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 2.4.0: pip install --upgrade 'pydantic>=2.4.0' (Advisory: PYSEC-2026-1812)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-06-17T10:55:15.113Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2194\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.15\", \"aliases\": [\"CVE-2026-48776\", \"GHSA-w39p-vh2g-g8g5\", \"PYSEC-2026-2575\"]}",
+      "fingerprint": "sha256:5767a96614eb447c00a1c7926225f9df0f46f5c51ed5d4a349fc65e55cc2d997",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2194",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2194] LangGraph Python SDK is used to connect to running LangGraph API servers, manage assistants, threads and stream runs from Python applications. Versions 0.3.1... (Affects langgraph < 0.3.15)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 0.3.15: pip install --upgrade 'langgraph>=0.3.15' (Advisory: PYSEC-2026-2194)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2026-06-16T15:03:14Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-gr75-jv2w-4656\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.9\", \"aliases\": [\"CVE-2026-55443\", \"PYSEC-2026-2192\", \"PYSEC-2026-2556\"]}",
+      "fingerprint": "sha256:db377dfc62e57902fba58c8c418ce63e398017637c96ff0af99f22eaeb8da175",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_gr75_jv2w_4656",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-gr75-jv2w-4656] LangChain: Path traversal and sandbox escape in LangChain file-search middleware and loaders (Affects langchain < 1.3.9)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 1.3.9: pip install --upgrade 'langchain>=1.3.9' (Advisory: GHSA-gr75-jv2w-4656)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-15T20:39:53Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-82w8-qh3p-5jfq\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.1\", \"aliases\": [\"CVE-2026-54283\", \"PYSEC-2026-249\"]}",
+      "fingerprint": "sha256:0fb2012ad0de432d91f7c9197743e28306ef36833fea85b69802a6a1b40175b9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_82w8_qh3p_5jfq",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-82w8-qh3p-5jfq] Starlette: request.form() limits silently ignored for application/x-www-form-urlencoded enable DoS (Affects starlette < 1.3.1)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.3.1: pip install --upgrade 'starlette>=1.3.1' (Advisory: GHSA-82w8-qh3p-5jfq)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-15T20:38:08Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-jp82-jpqv-5vv3\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.0\", \"aliases\": [\"CVE-2026-54282\", \"PYSEC-2026-248\"]}",
+      "fingerprint": "sha256:98052545f8e8e7ca1daca9cf1efd5ccc5420fc5efeee870621cef6b809e2c050",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_jp82_jpqv_5vv3",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-jp82-jpqv-5vv3] Starlette: Unvalidated request path concatenated into authority poisons request.url.hostname (Affects starlette < 1.3.0)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.3.0: pip install --upgrade 'starlette>=1.3.0' (Advisory: GHSA-jp82-jpqv-5vv3)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-15T20:16:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-wqp7-x3pw-xc5r\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.1.0\", \"aliases\": [\"CVE-2026-48818\", \"PYSEC-2026-2281\"]}",
+      "fingerprint": "sha256:176cce848854e04ecca19341e1d30a6118125e6e101b70d31e6a3a0747f1d8db",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_wqp7_x3pw_xc5r",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-wqp7-x3pw-xc5r] Starlette: SSRF and NTLM credential theft via UNC paths in StaticFiles on Windows (Affects starlette < 1.1.0)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.1.0: pip install --upgrade 'starlette>=1.1.0' (Advisory: GHSA-wqp7-x3pw-xc5r)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-04T13:15:17Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-86qp-5c8j-p5mr\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.0.1\", \"aliases\": [\"CVE-2026-48710\", \"PYSEC-2026-161\", \"X41-2026-002\"]}",
+      "fingerprint": "sha256:ddcd29bb4a7a154f2cf9a6154fda43b44cd85483ef36f167b912ac39e0076140",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_86qp_5c8j_p5mr",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-86qp-5c8j-p5mr] Starlette has missing Host header validation that poisons request.url.path, bypassing path-based security checks (Affects starlette < 1.0.1)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.0.1: pip install --upgrade 'starlette>=1.0.1' (Advisory: GHSA-86qp-5c8j-p5mr)"
+    },
+    {
+      "applies_to": "uv",
+      "created_at": "2026-05-29T19:26:33Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-4gg8-gxpx-9rph\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.11.15\", \"aliases\": [\"CVE-2026-114109\"]}",
+      "fingerprint": "sha256:87995707609decd1579a175c436f75900168dfc8d46206eff07af904832451c1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_4gg8_gxpx_9rph",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-4gg8-gxpx-9rph] uv is vulnerable to arbitrary file write through entry point names (Affects uv < 0.11.15)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.11.15: pip install --upgrade 'uv>=0.11.15' (Advisory: GHSA-4gg8-gxpx-9rph)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-05-08T23:07:32Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pjwx-r37v-7724\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.3\", \"aliases\": [\"CVE-2026-44843\", \"PYSEC-2026-2564\"]}",
+      "fingerprint": "sha256:a5d11476b104826a843d70c2f41ee0ac2f472011b3fea25b3762b2013b5134fa",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pjwx_r37v_7724",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pjwx-r37v-7724] LangChain vulnerable to unsafe deserialization of attacker-controlled objects through overly broad `load()` allowlists (Affects langchain-core < 1.3.3)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.3.3: pip install --upgrade 'langchain-core>=1.3.3' (Advisory: GHSA-pjwx-r37v-7724)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-04-24T16:17:07Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-r75f-5x8p-qvmc\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.83.7\", \"aliases\": [\"CVE-2026-42208\", \"PYSEC-2026-391\"]}",
+      "fingerprint": "sha256:f724a54566f0a447a6c81dff5b4c9c507060dd4566c82ee76ba38eba0fa073ce",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_r75f_5x8p_qvmc",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-r75f-5x8p-qvmc] LiteLLM has SQL Injection in Proxy API key verification (Affects litellm < 1.83.7)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.83.7: pip install --upgrade 'litellm>=1.83.7' (Advisory: GHSA-r75f-5x8p-qvmc)"
+    },
+    {
+      "applies_to": "uv",
+      "created_at": "2026-04-10T19:39:15Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pjjw-68hj-v9mw\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.11.6\", \"aliases\": [\"CVE-2026-114110\"]}",
+      "fingerprint": "sha256:179e31b84aff8dbb5ffc376061c5d0390a4461475a7ddae08516746a1e8b4100",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pjjw_68hj_v9mw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pjjw-68hj-v9mw] uv vulnerable to arbitrary file deletion through RECORD entries (Affects uv < 0.11.6)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.11.6: pip install --upgrade 'uv>=0.11.6' (Advisory: GHSA-pjjw-68hj-v9mw)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-04-08T21:51:32Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-926x-3r5x-gfhw\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.28\", \"aliases\": [\"CVE-2026-40087\", \"PYSEC-2026-2563\"]}",
+      "fingerprint": "sha256:4ff5889933d9890107481fbc7ee39d01ccfba0e405ce592ff25afffffc53fdc2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_926x_3r5x_gfhw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-926x-3r5x-gfhw] LangChain has incomplete f-string validation in prompt templates (Affects langchain-core < 1.2.28)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.28: pip install --upgrade 'langchain-core>=1.2.28' (Advisory: GHSA-926x-3r5x-gfhw)"
+    },
+    {
+      "applies_to": "anthropic",
+      "created_at": "2026-04-01T21:17:34Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-w828-4qhx-vxx3\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.87.0\", \"aliases\": [\"CVE-2026-34452\", \"PYSEC-2026-2115\"]}",
+      "fingerprint": "sha256:42c9b60e357127c1b3bd6ba516a1a81a16ce8c1a0737d3f8142b8d140e966287",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_w828_4qhx_vxx3",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-w828-4qhx-vxx3] Claude SDK for Python: Memory Tool Path Validation Race Condition Allows Sandbox Escape (Affects anthropic < 0.87.0)",
+      "target": "anthropic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade anthropic to patched release >= 0.87.0: pip install --upgrade 'anthropic>=0.87.0' (Advisory: GHSA-w828-4qhx-vxx3)"
+    },
+    {
+      "applies_to": "anthropic",
+      "created_at": "2026-04-01T21:15:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-q5f5-3gjm-7mfm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.87.0\", \"aliases\": [\"CVE-2026-34450\", \"PYSEC-2026-2114\"]}",
+      "fingerprint": "sha256:35d3eec4f41b601c3b3e7d84fa79da764a829570519c2ae95bf0bfc4b112e8dc",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_q5f5_3gjm_7mfm",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-q5f5-3gjm-7mfm] Claude SDK for Python has Insecure Default File Permissions in Local Filesystem Memory Tool (Affects anthropic < 0.87.0)",
+      "target": "anthropic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade anthropic to patched release >= 0.87.0: pip install --upgrade 'anthropic>=0.87.0' (Advisory: GHSA-q5f5-3gjm-7mfm)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-03-31T22:53:21Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-vv7q-7jx5-f767\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2026-32871\", \"PYSEC-2026-338\"]}",
+      "fingerprint": "sha256:86553a297f5c96faa77883d23f4ecc798f2f5a249befb8508528b60220affea1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_vv7q_7jx5_f767",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-vv7q-7jx5-f767] FastMCP OpenAPI Provider has an SSRF & Path Traversal Vulnerability (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: GHSA-vv7q-7jx5-f767)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-03-31T22:32:28Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-rww4-4w9c-7733\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2026-27124\", \"PYSEC-2026-2476\"]}",
+      "fingerprint": "sha256:c1167b51a1615168a67478fdb7eb94cd3dd65486084d650a10a52f0138133a09",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_rww4_4w9c_7733",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-rww4-4w9c-7733] FastMCP: Missing Consent Verification in OAuth Proxy Callback Facilitates Confused Deputy Vulnerabilities (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: GHSA-rww4-4w9c-7733)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-03-31T22:24:15Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-m8x7-r2rg-vh5g\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2025-64340\", \"PYSEC-2026-2475\"]}",
+      "fingerprint": "sha256:42d278ddb4cfefd8dbdec28ce207facde2c543c06e845485f31f2c76d474fb76",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_m8x7_r2rg_vh5g",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-m8x7-r2rg-vh5g] FastMCP has a Command Injection vulnerability - Gemini CLI (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: GHSA-m8x7-r2rg-vh5g)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-03-27T19:45:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-qh6h-p6c9-ff54\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.22\", \"aliases\": [\"CVE-2026-34070\", \"PYSEC-2026-2193\"]}",
+      "fingerprint": "sha256:0c0badfef36edfa064c73c820e25129a82a377c30c8c19bd81b72213f40476d7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_qh6h_p6c9_ff54",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-qh6h-p6c9-ff54] LangChain Core has Path Traversal vulnerabilites in legacy `load_prompt` functions (Affects langchain-core < 1.2.22)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.22: pip install --upgrade 'langchain-core>=1.2.22' (Advisory: GHSA-qh6h-p6c9-ff54)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-03-05T20:16:15.677Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-83\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.0.10rc1\", \"aliases\": [\"CVE-2026-28277\", \"GHSA-g48c-2wqr-h844\"]}",
+      "fingerprint": "sha256:5277d329b5afe095485b7155f396bb30a0684a643fe4d365e1a8bfee8fdec647",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_83",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-83] LangGraph SQLite Checkpoint is an implementation of LangGraph CheckpointSaver that uses SQLite DB (both sync and async, via aiosqlite). In version 1.0.9 and ... (Affects langgraph < 1.0.10rc1)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 1.0.10rc1: pip install --upgrade 'langgraph>=1.0.10rc1' (Advisory: PYSEC-2026-83)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-02-11T14:23:13Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-2g6r-c272-w58r\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.11\", \"aliases\": [\"CVE-2026-26013\", \"PYSEC-2026-2562\"]}",
+      "fingerprint": "sha256:84ddf3ac15b8bdaf14c395a72dc1a418c285acbaf27bdd5c0bf69c3deed99cb2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_2g6r_c272_w58r",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-2g6r-c272-w58r] LangChain affected by SSRF via image_url token counting in ChatOpenAI.get_num_tokens_from_messages (Affects langchain-core < 1.2.11)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.11: pip install --upgrade 'langchain-core>=1.2.11' (Advisory: GHSA-2g6r-c272-w58r)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2026-01-21T23:00:35Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-36p8-mvp6-cv38\", \"ecosystem\": \"npm\", \"fixed_version\": \"4.59.1\", \"aliases\": [\"CVE-2026-0933\"]}",
+      "fingerprint": "sha256:7bba3894371be57110a50b0e0c541c6c68a81d3796a3f2828149b7c017d9d3c1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_36p8_mvp6_cv38",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-36p8-mvp6-cv38] Wrangler affected by OS Command Injection in `wrangler pages deploy` (Affects wrangler < 4.59.1)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 4.59.1: npm install 'wrangler@>=4.59.1' (Advisory: GHSA-36p8-mvp6-cv38)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2025-12-23T18:46:13Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-c67j-w6g6-q2cm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.5\", \"aliases\": [\"CVE-2025-68664\", \"PYSEC-2026-373\"]}",
+      "fingerprint": "sha256:0631006528f504e495c1827c86e11cd602f0e6e9c16030f160ec9378f01aa3e4",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_c67j_w6g6_q2cm",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-c67j-w6g6-q2cm] LangChain serialization injection vulnerability enables secret extraction in dumps/loads APIs (Affects langchain-core < 1.2.5)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.5: pip install --upgrade 'langchain-core>=1.2.5' (Advisory: GHSA-c67j-w6g6-q2cm)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2025-10-28T20:38:01Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-7f5h-v6xp-fcq8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.49.1\", \"aliases\": [\"CVE-2025-62727\", \"PYSEC-2026-1942\"]}",
+      "fingerprint": "sha256:23556317e7f3a812eca6101accbc16ad43a9f266b007d5bb334e51c4bdd7d3ef",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_7f5h_v6xp_fcq8",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-7f5h-v6xp-fcq8] Starlette vulnerable to O(n^2) DoS via Range header merging in ``starlette.responses.FileResponse`` (Affects starlette < 0.49.1)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 0.49.1: pip install --upgrade 'starlette>=0.49.1' (Advisory: GHSA-7f5h-v6xp-fcq8)"
+    },
+    {
+      "applies_to": "transformers",
+      "created_at": "2025-09-12T12:30:23Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-59p9-h35m-wg4g\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.53.0\", \"aliases\": [\"CVE-2025-6638\", \"PYSEC-2026-1981\"]}",
+      "fingerprint": "sha256:5dd2931a9cd9d8e64c4fcd2f5b46406e194d60fa2556b0050522beac2d85230f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_59p9_h35m_wg4g",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-59p9-h35m-wg4g] Hugging Face Transformers is vulnerable to ReDoS through its MarianTokenizer (Affects transformers < 4.53.0)",
+      "target": "transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade transformers to patched release >= 4.53.0: pip install --upgrade 'transformers>=4.53.0' (Advisory: GHSA-59p9-h35m-wg4g)"
+    },
+    {
+      "applies_to": "langchain-community",
+      "created_at": "2025-09-04T12:30:42Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pc6w-59fv-rh23\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.27\", \"aliases\": [\"CVE-2025-6984\", \"PYSEC-2026-1515\"]}",
+      "fingerprint": "sha256:d9a57a05e6535e2e34a591fc8302ae2e39439a530bbc4171e9b9296a72fb42ec",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pc6w_59fv_rh23",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pc6w-59fv-rh23] Langchain Community Vulnerable to XML External Entity (XXE) Attacks (Affects langchain-community < 0.3.27)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-community to patched release >= 0.3.27: pip install --upgrade 'langchain-community>=0.3.27' (Advisory: GHSA-pc6w-59fv-rh23)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2025-07-10T15:31:27Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5hq9-5r78-2gjh\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.41\", \"aliases\": [\"CVE-2025-6211\", \"PYSEC-2026-1566\", \"PYSEC-2026-2606\"]}",
+      "fingerprint": "sha256:2aa135db84a8addb440f6fed5ceb53775b7a107339675963d412a248565287f2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_5hq9_5r78_2gjh",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-5hq9-5r78-2gjh] LlamaIndex vulnerable to data loss through hash collisions in its DocugamiReader class (Affects llama-index < 0.12.41)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.41: pip install --upgrade 'llama-index>=0.12.41' (Advisory: GHSA-5hq9-5r78-2gjh)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2025-06-05T06:30:26Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-v3c8-3pr6-gr7p\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.28\", \"aliases\": [\"CVE-2025-1793\", \"PYSEC-2026-394\"]}",
+      "fingerprint": "sha256:f8db5864ff18376413eae7e307f6d92a95f3924740c750e38107e66038ef94f5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_v3c8_3pr6_gr7p",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-v3c8-3pr6-gr7p] llama_index vulnerable to SQL Injection (Affects llama-index < 0.12.28)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.28: pip install --upgrade 'llama-index>=0.12.28' (Advisory: GHSA-v3c8-3pr6-gr7p)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2025-06-02T10:15:20.557Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2025-245\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.21\", \"aliases\": [\"CVE-2025-1750\", \"GHSA-6mcc-q3mg-3qg6\", \"PYSEC-2026-4242\"]}",
+      "fingerprint": "sha256:28b20343c905427fde6a6997a1aa5391571ea2590408eec3ea086fd74052accf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2025_245",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2025-245] An SQL injection vulnerability exists in the delete function of DuckDBVectorStore in run-llama/llama_index version v0.12.19. This vulnerability allows an att... (Affects llama-index < 0.12.21)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.21: pip install --upgrade 'llama-index>=0.12.21' (Advisory: PYSEC-2025-245)"
+    },
+    {
+      "applies_to": "langchain-community",
+      "created_at": "2024-09-17T12:30:32Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-f2jm-rw3h-6phg\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.2.4\", \"aliases\": [\"CVE-2024-5998\", \"PYSEC-2024-323\", \"PYSEC-2026-1514\"]}",
+      "fingerprint": "sha256:aca9b95485045abec8cacc9bf7f90bd217023322f39785a4dc0de29616afa7f5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_f2jm_rw3h_6phg",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-f2jm-rw3h-6phg] LangChain pickle deserialization of untrusted data (Affects langchain-community < 0.2.4)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-community to patched release >= 0.2.4: pip install --upgrade 'langchain-community>=0.2.4' (Advisory: GHSA-f2jm-rw3h-6phg)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2024-06-06T21:30:36Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3hjh-jh2h-vrg6\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.2.5\", \"aliases\": [\"CVE-2024-2965\", \"PYSEC-2024-118\", \"PYSEC-2026-2561\"]}",
+      "fingerprint": "sha256:c36b1868bddeca7204ce2dae2960362e249e45865fd27b893cf68ec400e04bf6",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3hjh_jh2h_vrg6",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3hjh-jh2h-vrg6] Denial of service in langchain-community (Affects langchain < 0.2.5)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.2.5: pip install --upgrade 'langchain>=0.2.5' (Advisory: GHSA-3hjh-jh2h-vrg6)"
+    },
+    {
+      "applies_to": "fastapi",
+      "created_at": "2024-02-05T15:15:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2024-38\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.109.1\", \"aliases\": [\"CVE-2024-24762\", \"GHSA-2jv5-9r88-3w3p\", \"GHSA-qf9m-vfgh-m389\", \"PYSEC-2026-1850\"]}",
+      "fingerprint": "sha256:882d9c0a9ba0230c0f659981cf9517040a24815618ff8bf0f67c7a1accac881c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2024_38",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2024-38] FastAPI is a web framework for building APIs with Python 3.8+ based on standard Python type hints. When using form data, `python-multipart` uses a Regular Ex... (Affects fastapi < 0.109.1)",
+      "target": "fastapi",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastapi to patched release >= 0.109.1: pip install --upgrade 'fastapi>=0.109.1' (Advisory: PYSEC-2024-38)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2024-01-03T21:26:50Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-f8mp-x433-5wpf\", \"ecosystem\": \"npm\", \"fixed_version\": \"3.19.0\", \"aliases\": [\"CVE-2023-7080\"]}",
+      "fingerprint": "sha256:a56eef4aa7321355a11246cc0cc94fc8930394b543253eecbf5ea6d8c53d841a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_f8mp_x433_5wpf",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-f8mp-x433-5wpf] Arbitrary remote code execution within `wrangler dev` Workers sandbox (Affects wrangler < 3.19.0)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 3.19.0: npm install 'wrangler@>=3.19.0' (Advisory: GHSA-f8mp-x433-5wpf)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2024-01-03T21:24:56Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-cfph-4qqh-w828\", \"ecosystem\": \"npm\", \"fixed_version\": \"3.19.0\", \"aliases\": [\"CVE-2023-7079\"]}",
+      "fingerprint": "sha256:ab65bd880811abf4f707e94c132f02395ac0ac4f1471939c59306d52816b87d9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_cfph_4qqh_w828",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-cfph-4qqh-w828] Arbitrary remote file read in Wrangler dev server (Affects wrangler < 3.19.0)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 3.19.0: npm install 'wrangler@>=3.19.0' (Advisory: GHSA-cfph-4qqh-w828)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2023-10-21T00:30:47Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8h5w-f6q9-wg35\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.0.247\", \"aliases\": [\"CVE-2023-32785\", \"PYSEC-2026-372\"]}",
+      "fingerprint": "sha256:91a2934c19dd65b504f183f028795feaf050a2f3f623c75325f15a1c178996ff",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_8h5w_f6q9_wg35",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-8h5w-f6q9-wg35] Langchain SQL Injection vulnerability (Affects langchain < 0.0.247)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.0.247: pip install --upgrade 'langchain>=0.0.247' (Advisory: GHSA-8h5w-f6q9-wg35)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2023-08-03T16:34:31Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8c93-4hch-xgxp\", \"ecosystem\": \"npm\", \"fixed_version\": \"2.20.1\", \"aliases\": [\"CVE-2023-3348\"]}",
+      "fingerprint": "sha256:9f5b79d2dbf0ce7afec4087f1a293e2f0f9fb80be56eacf73b4b2aa9c4d0cc35",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_8c93_4hch_xgxp",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-8c93-4hch-xgxp] Cloudflare Wrangler directory traversal vulnerability (Affects wrangler < 2.20.1)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 2.20.1: npm install 'wrangler@>=2.20.1' (Advisory: GHSA-8c93-4hch-xgxp)"
+    },
+    {
+      "applies_to": "fastapi",
+      "created_at": "2021-06-10T15:43:54Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8h2j-cgx8-6xv7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.65.2\", \"aliases\": [\"CVE-2021-32677\", \"PYSEC-2021-100\"]}",
+      "fingerprint": "sha256:2def2ce68d34ccfeca146d30bed5516ba292439d08422ef48bfe3bc7f3414413",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_8h2j_cgx8_6xv7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-8h2j-cgx8-6xv7] Cross-Site Request Forgery (CSRF) in FastAPI (Affects fastapi < 0.65.2)",
+      "target": "fastapi",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastapi to patched release >= 0.65.2: pip install --upgrade 'fastapi>=0.65.2' (Advisory: GHSA-8h2j-cgx8-6xv7)"
+    },
+    {
+      "applies_to": "pydantic",
+      "created_at": "2021-05-13T20:23:17Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5jqp-qgf6-3pvh\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.8.2\", \"aliases\": [\"CVE-2021-29510\", \"PYSEC-2021-47\"]}",
+      "fingerprint": "sha256:fe03957d72b1848249ad090a93bd60e44873f8de1dd9d9f60837c558371b3ade",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_5jqp_qgf6_3pvh",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-5jqp-qgf6-3pvh] Use of \"infinity\" as an input to datetime and date fields causes infinite loop in pydantic (Affects pydantic < 1.8.2)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 1.8.2: pip install --upgrade 'pydantic>=1.8.2' (Advisory: GHSA-5jqp-qgf6-3pvh)"
     }
   ],
   "version": "1.0.0",
@@ -1607,6 +2598,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T11:47:19Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3013cf290b2b93e0ac51e0b63fc91a123d956857b6e4179d2c9e0aabc5a1572d",
       "grievance_type": "AGENT_FRICTION",
       "harness": "github-merged-pr",
@@ -1620,6 +2612,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T11:12:14Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:ff58efbf27ac237da832ec5e1bc021b8375539c3a6fb1a228b6174031fb68f4c",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1633,6 +2626,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T10:46:36Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:06f63d2ed1cccb4c95e51470f1a4a8904734e6de348b585f6e5c9634a514bf0b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1646,6 +2640,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T05:51:40Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a798d1537b52bc71bb2bc44df0e2d7e198c319d83cc8a9a6b6a0639ba8fa28bd",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1659,6 +2654,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T02:23:16Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c609695c8212fa26e5f78b5425bb4c2dd75148c0a5c6defc5cf922c439518603",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1672,6 +2668,7 @@
     {
       "applies_to": "langchain-ai/langchain",
       "created_at": "2026-10-29T01:32:13Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3d9448408773e55d5044ca7b645fbf4cf073ad0743d33277c8683f7feffd2b74",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1683,8 +2680,93 @@
       "workaround": "Fix: fix(anthropic): handle null cache-creation token counts. Target files: libs/partners/anthropic/langchain_anthropic/chat_models.py, libs/partners/anthropic/tests/unit_tests/test_chat_models.py. Prevent `ChatAnthropic` from crashing when a provider returns null cache-creation TTL counts. Preserve omission of null token details and correct the regression test to expect the missing key. (Ref: https://github.com/langchain-ai/langchain/pull/41553)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:49Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-vvpg-rrww-wpmh\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115917\", \"PYSEC-2026-4348\"]}",
+      "fingerprint": "sha256:e37ea139c6dfd0156752b094e55d595fa89add25d680dff9f2715659384130b1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_vvpg_rrww_wpmh",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-vvpg-rrww-wpmh] vLLM: Permissive default CORS origins allow cross-origin requests to the vLLM HTTP server (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-vvpg-rrww-wpmh)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:29Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-h3rc-j82p-2c3h\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115915\", \"PYSEC-2026-4346\"]}",
+      "fingerprint": "sha256:49d1946e9e068b5f2ed7a00f8c1803073cb6936c6094653f0b888001bd37d70c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_h3rc_j82p_2c3h",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-h3rc-j82p-2c3h] vLLM: Untrusted EPS inputs can trigger denial of service or Ghostscript RCE (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-h3rc-j82p-2c3h)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:15Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-6757-hggm-hp2w\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115912\", \"PYSEC-2026-4345\"]}",
+      "fingerprint": "sha256:ac8fc4fb8509382a569ae1d5795e49ed7e0831b53e0e44a6ec8dbebaa2707c4c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_6757_hggm_hp2w",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-6757-hggm-hp2w] vLLM: Public multimodal SHM handle forgery reaches worker-side `pickle.loads()` with insecure serialization disabled (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-6757-hggm-hp2w)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:15:08Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-q97c-p368-75c4\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115916\", \"PYSEC-2026-4347\"]}",
+      "fingerprint": "sha256:7314518e5393806c25569f9cd4192f4593ef645bc33917be69c0fcc0cb2efc7e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_q97c_p368_75c4",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-q97c-p368-75c4] vLLM: Out-of-vocabulary prompt token id passes input validation and triggers a CUDA device-side assert (engine crash / DoS) (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-q97c-p368-75c4)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-10-28T21:14:59Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-x567-49g5-p4cf\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.32.0\", \"aliases\": [\"CVE-2026-115918\", \"PYSEC-2026-4349\"]}",
+      "fingerprint": "sha256:04107f14f008181d4217f12bd3a41dbc5d48e53c029e433f0e027a2ba0b5dddf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_x567_49g5_p4cf",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-x567-49g5-p4cf] vLLM: Responses API bypasses trust_request_chat_template for chat_template_kwargs (Affects vllm < 0.32.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: GHSA-x567-49g5-p4cf)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-10-28T21:05:47Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3fx2-cqw9-xr3c\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.14\", \"aliases\": [\"CVE-2026-118667\"]}",
+      "fingerprint": "sha256:2f4fdfdbe8430306407e3f0c05ddf44de9f7607a9b0ce2c8ab96216f9567a8d7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3fx2_cqw9_xr3c",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3fx2-cqw9-xr3c] LangGraph: Unencoded identifiers in LangGraph SDK v3 streaming can redirect authenticated GET requests (Affects langgraph < 1.2.14)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 1.2.14: pip install --upgrade 'langgraph>=1.2.14' (Advisory: GHSA-3fx2-cqw9-xr3c)"
+    },
+    {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T21:04:04.478Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:f76cd65573c73cfd76c190a2af3e952b0e50e6e02967c7ec84197aa37e81fae1",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -1698,6 +2780,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T19:35:27Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:9e843b0634bd3d041223bbb449102f540567419109ba939380eb360c41060b4e",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1711,6 +2794,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T19:10:54Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:8e3b074811de7fd6b313a7a66bd9ec12ea68a473ee31d4fb153eaea2f4dd8db1",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1724,6 +2808,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T18:41:34Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3cc82de616cb5fdc453bb9bedd780a3a1579e2a29d5904aeda574bfa084d3e2a",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1737,6 +2822,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T18:28:55Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c450fd3144780d90616c36e2483961579f2901a179cf9c2f580ad024a3f21f1e",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1750,6 +2836,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-28T17:27:31Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:853682ef1a5fb812209773f4b2387f01c9c302f769508490c6e9bf8cd402531f",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1763,6 +2850,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T12:21:32Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:27f9e41530745cca762eddf8ce83f22c564ac0b59fbcf1c24da099b4017cc3f9",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1776,6 +2864,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T05:21:16.151Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:bd5a2a71294ac11b1f7604af35cedce5a824c17f54abc229b7408be4d77d5122",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -1789,6 +2878,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T03:09:35.581Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a107897bc398a5b7fdf030db4f0b621ef56a8fcd1ce7598733bc751b06c4801f",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -1802,6 +2892,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T02:33:38Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1cfee6c0c89bd4b1303e37e4205ad228c993ca644ef5671d8a7b85cce5aad75e",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1815,6 +2906,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T02:01:55Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:006e4631a77aacc685fc7f0d08f7a0c4baef1c6556a954450669fb612ff4e6f4",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1828,6 +2920,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-28T01:58:25.853Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:e4740a8295045ca9310c8f2fbeeb87271c25a8afa62a1465032db4ba76b34d1f",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "gitlab-merged-mr",
@@ -1841,6 +2934,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T21:46:16Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:049e2c595cdec59ce01991caa5764397abb089c06f1623031705ccea14bf30ae",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1852,8 +2946,51 @@
       "workaround": "Fix: fix(mcp): accept YAML OpenAPI documents. Target files: litellm/proxy/mcp_server/openapi_to_mcp_generator.py, tests/unit/proxy/mcp_server/test_mcp_server_manager.py, tests/unit/proxy/mcp_server/test_openapi_spec_path_url.py. YAML OpenAPI specs now generate MCP tools from URLs and local files. JSON keeps its existing decoding behavior, and both formats use the same loader for preview, registration, and health checks (Ref: https://github.com/BerriAI/litellm/pull/48622)"
     },
     {
+      "applies_to": "mcp",
+      "created_at": "2026-10-27T21:06:59Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-w4fh-qvv9-3v23\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-116684\"]}",
+      "fingerprint": "sha256:f7d758cade63867f28b61bbae3738fcadc44b12c11a8bcfb8bcc75cc7797dfd2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_w4fh_qvv9_3v23",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-w4fh-qvv9-3v23] Model Context Protocol Python SDK: Server bearer-token authentication accepts tokens issued for a different resource server (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-w4fh-qvv9-3v23)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-10-27T21:05:34Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5h93-6whr-6q8j\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-116685\"]}",
+      "fingerprint": "sha256:476b8c08f04e211468dc2d8148a90914d8baeca728a5082835dd9a03279c61b1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_5h93_6whr_6q8j",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-5h93-6whr-6q8j] Model Context Protocol Python SDK: HTTP client transports followed cross-origin redirects carrying custom headers and bodies (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-5h93-6whr-6q8j)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-10-27T21:05:29Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-rwrf-2pqf-9j8j\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-116686\"]}",
+      "fingerprint": "sha256:b5e32c489fe50291e2a53fabdb3b779dff65691351205cbd5cfa7934450afd85",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_rwrf_2pqf_9j8j",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-rwrf-2pqf-9j8j] Model Context Protocol Python SDK: Client fetched server-chosen $ref URLs while validating tool results against output schemas (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-rwrf-2pqf-9j8j)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T19:43:37Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:d63bd56d49828e9df60474194e6673653ee28d76a2226f7eb49c105df0012d57",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -1865,8 +3002,65 @@
       "workaround": "Fix: feat(hosted_vllm): accept images on decision deployments. Target files: litellm/llms/hosted_vllm/decisions/transformation.py, tests/unit/decisions/test_main.py. hosted_vllm decision deployments now accept images on /v1/decisions and /v1/systemone and pass them to vLLM's /v1/systemone `images` field, the same way LM Studio deployments already do. Before this, the gateway refused any image with a 400 before calling vLLM, even though current vLLM accepts images there. Remote https image URLs are inlined as data URLs before sen... (Ref: https://github.com/BerriAI/litellm/pull/48621)"
     },
     {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-27T19:02:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-f897-62hf-6gxq\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.30.1\", \"aliases\": []}",
+      "fingerprint": "sha256:b415fc5a83db1c658afc6e92231d1628db636c90fdb85b3c07cdf6eea79cc1ff",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_f897_62hf_6gxq",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-f897-62hf-6gxq] MCP TypeScript SDK: HTTP server transports and handlers did not limit request body size or JSON-RPC batch length (Affects @modelcontextprotocol/sdk < 1.30.1)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.30.1: npm install '@modelcontextprotocol/sdk@>=1.30.1' (Advisory: GHSA-f897-62hf-6gxq)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-10-27T15:32:36Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-g5ff-637f-6q2m\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.95.0\", \"aliases\": []}",
+      "fingerprint": "sha256:f6267044bfa185a0e2e53a07af9a6e95af43e032c2cb56e9b8e75a107a101d0d",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_g5ff_637f_6q2m",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-g5ff-637f-6q2m] LiteLLM: internal_user_viewer arbitrary local file read via `vertex_ai_credentials` (Affects litellm < 1.95.0)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.95.0: pip install --upgrade 'litellm>=1.95.0' (Advisory: GHSA-g5ff-637f-6q2m)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-10-27T15:31:56Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hhww-mrg2-969h\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.85.0\", \"aliases\": []}",
+      "fingerprint": "sha256:b1344863e54d6ea20590a69abffc17c04f5f7efaf3973ae1169a6beb5e607ce7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_hhww_mrg2_969h",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-hhww-mrg2-969h] LiteLLM vulnerable to reflected XSS in /sso/debug/callback (Affects litellm < 1.85.0)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.85.0: pip install --upgrade 'litellm>=1.85.0' (Advisory: GHSA-hhww-mrg2-969h)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-10-27T15:04:14Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-7hp6-4w63-5g45\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.104.0rc2\", \"aliases\": [\"CVE-2026-114612\"]}",
+      "fingerprint": "sha256:9f5758a96bad3330d4875a5c07f9e8f249cd1c7148efc20280d457f7bdf57424",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_7hp6_4w63_5g45",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-7hp6-4w63-5g45] LiteLLM: Privilege Escalation to Proxy Admin via Cross-Domain Reuse of the Salt Key (Affects litellm < 1.104.0rc2)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.104.0rc2: pip install --upgrade 'litellm>=1.104.0rc2' (Advisory: GHSA-7hp6-4w63-5g45)"
+    },
+    {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-27T07:08:26Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c4858debe6a9b1a483eec1284c103091f7e556e6d3d73f2d8369ac1bcc407daf",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1880,6 +3074,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-27T06:56:39Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4dd7ea2c68e28bb669bff63fc86655d14783f1a51a206bb2a6a7c0080503c689",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1893,6 +3088,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T03:18:17Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4da8ff8beacd0d69656535b6f8386abbec72c881a5aff5ad3bdd5a195103bce0",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -1906,6 +3102,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-27T02:24:10Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:800376a0a44b32b89b89811b4cccbbc3166a0feef918e25f6a44d47c207d3017",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -1919,6 +3116,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-27T00:34:00.907Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1932,6 +3130,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T23:59:15.066Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1945,6 +3144,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T23:35:14Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -1958,6 +3158,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-26T23:11:38Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:bddcff4645219652a3bb181b33bfa1514909f554bc36edb9160e2525de5c1f37",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -1971,6 +3172,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-26T21:21:52Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1984,6 +3186,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T20:29:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -1997,6 +3200,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T18:15:26Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2010,6 +3214,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T17:11:58Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2023,6 +3228,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-26T15:35:24Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2036,6 +3242,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-26T13:36:05Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2049,6 +3256,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T13:07:43.435Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2062,6 +3270,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T12:56:50Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2075,6 +3284,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T12:56:38Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2088,6 +3298,7 @@
     {
       "applies_to": "langchain-ai/langgraph",
       "created_at": "2026-10-26T12:56:27Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2101,6 +3312,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-26T12:35:35Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:c408d3e376c7a68107792665391cce11d67e1c1f4b548f3b326eb260c6a238d1",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2114,6 +3326,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-26T11:03:13Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:0c1b0e08fc4798979df9f67c716eb7b68a9b455fe06a2e497ee69174f82686b6",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2127,6 +3340,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T08:23:52Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a42f75882122fe78a9e9b5112aab22538a4da217aec6231adaaa3b5a4eb70ca6",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2140,6 +3354,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T07:30:48Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:f48a50c53dcf0f04b570670b2e8d171a8206da4efa587b376f71723445db9b38",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2153,6 +3368,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T07:01:51Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:58462711484b513da687e59c27415fe4fcb99ea067ece12be67ff96d0796fcb6",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2166,6 +3382,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T06:20:02Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:fb8a38844afcaeac690e3be6c4cc7fa896507e710d37c65f92f668574f6ab5f8",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2179,6 +3396,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T06:04:24.451Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2192,6 +3410,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-26T05:46:52Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1e00b17334d6d2cc795f212da8312c7ed25f658a90acde64c60bb6743b4a72be",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2205,6 +3424,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T05:28:26.931Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2218,6 +3438,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-26T00:53:08.719Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2231,6 +3452,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-25T09:39:15Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2244,6 +3466,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-25T08:10:28Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2255,8 +3478,37 @@
       "workaround": "Fix: [vitest-plugin] Pass the import kind to Vite so `require()` picks the `require` export condition. Target files: packages/vitest-plugin/src/pool/module-fallback.ts, packages/vitest-plugin/test/cjs-require.test.ts, packages/vitest-plugin/test/module-fallback.test.ts. On Vite 8, a `require()` in a CommonJS dependency resolved to the `import` entry of packages that ship both an `import` and a `require` entry. CommonJS code then got an ES module. With `pg`, for example, tests fail with `SyntaxError: Cannot use import stat... (Ref: https://github.com/cloudflare/workers-sdk/pull/16335)"
     },
     {
+      "applies_to": "fastmcp",
+      "created_at": "2026-10-23T21:32:06Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-7xgj-8392-5q4r\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.1.2\", \"aliases\": []}",
+      "fingerprint": "sha256:4aad558f8262741fcd59d3b271cfb62a98024f7383a7f912223c8217385503f9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_7xgj_8392_5q4r",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-7xgj-8392-5q4r] FastMCP: Post-transform component authorization is skipped on direct calls (Affects fastmcp < 4.1.2)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 4.1.2: pip install --upgrade 'fastmcp>=4.1.2' (Advisory: GHSA-7xgj-8392-5q4r)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-10-23T21:31:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-vqqp-x5qm-5qp4\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.1.2\", \"aliases\": []}",
+      "fingerprint": "sha256:5a7993e56f73e6ec770c03031a2b1dd2dc240357dcbe3af055aaff2127160b6f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_vqqp_x5qm_5qp4",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-vqqp-x5qm-5qp4] FastMCP MCP client wrappers construct M2M OAuth providers without issuer binding \u2014 client secret redirectable to attacker-advertised authorization server (Affects fastmcp < 4.1.2)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 4.1.2: pip install --upgrade 'fastmcp>=4.1.2' (Advisory: GHSA-vqqp-x5qm-5qp4)"
+    },
+    {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-23T17:33:51Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1ff0237a12b5e69ea121bc56202565b09717ceea31ea9000ef151817fc5ef1bc",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2270,6 +3522,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-23T17:25:13Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2283,6 +3536,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-23T17:23:30Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2296,6 +3550,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-23T13:16:21Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:9d1368ff60ddee746a49b3a9e4d7d424709cf3793859f90ab29d2c3d07a8d808",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2309,6 +3564,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T07:28:25Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:8e095344bc1fc43fe338294586af942a7118ea2f63175759cea28861a3906c8b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2322,6 +3578,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T07:11:49Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:cd25903f6f54de78ca6d1128a9c1385e70a0c3fea22d775ba020ab2445f3a98b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2335,6 +3592,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T06:45:18Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:1bfaa6c2aafb538218c25322c4070c077c9d72e75556f2a093d00d14cfd3b47d",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2348,6 +3606,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T05:20:30Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:98e9387b27d4869bd4a0aa43e3b8cc57fbcd6bfb3ad93b469f27dd5427cf6eb0",
       "grievance_type": "AGENT_FRICTION",
       "harness": "github-merged-pr",
@@ -2361,6 +3620,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T05:10:28Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:e96eabda756bbe4798fe05d41e010da886d0419ca11bd24278b6ad8226ba5d0e",
       "grievance_type": "AGENT_FRICTION",
       "harness": "github-merged-pr",
@@ -2374,6 +3634,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T04:18:19Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:03bad51c2cc925d5feab519b3e51b8dd06e771f994dc46c68f78cb81e10ed3a1",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2387,6 +3648,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-23T03:56:32Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:6a943b576c615bdde50b4e0b6a9b0cb9e8e71442e97f6a76cf13b24e17358d17",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2400,6 +3662,7 @@
     {
       "applies_to": "gitlab-org/cli",
       "created_at": "2026-10-23T02:35:05.014Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2413,6 +3676,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-22T14:49:25Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:a9ed35aa5282e3b541535d37d1e1909718f97df47bf68d31920887f4ba1869e0",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2426,6 +3690,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T13:45:59Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2439,6 +3704,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T11:13:58Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4477eec9732ee076cfdd0f48a77cac1a35665cc3c89a74e4befe334aacf8d81b",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2452,6 +3718,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T11:13:58Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:39942a9ff8f74fdf7f0a2d05d15b1279053b54ba290696ad23adb51df8cd27c5",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2465,6 +3732,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-22T09:37:05Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:9cbabcc41f5f1a7ca9e071741267b2feb792fa8f0eb224f38e9d5aa0e13a9820",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2478,6 +3746,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-21T22:37:04Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2491,6 +3760,7 @@
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-21T22:24:13Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2504,6 +3774,7 @@
     {
       "applies_to": "langchain-ai/langchain",
       "created_at": "2026-10-21T16:53:42Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:ca4d84a0e7a32d1d8e8d6046c1ef5b3d902382ecbc0b495bb31f2b17074398ed",
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": "github-merged-pr",
@@ -2517,6 +3788,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-21T14:19:15Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:13e272cd72a349178f682c2daa7b356e8820bc825fc7a2acd6fde5088908bee7",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -2530,6 +3802,7 @@
     {
       "applies_to": "media-forensic-agents",
       "created_at": "2026-10-21T02:58:13Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -2543,6 +3816,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-10-20T22:09:58Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:3468f25bb313dfb8af1b7f9a0dd99b882227bfe71540b20ff589709e082ebdb3",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2554,8 +3828,79 @@
       "workaround": "Fix: fix(server): preserve forwarded params and support modern low-level connections. Target files: packages/server/src/server/perRequestTransport.ts, packages/server/src/server/server.ts, packages/server/src/server/serverEventBus.ts. A gateway cannot forward a change notification faithfully through `ServerEventBus`: the event carries only a kind/URI, so the listen router drops custom `_meta` and extension params. A manually connected `Server` also rejects a correctly classified modern request because advertis... (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/3057)"
     },
     {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T20:06:35Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-46jr-4wx8-v453\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111768\"]}",
+      "fingerprint": "sha256:38fce360b3febfb184ad66e583d6431300155170ce1c8c268fe4a283290fe2a5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_46jr_4wx8_v453",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-46jr-4wx8-v453] MCP TypeScript SDK: One HTTP request within the default size limit could exhaust server memory during validation (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-46jr-4wx8-v453)"
+    },
+    {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T19:43:36Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-rvq5-wwqv-78pq\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111771\"]}",
+      "fingerprint": "sha256:263607a466cd3477f0e387ef97305e30aadf732a11082b60c30ae44dbe79bd7f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_rvq5_wwqv_78pq",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-rvq5-wwqv-78pq] MCP TypeScript SDK: Server bearer authentication accepted tokens issued for another service (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-rvq5-wwqv-78pq)"
+    },
+    {
+      "applies_to": "uv",
+      "created_at": "2026-10-20T19:37:52Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hq85-5cpj-mr62\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.13.4\", \"aliases\": [\"PYSEC-2026-4321\"]}",
+      "fingerprint": "sha256:7d9e64e3f75d494fb0435586dbbb9d102e9b7d6e0c6814fcafcc9867f0624002",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_hq85_5cpj_mr62",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-hq85-5cpj-mr62] uv's bundled CA store trusts an emSign root whose intermediate CA keys are compromised (Affects uv < 0.13.4)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.13.4: pip install --upgrade 'uv>=0.13.4' (Advisory: GHSA-hq85-5cpj-mr62)"
+    },
+    {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T18:26:54Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-22jm-h49p-29qw\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111767\"]}",
+      "fingerprint": "sha256:db3ee97af10824502f015bbad5fafeab5e4014e016f518d588ae79bd3f04d538",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_22jm_h49p_29qw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-22jm-h49p-29qw] MCP TypeScript SDK: Experimental tasks were not tied to the session that created them (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-22jm-h49p-29qw)"
+    },
+    {
+      "applies_to": "@modelcontextprotocol/sdk",
+      "created_at": "2026-10-20T18:26:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-6prh-2h8m-c8cw\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.32.0\", \"aliases\": [\"CVE-2026-111769\"]}",
+      "fingerprint": "sha256:ad01fdb007f3c99afcb4174f168b39e82fd9275f3e9b507a6639039eb4faa9c4",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_6prh_2h8m_c8cw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-6prh-2h8m-c8cw] MCP TypeScript client SDK: HTTP client transports and OAuth requests followed cross-origin redirects and re-sent custom headers and request bodies (Affects @modelcontextprotocol/sdk < 1.32.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade @modelcontextprotocol/sdk to patched release >= 1.32.0: npm install '@modelcontextprotocol/sdk@>=1.32.0' (Advisory: GHSA-6prh-2h8m-c8cw)"
+    },
+    {
       "applies_to": "ssh-remote-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2569,6 +3914,7 @@
     {
       "applies_to": "sqlite-cache-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2582,6 +3928,7 @@
     {
       "applies_to": "paramiko-ssh-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2595,6 +3942,7 @@
     {
       "applies_to": "windows-powershell-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -2608,6 +3956,7 @@
     {
       "applies_to": "background-task-agents",
       "created_at": "2026-10-20T04:51:23Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -2621,6 +3970,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-19T13:35:42Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2634,6 +3984,7 @@
     {
       "applies_to": "windows-powershell-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -2647,6 +3998,7 @@
     {
       "applies_to": "windows-powershell-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -2660,6 +4012,7 @@
     {
       "applies_to": "windows-python-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2673,6 +4026,7 @@
     {
       "applies_to": "headless-ci-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2686,6 +4040,7 @@
     {
       "applies_to": "cli-terminal-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "HUMAN_OPERATOR_FRICTION",
       "harness": null,
@@ -2699,6 +4054,7 @@
     {
       "applies_to": "node-terminal-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2712,6 +4068,7 @@
     {
       "applies_to": "frontend-web-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2725,6 +4082,7 @@
     {
       "applies_to": "nextjs-web-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2738,6 +4096,7 @@
     {
       "applies_to": "python-fastapi-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2751,6 +4110,7 @@
     {
       "applies_to": "node-typescript-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2764,6 +4124,7 @@
     {
       "applies_to": "cloudflare-pages-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2777,6 +4138,7 @@
     {
       "applies_to": "mcp-server-authors",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -2790,6 +4152,7 @@
     {
       "applies_to": "d1-database-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2803,6 +4166,7 @@
     {
       "applies_to": "mcp-windows-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "AGENT_FRICTION",
       "harness": null,
@@ -2816,6 +4180,7 @@
     {
       "applies_to": "docker-container-agents",
       "created_at": "2026-10-19T00:30:47Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2827,8 +4192,23 @@
       "workaround": "Remove 'credsStore' from ~/.docker/config.json or pass explicit auth tokens to daemon."
     },
     {
+      "applies_to": "mcp",
+      "created_at": "2026-10-15T20:13:13Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-84m7-p3x7-pcfv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.2.0\", \"aliases\": [\"CVE-2026-59951\"]}",
+      "fingerprint": "sha256:01e6c9fe3178332073b298d6a5b21f699b7cd1a14936a3a96cc6a1ae5f16b6e6",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_84m7_p3x7_pcfv",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-84m7-p3x7-pcfv] MCP Python SDK: Unbounded Session Accumulation in StreamableHTTP Transport Enables Resource Exhaustion (Affects mcp < 2.2.0)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 2.2.0: pip install --upgrade 'mcp>=2.2.0' (Advisory: GHSA-84m7-p3x7-pcfv)"
+    },
+    {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-14T09:27:21Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2842,6 +4222,7 @@
     {
       "applies_to": "modelcontextprotocol/python-sdk",
       "created_at": "2026-10-13T09:20:59Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:328d138472fd31c9c2ca2f134c43f4c4ee620765859553bb7219e00037f7ceb8",
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": "github-merged-pr",
@@ -2855,6 +4236,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-12T07:55:39Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2868,6 +4250,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-12T03:51:06Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2881,6 +4264,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-12T03:36:04Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2894,6 +4278,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T18:39:44Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2907,6 +4292,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T18:21:15Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2920,6 +4306,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T16:33:30Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2933,6 +4320,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-11T00:53:58Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2946,6 +4334,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-10T23:29:53Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2959,6 +4348,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-09T18:34:18Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2972,6 +4362,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-09T13:16:56Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -2985,6 +4376,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-08T23:19:31Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -2998,6 +4390,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-08T11:39:07Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3011,6 +4404,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-08T06:03:59Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3024,6 +4418,7 @@
     {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-06T18:46:21Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3037,6 +4432,7 @@
     {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-06T13:52:52Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3048,8 +4444,23 @@
       "workaround": "Fix: [wrangler] Add --source-namespace and --source-repo-name for artifacts.repo queue subscriptions. Target files: .changeset/artifacts-repo-subscription-flags.md, packages/wrangler/src/__tests__/queues/queues-subscription.test.ts, packages/wrangler/src/queues/cli/commands/subscription/create.ts. `wrangler queues subscription create --source artifacts.repo` could never succeed. The Event Subscriptions API requires `source.namespace` and `source.repo_name` for this source (\"Validation error: Required at \"source.namespace\"... (Ref: https://github.com/cloudflare/workers-sdk/pull/16051)"
     },
     {
+      "applies_to": "uv",
+      "created_at": "2026-10-05T23:42:09Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-2cv4-cqwr-gwf7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.18\", \"aliases\": [\"CVE-2026-104843\", \"PYSEC-2026-4305\"]}",
+      "fingerprint": "sha256:614c6b63198234368c2ef4d6e65e49abec342f1e5bbc4f56f2ca994f5b1ee077",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_2cv4_cqwr_gwf7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-2cv4-cqwr-gwf7] uv: Path traversal on Windows through wheel extraction (Affects uv < 0.12.18)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.12.18: pip install --upgrade 'uv>=0.12.18' (Advisory: GHSA-2cv4-cqwr-gwf7)"
+    },
+    {
       "applies_to": "modelcontextprotocol/python-sdk",
       "created_at": "2026-10-02T12:51:06Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -3063,6 +4474,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-10-01T21:11:33Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3076,6 +4488,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-30T14:37:16Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -3089,6 +4502,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-30T13:53:35Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3102,6 +4516,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-30T12:45:09Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3115,6 +4530,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-29T20:43:27Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "INFRASTRUCTURE_FRICTION",
       "harness": null,
@@ -3128,6 +4544,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-29T19:39:24Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3141,6 +4558,7 @@
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
       "created_at": "2026-09-28T15:07:26Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": null,
@@ -3154,6 +4572,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-25T19:41:22Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3167,6 +4586,7 @@
     {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-25T01:39:46Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3180,6 +4600,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-09-25T00:31:43Z",
+      "environment_json": "{}",
       "fingerprint": null,
       "grievance_type": "ENVIRONMENT_MISMATCH",
       "harness": null,
@@ -3193,6 +4614,7 @@
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-08-04T01:58:40Z",
+      "environment_json": "{}",
       "fingerprint": "sha256:4dc96038178e7bf5dddaceacfd137aa5e97a09f5210abe466f0853bfa9d0e280",
       "grievance_type": "PROTOCOL_FRICTION",
       "harness": "github-merged-pr",
@@ -3202,6 +4624,566 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(bedrock): stop forwarding no-op toolSpec.strict to Converse. Target files: litellm/types/llms/bedrock.py, litellm/model_prices_and_context_window_backup.json, model_prices_and_context_window.json. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/35688)"
+    },
+    {
+      "applies_to": "transformers",
+      "created_at": "2026-08-02T18:30:20Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-xrqw-3rrv-vx5w\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"5.10.0\", \"aliases\": [\"CVE-2026-9856\", \"PYSEC-2026-3929\"]}",
+      "fingerprint": "sha256:3cd176ceef283d8ae7e4819a3b422b70737424539e15e0c6168e9f87a08d4bbe",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_xrqw_3rrv_vx5w",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-xrqw-3rrv-vx5w] Transformers save_pretrained path traversal allows arbitrary file writes through chat template names (Affects transformers < 5.10.0)",
+      "target": "transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade transformers to patched release >= 5.10.0: pip install --upgrade 'transformers>=5.10.0' (Advisory: GHSA-xrqw-3rrv-vx5w)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-07-16T19:56:12Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hvrp-rf83-w775\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.27.2\", \"aliases\": [\"CVE-2026-52870\", \"PYSEC-2026-3481\"]}",
+      "fingerprint": "sha256:675d5bbee5e3d015b7b41aa36a6fd124b3f9b7e8366b12ec400fa41466e2dbb5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_hvrp_rf83_w775",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-hvrp-rf83-w775] MCP Python SDK: Experimental task handlers allow any client to access and cancel other clients' tasks (Affects mcp < 1.27.2)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 1.27.2: pip install --upgrade 'mcp>=1.27.2' (Advisory: GHSA-hvrp-rf83-w775)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2026-07-13T15:15:46.836675Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2555\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.30\", \"aliases\": [\"CVE-2026-45134\", \"GHSA-3644-q5cj-c5c7\", \"PYSEC-2026-2560\", \"PYSEC-2026-2582\"]}",
+      "fingerprint": "sha256:bd2177fd4f966a3c40722f6d23aad714cdd81b01d54623a4fd92d8ad0d3becfb",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2555",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2555] LangSmith SDK: Public prompt pull deserializes untrusted manifests without trust boundary warning (Affects langchain < 0.3.30)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.3.30: pip install --upgrade 'langchain>=0.3.30' (Advisory: PYSEC-2026-2555)"
+    },
+    {
+      "applies_to": "pydantic",
+      "created_at": "2026-07-07T11:45:38.517274Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1812\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.4.0\", \"aliases\": [\"CVE-2024-3772\", \"GHSA-mr82-8j83-vxmv\"]}",
+      "fingerprint": "sha256:b21b5c9e247d7dc85c7ac1d8943b94a12c6e7c91078dddcef0cdb1fc2a9d1d3e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_1812",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-1812] Pydantic regular expression denial of service (Affects pydantic < 2.4.0)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 2.4.0: pip install --upgrade 'pydantic>=2.4.0' (Advisory: PYSEC-2026-1812)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-06-17T10:55:15.113Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2194\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.15\", \"aliases\": [\"CVE-2026-48776\", \"GHSA-w39p-vh2g-g8g5\", \"PYSEC-2026-2575\"]}",
+      "fingerprint": "sha256:5767a96614eb447c00a1c7926225f9df0f46f5c51ed5d4a349fc65e55cc2d997",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2194",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2194] LangGraph Python SDK is used to connect to running LangGraph API servers, manage assistants, threads and stream runs from Python applications. Versions 0.3.1... (Affects langgraph < 0.3.15)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 0.3.15: pip install --upgrade 'langgraph>=0.3.15' (Advisory: PYSEC-2026-2194)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2026-06-16T15:03:14Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-gr75-jv2w-4656\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.9\", \"aliases\": [\"CVE-2026-55443\", \"PYSEC-2026-2192\", \"PYSEC-2026-2556\"]}",
+      "fingerprint": "sha256:db377dfc62e57902fba58c8c418ce63e398017637c96ff0af99f22eaeb8da175",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_gr75_jv2w_4656",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-gr75-jv2w-4656] LangChain: Path traversal and sandbox escape in LangChain file-search middleware and loaders (Affects langchain < 1.3.9)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 1.3.9: pip install --upgrade 'langchain>=1.3.9' (Advisory: GHSA-gr75-jv2w-4656)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-15T20:39:53Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-82w8-qh3p-5jfq\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.1\", \"aliases\": [\"CVE-2026-54283\", \"PYSEC-2026-249\"]}",
+      "fingerprint": "sha256:0fb2012ad0de432d91f7c9197743e28306ef36833fea85b69802a6a1b40175b9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_82w8_qh3p_5jfq",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-82w8-qh3p-5jfq] Starlette: request.form() limits silently ignored for application/x-www-form-urlencoded enable DoS (Affects starlette < 1.3.1)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.3.1: pip install --upgrade 'starlette>=1.3.1' (Advisory: GHSA-82w8-qh3p-5jfq)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-15T20:38:08Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-jp82-jpqv-5vv3\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.0\", \"aliases\": [\"CVE-2026-54282\", \"PYSEC-2026-248\"]}",
+      "fingerprint": "sha256:98052545f8e8e7ca1daca9cf1efd5ccc5420fc5efeee870621cef6b809e2c050",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_jp82_jpqv_5vv3",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-jp82-jpqv-5vv3] Starlette: Unvalidated request path concatenated into authority poisons request.url.hostname (Affects starlette < 1.3.0)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.3.0: pip install --upgrade 'starlette>=1.3.0' (Advisory: GHSA-jp82-jpqv-5vv3)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-15T20:16:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-wqp7-x3pw-xc5r\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.1.0\", \"aliases\": [\"CVE-2026-48818\", \"PYSEC-2026-2281\"]}",
+      "fingerprint": "sha256:176cce848854e04ecca19341e1d30a6118125e6e101b70d31e6a3a0747f1d8db",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_wqp7_x3pw_xc5r",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-wqp7-x3pw-xc5r] Starlette: SSRF and NTLM credential theft via UNC paths in StaticFiles on Windows (Affects starlette < 1.1.0)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.1.0: pip install --upgrade 'starlette>=1.1.0' (Advisory: GHSA-wqp7-x3pw-xc5r)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2026-06-04T13:15:17Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-86qp-5c8j-p5mr\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.0.1\", \"aliases\": [\"CVE-2026-48710\", \"PYSEC-2026-161\", \"X41-2026-002\"]}",
+      "fingerprint": "sha256:ddcd29bb4a7a154f2cf9a6154fda43b44cd85483ef36f167b912ac39e0076140",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_86qp_5c8j_p5mr",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-86qp-5c8j-p5mr] Starlette has missing Host header validation that poisons request.url.path, bypassing path-based security checks (Affects starlette < 1.0.1)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 1.0.1: pip install --upgrade 'starlette>=1.0.1' (Advisory: GHSA-86qp-5c8j-p5mr)"
+    },
+    {
+      "applies_to": "uv",
+      "created_at": "2026-05-29T19:26:33Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-4gg8-gxpx-9rph\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.11.15\", \"aliases\": [\"CVE-2026-114109\"]}",
+      "fingerprint": "sha256:87995707609decd1579a175c436f75900168dfc8d46206eff07af904832451c1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_4gg8_gxpx_9rph",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-4gg8-gxpx-9rph] uv is vulnerable to arbitrary file write through entry point names (Affects uv < 0.11.15)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.11.15: pip install --upgrade 'uv>=0.11.15' (Advisory: GHSA-4gg8-gxpx-9rph)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-05-08T23:07:32Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pjwx-r37v-7724\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.3\", \"aliases\": [\"CVE-2026-44843\", \"PYSEC-2026-2564\"]}",
+      "fingerprint": "sha256:a5d11476b104826a843d70c2f41ee0ac2f472011b3fea25b3762b2013b5134fa",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pjwx_r37v_7724",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pjwx-r37v-7724] LangChain vulnerable to unsafe deserialization of attacker-controlled objects through overly broad `load()` allowlists (Affects langchain-core < 1.3.3)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.3.3: pip install --upgrade 'langchain-core>=1.3.3' (Advisory: GHSA-pjwx-r37v-7724)"
+    },
+    {
+      "applies_to": "litellm",
+      "created_at": "2026-04-24T16:17:07Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-r75f-5x8p-qvmc\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.83.7\", \"aliases\": [\"CVE-2026-42208\", \"PYSEC-2026-391\"]}",
+      "fingerprint": "sha256:f724a54566f0a447a6c81dff5b4c9c507060dd4566c82ee76ba38eba0fa073ce",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_r75f_5x8p_qvmc",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-r75f-5x8p-qvmc] LiteLLM has SQL Injection in Proxy API key verification (Affects litellm < 1.83.7)",
+      "target": "litellm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litellm to patched release >= 1.83.7: pip install --upgrade 'litellm>=1.83.7' (Advisory: GHSA-r75f-5x8p-qvmc)"
+    },
+    {
+      "applies_to": "uv",
+      "created_at": "2026-04-10T19:39:15Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pjjw-68hj-v9mw\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.11.6\", \"aliases\": [\"CVE-2026-114110\"]}",
+      "fingerprint": "sha256:179e31b84aff8dbb5ffc376061c5d0390a4461475a7ddae08516746a1e8b4100",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pjjw_68hj_v9mw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pjjw-68hj-v9mw] uv vulnerable to arbitrary file deletion through RECORD entries (Affects uv < 0.11.6)",
+      "target": "uv",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade uv to patched release >= 0.11.6: pip install --upgrade 'uv>=0.11.6' (Advisory: GHSA-pjjw-68hj-v9mw)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-04-08T21:51:32Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-926x-3r5x-gfhw\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.28\", \"aliases\": [\"CVE-2026-40087\", \"PYSEC-2026-2563\"]}",
+      "fingerprint": "sha256:4ff5889933d9890107481fbc7ee39d01ccfba0e405ce592ff25afffffc53fdc2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_926x_3r5x_gfhw",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-926x-3r5x-gfhw] LangChain has incomplete f-string validation in prompt templates (Affects langchain-core < 1.2.28)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.28: pip install --upgrade 'langchain-core>=1.2.28' (Advisory: GHSA-926x-3r5x-gfhw)"
+    },
+    {
+      "applies_to": "anthropic",
+      "created_at": "2026-04-01T21:17:34Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-w828-4qhx-vxx3\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.87.0\", \"aliases\": [\"CVE-2026-34452\", \"PYSEC-2026-2115\"]}",
+      "fingerprint": "sha256:42c9b60e357127c1b3bd6ba516a1a81a16ce8c1a0737d3f8142b8d140e966287",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_w828_4qhx_vxx3",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-w828-4qhx-vxx3] Claude SDK for Python: Memory Tool Path Validation Race Condition Allows Sandbox Escape (Affects anthropic < 0.87.0)",
+      "target": "anthropic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade anthropic to patched release >= 0.87.0: pip install --upgrade 'anthropic>=0.87.0' (Advisory: GHSA-w828-4qhx-vxx3)"
+    },
+    {
+      "applies_to": "anthropic",
+      "created_at": "2026-04-01T21:15:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-q5f5-3gjm-7mfm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.87.0\", \"aliases\": [\"CVE-2026-34450\", \"PYSEC-2026-2114\"]}",
+      "fingerprint": "sha256:35d3eec4f41b601c3b3e7d84fa79da764a829570519c2ae95bf0bfc4b112e8dc",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_q5f5_3gjm_7mfm",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-q5f5-3gjm-7mfm] Claude SDK for Python has Insecure Default File Permissions in Local Filesystem Memory Tool (Affects anthropic < 0.87.0)",
+      "target": "anthropic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade anthropic to patched release >= 0.87.0: pip install --upgrade 'anthropic>=0.87.0' (Advisory: GHSA-q5f5-3gjm-7mfm)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-03-31T22:53:21Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-vv7q-7jx5-f767\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2026-32871\", \"PYSEC-2026-338\"]}",
+      "fingerprint": "sha256:86553a297f5c96faa77883d23f4ecc798f2f5a249befb8508528b60220affea1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_vv7q_7jx5_f767",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-vv7q-7jx5-f767] FastMCP OpenAPI Provider has an SSRF & Path Traversal Vulnerability (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: GHSA-vv7q-7jx5-f767)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-03-31T22:32:28Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-rww4-4w9c-7733\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2026-27124\", \"PYSEC-2026-2476\"]}",
+      "fingerprint": "sha256:c1167b51a1615168a67478fdb7eb94cd3dd65486084d650a10a52f0138133a09",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_rww4_4w9c_7733",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-rww4-4w9c-7733] FastMCP: Missing Consent Verification in OAuth Proxy Callback Facilitates Confused Deputy Vulnerabilities (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: GHSA-rww4-4w9c-7733)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-03-31T22:24:15Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-m8x7-r2rg-vh5g\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2025-64340\", \"PYSEC-2026-2475\"]}",
+      "fingerprint": "sha256:42d278ddb4cfefd8dbdec28ce207facde2c543c06e845485f31f2c76d474fb76",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_m8x7_r2rg_vh5g",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-m8x7-r2rg-vh5g] FastMCP has a Command Injection vulnerability - Gemini CLI (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: GHSA-m8x7-r2rg-vh5g)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-03-27T19:45:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-qh6h-p6c9-ff54\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.22\", \"aliases\": [\"CVE-2026-34070\", \"PYSEC-2026-2193\"]}",
+      "fingerprint": "sha256:0c0badfef36edfa064c73c820e25129a82a377c30c8c19bd81b72213f40476d7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_qh6h_p6c9_ff54",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-qh6h-p6c9-ff54] LangChain Core has Path Traversal vulnerabilites in legacy `load_prompt` functions (Affects langchain-core < 1.2.22)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.22: pip install --upgrade 'langchain-core>=1.2.22' (Advisory: GHSA-qh6h-p6c9-ff54)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-03-05T20:16:15.677Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-83\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.0.10rc1\", \"aliases\": [\"CVE-2026-28277\", \"GHSA-g48c-2wqr-h844\"]}",
+      "fingerprint": "sha256:5277d329b5afe095485b7155f396bb30a0684a643fe4d365e1a8bfee8fdec647",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_83",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-83] LangGraph SQLite Checkpoint is an implementation of LangGraph CheckpointSaver that uses SQLite DB (both sync and async, via aiosqlite). In version 1.0.9 and ... (Affects langgraph < 1.0.10rc1)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 1.0.10rc1: pip install --upgrade 'langgraph>=1.0.10rc1' (Advisory: PYSEC-2026-83)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2026-02-11T14:23:13Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-2g6r-c272-w58r\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.11\", \"aliases\": [\"CVE-2026-26013\", \"PYSEC-2026-2562\"]}",
+      "fingerprint": "sha256:84ddf3ac15b8bdaf14c395a72dc1a418c285acbaf27bdd5c0bf69c3deed99cb2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_2g6r_c272_w58r",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-2g6r-c272-w58r] LangChain affected by SSRF via image_url token counting in ChatOpenAI.get_num_tokens_from_messages (Affects langchain-core < 1.2.11)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.11: pip install --upgrade 'langchain-core>=1.2.11' (Advisory: GHSA-2g6r-c272-w58r)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2026-01-21T23:00:35Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-36p8-mvp6-cv38\", \"ecosystem\": \"npm\", \"fixed_version\": \"4.59.1\", \"aliases\": [\"CVE-2026-0933\"]}",
+      "fingerprint": "sha256:7bba3894371be57110a50b0e0c541c6c68a81d3796a3f2828149b7c017d9d3c1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_36p8_mvp6_cv38",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-36p8-mvp6-cv38] Wrangler affected by OS Command Injection in `wrangler pages deploy` (Affects wrangler < 4.59.1)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 4.59.1: npm install 'wrangler@>=4.59.1' (Advisory: GHSA-36p8-mvp6-cv38)"
+    },
+    {
+      "applies_to": "langchain-core",
+      "created_at": "2025-12-23T18:46:13Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-c67j-w6g6-q2cm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.2.5\", \"aliases\": [\"CVE-2025-68664\", \"PYSEC-2026-373\"]}",
+      "fingerprint": "sha256:0631006528f504e495c1827c86e11cd602f0e6e9c16030f160ec9378f01aa3e4",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_c67j_w6g6_q2cm",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-c67j-w6g6-q2cm] LangChain serialization injection vulnerability enables secret extraction in dumps/loads APIs (Affects langchain-core < 1.2.5)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.2.5: pip install --upgrade 'langchain-core>=1.2.5' (Advisory: GHSA-c67j-w6g6-q2cm)"
+    },
+    {
+      "applies_to": "starlette",
+      "created_at": "2025-10-28T20:38:01Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-7f5h-v6xp-fcq8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.49.1\", \"aliases\": [\"CVE-2025-62727\", \"PYSEC-2026-1942\"]}",
+      "fingerprint": "sha256:23556317e7f3a812eca6101accbc16ad43a9f266b007d5bb334e51c4bdd7d3ef",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_7f5h_v6xp_fcq8",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-7f5h-v6xp-fcq8] Starlette vulnerable to O(n^2) DoS via Range header merging in ``starlette.responses.FileResponse`` (Affects starlette < 0.49.1)",
+      "target": "starlette",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade starlette to patched release >= 0.49.1: pip install --upgrade 'starlette>=0.49.1' (Advisory: GHSA-7f5h-v6xp-fcq8)"
+    },
+    {
+      "applies_to": "transformers",
+      "created_at": "2025-09-12T12:30:23Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-59p9-h35m-wg4g\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.53.0\", \"aliases\": [\"CVE-2025-6638\", \"PYSEC-2026-1981\"]}",
+      "fingerprint": "sha256:5dd2931a9cd9d8e64c4fcd2f5b46406e194d60fa2556b0050522beac2d85230f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_59p9_h35m_wg4g",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-59p9-h35m-wg4g] Hugging Face Transformers is vulnerable to ReDoS through its MarianTokenizer (Affects transformers < 4.53.0)",
+      "target": "transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade transformers to patched release >= 4.53.0: pip install --upgrade 'transformers>=4.53.0' (Advisory: GHSA-59p9-h35m-wg4g)"
+    },
+    {
+      "applies_to": "langchain-community",
+      "created_at": "2025-09-04T12:30:42Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pc6w-59fv-rh23\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.27\", \"aliases\": [\"CVE-2025-6984\", \"PYSEC-2026-1515\"]}",
+      "fingerprint": "sha256:d9a57a05e6535e2e34a591fc8302ae2e39439a530bbc4171e9b9296a72fb42ec",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pc6w_59fv_rh23",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pc6w-59fv-rh23] Langchain Community Vulnerable to XML External Entity (XXE) Attacks (Affects langchain-community < 0.3.27)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-community to patched release >= 0.3.27: pip install --upgrade 'langchain-community>=0.3.27' (Advisory: GHSA-pc6w-59fv-rh23)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2025-07-10T15:31:27Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5hq9-5r78-2gjh\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.41\", \"aliases\": [\"CVE-2025-6211\", \"PYSEC-2026-1566\", \"PYSEC-2026-2606\"]}",
+      "fingerprint": "sha256:2aa135db84a8addb440f6fed5ceb53775b7a107339675963d412a248565287f2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_5hq9_5r78_2gjh",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-5hq9-5r78-2gjh] LlamaIndex vulnerable to data loss through hash collisions in its DocugamiReader class (Affects llama-index < 0.12.41)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.41: pip install --upgrade 'llama-index>=0.12.41' (Advisory: GHSA-5hq9-5r78-2gjh)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2025-06-05T06:30:26Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-v3c8-3pr6-gr7p\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.28\", \"aliases\": [\"CVE-2025-1793\", \"PYSEC-2026-394\"]}",
+      "fingerprint": "sha256:f8db5864ff18376413eae7e307f6d92a95f3924740c750e38107e66038ef94f5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_v3c8_3pr6_gr7p",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-v3c8-3pr6-gr7p] llama_index vulnerable to SQL Injection (Affects llama-index < 0.12.28)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.28: pip install --upgrade 'llama-index>=0.12.28' (Advisory: GHSA-v3c8-3pr6-gr7p)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2025-06-02T10:15:20.557Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2025-245\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.21\", \"aliases\": [\"CVE-2025-1750\", \"GHSA-6mcc-q3mg-3qg6\", \"PYSEC-2026-4242\"]}",
+      "fingerprint": "sha256:28b20343c905427fde6a6997a1aa5391571ea2590408eec3ea086fd74052accf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2025_245",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2025-245] An SQL injection vulnerability exists in the delete function of DuckDBVectorStore in run-llama/llama_index version v0.12.19. This vulnerability allows an att... (Affects llama-index < 0.12.21)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.21: pip install --upgrade 'llama-index>=0.12.21' (Advisory: PYSEC-2025-245)"
+    },
+    {
+      "applies_to": "langchain-community",
+      "created_at": "2024-09-17T12:30:32Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-f2jm-rw3h-6phg\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.2.4\", \"aliases\": [\"CVE-2024-5998\", \"PYSEC-2024-323\", \"PYSEC-2026-1514\"]}",
+      "fingerprint": "sha256:aca9b95485045abec8cacc9bf7f90bd217023322f39785a4dc0de29616afa7f5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_f2jm_rw3h_6phg",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-f2jm-rw3h-6phg] LangChain pickle deserialization of untrusted data (Affects langchain-community < 0.2.4)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-community to patched release >= 0.2.4: pip install --upgrade 'langchain-community>=0.2.4' (Advisory: GHSA-f2jm-rw3h-6phg)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2024-06-06T21:30:36Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3hjh-jh2h-vrg6\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.2.5\", \"aliases\": [\"CVE-2024-2965\", \"PYSEC-2024-118\", \"PYSEC-2026-2561\"]}",
+      "fingerprint": "sha256:c36b1868bddeca7204ce2dae2960362e249e45865fd27b893cf68ec400e04bf6",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3hjh_jh2h_vrg6",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3hjh-jh2h-vrg6] Denial of service in langchain-community (Affects langchain < 0.2.5)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.2.5: pip install --upgrade 'langchain>=0.2.5' (Advisory: GHSA-3hjh-jh2h-vrg6)"
+    },
+    {
+      "applies_to": "fastapi",
+      "created_at": "2024-02-05T15:15:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2024-38\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.109.1\", \"aliases\": [\"CVE-2024-24762\", \"GHSA-2jv5-9r88-3w3p\", \"GHSA-qf9m-vfgh-m389\", \"PYSEC-2026-1850\"]}",
+      "fingerprint": "sha256:882d9c0a9ba0230c0f659981cf9517040a24815618ff8bf0f67c7a1accac881c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2024_38",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2024-38] FastAPI is a web framework for building APIs with Python 3.8+ based on standard Python type hints. When using form data, `python-multipart` uses a Regular Ex... (Affects fastapi < 0.109.1)",
+      "target": "fastapi",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastapi to patched release >= 0.109.1: pip install --upgrade 'fastapi>=0.109.1' (Advisory: PYSEC-2024-38)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2024-01-03T21:26:50Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-f8mp-x433-5wpf\", \"ecosystem\": \"npm\", \"fixed_version\": \"3.19.0\", \"aliases\": [\"CVE-2023-7080\"]}",
+      "fingerprint": "sha256:a56eef4aa7321355a11246cc0cc94fc8930394b543253eecbf5ea6d8c53d841a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_f8mp_x433_5wpf",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-f8mp-x433-5wpf] Arbitrary remote code execution within `wrangler dev` Workers sandbox (Affects wrangler < 3.19.0)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 3.19.0: npm install 'wrangler@>=3.19.0' (Advisory: GHSA-f8mp-x433-5wpf)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2024-01-03T21:24:56Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-cfph-4qqh-w828\", \"ecosystem\": \"npm\", \"fixed_version\": \"3.19.0\", \"aliases\": [\"CVE-2023-7079\"]}",
+      "fingerprint": "sha256:ab65bd880811abf4f707e94c132f02395ac0ac4f1471939c59306d52816b87d9",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_cfph_4qqh_w828",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-cfph-4qqh-w828] Arbitrary remote file read in Wrangler dev server (Affects wrangler < 3.19.0)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 3.19.0: npm install 'wrangler@>=3.19.0' (Advisory: GHSA-cfph-4qqh-w828)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2023-10-21T00:30:47Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8h5w-f6q9-wg35\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.0.247\", \"aliases\": [\"CVE-2023-32785\", \"PYSEC-2026-372\"]}",
+      "fingerprint": "sha256:91a2934c19dd65b504f183f028795feaf050a2f3f623c75325f15a1c178996ff",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_8h5w_f6q9_wg35",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-8h5w-f6q9-wg35] Langchain SQL Injection vulnerability (Affects langchain < 0.0.247)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.0.247: pip install --upgrade 'langchain>=0.0.247' (Advisory: GHSA-8h5w-f6q9-wg35)"
+    },
+    {
+      "applies_to": "wrangler",
+      "created_at": "2023-08-03T16:34:31Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8c93-4hch-xgxp\", \"ecosystem\": \"npm\", \"fixed_version\": \"2.20.1\", \"aliases\": [\"CVE-2023-3348\"]}",
+      "fingerprint": "sha256:9f5b79d2dbf0ce7afec4087f1a293e2f0f9fb80be56eacf73b4b2aa9c4d0cc35",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_8c93_4hch_xgxp",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-8c93-4hch-xgxp] Cloudflare Wrangler directory traversal vulnerability (Affects wrangler < 2.20.1)",
+      "target": "wrangler",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wrangler to patched release >= 2.20.1: npm install 'wrangler@>=2.20.1' (Advisory: GHSA-8c93-4hch-xgxp)"
+    },
+    {
+      "applies_to": "fastapi",
+      "created_at": "2021-06-10T15:43:54Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8h2j-cgx8-6xv7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.65.2\", \"aliases\": [\"CVE-2021-32677\", \"PYSEC-2021-100\"]}",
+      "fingerprint": "sha256:2def2ce68d34ccfeca146d30bed5516ba292439d08422ef48bfe3bc7f3414413",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_8h2j_cgx8_6xv7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-8h2j-cgx8-6xv7] Cross-Site Request Forgery (CSRF) in FastAPI (Affects fastapi < 0.65.2)",
+      "target": "fastapi",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastapi to patched release >= 0.65.2: pip install --upgrade 'fastapi>=0.65.2' (Advisory: GHSA-8h2j-cgx8-6xv7)"
+    },
+    {
+      "applies_to": "pydantic",
+      "created_at": "2021-05-13T20:23:17Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5jqp-qgf6-3pvh\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.8.2\", \"aliases\": [\"CVE-2021-29510\", \"PYSEC-2021-47\"]}",
+      "fingerprint": "sha256:fe03957d72b1848249ad090a93bd60e44873f8de1dd9d9f60837c558371b3ade",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_5jqp_qgf6_3pvh",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-5jqp-qgf6-3pvh] Use of \"infinity\" as an input to datetime and date fields causes infinite loop in pydantic (Affects pydantic < 1.8.2)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 1.8.2: pip install --upgrade 'pydantic>=1.8.2' (Advisory: GHSA-5jqp-qgf6-3pvh)"
     }
   ]
 }

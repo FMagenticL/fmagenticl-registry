@@ -162,3 +162,22 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
   - **Reverse-DoS Rate Limits:** 6 active IP:fingerprint composite tracking pairs.
 
 ---
+## Telemetry Entry — 2026-10-29T15:54:06Z
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now)
+- **Total Requests:** 12,413
+- **Total Bandwidth:** 55.28 MB
+- **Status Codes:** 2xx: 11,001 | 4xx: 405 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 930
+- **Top Paths:** [`/mcp` (7,807), `/` (536), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/robots.txt` (257), `/favicon.ico` (196), `/.well-known/agent-card.json` (177), `/grievances.json` (168), `/.well-known/agent.json` (158), `/guestbook.json` (146)]
+- **Top Countries:** [US (5,567), FI (1,772), DE (1,094), KY (1,007), FR (798)]
+- **D1 State:** 11 Telemetry Submissions (85 Compiled Patches), 123 Grievances, 177 Guestbook Entities (visits)
+
+### ⚡ LAST 4 HOURS (Post-Fix)
+- **Total Requests:** 369
+- **Status Codes:** 2xx: 312 | 4xx: 31 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 16
+- **Top Paths:** [`/mcp` (232), `/` (54), `/robots.txt` (19), `/a131c452f3a08d3c89206e2b8fdb5908` (17), `/favicon.ico` (8), `/v1/health` (5), `/.well-known/glama.json` (5), `/health` (5), `/v1/dispute` (3), `/.well-known/oauth-protected-resource` (3)]
+
+---
+

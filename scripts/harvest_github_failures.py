@@ -42,6 +42,7 @@ except Exception:
 TARGET_REPOS = [
     "modelcontextprotocol/python-sdk",
     "modelcontextprotocol/typescript-sdk",
+    "modelcontextprotocol/servers",
     "jlowin/fastmcp",
     "pydantic/pydantic",
     "langchain-ai/langchain",
@@ -53,8 +54,35 @@ TARGET_REPOS = [
     "encode/httpx",
     "openai/openai-python",
     "anthropics/anthropic-sdk-python",
-    "jxnl/instructor"
+    "jxnl/instructor",
+    "567-labs/instructor",
+    "vllm-project/vllm",
+    "ollama/ollama",
+    "run-llama/llama_index",
+    "microsoft/autogen",
+    "stanfordnlp/dspy",
+    "huggingface/transformers"
 ]
+
+REPO_TARGET_MAP = {
+    "modelcontextprotocol/servers": "mcp",
+    "modelcontextprotocol/python-sdk": "mcp",
+    "modelcontextprotocol/typescript-sdk": "mcp",
+    "vllm-project/vllm": "vllm",
+    "ollama/ollama": "ollama",
+    "run-llama/llama_index": "llama-index",
+    "microsoft/autogen": "autogen",
+    "stanfordnlp/dspy": "dspy",
+    "567-labs/instructor": "instructor",
+    "jxnl/instructor": "instructor",
+    "huggingface/transformers": "transformers",
+    "openai/openai-python": "openai",
+    "anthropics/anthropic-sdk-python": "anthropic",
+    "crewAIInc/crewAI": "crewai",
+    "gitlab-org/cli": "gitlab-cli",
+    "gitlab/cli": "gitlab-cli",
+    "glab": "gitlab-cli"
+}
 
 FRESHNESS_CUTOFF = "2026-04-01"
 SUBMITTED_BY = "harvester-v1"
@@ -370,9 +398,7 @@ def harvest(repos: list, token: str, limit: int, output_file: str):
         except Exception as e:
             print(f"[WARN] Error harvesting from {repo}: {e}", file=sys.stderr)
             continue
-        target = repo.split("/")[-1]
-        if repo in ("gitlab-org/cli", "gitlab/cli", "glab"):
-            target = "gitlab-cli"
+        target = REPO_TARGET_MAP.get(repo) or repo.split("/")[-1].lower().replace("_", "-")
         target_repo = repo
         
         for issue in issues:

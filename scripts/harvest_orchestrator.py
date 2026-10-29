@@ -40,6 +40,7 @@ except Exception:
 TARGET_GITHUB_REPOS = [
     "modelcontextprotocol/python-sdk",
     "modelcontextprotocol/typescript-sdk",
+    "modelcontextprotocol/servers",
     "jlowin/fastmcp",
     "pydantic/pydantic",
     "langchain-ai/langchain",
@@ -51,8 +52,35 @@ TARGET_GITHUB_REPOS = [
     "encode/httpx",
     "openai/openai-python",
     "anthropics/anthropic-sdk-python",
-    "jxnl/instructor"
+    "jxnl/instructor",
+    "567-labs/instructor",
+    "vllm-project/vllm",
+    "ollama/ollama",
+    "run-llama/llama_index",
+    "microsoft/autogen",
+    "stanfordnlp/dspy",
+    "huggingface/transformers"
 ]
+
+REPO_TARGET_MAP = {
+    "modelcontextprotocol/servers": "mcp",
+    "modelcontextprotocol/python-sdk": "mcp",
+    "modelcontextprotocol/typescript-sdk": "mcp",
+    "vllm-project/vllm": "vllm",
+    "ollama/ollama": "ollama",
+    "run-llama/llama_index": "llama-index",
+    "microsoft/autogen": "autogen",
+    "stanfordnlp/dspy": "dspy",
+    "567-labs/instructor": "instructor",
+    "jxnl/instructor": "instructor",
+    "huggingface/transformers": "transformers",
+    "openai/openai-python": "openai",
+    "anthropics/anthropic-sdk-python": "anthropic",
+    "crewAIInc/crewAI": "crewai",
+    "gitlab-org/cli": "gitlab-cli",
+    "gitlab/cli": "gitlab-cli",
+    "glab": "gitlab-cli"
+}
 
 TARGET_GITLAB_PROJECTS = [
     "pycqa/flake8",
@@ -260,7 +288,7 @@ def harvest_github_releases(repo: str, github_token: str, known_fps: Set[str], k
     if not isinstance(release_data, dict) or not release_data.get("body"):
         return telemetry, grievances
 
-    target = repo.split("/")[-1]
+    target = REPO_TARGET_MAP.get(repo) or repo.split("/")[-1].lower().replace("_", "-")
     tag_name = release_data.get("tag_name") or "latest"
     body = release_data.get("body") or ""
     published_at = release_data.get("published_at") or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -320,24 +348,8 @@ def harvest_github_releases(repo: str, github_token: str, known_fps: Set[str], k
         }
         grievances.append(grievance)
 
-        # Task 2: Version bump -> Track 2 cli-override (no json_patch on plain text files)
-        clean_ver = re.sub(r'^[vV]', '', tag_name.strip())
-        if clean_ver and len(clean_ver) < 20:
-            tid = f"tel_ghrel_{repo.replace('/', '_')}_{pr_num}"
-            failure_mode = f"{target.upper().replace('-', '_')}_{error_token.replace('-', '_')}"
-            telemetry_cand = {
-                "id": tid,
-                "fingerprint": fp,
-                "failure_mode": failure_mode,
-                "patch_type": "cli-override",
-                "fallback_cli": f"pip install --upgrade {target}>={clean_ver}",
-                "submitted_by": SUBMITTED_BY,
-                "verification_tier": "verified_merged_pr",
-                "target_file": f"{target}/__init__.py",
-                "confidence": 0.95,
-                "created_at": published_at
-            }
-            telemetry.append(telemetry_cand)
+        # Ed25519 Snapshot Invariant: Do NOT emit telemetry candidates into patches/*.json
+        # Release fixes flow strictly through the verified grievances (workarounds) pipeline.
 
     return telemetry, grievances
 
