@@ -1,5 +1,5 @@
 {
-  "count": 182,
+  "count": 185,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -887,6 +887,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "AgentIndexProbe",
+      "first_seen": "2026-10-29",
+      "type": "crawler"
+    },
+    {
       "entity": "didit-catalog-icons",
       "first_seen": "2026-10-29",
       "type": "crawler"
@@ -902,9 +907,19 @@
       "type": "crawler"
     },
     {
+      "entity": "mcp-check-scanner",
+      "first_seen": "2026-10-29",
+      "type": "security_probe"
+    },
+    {
       "entity": "mcp-discovery-measurement",
       "first_seen": "2026-10-29",
       "type": "agent"
+    },
+    {
+      "entity": "telosnex-registry-check",
+      "first_seen": "2026-10-29",
+      "type": "security_probe"
     },
     {
       "entity": "toolscaled-registry-probe",
@@ -912,5 +927,5 @@
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-29T16:35:00Z"
+  "generated_at": "2026-10-29T22:47:21Z"
 }

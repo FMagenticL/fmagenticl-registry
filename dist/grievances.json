@@ -1,7 +1,119 @@
 {
-  "count": 185,
-  "generated_at": "2026-10-29T16:29:07Z",
+  "count": 215,
+  "generated_at": "2026-10-29T22:47:24Z",
   "grievances": [
+    {
+      "applies_to": "astral-sh/uv",
+      "created_at": "2026-10-29T22:25:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:90a2d482268445fc501394ef7dba6cd6c5e8ebdf224be8ba76452f406950fbbf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_uv_22985",
+      "submitted_by": "harvester-v1",
+      "symptom": "`uv audit` reports duplicate advisory with wrong fix version",
+      "target": "uv",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Deduplicate aliased OSV findings in uv audit. Target files: crates/uv-audit-operations/src/lib.rs, crates/uv-audit/src/service/osv.rs, crates/uv-audit/src/types.rs. For each dependency, keep a list of advisory groups. Merge every group whose IDs overlap the incoming record, so a third record can join two previously separate groups. Grouping runs per package and version before ignore rules, counts and output formatting. All IDs in the group remain available for display and suppression. Both ignore lists record every matching ID... (Ref: https://github.com/astral-sh/uv/pull/22990)"
+    },
+    {
+      "applies_to": "astral-sh/uv",
+      "created_at": "2026-10-29T22:04:41Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b2f082ea5edaa5c1eef3021be36f7921cd31a9361cb306553119f3023f0867e6",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_uv_22966",
+      "submitted_by": "harvester-v1",
+      "symptom": "Windows trampoline can close its own child or job handle when started through the C runtime's spawn, so the child is lost",
+      "target": "uv",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Stop closing handles listed in `lpReserved2` in the Windows trampoline. Target files: crates/uv-trampoline/src/bounce.rs, crates/uv-trampoline-builder/trampolines/uv-trampoline-aarch64-console.exe, crates/uv-trampoline-builder/trampolines/uv-trampoline-aarch64-gui.exe. Windows has a concept of handle inheritance, despite not having all the other features that make sense to have if you have that, such as exec, and this means that our trampolines must stick around while the interpreter runs. This means that we end up with a copy... (Ref: https://github.com/astral-sh/uv/pull/22977)"
+    },
+    {
+      "applies_to": "cloudflare/workers-sdk",
+      "created_at": "2026-10-29T17:31:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:21ad94bd0d1173c30f6e01701e9ae8b20488acf14c1cdcfd93541900866ba46b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_cloudflare_workers-sdk_16326",
+      "submitted_by": "harvester-v1",
+      "symptom": "Cross-process bindings fail with `Worker \"dev-registry-proxy\" not found` after Miniflare restarts a crashed workerd",
+      "target": "workers-sdk",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [miniflare] Keep cross-process bindings working after a workerd crash restart. Target files: packages/miniflare/src/index.ts, packages/miniflare/test/dev-registry.spec.ts, .changeset/dev-registry-crash-restart-bindings.md. Title: [miniflare] Keep cross-process bindings working after a workerd crash restart (Ref: https://github.com/cloudflare/workers-sdk/pull/16327)"
+    },
+    {
+      "applies_to": "cloudflare/workers-sdk",
+      "created_at": "2026-10-29T17:31:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ed6e4661fe1d3a1dc168de81229e2f103acf86dc434ce7d2c852ec819edc4741",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_cloudflare_workers-sdk_16012",
+      "submitted_by": "harvester-v1",
+      "symptom": "[vitest-plugin] cloudflare.config.ts Durable Object binding to the Worker's own class fails: \"no such service is defined\"",
+      "target": "workers-sdk",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [config] Fix Durable Object self-references without changing deployment targets. Target files: packages/deploy-helpers/src/deploy/helpers/durable-object-container-applications.ts, packages/deploy-helpers/src/preview/preview.ts, packages/deploy-helpers/src/preview/shared.ts. Durable Object bindings that explicitly name the Worker itself failed to start in the Vitest plugin and were rejected when attaching a container. Recognize those self-references where the effective Worker identity is known, while preserving explic... (Ref: https://github.com/cloudflare/workers-sdk/pull/16013)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-29T16:18:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:425e26d5debe8368e2ba3ce48a89a2633b81e9fd723da80c1df56dee4b3365e2",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_52965",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: [Bug]: bare `@torch.compile` in `kimi_k25_vit` compiles outside the compilation lifecycle and pins `TRITON_CACHE_DIR` process-wide",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Avoid eager torch.compile in Kimi K2.5 vision helper. Target files: vllm/model_executor/models/kimi_k25_vit.py. `get_rope_shape` in the Kimi K2.5 vision encoder was decorated with bare `torch.compile`, and an eager wrapper invoked it on the first input key. This could initialize Triton before vLLM's compilation lifecycle configured its cache directories, causing warm-cache reload failures. (Ref: https://github.com/vllm-project/vllm/pull/53011)"
+    },
+    {
+      "applies_to": "pydantic/pydantic",
+      "created_at": "2026-10-29T15:51:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4050604fe70fe9404af5651e9657e2f15a47d6e0e2d3fb1d6363504767636d70",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic_14093",
+      "submitted_by": "harvester-v1",
+      "symptom": "Deep-copying a self-referential model changes its object graph",
+      "target": "pydantic",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix deep copy of self-referential models. Target files: pydantic/main.py, pydantic/root_model.py, tests/test_construction.py. Fixes https://github.com/pydantic/pydantic/issues/14093. (Ref: https://github.com/pydantic/pydantic/pull/14116)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-29T13:01:01Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0b0a0d00bc6bfebcdef71fba2a3ea70db68a2c1b19e810956aed9f23aa6bc58a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_60162",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Humming FP8 linear crashes on per-tensor/per-channel FP8 weights, so FP8 models cannot start with VLLM_BATCH_INVARIANT=1 on Ampere",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Quantization] Fix Humming FP8 linear for per-tensor/per-channel FP8 weights. Target files: vllm/model_executor/kernels/linear/__init__.py, vllm/model_executor/layers/quantization/fp8.py, vllm/model_executor/layers/quantization/online/fp8.py. . With the Humming FP8 linear kernel, `fp8` checkpoints with per-tensor weight scales and online `fp8_per_tensor` / `fp8_per_channel` quantization crash while loading weights. On Ampere with `VLLM_BATCH_INVARIANT=1`, Humming is the only FP8 linear kernel left (Marlin opts out... (Ref: https://github.com/vllm-project/vllm/pull/60163)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-29T12:46:36Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a152f9604257930c24acb03c3069d8153c8f577150973fe9d5744961122c53bf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_64319",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Rust vllm-bench accepts --max-concurrency 0 and hangs forever (Python rejects it since #54887)",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Rust Frontend] Rust vllm-bench accepts --max-concurrency 0 and hangs forever (Python rejects it since #54887). Target files: rust/src/bench/src/config.rs, rust/src/bench/src/mm_processor.rs, rust/src/bench/src/sweep.rs. Rust `vllm-bench` accepted `--max-concurrency 0` and then hung forever on `Semaphore::new(0)`, while Python `vllm bench serve` rejects 0 since #54887. This change rejects 0 fail-fast on every Rust bench path that builds a concurrency semaphore: (Ref: https://github.com/vllm-project/vllm/pull/64390)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T11:47:19Z",
@@ -71,6 +183,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(bedrock): omit system prompt from audio transcription and report its token usage. Target files: litellm-rust/crates/llms-types/src/formats/audio_transcription/response.rs, litellm-rust/crates/llms/src/bedrock/audio_transcription/mod.rs, litellm/cost_calculator.py. Bedrock Voxtral transcription through `/v1/audio/transcriptions` always failed with a 400, because LiteLLM sent a system prompt that Voxtral on Bedrock refuses next to audio. This PR drops that prompt (Ref: https://github.com/BerriAI/litellm/pull/41565)"
+    },
+    {
+      "applies_to": "modelcontextprotocol/servers",
+      "created_at": "2026-10-29T01:32:20Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e7dcfe24c638c5b97f14f3313598515848615ea845cf4d44e724968f28fc8d16",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_modelcontextprotocol_servers_4914",
+      "submitted_by": "harvester-v1",
+      "symptom": "mcp-server-fetch: `fetch` prompt returns JSON-RPC error code 0 with the raw exception text for an invalid URL",
+      "target": "mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(fetch): reject an invalid prompt URL with -32602. Target files: src/fetch/src/mcp_server_fetch/server.py, src/fetch/tests/test_prompt_url.py, src/fetch/tests/test_protocol.py. The `fetch` prompt passed its `url` argument straight to httpx. A malformed URL such as `http://[::1` raises `httpx.InvalidURL`, which is not an `httpx.HTTPError`, so it escaped `fetch_url`'s handler and the prompt's `except ToolError`, and the SDK answered with its generic fallback for an unhandled exception. On current `v2/main` (aft... (Ref: https://github.com/modelcontextprotocol/servers/pull/5358)"
     },
     {
       "applies_to": "langchain-ai/langchain",
@@ -185,6 +311,20 @@
       "workaround": "Fix: fix(orbit): require GitLab Orbit CLI 0.163.0 or later. Applied in GitLab MR !4244. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4244)"
     },
     {
+      "applies_to": "modelcontextprotocol/servers",
+      "created_at": "2026-10-28T20:57:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1491324a962da08096382795ac1d43d611757813df746197a68d1f0247837227",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_modelcontextprotocol_servers_5185",
+      "submitted_by": "harvester-v1",
+      "symptom": "mcp v2.2.0: @krot4u, tolerating a Windows realpath ENOENT, for #5185",
+      "target": "mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: @krot4u, tolerating a Windows realpath ENOENT, for #5185. Upstream PR #5185. (Ref: https://github.com/modelcontextprotocol/servers/pull/5185)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T19:35:27Z",
       "environment_json": "{}",
@@ -225,6 +365,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(mistral): replay assistant reasoning as a Mistral thinking chunk. Target files: litellm/llms/mistral/chat/transformation.py, litellm/types/llms/mistral.py, litellm/model_prices_and_context_window_backup.json. When a client sent an earlier Mistral reply back, LiteLLM dropped its reasoning, so the model lost its earlier thinking (Ref: https://github.com/BerriAI/litellm/pull/48778)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-10-28T18:32:09Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d446cb89eb474905b39a25bbb5898b981dab25d7e07d6bb266df83c313af0e2f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_50014",
+      "submitted_by": "harvester-v1",
+      "symptom": "All 10 ModelOnTheFlyConversionTester tests fail: HUGGINGFACE_PRODUCTION_USER_TOKEN secret not set in CI",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(tests): restore ModelOnTheFlyConversionTester after token revocation and Space API migration. Target files: src/transformers/safetensors_conversion.py, tests/utils/test_modeling_utils.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50075) (Ref: https://github.com/huggingface/transformers/pull/50075)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -519,6 +673,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: feat(decisions): support LM Studio decision models. Target files: litellm/__init__.py, litellm/_lazy_imports_registry.py, litellm/llms/lm_studio/decisions/transformation.py. LM Studio decision models can now use the same LiteLLM Decisions routes and SDK calls as other decision providers. Requests go to LM Studio's native System One endpoint, with typed question and response translation handled by the shared Decisions pipeline (Ref: https://github.com/BerriAI/litellm/pull/48448)"
+    },
+    {
+      "applies_to": "ollama/ollama",
+      "created_at": "2026-10-27T02:18:31Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9058f0948ba5a4c1ad866dc892c6657346a892534538089dddf3c09fe9045a80",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ollama_ollama_19303",
+      "submitted_by": "harvester-v1",
+      "symptom": "launch: `ollama launch opencode` fails on OpenCode v2 because `opencode debug config` returns an array",
+      "target": "ollama",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: cmd/launch: fix OpenCode v2 launch and config parsing. Target files: cmd/launch/opencode.go, cmd/launch/opencode_context_test.go. OpenCode v2 rejects `--model` on the bare command, and its shared service can keep the global default instead of the model selected by `ollama launch`. Use `--standalone` for detected v2 clients so the backend inherits the per-launch Ollama configuration. Keep detected v1 clients' explicit model selection and preserve forwarded arguments. Allow five seconds for version detection; when it fails or t... (Ref: https://github.com/ollama/ollama/pull/19310)"
     },
     {
       "applies_to": "gitlab-org/cli",
@@ -1081,6 +1249,20 @@
       "workaround": "Fix: fix(df): fail closed when the policy API stops answering. Applied in GitLab MR !4178. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4178)"
     },
     {
+      "applies_to": "ollama/ollama",
+      "created_at": "2026-10-22T22:37:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:29660fd8128f4210296c29b28a2bf8c833beded817eaf78dc80d6ea9b17b9116",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ollama_ollama_17118",
+      "submitted_by": "harvester-v1",
+      "symptom": "Intermittent /v1/responses stream closes during reasoning without a terminal event",
+      "target": "ollama",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: openai: preserve failures in Responses streams. Target files: middleware/openai.go, middleware/responses_errors_test.go, middleware/responses_web_search_test.go. When generation fails after `/v1/responses` starts streaming, HTTP 200 is already committed. The native `{\"error\":\"...\"}` envelope is decoded as an empty chat response, so clients receive EOF without a terminal failure event. Detect in-band generation errors and emit one `response.failed`. Preserve partial text, reasoning, and completed tool output; close unfinished ... (Ref: https://github.com/ollama/ollama/pull/19225)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-22T14:49:25Z",
       "environment_json": "{}",
@@ -1627,6 +1809,20 @@
       "workaround": "Fix: Fix unpickling of generic classes defined in separate module. Target files: pydantic/_internal/_generics.py, tests/test_forward_ref.py, tests/test_generics.py. Fixes https://github.com/pydantic/pydantic/issues/13991. (Ref: https://github.com/pydantic/pydantic/pull/13994)"
     },
     {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-10-13T17:29:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ccbe47b5cb2ea37d2a41bc7746ce5ee9d19ca006ddd1abb1293fb6ba4dbfacf0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_48841",
+      "submitted_by": "harvester-v1",
+      "symptom": "FSDP2: evaluate/predict on a fresh Trainer raises in Accelerator.prepare",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [docs] Context parallelism during eval. Target files: docs/source/en/deepspeed_alst.md, docs/source/en/fsdp.md. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=48663) (Ref: https://github.com/huggingface/transformers/pull/48663)"
+    },
+    {
       "applies_to": "modelcontextprotocol/python-sdk",
       "created_at": "2026-10-13T09:20:59Z",
       "environment_json": "{}",
@@ -1639,6 +1835,48 @@
       "target": "python-sdk",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Return invalid params for unknown prompts and missing arguments. Target files: src/mcp/server/mcpserver/prompts/base.py, src/mcp/server/mcpserver/prompts/manager.py, src/mcp/server/mcpserver/server.py. Closes [#3669](https://github.com/modelcontextprotocol/python-sdk/issues/3669). (Ref: https://github.com/modelcontextprotocol/python-sdk/pull/3696)"
+    },
+    {
+      "applies_to": "stanfordnlp/dspy",
+      "created_at": "2026-10-12T23:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1503eecadf122c464540d150b42ebb0d3a55ff60b46d4935c04a6235e16ce728",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_stanfordnlp_dspy_10625",
+      "submitted_by": "harvester-v1",
+      "symptom": "dspy 3.4.1: Fall back to no sub-agents when an interpreter rejects the facade shim with `SyntaxError` by @isaacbmiller ([#10625](https://github.com/stanfordnlp/dspy/pull/10625)).",
+      "target": "dspy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fall back to no sub-agents when an interpreter rejects the facade shim with `SyntaxError` by @isaacbmiller ([#10625](https://github.com/stanfordnlp/dspy/pull/10625)).. Upstream PR #10625. (Ref: https://github.com/stanfordnlp/dspy/pull/10625)"
+    },
+    {
+      "applies_to": "stanfordnlp/dspy",
+      "created_at": "2026-10-12T23:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e6d31efdcf991cc6db117c8bfa92c855321fad74ada746939e4082445f236497",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_stanfordnlp_dspy_10569",
+      "submitted_by": "harvester-v1",
+      "symptom": "dspy 3.4.1: `BetterTogether` raises a `ValueError` that names the student predictors without an LM. 3.4.0 failed later with `AttributeError: 'NoneType' object has no attribute 'launch'`. Call ",
+      "target": "dspy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: `BetterTogether` raises a `ValueError` that names the student predictors without an LM. 3.4.0 failed later with `AttributeError: 'NoneType' object has no attribute 'launch'`. Call `student.set_lm(lm)`; `dspy.configure(lm=...)` alone is not enough. [#10569](https://github.com/stanfordnlp/dspy/pull/10569). Upstream PR #10569. (Ref: https://github.com/stanfordnlp/dspy/pull/10569)"
+    },
+    {
+      "applies_to": "stanfordnlp/dspy",
+      "created_at": "2026-10-12T23:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:15486c6a0e0dd73c6919c11b91da021df92be8e235ee4ac5f890d90dabc8898e",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_stanfordnlp_dspy_10520",
+      "submitted_by": "harvester-v1",
+      "symptom": "dspy 3.4.1: Fix the 3.4.0 import crash `ImportError: cannot import name 'BaseModel' from partially initialized module 'openai._models'`, which could occur when DSPy lazily imported LiteLLM, fo",
+      "target": "dspy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix the 3.4.0 import crash `ImportError: cannot import name 'BaseModel' from partially initialized module 'openai._models'`, which could occur when DSPy lazily imported LiteLLM, for example through `dspy.LM(...).supports_function_calling`. [#10520](https://github.com/stanfordnlp/dspy/pull/10520). Upstream PR #10520. (Ref: https://github.com/stanfordnlp/dspy/pull/10520)"
     },
     {
       "applies_to": "cloudflare/workers-sdk",
@@ -1795,6 +2033,20 @@
       "workaround": "Fix: COR-891 Fix SQLite flow initialization contention. Target files: lib/crewai/pyproject.toml, lib/crewai/src/crewai/flow/persistence/sqlite.py, lib/crewai/tests/test_sqlite_connection_lifecycle.py. - - [COR-891: Prevent flow persistence initialization lock failures](https://linear.app/crewai/issue/COR-891/prevent-flow-persistence-initialization-lock-failures-during) - [COR-261: Concurrent flow module import races](https://linear.app/crewai/issue/COR-261/concurrent-flow-module-import-races-sqliteflowpersistenceinit-db) (Ref: https://github.com/crewAIInc/crewAI/pull/7821)"
     },
     {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-08T20:45:50Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:72ef86274c9bc2089fe37f9ca56011b8ce8d70407ce095aa6548081b4864feef",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23068",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: llama-index-vector-stores-qdrant caps requires-python at <3.14, blocking Python 3.14",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(qdrant): relax requires-python upper bound to allow Python 3.14. Target files: llama-index-integrations/vector_stores/llama-index-vector-stores-qdrant/pyproject.toml. `llama-index-vector-stores-qdrant` declares `requires-python = \">=3.10,<3.14\"`. Most sibling packages under `llama-index-integrations/vector_stores/*` (`deeplake`, `singlestoredb`, `alibabacloud-mysql`, `pgvecto-rs`, `relyt`, `opensearch`, \u2026) use `>=3.10,<4.0`, matching `llama-index-core`'s own `>=3.10,<4.0`, and this PR brings qdrant in line with th... (Ref: https://github.com/run-llama/llama_index/pull/23069)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-08T11:39:07Z",
       "environment_json": "{}",
@@ -1821,6 +2073,20 @@
       "target": "crewAI",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: fix(utilities): keep rwlock ownership when acquire is interrupted. Target files: lib/crewai/src/crewai/utilities/rw_lock.py, lib/crewai/tests/utilities/events/test_rw_lock.py. `r_locked()` and `w_locked()` called acquire inside the `try` that always releases in `finally`. If `Condition.wait()` is interrupted before acquire finishes, the context manager releases a lock it never held. The reader count can drop below zero, and the writer flag can be cleared while another writer still owns the lock. (Ref: https://github.com/crewAIInc/crewAI/pull/7944)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-06T19:11:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:acab5ccbed6d43baaa5492c371814c1e8fcf4a05665cdf5bb1acd60675f3e325",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23395",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Not able to update llama-index-llm-openai",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: deps(llama-index): update OpenAI dependency version constraints. Target files: pyproject.toml, uv.lock. This PR updates the OpenAI dependency version constraints to allow newer major versions of the OpenAI package. No new dependencies are introduced. . (Ref: https://github.com/run-llama/llama_index/pull/23353)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -1891,6 +2157,34 @@
       "target": "pydantic",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: Handle OS errors during `ZoneInfo` validation. Target files: pydantic/_internal/_validators.py, tests/test_types_zoneinfo.py, tests/types/test_zoneinfo.py. Fixes https://github.com/pydantic/pydantic/issues/13908. (Ref: https://github.com/pydantic/pydantic/pull/13912)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-01T18:39:47Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e8d83d53409c46c4770df6ee6b2b44c5c50e7b72fa58fff81bf84ac210372b11",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23325",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: llama-index-embeddings-azure-openai 0.6.0 is still dependent on llama-index-llms-azure-openai>=0.4.0,<0.6",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(azure-openai): update embeddings llm dependency bound (#23325). Target files: llama-index-integrations/embeddings/llama-index-embeddings-azure-openai/pyproject.toml, llama-index-integrations/embeddings/llama-index-embeddings-azure-openai/uv.lock. Update `llama-index-embeddings-azure-openai` from `llama-index-llms-azure-openai>=0.4.0,<0.6` to `>=0.4.0,<0.7`. Also bump the integration to `0.6.1` and refresh its lockfile (`uv lock`). (Ref: https://github.com/run-llama/llama_index/pull/23327)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-01T18:02:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:03fca997c8d9dab97813f5bd850db83d39505d55b7a090015213a968619e5e9e",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23247",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: `llama-index-llms-openai-like` blocks `llama-index-llms-openai` 0.8.x",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai-like): support `llama-index-llms-openai` `0.8.x`. Target files: llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml, llama-index-integrations/llms/llama-index-llms-openai-like/uv.lock. Update `llama-index-llms-openai-like` from `llama-index-llms-openai>=0.7.0,<0.8` to `>=0.8.0,<0.9`. Also bump the integration to `0.8.1` and refresh its lockfile (`uv lock`). (Ref: https://github.com/run-llama/llama_index/pull/23249)"
     },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
@@ -1977,6 +2271,34 @@
       "workaround": "Fix: docs(client): correct token endpoint TLS citation. Target files: .changeset/correct-token-endpoint-tls-citation.md, packages/client/src/client/auth.ts, packages/client/src/client/authErrors.ts. The JSDoc for `assertSecureTokenEndpoint` and `InsecureTokenEndpointError` attributed the token-endpoint TLS check to SEP-2207, which covers OIDC-flavored refresh-token guidance. This change points the explanation to the MCP authorization specification's HTTPS requirement and describes the SDK's loopback exemption ... (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2768)"
     },
     {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-09-25T23:11:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4ece4ddb72b6272311ea02612b562170e06665f47f38488e9db8c853884ee5d2",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23222",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: llms-anthropic 0.12.0 rejects claude-opus-5-5 during metadata lookup and agent initialization",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(anthropic): add claude-opus-5-5 to model registry. Target files: llama-index-integrations/llms/llama-index-llms-anthropic/llama_index/llms/anthropic/utils.py, llama-index-integrations/llms/llama-index-llms-anthropic/pyproject.toml, llama-index-integrations/llms/llama-index-llms-anthropic/tests/test_anthropic_utils.py. `Anthropic(model=\"claude-opus-5-5\", ...)` raises `ValueError: Unknown model` as soon as `.metadata` is accessed, because `claude-opus-5-5` has no entry in `CLAUDE_MODELS` / `ANTHROPIC_MODELS` in `lla... (Ref: https://github.com/run-llama/llama_index/pull/23223)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-09-25T23:11:05Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:95f9e60c48899ea735de697f99c4b4188f95ae580a4a186bfce0a0219995a0bf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23207",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Claude Opus 5.5 on Bedrock: BedrockConverse rejects its inference profile IDs, and structured_predict gets 400 on forced toolChoice",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock-converse): add Claude Opus 5.5 and stop forcing toolChoice, which Bedrock rejects for it. Target files: llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/base.py, llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/utils.py, llama-index-integrations/llms/llama-index-llms-bedrock-converse/pyproject.toml. Thanks for #22451, which put Opus 5 into these lists on launch day. This does the same for Claude Opus 5.5, whic... (Ref: https://github.com/run-llama/llama_index/pull/23208)"
+    },
+    {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-25T19:41:22Z",
       "environment_json": "{}",
@@ -2017,6 +2339,34 @@
       "target": "litellm",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: fix(router): serve Responses turns from a sibling when the encrypted content origin has no boundary peer. Target files: litellm/router.py, litellm/router_utils/pre_call_checks/encrypted_content_affinity_check.py, tests/integration/_support/upstream.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/43015)"
+    },
+    {
+      "applies_to": "transformers",
+      "created_at": "2026-09-10T09:44:51.053247Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3929\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"5.10.0\", \"aliases\": [\"CVE-2026-9856\", \"GHSA-xrqw-3rrv-vx5w\"]}",
+      "fingerprint": "sha256:310539580d9d68be869f0b5ef42e9c721f92b732878b5b31df058375edfbe84b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3929",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3929] Transformers save_pretrained path traversal allows arbitrary file writes through chat template names (Affects transformers < 5.10.0)",
+      "target": "transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade transformers to patched release >= 5.10.0: pip install --upgrade 'transformers>=5.10.0' (Advisory: PYSEC-2026-3929)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-08-28T14:37:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:8133d606172c2baf95d3047e5729b03b2f77831db334b6f9dcc038a4b51d9de5",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2567",
+      "submitted_by": "harvester-v1",
+      "symptom": "TypedDict response_model ignores total=False and NotRequired, forcing every key to be required",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: consolidate 1.16.1 response correctness. Target files: instructor/batch/request.py, instructor/v2/core/response_model.py, instructor/v2/providers/bedrock/handlers.py. - preserve every Anthropic batch system instruction during request conversion - reject AWS-documented unsupported Bedrock schema constraints locally without misclassifying property names that resemble constraint keywords - preserve caller-owned Bedrock nested inference configuration and Gemini safety mappings during normalization - preserve `TypedDict`... (Ref: https://github.com/567-labs/instructor/pull/2566)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -2073,6 +2423,20 @@
       "target": "langchain",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade langchain to patched release >= 0.3.30: pip install --upgrade 'langchain>=0.3.30' (Advisory: PYSEC-2026-2555)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2026-07-13T14:36:34.041017Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2606\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.41\", \"aliases\": [\"CVE-2025-6211\", \"GHSA-5hq9-5r78-2gjh\", \"PYSEC-2026-1566\"]}",
+      "fingerprint": "sha256:0631dacd3b605efe6eadc29998e2183ca180599416dbba17aa4e71a4de5a3401",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2606",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2606] LlamaIndex vulnerable to data loss through hash collisions in its DocugamiReader class (Affects llama-index < 0.12.41)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.41: pip install --upgrade 'llama-index>=0.12.41' (Advisory: PYSEC-2026-2606)"
     },
     {
       "applies_to": "pydantic",
@@ -2185,6 +2549,20 @@
       "target": "uv",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade uv to patched release >= 0.11.15: pip install --upgrade 'uv>=0.11.15' (Advisory: GHSA-4gg8-gxpx-9rph)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2026-05-13T15:29:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3644-q5cj-c5c7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.30\", \"aliases\": [\"CVE-2026-45134\", \"PYSEC-2026-2555\", \"PYSEC-2026-2560\", \"PYSEC-2026-2582\"]}",
+      "fingerprint": "sha256:2d74b54e5e1458a825e56e2e9efad9792401848cac7d1722d7de05c7438c1628",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3644_q5cj_c5c7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3644-q5cj-c5c7] LangSmith SDK: Public prompt pull deserializes untrusted manifests without trust boundary warning (Affects langchain < 0.3.30)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.3.30: pip install --upgrade 'langchain>=0.3.30' (Advisory: GHSA-3644-q5cj-c5c7)"
     },
     {
       "applies_to": "langchain-core",
@@ -2325,6 +2703,20 @@
       "target": "langchain",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade langchain-core to patched release >= 1.2.22: pip install --upgrade 'langchain-core>=1.2.22' (Advisory: GHSA-qh6h-p6c9-ff54)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-03-05T20:19:49Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-g48c-2wqr-h844\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.0.10\", \"aliases\": [\"CVE-2026-28277\", \"PYSEC-2026-83\"]}",
+      "fingerprint": "sha256:34aebbae13af8d462bf3fea1b473a71d4556eeac2df15b0fe32bcb523f3c64c0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_g48c_2wqr_h844",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-g48c-2wqr-h844] LangGraph checkpoint loading has unsafe msgpack deserialization (Affects langgraph < 1.0.10)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 1.0.10: pip install --upgrade 'langgraph>=1.0.10' (Advisory: GHSA-g48c-2wqr-h844)"
     },
     {
       "applies_to": "langgraph",
@@ -2495,6 +2887,20 @@
       "workaround": "Upgrade langchain to patched release >= 0.2.5: pip install --upgrade 'langchain>=0.2.5' (Advisory: GHSA-3hjh-jh2h-vrg6)"
     },
     {
+      "applies_to": "pydantic",
+      "created_at": "2024-04-15T03:31:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-mr82-8j83-vxmv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.4.0\", \"aliases\": [\"CVE-2024-3772\", \"PYSEC-2026-1812\"]}",
+      "fingerprint": "sha256:0a23f54e89da931f05b723ce9628ad46efb51f88ab715440cfeca6fc7d490352",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_mr82_8j83_vxmv",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-mr82-8j83-vxmv] Pydantic regular expression denial of service (Affects pydantic < 2.4.0)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 2.4.0: pip install --upgrade 'pydantic>=2.4.0' (Advisory: GHSA-mr82-8j83-vxmv)"
+    },
+    {
       "applies_to": "fastapi",
       "created_at": "2024-02-05T15:15:00Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2024-38\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.109.1\", \"aliases\": [\"CVE-2024-24762\", \"GHSA-2jv5-9r88-3w3p\", \"GHSA-qf9m-vfgh-m389\", \"PYSEC-2026-1850\"]}",
@@ -2591,11 +2997,137 @@
       "target": "pydantic",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade pydantic to patched release >= 1.8.2: pip install --upgrade 'pydantic>=1.8.2' (Advisory: GHSA-5jqp-qgf6-3pvh)"
+    },
+    {
+      "applies_to": "pydantic",
+      "created_at": "2021-05-13T19:15:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2021-47\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.8.2\", \"aliases\": [\"CVE-2021-29510\", \"GHSA-5jqp-qgf6-3pvh\"]}",
+      "fingerprint": "sha256:2578148ffc5f7c89521887fb616e208102e8b646b663b865d49e0033124daf68",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2021_47",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2021-47] Pydantic is a data validation and settings management using Python type hinting. In affected versions passing either `'infinity'`, `'inf'` or `float('inf')` ... (Affects pydantic < 1.8.2)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 1.8.2: pip install --upgrade 'pydantic>=1.8.2' (Advisory: PYSEC-2021-47)"
     }
   ],
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "astral-sh/uv",
+      "created_at": "2026-10-29T22:25:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:90a2d482268445fc501394ef7dba6cd6c5e8ebdf224be8ba76452f406950fbbf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_uv_22985",
+      "submitted_by": "harvester-v1",
+      "symptom": "`uv audit` reports duplicate advisory with wrong fix version",
+      "target": "uv",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Deduplicate aliased OSV findings in uv audit. Target files: crates/uv-audit-operations/src/lib.rs, crates/uv-audit/src/service/osv.rs, crates/uv-audit/src/types.rs. For each dependency, keep a list of advisory groups. Merge every group whose IDs overlap the incoming record, so a third record can join two previously separate groups. Grouping runs per package and version before ignore rules, counts and output formatting. All IDs in the group remain available for display and suppression. Both ignore lists record every matching ID... (Ref: https://github.com/astral-sh/uv/pull/22990)"
+    },
+    {
+      "applies_to": "astral-sh/uv",
+      "created_at": "2026-10-29T22:04:41Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b2f082ea5edaa5c1eef3021be36f7921cd31a9361cb306553119f3023f0867e6",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_uv_22966",
+      "submitted_by": "harvester-v1",
+      "symptom": "Windows trampoline can close its own child or job handle when started through the C runtime's spawn, so the child is lost",
+      "target": "uv",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Stop closing handles listed in `lpReserved2` in the Windows trampoline. Target files: crates/uv-trampoline/src/bounce.rs, crates/uv-trampoline-builder/trampolines/uv-trampoline-aarch64-console.exe, crates/uv-trampoline-builder/trampolines/uv-trampoline-aarch64-gui.exe. Windows has a concept of handle inheritance, despite not having all the other features that make sense to have if you have that, such as exec, and this means that our trampolines must stick around while the interpreter runs. This means that we end up with a copy... (Ref: https://github.com/astral-sh/uv/pull/22977)"
+    },
+    {
+      "applies_to": "cloudflare/workers-sdk",
+      "created_at": "2026-10-29T17:31:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:21ad94bd0d1173c30f6e01701e9ae8b20488acf14c1cdcfd93541900866ba46b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_cloudflare_workers-sdk_16326",
+      "submitted_by": "harvester-v1",
+      "symptom": "Cross-process bindings fail with `Worker \"dev-registry-proxy\" not found` after Miniflare restarts a crashed workerd",
+      "target": "workers-sdk",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [miniflare] Keep cross-process bindings working after a workerd crash restart. Target files: packages/miniflare/src/index.ts, packages/miniflare/test/dev-registry.spec.ts, .changeset/dev-registry-crash-restart-bindings.md. Title: [miniflare] Keep cross-process bindings working after a workerd crash restart (Ref: https://github.com/cloudflare/workers-sdk/pull/16327)"
+    },
+    {
+      "applies_to": "cloudflare/workers-sdk",
+      "created_at": "2026-10-29T17:31:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ed6e4661fe1d3a1dc168de81229e2f103acf86dc434ce7d2c852ec819edc4741",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_cloudflare_workers-sdk_16012",
+      "submitted_by": "harvester-v1",
+      "symptom": "[vitest-plugin] cloudflare.config.ts Durable Object binding to the Worker's own class fails: \"no such service is defined\"",
+      "target": "workers-sdk",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [config] Fix Durable Object self-references without changing deployment targets. Target files: packages/deploy-helpers/src/deploy/helpers/durable-object-container-applications.ts, packages/deploy-helpers/src/preview/preview.ts, packages/deploy-helpers/src/preview/shared.ts. Durable Object bindings that explicitly name the Worker itself failed to start in the Vitest plugin and were rejected when attaching a container. Recognize those self-references where the effective Worker identity is known, while preserving explic... (Ref: https://github.com/cloudflare/workers-sdk/pull/16013)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-29T16:18:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:425e26d5debe8368e2ba3ce48a89a2633b81e9fd723da80c1df56dee4b3365e2",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_52965",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: [Bug]: bare `@torch.compile` in `kimi_k25_vit` compiles outside the compilation lifecycle and pins `TRITON_CACHE_DIR` process-wide",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Avoid eager torch.compile in Kimi K2.5 vision helper. Target files: vllm/model_executor/models/kimi_k25_vit.py. `get_rope_shape` in the Kimi K2.5 vision encoder was decorated with bare `torch.compile`, and an eager wrapper invoked it on the first input key. This could initialize Triton before vLLM's compilation lifecycle configured its cache directories, causing warm-cache reload failures. (Ref: https://github.com/vllm-project/vllm/pull/53011)"
+    },
+    {
+      "applies_to": "pydantic/pydantic",
+      "created_at": "2026-10-29T15:51:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4050604fe70fe9404af5651e9657e2f15a47d6e0e2d3fb1d6363504767636d70",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic_14093",
+      "submitted_by": "harvester-v1",
+      "symptom": "Deep-copying a self-referential model changes its object graph",
+      "target": "pydantic",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix deep copy of self-referential models. Target files: pydantic/main.py, pydantic/root_model.py, tests/test_construction.py. Fixes https://github.com/pydantic/pydantic/issues/14093. (Ref: https://github.com/pydantic/pydantic/pull/14116)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-29T13:01:01Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0b0a0d00bc6bfebcdef71fba2a3ea70db68a2c1b19e810956aed9f23aa6bc58a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_60162",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Humming FP8 linear crashes on per-tensor/per-channel FP8 weights, so FP8 models cannot start with VLLM_BATCH_INVARIANT=1 on Ampere",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Quantization] Fix Humming FP8 linear for per-tensor/per-channel FP8 weights. Target files: vllm/model_executor/kernels/linear/__init__.py, vllm/model_executor/layers/quantization/fp8.py, vllm/model_executor/layers/quantization/online/fp8.py. . With the Humming FP8 linear kernel, `fp8` checkpoints with per-tensor weight scales and online `fp8_per_tensor` / `fp8_per_channel` quantization crash while loading weights. On Ampere with `VLLM_BATCH_INVARIANT=1`, Humming is the only FP8 linear kernel left (Marlin opts out... (Ref: https://github.com/vllm-project/vllm/pull/60163)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-29T12:46:36Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a152f9604257930c24acb03c3069d8153c8f577150973fe9d5744961122c53bf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_64319",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Rust vllm-bench accepts --max-concurrency 0 and hangs forever (Python rejects it since #54887)",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Rust Frontend] Rust vllm-bench accepts --max-concurrency 0 and hangs forever (Python rejects it since #54887). Target files: rust/src/bench/src/config.rs, rust/src/bench/src/mm_processor.rs, rust/src/bench/src/sweep.rs. Rust `vllm-bench` accepted `--max-concurrency 0` and then hung forever on `Semaphore::new(0)`, while Python `vllm bench serve` rejects 0 since #54887. This change rejects 0 fail-fast on every Rust bench path that builds a concurrency semaphore: (Ref: https://github.com/vllm-project/vllm/pull/64390)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-29T11:47:19Z",
       "environment_json": "{}",
@@ -2664,6 +3196,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(bedrock): omit system prompt from audio transcription and report its token usage. Target files: litellm-rust/crates/llms-types/src/formats/audio_transcription/response.rs, litellm-rust/crates/llms/src/bedrock/audio_transcription/mod.rs, litellm/cost_calculator.py. Bedrock Voxtral transcription through `/v1/audio/transcriptions` always failed with a 400, because LiteLLM sent a system prompt that Voxtral on Bedrock refuses next to audio. This PR drops that prompt (Ref: https://github.com/BerriAI/litellm/pull/41565)"
+    },
+    {
+      "applies_to": "modelcontextprotocol/servers",
+      "created_at": "2026-10-29T01:32:20Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e7dcfe24c638c5b97f14f3313598515848615ea845cf4d44e724968f28fc8d16",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_modelcontextprotocol_servers_4914",
+      "submitted_by": "harvester-v1",
+      "symptom": "mcp-server-fetch: `fetch` prompt returns JSON-RPC error code 0 with the raw exception text for an invalid URL",
+      "target": "mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(fetch): reject an invalid prompt URL with -32602. Target files: src/fetch/src/mcp_server_fetch/server.py, src/fetch/tests/test_prompt_url.py, src/fetch/tests/test_protocol.py. The `fetch` prompt passed its `url` argument straight to httpx. A malformed URL such as `http://[::1` raises `httpx.InvalidURL`, which is not an `httpx.HTTPError`, so it escaped `fetch_url`'s handler and the prompt's `except ToolError`, and the SDK answered with its generic fallback for an unhandled exception. On current `v2/main` (aft... (Ref: https://github.com/modelcontextprotocol/servers/pull/5358)"
     },
     {
       "applies_to": "langchain-ai/langchain",
@@ -2778,6 +3324,20 @@
       "workaround": "Fix: fix(orbit): require GitLab Orbit CLI 0.163.0 or later. Applied in GitLab MR !4244. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4244)"
     },
     {
+      "applies_to": "modelcontextprotocol/servers",
+      "created_at": "2026-10-28T20:57:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1491324a962da08096382795ac1d43d611757813df746197a68d1f0247837227",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_modelcontextprotocol_servers_5185",
+      "submitted_by": "harvester-v1",
+      "symptom": "mcp v2.2.0: @krot4u, tolerating a Windows realpath ENOENT, for #5185",
+      "target": "mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: @krot4u, tolerating a Windows realpath ENOENT, for #5185. Upstream PR #5185. (Ref: https://github.com/modelcontextprotocol/servers/pull/5185)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-28T19:35:27Z",
       "environment_json": "{}",
@@ -2818,6 +3378,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(mistral): replay assistant reasoning as a Mistral thinking chunk. Target files: litellm/llms/mistral/chat/transformation.py, litellm/types/llms/mistral.py, litellm/model_prices_and_context_window_backup.json. When a client sent an earlier Mistral reply back, LiteLLM dropped its reasoning, so the model lost its earlier thinking (Ref: https://github.com/BerriAI/litellm/pull/48778)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-10-28T18:32:09Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d446cb89eb474905b39a25bbb5898b981dab25d7e07d6bb266df83c313af0e2f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_50014",
+      "submitted_by": "harvester-v1",
+      "symptom": "All 10 ModelOnTheFlyConversionTester tests fail: HUGGINGFACE_PRODUCTION_USER_TOKEN secret not set in CI",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(tests): restore ModelOnTheFlyConversionTester after token revocation and Space API migration. Target files: src/transformers/safetensors_conversion.py, tests/utils/test_modeling_utils.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50075) (Ref: https://github.com/huggingface/transformers/pull/50075)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -3112,6 +3686,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: feat(decisions): support LM Studio decision models. Target files: litellm/__init__.py, litellm/_lazy_imports_registry.py, litellm/llms/lm_studio/decisions/transformation.py. LM Studio decision models can now use the same LiteLLM Decisions routes and SDK calls as other decision providers. Requests go to LM Studio's native System One endpoint, with typed question and response translation handled by the shared Decisions pipeline (Ref: https://github.com/BerriAI/litellm/pull/48448)"
+    },
+    {
+      "applies_to": "ollama/ollama",
+      "created_at": "2026-10-27T02:18:31Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9058f0948ba5a4c1ad866dc892c6657346a892534538089dddf3c09fe9045a80",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ollama_ollama_19303",
+      "submitted_by": "harvester-v1",
+      "symptom": "launch: `ollama launch opencode` fails on OpenCode v2 because `opencode debug config` returns an array",
+      "target": "ollama",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: cmd/launch: fix OpenCode v2 launch and config parsing. Target files: cmd/launch/opencode.go, cmd/launch/opencode_context_test.go. OpenCode v2 rejects `--model` on the bare command, and its shared service can keep the global default instead of the model selected by `ollama launch`. Use `--standalone` for detected v2 clients so the backend inherits the per-launch Ollama configuration. Keep detected v1 clients' explicit model selection and preserve forwarded arguments. Allow five seconds for version detection; when it fails or t... (Ref: https://github.com/ollama/ollama/pull/19310)"
     },
     {
       "applies_to": "gitlab-org/cli",
@@ -3674,6 +4262,20 @@
       "workaround": "Fix: fix(df): fail closed when the policy API stops answering. Applied in GitLab MR !4178. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4178)"
     },
     {
+      "applies_to": "ollama/ollama",
+      "created_at": "2026-10-22T22:37:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:29660fd8128f4210296c29b28a2bf8c833beded817eaf78dc80d6ea9b17b9116",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ollama_ollama_17118",
+      "submitted_by": "harvester-v1",
+      "symptom": "Intermittent /v1/responses stream closes during reasoning without a terminal event",
+      "target": "ollama",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: openai: preserve failures in Responses streams. Target files: middleware/openai.go, middleware/responses_errors_test.go, middleware/responses_web_search_test.go. When generation fails after `/v1/responses` starts streaming, HTTP 200 is already committed. The native `{\"error\":\"...\"}` envelope is decoded as an empty chat response, so clients receive EOF without a terminal failure event. Detect in-band generation errors and emit one `response.failed`. Preserve partial text, reasoning, and completed tool output; close unfinished ... (Ref: https://github.com/ollama/ollama/pull/19225)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-22T14:49:25Z",
       "environment_json": "{}",
@@ -4220,6 +4822,20 @@
       "workaround": "Fix: Fix unpickling of generic classes defined in separate module. Target files: pydantic/_internal/_generics.py, tests/test_forward_ref.py, tests/test_generics.py. Fixes https://github.com/pydantic/pydantic/issues/13991. (Ref: https://github.com/pydantic/pydantic/pull/13994)"
     },
     {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-10-13T17:29:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ccbe47b5cb2ea37d2a41bc7746ce5ee9d19ca006ddd1abb1293fb6ba4dbfacf0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_48841",
+      "submitted_by": "harvester-v1",
+      "symptom": "FSDP2: evaluate/predict on a fresh Trainer raises in Accelerator.prepare",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [docs] Context parallelism during eval. Target files: docs/source/en/deepspeed_alst.md, docs/source/en/fsdp.md. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=48663) (Ref: https://github.com/huggingface/transformers/pull/48663)"
+    },
+    {
       "applies_to": "modelcontextprotocol/python-sdk",
       "created_at": "2026-10-13T09:20:59Z",
       "environment_json": "{}",
@@ -4232,6 +4848,48 @@
       "target": "python-sdk",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Return invalid params for unknown prompts and missing arguments. Target files: src/mcp/server/mcpserver/prompts/base.py, src/mcp/server/mcpserver/prompts/manager.py, src/mcp/server/mcpserver/server.py. Closes [#3669](https://github.com/modelcontextprotocol/python-sdk/issues/3669). (Ref: https://github.com/modelcontextprotocol/python-sdk/pull/3696)"
+    },
+    {
+      "applies_to": "stanfordnlp/dspy",
+      "created_at": "2026-10-12T23:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1503eecadf122c464540d150b42ebb0d3a55ff60b46d4935c04a6235e16ce728",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_stanfordnlp_dspy_10625",
+      "submitted_by": "harvester-v1",
+      "symptom": "dspy 3.4.1: Fall back to no sub-agents when an interpreter rejects the facade shim with `SyntaxError` by @isaacbmiller ([#10625](https://github.com/stanfordnlp/dspy/pull/10625)).",
+      "target": "dspy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fall back to no sub-agents when an interpreter rejects the facade shim with `SyntaxError` by @isaacbmiller ([#10625](https://github.com/stanfordnlp/dspy/pull/10625)).. Upstream PR #10625. (Ref: https://github.com/stanfordnlp/dspy/pull/10625)"
+    },
+    {
+      "applies_to": "stanfordnlp/dspy",
+      "created_at": "2026-10-12T23:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e6d31efdcf991cc6db117c8bfa92c855321fad74ada746939e4082445f236497",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_stanfordnlp_dspy_10569",
+      "submitted_by": "harvester-v1",
+      "symptom": "dspy 3.4.1: `BetterTogether` raises a `ValueError` that names the student predictors without an LM. 3.4.0 failed later with `AttributeError: 'NoneType' object has no attribute 'launch'`. Call ",
+      "target": "dspy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: `BetterTogether` raises a `ValueError` that names the student predictors without an LM. 3.4.0 failed later with `AttributeError: 'NoneType' object has no attribute 'launch'`. Call `student.set_lm(lm)`; `dspy.configure(lm=...)` alone is not enough. [#10569](https://github.com/stanfordnlp/dspy/pull/10569). Upstream PR #10569. (Ref: https://github.com/stanfordnlp/dspy/pull/10569)"
+    },
+    {
+      "applies_to": "stanfordnlp/dspy",
+      "created_at": "2026-10-12T23:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:15486c6a0e0dd73c6919c11b91da021df92be8e235ee4ac5f890d90dabc8898e",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_stanfordnlp_dspy_10520",
+      "submitted_by": "harvester-v1",
+      "symptom": "dspy 3.4.1: Fix the 3.4.0 import crash `ImportError: cannot import name 'BaseModel' from partially initialized module 'openai._models'`, which could occur when DSPy lazily imported LiteLLM, fo",
+      "target": "dspy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix the 3.4.0 import crash `ImportError: cannot import name 'BaseModel' from partially initialized module 'openai._models'`, which could occur when DSPy lazily imported LiteLLM, for example through `dspy.LM(...).supports_function_calling`. [#10520](https://github.com/stanfordnlp/dspy/pull/10520). Upstream PR #10520. (Ref: https://github.com/stanfordnlp/dspy/pull/10520)"
     },
     {
       "applies_to": "cloudflare/workers-sdk",
@@ -4388,6 +5046,20 @@
       "workaround": "Fix: COR-891 Fix SQLite flow initialization contention. Target files: lib/crewai/pyproject.toml, lib/crewai/src/crewai/flow/persistence/sqlite.py, lib/crewai/tests/test_sqlite_connection_lifecycle.py. - - [COR-891: Prevent flow persistence initialization lock failures](https://linear.app/crewai/issue/COR-891/prevent-flow-persistence-initialization-lock-failures-during) - [COR-261: Concurrent flow module import races](https://linear.app/crewai/issue/COR-261/concurrent-flow-module-import-races-sqliteflowpersistenceinit-db) (Ref: https://github.com/crewAIInc/crewAI/pull/7821)"
     },
     {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-08T20:45:50Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:72ef86274c9bc2089fe37f9ca56011b8ce8d70407ce095aa6548081b4864feef",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23068",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: llama-index-vector-stores-qdrant caps requires-python at <3.14, blocking Python 3.14",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(qdrant): relax requires-python upper bound to allow Python 3.14. Target files: llama-index-integrations/vector_stores/llama-index-vector-stores-qdrant/pyproject.toml. `llama-index-vector-stores-qdrant` declares `requires-python = \">=3.10,<3.14\"`. Most sibling packages under `llama-index-integrations/vector_stores/*` (`deeplake`, `singlestoredb`, `alibabacloud-mysql`, `pgvecto-rs`, `relyt`, `opensearch`, \u2026) use `>=3.10,<4.0`, matching `llama-index-core`'s own `>=3.10,<4.0`, and this PR brings qdrant in line with th... (Ref: https://github.com/run-llama/llama_index/pull/23069)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-08T11:39:07Z",
       "environment_json": "{}",
@@ -4414,6 +5086,20 @@
       "target": "crewAI",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: fix(utilities): keep rwlock ownership when acquire is interrupted. Target files: lib/crewai/src/crewai/utilities/rw_lock.py, lib/crewai/tests/utilities/events/test_rw_lock.py. `r_locked()` and `w_locked()` called acquire inside the `try` that always releases in `finally`. If `Condition.wait()` is interrupted before acquire finishes, the context manager releases a lock it never held. The reader count can drop below zero, and the writer flag can be cleared while another writer still owns the lock. (Ref: https://github.com/crewAIInc/crewAI/pull/7944)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-06T19:11:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:acab5ccbed6d43baaa5492c371814c1e8fcf4a05665cdf5bb1acd60675f3e325",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23395",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Not able to update llama-index-llm-openai",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: deps(llama-index): update OpenAI dependency version constraints. Target files: pyproject.toml, uv.lock. This PR updates the OpenAI dependency version constraints to allow newer major versions of the OpenAI package. No new dependencies are introduced. . (Ref: https://github.com/run-llama/llama_index/pull/23353)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -4484,6 +5170,34 @@
       "target": "pydantic",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: Handle OS errors during `ZoneInfo` validation. Target files: pydantic/_internal/_validators.py, tests/test_types_zoneinfo.py, tests/types/test_zoneinfo.py. Fixes https://github.com/pydantic/pydantic/issues/13908. (Ref: https://github.com/pydantic/pydantic/pull/13912)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-01T18:39:47Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e8d83d53409c46c4770df6ee6b2b44c5c50e7b72fa58fff81bf84ac210372b11",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23325",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: llama-index-embeddings-azure-openai 0.6.0 is still dependent on llama-index-llms-azure-openai>=0.4.0,<0.6",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(azure-openai): update embeddings llm dependency bound (#23325). Target files: llama-index-integrations/embeddings/llama-index-embeddings-azure-openai/pyproject.toml, llama-index-integrations/embeddings/llama-index-embeddings-azure-openai/uv.lock. Update `llama-index-embeddings-azure-openai` from `llama-index-llms-azure-openai>=0.4.0,<0.6` to `>=0.4.0,<0.7`. Also bump the integration to `0.6.1` and refresh its lockfile (`uv lock`). (Ref: https://github.com/run-llama/llama_index/pull/23327)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-10-01T18:02:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:03fca997c8d9dab97813f5bd850db83d39505d55b7a090015213a968619e5e9e",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23247",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: `llama-index-llms-openai-like` blocks `llama-index-llms-openai` 0.8.x",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai-like): support `llama-index-llms-openai` `0.8.x`. Target files: llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml, llama-index-integrations/llms/llama-index-llms-openai-like/uv.lock. Update `llama-index-llms-openai-like` from `llama-index-llms-openai>=0.7.0,<0.8` to `>=0.8.0,<0.9`. Also bump the integration to `0.8.1` and refresh its lockfile (`uv lock`). (Ref: https://github.com/run-llama/llama_index/pull/23249)"
     },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
@@ -4570,6 +5284,34 @@
       "workaround": "Fix: docs(client): correct token endpoint TLS citation. Target files: .changeset/correct-token-endpoint-tls-citation.md, packages/client/src/client/auth.ts, packages/client/src/client/authErrors.ts. The JSDoc for `assertSecureTokenEndpoint` and `InsecureTokenEndpointError` attributed the token-endpoint TLS check to SEP-2207, which covers OIDC-flavored refresh-token guidance. This change points the explanation to the MCP authorization specification's HTTPS requirement and describes the SDK's loopback exemption ... (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2768)"
     },
     {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-09-25T23:11:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4ece4ddb72b6272311ea02612b562170e06665f47f38488e9db8c853884ee5d2",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23222",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: llms-anthropic 0.12.0 rejects claude-opus-5-5 during metadata lookup and agent initialization",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(anthropic): add claude-opus-5-5 to model registry. Target files: llama-index-integrations/llms/llama-index-llms-anthropic/llama_index/llms/anthropic/utils.py, llama-index-integrations/llms/llama-index-llms-anthropic/pyproject.toml, llama-index-integrations/llms/llama-index-llms-anthropic/tests/test_anthropic_utils.py. `Anthropic(model=\"claude-opus-5-5\", ...)` raises `ValueError: Unknown model` as soon as `.metadata` is accessed, because `claude-opus-5-5` has no entry in `CLAUDE_MODELS` / `ANTHROPIC_MODELS` in `lla... (Ref: https://github.com/run-llama/llama_index/pull/23223)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-09-25T23:11:05Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:95f9e60c48899ea735de697f99c4b4188f95ae580a4a186bfce0a0219995a0bf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_23207",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Claude Opus 5.5 on Bedrock: BedrockConverse rejects its inference profile IDs, and structured_predict gets 400 on forced toolChoice",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock-converse): add Claude Opus 5.5 and stop forcing toolChoice, which Bedrock rejects for it. Target files: llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/base.py, llama-index-integrations/llms/llama-index-llms-bedrock-converse/llama_index/llms/bedrock_converse/utils.py, llama-index-integrations/llms/llama-index-llms-bedrock-converse/pyproject.toml. Thanks for #22451, which put Opus 5 into these lists on launch day. This does the same for Claude Opus 5.5, whic... (Ref: https://github.com/run-llama/llama_index/pull/23208)"
+    },
+    {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-09-25T19:41:22Z",
       "environment_json": "{}",
@@ -4610,6 +5352,34 @@
       "target": "litellm",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: fix(router): serve Responses turns from a sibling when the encrypted content origin has no boundary peer. Target files: litellm/router.py, litellm/router_utils/pre_call_checks/encrypted_content_affinity_check.py, tests/integration/_support/upstream.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/43015)"
+    },
+    {
+      "applies_to": "transformers",
+      "created_at": "2026-09-10T09:44:51.053247Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3929\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"5.10.0\", \"aliases\": [\"CVE-2026-9856\", \"GHSA-xrqw-3rrv-vx5w\"]}",
+      "fingerprint": "sha256:310539580d9d68be869f0b5ef42e9c721f92b732878b5b31df058375edfbe84b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3929",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3929] Transformers save_pretrained path traversal allows arbitrary file writes through chat template names (Affects transformers < 5.10.0)",
+      "target": "transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade transformers to patched release >= 5.10.0: pip install --upgrade 'transformers>=5.10.0' (Advisory: PYSEC-2026-3929)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-08-28T14:37:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:8133d606172c2baf95d3047e5729b03b2f77831db334b6f9dcc038a4b51d9de5",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2567",
+      "submitted_by": "harvester-v1",
+      "symptom": "TypedDict response_model ignores total=False and NotRequired, forcing every key to be required",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: consolidate 1.16.1 response correctness. Target files: instructor/batch/request.py, instructor/v2/core/response_model.py, instructor/v2/providers/bedrock/handlers.py. - preserve every Anthropic batch system instruction during request conversion - reject AWS-documented unsupported Bedrock schema constraints locally without misclassifying property names that resemble constraint keywords - preserve caller-owned Bedrock nested inference configuration and Gemini safety mappings during normalization - preserve `TypedDict`... (Ref: https://github.com/567-labs/instructor/pull/2566)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -4666,6 +5436,20 @@
       "target": "langchain",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade langchain to patched release >= 0.3.30: pip install --upgrade 'langchain>=0.3.30' (Advisory: PYSEC-2026-2555)"
+    },
+    {
+      "applies_to": "llama-index",
+      "created_at": "2026-07-13T14:36:34.041017Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2606\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.41\", \"aliases\": [\"CVE-2025-6211\", \"GHSA-5hq9-5r78-2gjh\", \"PYSEC-2026-1566\"]}",
+      "fingerprint": "sha256:0631dacd3b605efe6eadc29998e2183ca180599416dbba17aa4e71a4de5a3401",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2606",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2606] LlamaIndex vulnerable to data loss through hash collisions in its DocugamiReader class (Affects llama-index < 0.12.41)",
+      "target": "llama-index",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade llama-index to patched release >= 0.12.41: pip install --upgrade 'llama-index>=0.12.41' (Advisory: PYSEC-2026-2606)"
     },
     {
       "applies_to": "pydantic",
@@ -4778,6 +5562,20 @@
       "target": "uv",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade uv to patched release >= 0.11.15: pip install --upgrade 'uv>=0.11.15' (Advisory: GHSA-4gg8-gxpx-9rph)"
+    },
+    {
+      "applies_to": "langchain",
+      "created_at": "2026-05-13T15:29:30Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3644-q5cj-c5c7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.3.30\", \"aliases\": [\"CVE-2026-45134\", \"PYSEC-2026-2555\", \"PYSEC-2026-2560\", \"PYSEC-2026-2582\"]}",
+      "fingerprint": "sha256:2d74b54e5e1458a825e56e2e9efad9792401848cac7d1722d7de05c7438c1628",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3644_q5cj_c5c7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3644-q5cj-c5c7] LangSmith SDK: Public prompt pull deserializes untrusted manifests without trust boundary warning (Affects langchain < 0.3.30)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain to patched release >= 0.3.30: pip install --upgrade 'langchain>=0.3.30' (Advisory: GHSA-3644-q5cj-c5c7)"
     },
     {
       "applies_to": "langchain-core",
@@ -4918,6 +5716,20 @@
       "target": "langchain",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade langchain-core to patched release >= 1.2.22: pip install --upgrade 'langchain-core>=1.2.22' (Advisory: GHSA-qh6h-p6c9-ff54)"
+    },
+    {
+      "applies_to": "langgraph",
+      "created_at": "2026-03-05T20:19:49Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-g48c-2wqr-h844\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.0.10\", \"aliases\": [\"CVE-2026-28277\", \"PYSEC-2026-83\"]}",
+      "fingerprint": "sha256:34aebbae13af8d462bf3fea1b473a71d4556eeac2df15b0fe32bcb523f3c64c0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_g48c_2wqr_h844",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-g48c-2wqr-h844] LangGraph checkpoint loading has unsafe msgpack deserialization (Affects langgraph < 1.0.10)",
+      "target": "langgraph",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langgraph to patched release >= 1.0.10: pip install --upgrade 'langgraph>=1.0.10' (Advisory: GHSA-g48c-2wqr-h844)"
     },
     {
       "applies_to": "langgraph",
@@ -5088,6 +5900,20 @@
       "workaround": "Upgrade langchain to patched release >= 0.2.5: pip install --upgrade 'langchain>=0.2.5' (Advisory: GHSA-3hjh-jh2h-vrg6)"
     },
     {
+      "applies_to": "pydantic",
+      "created_at": "2024-04-15T03:31:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-mr82-8j83-vxmv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.4.0\", \"aliases\": [\"CVE-2024-3772\", \"PYSEC-2026-1812\"]}",
+      "fingerprint": "sha256:0a23f54e89da931f05b723ce9628ad46efb51f88ab715440cfeca6fc7d490352",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_mr82_8j83_vxmv",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-mr82-8j83-vxmv] Pydantic regular expression denial of service (Affects pydantic < 2.4.0)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 2.4.0: pip install --upgrade 'pydantic>=2.4.0' (Advisory: GHSA-mr82-8j83-vxmv)"
+    },
+    {
       "applies_to": "fastapi",
       "created_at": "2024-02-05T15:15:00Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2024-38\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.109.1\", \"aliases\": [\"CVE-2024-24762\", \"GHSA-2jv5-9r88-3w3p\", \"GHSA-qf9m-vfgh-m389\", \"PYSEC-2026-1850\"]}",
@@ -5184,6 +6010,20 @@
       "target": "pydantic",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade pydantic to patched release >= 1.8.2: pip install --upgrade 'pydantic>=1.8.2' (Advisory: GHSA-5jqp-qgf6-3pvh)"
+    },
+    {
+      "applies_to": "pydantic",
+      "created_at": "2021-05-13T19:15:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2021-47\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.8.2\", \"aliases\": [\"CVE-2021-29510\", \"GHSA-5jqp-qgf6-3pvh\"]}",
+      "fingerprint": "sha256:2578148ffc5f7c89521887fb616e208102e8b646b663b865d49e0033124daf68",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2021_47",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2021-47] Pydantic is a data validation and settings management using Python type hinting. In affected versions passing either `'infinity'`, `'inf'` or `float('inf')` ... (Affects pydantic < 1.8.2)",
+      "target": "pydantic",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pydantic to patched release >= 1.8.2: pip install --upgrade 'pydantic>=1.8.2' (Advisory: PYSEC-2021-47)"
     }
   ]
 }
