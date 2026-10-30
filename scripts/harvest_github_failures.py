@@ -40,6 +40,8 @@ except Exception:
             return text
 
 TARGET_REPOS = [
+    "confident-ai/deepeval",
+    "huggingface/smolagents",
     "pydantic/pydantic-ai",
     "modelcontextprotocol/python-sdk",
     "modelcontextprotocol/typescript-sdk",
@@ -66,6 +68,8 @@ TARGET_REPOS = [
 ]
 
 REPO_TARGET_MAP = {
+    "confident-ai/deepeval": "deepeval",
+    "huggingface/smolagents": "smolagents",
     "pydantic/pydantic-ai": "pydantic-ai",
     "modelcontextprotocol/servers": "mcp",
     "modelcontextprotocol/python-sdk": "mcp",
