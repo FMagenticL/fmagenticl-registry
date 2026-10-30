@@ -40,6 +40,8 @@ except Exception:
             return text
 
 TARGET_REPOS = [
+    "mem0ai/mem0",
+    "browser-use/browser-use",
     "confident-ai/deepeval",
     "huggingface/smolagents",
     "pydantic/pydantic-ai",
@@ -68,6 +70,8 @@ TARGET_REPOS = [
 ]
 
 REPO_TARGET_MAP = {
+    "mem0ai/mem0": "mem0",
+    "browser-use/browser-use": "browser-use",
     "confident-ai/deepeval": "deepeval",
     "huggingface/smolagents": "smolagents",
     "pydantic/pydantic-ai": "pydantic-ai",
