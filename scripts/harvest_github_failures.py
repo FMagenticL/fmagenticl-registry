@@ -40,6 +40,7 @@ except Exception:
             return text
 
 TARGET_REPOS = [
+    "run-llama/llama-agents",
     "camel-ai/camel",
     "agno-agi/agno",
     "mem0ai/mem0",
@@ -72,6 +73,7 @@ TARGET_REPOS = [
 ]
 
 REPO_TARGET_MAP = {
+    "run-llama/llama-agents": "llama-agents",
     "camel-ai/camel": "camel",
     "agno-agi/agno": "agno",
     "mem0ai/mem0": "mem0",
