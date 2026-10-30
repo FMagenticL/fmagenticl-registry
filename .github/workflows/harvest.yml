@@ -2,8 +2,8 @@ name: Automated Registry Harvest
 
 on:
   schedule:
-    # Run every 6 hours, offset by 17 minutes to avoid GitHub's peak-load queue drops
-    - cron: '17 */6 * * *'
+    # Run hourly at 11 minutes past the hour to avoid queue drops and agent polling bursts
+    - cron: '11 * * * *'
   workflow_dispatch: # Allow manual trigger from the Actions tab
 
 permissions:
@@ -97,7 +97,7 @@ jobs:
         run: |
           git config --global user.name "FMagenticL Harvester Bot"
           git config --global user.email "harvester@fmagenticl-registry.pages.dev"
-          git commit -m "[BOT] chore(harvest): automated GitHub issue harvesting and patch promotion"
+          git commit -m "[BOT] chore(harvest): automated hourly harvesting and patch promotion"
           git pull --rebase origin main || (git rebase --abort && git pull --no-rebase origin main)
           git push origin main
 
