@@ -92,3 +92,7 @@ build_google_photos_exports.py
 candidates.json
 temp_promote_d1.sql
 sandbox/
+
+# Proprietary Team Playbook (Local Only)
+PLAYBOOK.md
+PLAYBOOK_*.md
