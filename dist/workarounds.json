@@ -1,7 +1,35 @@
 {
-  "count": 215,
-  "generated_at": "2026-10-29T22:47:24Z",
+  "count": 218,
+  "generated_at": "2026-10-30T05:52:11Z",
   "grievances": [
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-30T02:12:31Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cec2d4c92e1731abb7e057a59db4caf6fb9bdfafc750a764a649de4bf22f1fc8",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_45671",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Claude models on Vertex AI fail at batch creation (404 batchPredictionJobs) \u2014 OpenAI batch translation doesn't cover Anthropic's native schema",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vertex_ai): batch Claude models in Anthropic's native row shape. Target files: litellm/llms/vertex_ai/batches/handler.py, litellm/llms/vertex_ai/batches/transformation.py, litellm/llms/vertex_ai/files/transformation.py. Claude on Vertex AI now runs through LiteLLM's managed batch route, which used to 404 at create. Lines go to Vertex as Anthropic Messages rows and come back as priced OpenAI batch rows (Ref: https://github.com/BerriAI/litellm/pull/45715)"
+    },
+    {
+      "applies_to": "gitlab-org/cli",
+      "created_at": "2026-10-29T23:56:56.113Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:fd14a4a43c8c668f2280a2efff443d1e14907d048846cec1e0d25ef3a5b261e5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "gitlab-merged-mr",
+      "id": "grv_gl_gitlab-org_cli_4255",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(release): report a failed close and remove a partial asset",
+      "target": "gitlab-cli",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(release): report a failed close and remove a partial asset. Applied in GitLab MR !4255. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4255)"
+    },
     {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-29T22:25:38Z",
@@ -2185,6 +2213,20 @@
       "target": "llama-index",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(openai-like): support `llama-index-llms-openai` `0.8.x`. Target files: llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml, llama-index-integrations/llms/llama-index-llms-openai-like/uv.lock. Update `llama-index-llms-openai-like` from `llama-index-llms-openai>=0.7.0,<0.8` to `>=0.8.0,<0.9`. Also bump the integration to `0.8.1` and refresh its lockfile (`uv lock`). (Ref: https://github.com/run-llama/llama_index/pull/23249)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-01T02:11:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d29e21a9e3a8e0e254e837d5c2f3095078f2fb725f3fcde7cee4ab892fb94539",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_54437",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: structured output can sample unconstrained tokens when the draft hand-off goes stale (spec decode + async scheduling + PP)",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Don't let a structured-output request sample from an unmasked row. Target files: vllm/v1/core/sched/output.py, vllm/v1/core/sched/scheduler.py, vllm/v1/worker/gpu/model_runner.py. > This pull request was developed and reviewed with support from the Linux Club of Peking University (LCPU). For questions, please contact [REDACTED] (Ref: https://github.com/vllm-project/vllm/pull/54442)"
     },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
@@ -3016,6 +3058,34 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-30T02:12:31Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cec2d4c92e1731abb7e057a59db4caf6fb9bdfafc750a764a649de4bf22f1fc8",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_45671",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Claude models on Vertex AI fail at batch creation (404 batchPredictionJobs) \u2014 OpenAI batch translation doesn't cover Anthropic's native schema",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vertex_ai): batch Claude models in Anthropic's native row shape. Target files: litellm/llms/vertex_ai/batches/handler.py, litellm/llms/vertex_ai/batches/transformation.py, litellm/llms/vertex_ai/files/transformation.py. Claude on Vertex AI now runs through LiteLLM's managed batch route, which used to 404 at create. Lines go to Vertex as Anthropic Messages rows and come back as priced OpenAI batch rows (Ref: https://github.com/BerriAI/litellm/pull/45715)"
+    },
+    {
+      "applies_to": "gitlab-org/cli",
+      "created_at": "2026-10-29T23:56:56.113Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:fd14a4a43c8c668f2280a2efff443d1e14907d048846cec1e0d25ef3a5b261e5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "gitlab-merged-mr",
+      "id": "grv_gl_gitlab-org_cli_4255",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(release): report a failed close and remove a partial asset",
+      "target": "gitlab-cli",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(release): report a failed close and remove a partial asset. Applied in GitLab MR !4255. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4255)"
+    },
+    {
       "applies_to": "astral-sh/uv",
       "created_at": "2026-10-29T22:25:38Z",
       "environment_json": "{}",
@@ -5198,6 +5268,20 @@
       "target": "llama-index",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(openai-like): support `llama-index-llms-openai` `0.8.x`. Target files: llama-index-integrations/llms/llama-index-llms-openai-like/pyproject.toml, llama-index-integrations/llms/llama-index-llms-openai-like/uv.lock. Update `llama-index-llms-openai-like` from `llama-index-llms-openai>=0.7.0,<0.8` to `>=0.8.0,<0.9`. Also bump the integration to `0.8.1` and refresh its lockfile (`uv lock`). (Ref: https://github.com/run-llama/llama_index/pull/23249)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-01T02:11:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d29e21a9e3a8e0e254e837d5c2f3095078f2fb725f3fcde7cee4ab892fb94539",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_54437",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: structured output can sample unconstrained tokens when the draft hand-off goes stale (spec decode + async scheduling + PP)",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Don't let a structured-output request sample from an unmasked row. Target files: vllm/v1/core/sched/output.py, vllm/v1/core/sched/scheduler.py, vllm/v1/worker/gpu/model_runner.py. > This pull request was developed and reviewed with support from the Linux Club of Peking University (LCPU). For questions, please contact [REDACTED] (Ref: https://github.com/vllm-project/vllm/pull/54442)"
     },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",

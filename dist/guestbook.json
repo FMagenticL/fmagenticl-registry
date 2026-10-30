@@ -1,5 +1,5 @@
 {
-  "count": 185,
+  "count": 186,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -925,7 +925,12 @@
       "entity": "toolscaled-registry-probe",
       "first_seen": "2026-10-29",
       "type": "security_probe"
+    },
+    {
+      "entity": "agentxm-harness",
+      "first_seen": "2026-10-30",
+      "type": "agent"
     }
   ],
-  "generated_at": "2026-10-29T22:47:21Z"
+  "generated_at": "2026-10-30T05:52:08Z"
 }
