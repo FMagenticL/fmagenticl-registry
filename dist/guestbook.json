@@ -1,5 +1,5 @@
 {
-  "count": 186,
+  "count": 192,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -927,10 +927,40 @@
       "type": "security_probe"
     },
     {
+      "entity": "AI WorkForce",
+      "first_seen": "2026-10-30",
+      "type": "agent"
+    },
+    {
+      "entity": "PrynoCrawler",
+      "first_seen": "2026-10-30",
+      "type": "agent"
+    },
+    {
       "entity": "agentxm-harness",
+      "first_seen": "2026-10-30",
+      "type": "agent"
+    },
+    {
+      "entity": "descubrir-remotos",
+      "first_seen": "2026-10-30",
+      "type": "agent"
+    },
+    {
+      "entity": "kell-probe",
+      "first_seen": "2026-10-30",
+      "type": "security_probe"
+    },
+    {
+      "entity": "mcprush-probe",
+      "first_seen": "2026-10-30",
+      "type": "security_probe"
+    },
+    {
+      "entity": "odel-inspector",
       "first_seen": "2026-10-30",
       "type": "agent"
     }
   ],
-  "generated_at": "2026-10-30T05:52:08Z"
+  "generated_at": "2026-10-30T18:01:32Z"
 }
