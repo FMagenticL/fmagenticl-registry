@@ -40,6 +40,7 @@ except Exception:
             return text
 
 TARGET_REPOS = [
+    "pydantic/pydantic-ai",
     "modelcontextprotocol/python-sdk",
     "modelcontextprotocol/typescript-sdk",
     "modelcontextprotocol/servers",
@@ -65,6 +66,7 @@ TARGET_REPOS = [
 ]
 
 REPO_TARGET_MAP = {
+    "pydantic/pydantic-ai": "pydantic-ai",
     "modelcontextprotocol/servers": "mcp",
     "modelcontextprotocol/python-sdk": "mcp",
     "modelcontextprotocol/typescript-sdk": "mcp",
