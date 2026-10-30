@@ -333,3 +333,22 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 
 ---
 
+## Telemetry Entry — 2026-10-30T00:00:13Z
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now)
+- **Total Requests:** 13,253
+- **Total Bandwidth:** 59.62 MB
+- **Status Codes:** 2xx: 11,753 | 4xx: 434 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 986
+- **Top Paths:** [`/mcp` (8,324), `/` (598), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/robots.txt` (272), `/favicon.ico` (202), `/.well-known/agent-card.json` (193), `/a131c452f3a08d3c89206e2b8fdb5908` (178), `/.well-known/agent.json` (174), `/grievances.json` (171)]
+- **Top Countries:** [US (5,857), FI (1,878), DE (1,140), KY (1,113), FR (842)]
+- **D1 State:** 11 Telemetry Submissions (85 Compiled Patches), 215 Grievances, 179 Guestbook Entities (visits)
+
+### ⚡ LAST 4 HOURS (Post-Fix)
+- **Total Requests:** 385
+- **Status Codes:** 2xx: 340 | 4xx: 10 | 5xx (Runtime Crashes): 0
+- **504 Deployment Timeouts (origin: 0):** 35
+- **Top Paths:** [`/mcp` (273), `/a131c452f3a08d3c89206e2b8fdb5908` (25), `/` (13), `/robots.txt` (8), `/llms.txt` (6), `/workarounds.json` (5), `/.well-known/agent.json` (5), `/registry.json` (5), `/.well-known/agent-card.json` (4), `/825af577fbce131764e4c577fbf4b35c` (4)]
+
+---
+
