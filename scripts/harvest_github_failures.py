@@ -40,6 +40,8 @@ except Exception:
             return text
 
 TARGET_REPOS = [
+    "camel-ai/camel",
+    "agno-agi/agno",
     "mem0ai/mem0",
     "browser-use/browser-use",
     "confident-ai/deepeval",
@@ -70,6 +72,8 @@ TARGET_REPOS = [
 ]
 
 REPO_TARGET_MAP = {
+    "camel-ai/camel": "camel",
+    "agno-agi/agno": "agno",
     "mem0ai/mem0": "mem0",
     "browser-use/browser-use": "browser-use",
     "confident-ai/deepeval": "deepeval",
