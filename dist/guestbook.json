@@ -1,5 +1,5 @@
 {
-  "count": 198,
+  "count": 199,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -987,10 +987,15 @@
       "type": "security_probe"
     },
     {
+      "entity": "juno-registry",
+      "first_seen": "2026-10-31",
+      "type": "agent"
+    },
+    {
       "entity": "lazaretto-scanner",
       "first_seen": "2026-10-31",
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-31T15:45:19Z"
+  "generated_at": "2026-10-31T19:59:32Z"
 }
