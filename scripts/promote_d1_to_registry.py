@@ -360,15 +360,17 @@ def process_candidates(
         report["grievances_approved"].append(grv_out)
 
     # 3. Apply changes if requested
+    is_real_repo = (Path(repo_root).resolve() == REPO_ROOT.resolve()) and not os.environ.get("PYTEST_CURRENT_TEST")
     if not dry_run:
-        if report["patches_approved"]:
+        if report["patches_approved"] and is_real_repo:
             from scripts.build_distribution import build
             build()
-            try:
-                from scripts.build_guestbook import main as build_guestbook_main
-                build_guestbook_main()
-            except Exception:
-                pass
+            if is_real_repo:
+                try:
+                    from scripts.build_guestbook import main as build_guestbook_main
+                    build_guestbook_main()
+                except Exception:
+                    pass
 
         if report["grievances_approved"]:
             grv_file = repo_root / "dist" / "grievances.json"
