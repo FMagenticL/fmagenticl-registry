@@ -1,110 +1,112 @@
-name: Automated Registry Harvest
-
-on:
-  schedule:
-    # Run hourly at 11 minutes past the hour to avoid queue drops and agent polling bursts
-    - cron: '11 * * * *'
-  workflow_dispatch: # Allow manual trigger from the Actions tab
-
-permissions:
-  contents: write
-
-jobs:
-  harvest-and-promote:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Set up Node.js (for Wrangler D1 updates)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install cryptography pybloom-live httpx
-          npm install -g wrangler
-
-      - name: Run GitHub Harvester
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Harvests up to 10 issues per repo to avoid rate limits
-          python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
-
-      - name: Run OSV Advisory Harvester
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          python scripts/harvest_osv_advisories.py
-
-      - name: Run Harvest Orchestrator (Multi-Source Live D1)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          python scripts/harvest_orchestrator.py --live-d1
-
-      - name: Promote Harvested Candidates
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          # Promotes candidates to patches/ and updates D1
-          python scripts/promote_d1_to_registry.py --source-json harvested_candidates.json --apply
-
-      - name: Rebuild Guestbook & Distribution
-        env:
-          FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          python scripts/export_db_to_static.py
-          python scripts/build_guestbook.py
-          python scripts/build_distribution.py
-
-      - name: Stage Changes & Run CI Seatbelts
-        id: seatbelt-step
-        run: |
-          git add patches/ dist/ fmagenticl/server/seed_hermes.py
-          if git diff --staged --quiet; then
-            echo "No changes staged. Skipping test gates."
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          else
-            echo "Changes detected. Running load-bearing CI seatbelt gates..."
-            python scripts/air_gap_scan.py --staged
-            python -m pytest tests/test_promote_d1.py -v
-            python -m pytest tests/test_osv_harvester.py -v
-            python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit and Push Changes
-        if: steps.seatbelt-step.outputs.has_changes == 'true'
-        run: |
-          git config --global user.name "FMagenticL Harvester Bot"
-          git config --global user.email "harvester@fmagenticl-registry.pages.dev"
-          git commit -m "[BOT] chore(harvest): automated hourly harvesting and patch promotion"
-          git pull --rebase origin main || (git rebase --abort && git pull --no-rebase origin main)
-          git push origin main
-
-      - name: Deploy to Cloudflare Pages CDN
-        if: steps.seatbelt-step.outputs.has_changes == 'true'
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          npx wrangler pages deploy dist --project-name=fmagenticl-registry --branch=main
+name: Automated Registry Harvest
+
+on:
+  schedule:
+    # Run hourly at 11 minutes past the hour to avoid queue drops and agent polling bursts
+    - cron: '11 * * * *'
+  workflow_dispatch: # Allow manual trigger from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  harvest-and-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js (for Wrangler D1 updates)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install cryptography pybloom-live httpx
+          npm install -g wrangler
+
+      - name: Run GitHub Harvester
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Harvests up to 10 issues per repo to avoid rate limits
+          python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
+
+      - name: Run OSV Advisory Harvester
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python scripts/harvest_osv_advisories.py
+
+      - name: Run Harvest Orchestrator (Multi-Source Live D1)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python scripts/harvest_orchestrator.py --live-d1
+
+      - name: Promote Harvested Candidates
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Promotes candidates to patches/ and updates D1
+          python scripts/promote_d1_to_registry.py --source-json harvested_candidates.json --apply
+
+      - name: Rebuild Guestbook & Distribution
+        env:
+          FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python scripts/export_db_to_static.py
+          python scripts/build_guestbook.py
+          python scripts/build_distribution.py
+
+      - name: Stage Changes & Run CI Seatbelts
+        id: seatbelt-step
+        run: |
+          git add patches/ dist/ fmagenticl/server/seed_hermes.py
+          if git diff --staged --quiet; then
+            echo "No changes staged. Skipping test gates."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected. Running load-bearing CI seatbelt gates..."
+            python scripts/air_gap_scan.py --staged
+            python -m pytest tests/test_promote_d1.py -v
+            python -m pytest tests/test_osv_harvester.py -v
+            python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and Push Changes
+        if: steps.seatbelt-step.outputs.has_changes == 'true'
+        run: |
+          git config --global user.name "FMagenticL Harvester Bot"
+          git config --global user.email "harvester@fmagenticl-registry.pages.dev"
+          git checkout -B main
+          git commit -m "[BOT] chore(harvest): automated hourly harvesting and patch promotion" || echo "No changes to commit"
+          git pull --rebase origin main || (git rebase --abort && git pull --no-rebase origin main)
+          git push origin main
+
+      - name: Deploy to Cloudflare Pages CDN
+        if: steps.seatbelt-step.outputs.has_changes == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx wrangler pages deploy dist --project-name=fmagenticl-registry --branch=main
