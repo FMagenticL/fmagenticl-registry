@@ -1,5 +1,5 @@
 {
-  "count": 192,
+  "count": 198,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -942,6 +942,16 @@
       "type": "agent"
     },
     {
+      "entity": "aisonar",
+      "first_seen": "2026-10-30",
+      "type": "agent"
+    },
+    {
+      "entity": "cre-brain-catalog-check",
+      "first_seen": "2026-10-30",
+      "type": "crawler"
+    },
+    {
       "entity": "descubrir-remotos",
       "first_seen": "2026-10-30",
       "type": "agent"
@@ -960,7 +970,27 @@
       "entity": "odel-inspector",
       "first_seen": "2026-10-30",
       "type": "agent"
+    },
+    {
+      "entity": "xenovia-mcp-index",
+      "first_seen": "2026-10-30",
+      "type": "crawler"
+    },
+    {
+      "entity": "central-pro-mcp-probe",
+      "first_seen": "2026-10-31",
+      "type": "security_probe"
+    },
+    {
+      "entity": "forge-registry-probe",
+      "first_seen": "2026-10-31",
+      "type": "security_probe"
+    },
+    {
+      "entity": "lazaretto-scanner",
+      "first_seen": "2026-10-31",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-30T18:01:32Z"
+  "generated_at": "2026-10-31T15:45:19Z"
 }
