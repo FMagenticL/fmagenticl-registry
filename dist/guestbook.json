@@ -1,5 +1,5 @@
 {
-  "count": 199,
+  "count": 201,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -982,6 +982,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "flowy-probe",
+      "first_seen": "2026-10-31",
+      "type": "security_probe"
+    },
+    {
       "entity": "forge-registry-probe",
       "first_seen": "2026-10-31",
       "type": "security_probe"
@@ -995,7 +1000,12 @@
       "entity": "lazaretto-scanner",
       "first_seen": "2026-10-31",
       "type": "security_probe"
+    },
+    {
+      "entity": "mcpprobe",
+      "first_seen": "2026-10-31",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-31T19:59:32Z"
+  "generated_at": "2026-10-31T23:24:07Z"
 }
