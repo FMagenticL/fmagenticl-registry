@@ -1,5 +1,5 @@
 {
-  "count": 201,
+  "count": 205,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -977,6 +977,11 @@
       "type": "crawler"
     },
     {
+      "entity": "calledfirst",
+      "first_seen": "2026-10-31",
+      "type": "agent"
+    },
+    {
       "entity": "central-pro-mcp-probe",
       "first_seen": "2026-10-31",
       "type": "security_probe"
@@ -1005,7 +1010,22 @@
       "entity": "mcpprobe",
       "first_seen": "2026-10-31",
       "type": "security_probe"
+    },
+    {
+      "entity": "mcpreflight",
+      "first_seen": "2026-11-01",
+      "type": "agent"
+    },
+    {
+      "entity": "measure-mcp-schema",
+      "first_seen": "2026-11-01",
+      "type": "agent"
+    },
+    {
+      "entity": "strand-mcp-probe",
+      "first_seen": "2026-11-01",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-10-31T23:24:07Z"
+  "generated_at": "2026-11-01T06:00:17Z"
 }
