@@ -1,5 +1,5 @@
 {
-  "count": 210,
+  "count": 211,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1017,6 +1017,11 @@
       "type": "agent"
     },
     {
+      "entity": "cre-brain",
+      "first_seen": "2026-11-01",
+      "type": "agent"
+    },
+    {
       "entity": "koskamo-mcp-directory-check",
       "first_seen": "2026-11-01",
       "type": "crawler"
@@ -1052,5 +1057,5 @@
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-01T13:18:39Z"
+  "generated_at": "2026-11-01T22:49:41Z"
 }
