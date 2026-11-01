@@ -1,5 +1,5 @@
 {
-  "count": 205,
+  "count": 210,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1012,6 +1012,21 @@
       "type": "security_probe"
     },
     {
+      "entity": "agent2agent-hub",
+      "first_seen": "2026-11-01",
+      "type": "agent"
+    },
+    {
+      "entity": "koskamo-mcp-directory-check",
+      "first_seen": "2026-11-01",
+      "type": "crawler"
+    },
+    {
+      "entity": "lastseen-migration-watch",
+      "first_seen": "2026-11-01",
+      "type": "crawler"
+    },
+    {
       "entity": "mcpreflight",
       "first_seen": "2026-11-01",
       "type": "agent"
@@ -1022,10 +1037,20 @@
       "type": "agent"
     },
     {
+      "entity": "registry-ecology-observer",
+      "first_seen": "2026-11-01",
+      "type": "agent"
+    },
+    {
       "entity": "strand-mcp-probe",
+      "first_seen": "2026-11-01",
+      "type": "security_probe"
+    },
+    {
+      "entity": "trimtab-verifier",
       "first_seen": "2026-11-01",
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-01T06:00:17Z"
+  "generated_at": "2026-11-01T13:18:39Z"
 }
