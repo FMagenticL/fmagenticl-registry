@@ -1,7 +1,21 @@
 {
-  "count": 280,
-  "generated_at": "2026-10-31T23:24:09Z",
+  "count": 281,
+  "generated_at": "2026-11-01T18:57:20Z",
   "grievances": [
+    {
+      "applies_to": "agno-agi/agno",
+      "created_at": "2026-11-01T14:28:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cb9a6be3ae38689bc5002fb7ac03e69c41f1611655a853fe87338e8782fb8ff7",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_agno-agi_agno_10507",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] Async YouTube Knowledge ingestion fails on the name argument",
+      "target": "agno",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: accept the name argument in YouTubeReader.async_read. Target files: libs/agno/agno/knowledge/reader/youtube_reader.py, libs/agno/tests/unit/reader/test_youtube_reader.py. `YouTubeReader.async_read()` accepted only `url`, while the synchronous `YouTubeReader.read()` accepts an optional `name` and uses it as the document name. `Knowledge._aload_from_url()` (the async URL path in `libs/agno/agno/knowledge/knowledge.py`) calls `await reader.async_read(content.url, name=name)`, so every async YouTube URL ingestion stopped at ... (Ref: https://github.com/agno-agi/agno/pull/11417)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-31T23:12:31Z",
@@ -3925,6 +3939,20 @@
   ],
   "version": "1.0.0",
   "workarounds": [
+    {
+      "applies_to": "agno-agi/agno",
+      "created_at": "2026-11-01T14:28:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cb9a6be3ae38689bc5002fb7ac03e69c41f1611655a853fe87338e8782fb8ff7",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_agno-agi_agno_10507",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] Async YouTube Knowledge ingestion fails on the name argument",
+      "target": "agno",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: accept the name argument in YouTubeReader.async_read. Target files: libs/agno/agno/knowledge/reader/youtube_reader.py, libs/agno/tests/unit/reader/test_youtube_reader.py. `YouTubeReader.async_read()` accepted only `url`, while the synchronous `YouTubeReader.read()` accepts an optional `name` and uses it as the document name. `Knowledge._aload_from_url()` (the async URL path in `libs/agno/agno/knowledge/knowledge.py`) calls `await reader.async_read(content.url, name=name)`, so every async YouTube URL ingestion stopped at ... (Ref: https://github.com/agno-agi/agno/pull/11417)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-10-31T23:12:31Z",
