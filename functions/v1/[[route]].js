@@ -469,7 +469,7 @@ async function handleHello(request, env) {
 
   } catch (e) {
 
-    return json({ status: 'ignored', reason: 'db_error' }, 202);
+    return json({ error: 'db_error', detail: e.message }, 500);
 
   }
 

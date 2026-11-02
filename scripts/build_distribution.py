@@ -184,26 +184,37 @@ def build():
             json.dump(registry_data, f, indent=2, sort_keys=True)
 
     # 6. Dynamic Health & Census Manifests (/v1/health and /health)
-    workarounds_count = 0
+    workarounds_items = []
     for w_name in ["dist/workarounds.json", "dist/grievances.json"]:
         w_path = Path(w_name)
         if w_path.exists():
             try:
                 w_data = json.loads(w_path.read_text(encoding="utf-8"))
-                workarounds_count = w_data.get("count") or len(w_data.get("workarounds", []))
-                if workarounds_count > 0:
+                workarounds_items = w_data.get("workarounds", [])
+                if workarounds_items:
                     break
             except Exception:
                 pass
 
-    total_curated_entries = len(patches) + workarounds_count
+    total_grievances_count = len(workarounds_items)
+    # Honest accounting: separate human/forensic-verified cures from automated bot-harvested issues
+    human_and_forensic_submitters = {"capitan", "deepseek-v4.1", "argon-4", "gemini-3.7-flash", "gemini-3-flash", "sonnet-4-6"}
+    verified_workarounds_count = sum(
+        1 for item in workarounds_items
+        if item.get("submitted_by") in human_and_forensic_submitters
+        or item.get("verification_tier") == "internal_forensic_verified"
+    )
+    bot_harvested_count = total_grievances_count - verified_workarounds_count
+
+    total_curated_entries = len(patches) + total_grievances_count
     health_payload = {
         "status": "ok",
         "protocol_version": "1.3.1",
         "total_entries": total_curated_entries,
         "compiled_patches": len(patches),
-        "verified_workarounds": workarounds_count,
-        "total_grievances": workarounds_count,
+        "verified_workarounds": verified_workarounds_count,
+        "total_grievances": total_grievances_count,
+        "bot_harvested_grievances": bot_harvested_count,
         "updated_at": now_iso,
     }
     health_bytes = json.dumps(health_payload, separators=(",", ":")).encode("utf-8")
@@ -250,7 +261,7 @@ def build():
         with open(p, "wb") as f:
             f.write(authz_bytes)
 
-    print(f"SUCCESS: Distribution built: {len(patches)} patches, {workarounds_count} workarounds (total: {total_curated_entries}) compiled to dist/.")
+    print(f"SUCCESS: Distribution built: {len(patches)} patches, {verified_workarounds_count} verified workarounds ({total_grievances_count} grievances) (total: {total_curated_entries}) compiled to dist/.")
 
 if __name__ == "__main__":
     build()

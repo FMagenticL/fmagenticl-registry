@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-FMagenticL - Automated Cloudflare Analytics & D1 Telemetry Fetcher
+FMagenticL - Automated Cloudflare Analytics & D1 Telemetry Fetcher (Honest Accounting)
 Queries the Cloudflare GraphQL API (httpRequestsAdaptiveGroups) for:
   1. Historical Window: 2026-10-23T00:00:00Z to now
   2. Recent Window: now-4h to now
-Extracts total requests, bandwidth, status codes (2xx, 4xx, genuine 5xx runtime crashes),
-504 deployment cold-swap timeouts (originResponseStatus: 0), top 10 paths,
-top 5 countries, and live D1 database counts.
+Extracts total requests, bandwidth, status codes (2xx, 3xx, 4xx, 5xx server/gateway errors),
+explicit 504 timeouts (tracked as 5xx subtype, never subtracted or masked), top paths,
+5xx error paths, top countries, and live D1 database counts.
 """
 
 import os
@@ -92,6 +92,22 @@ query {{
           clientRequestPath
         }}
       }}
+      errorsByPath: httpRequestsAdaptiveGroups(
+        limit: 25
+        filter: {{
+          datetime_geq: "{start_iso}"
+          datetime_leq: "{end_iso}"
+          edgeResponseStatus_geq: 500
+          edgeResponseStatus_lt: 600
+        }}
+        orderBy: [count_DESC]
+      ) {{
+        count
+        dimensions {{
+          clientRequestPath
+          edgeResponseStatus
+        }}
+      }}
       countries: httpRequestsAdaptiveGroups(
         limit: 25
         filter: {{
@@ -115,7 +131,7 @@ def execute_graphql(query: str, token: str) -> dict:
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "User-Agent": "FMagenticL-Analytics-Fetcher/1.2",
+        "User-Agent": "FMagenticL-Analytics-Fetcher/1.3",
     }
     payload = json.dumps({"query": query}).encode("utf-8")
     req = urllib.request.Request(GRAPHQL_ENDPOINT, data=payload, headers=headers, method="POST")
@@ -161,9 +177,11 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
     c_2xx = 0
     c_3xx = 0
     c_4xx = 0
-    c_5xx_crashes = 0
-    c_504_deploy = 0
+    c_5xx_total = 0
+    c_504 = 0
+    c_5xx_other = 0
     path_counts = Counter()
+    error_path_counts = Counter()
     country_counts = Counter()
 
     for s_res in slices_data:
@@ -181,7 +199,6 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
         for item in acc.get("statusCodes", []):
             dims = item.get("dimensions", {}) or {}
             status = dims.get("edgeResponseStatus", 0)
-            origin_status = dims.get("originResponseStatus", 0)
             reqs = item.get("count", 0) or 0
             if 200 <= status < 300:
                 c_2xx += reqs
@@ -190,10 +207,11 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
             elif 400 <= status < 500:
                 c_4xx += reqs
             elif 500 <= status < 600:
-                if status == 504 and origin_status == 0:
-                    c_504_deploy += reqs
+                c_5xx_total += reqs
+                if status == 504:
+                    c_504 += reqs
                 else:
-                    c_5xx_crashes += reqs
+                    c_5xx_other += reqs
 
         for item in acc.get("paths", []):
             dims = item.get("dimensions", {}) or {}
@@ -201,11 +219,20 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
             reqs = item.get("count", 0) or 0
             path_counts[path] += reqs
 
+        for item in acc.get("errorsByPath", []):
+            dims = item.get("dimensions", {}) or {}
+            path = dims.get("clientRequestPath") or "/"
+            code = dims.get("edgeResponseStatus", 500)
+            reqs = item.get("count", 0) or 0
+            error_path_counts[f"{path} ({code})"] += reqs
+
         for item in acc.get("countries", []):
             dims = item.get("dimensions", {}) or {}
             country = dims.get("clientCountryName") or "Unknown"
             reqs = item.get("count", 0) or 0
             country_counts[country] += reqs
+
+    rate_5xx = (c_5xx_total / total_requests * 100) if total_requests > 0 else 0.0
 
     return {
         "start_iso": start_iso,
@@ -215,35 +242,44 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
         "c_2xx": c_2xx,
         "c_3xx": c_3xx,
         "c_4xx": c_4xx,
-        "c_5xx_crashes": c_5xx_crashes,
-        "c_504_deploy": c_504_deploy,
+        "c_5xx_total": c_5xx_total,
+        "c_504": c_504,
+        "c_5xx_other": c_5xx_other,
+        "rate_5xx": rate_5xx,
         "top_paths": path_counts.most_common(10),
+        "top_error_paths": error_path_counts.most_common(5),
         "top_countries": country_counts.most_common(5),
     }
 
 
-def query_d1_count(account_id: str, token: str, sql: str) -> int:
+def query_d1_count(account_id: str, token: str, sql: str) -> tuple[int, str | None]:
     url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/d1/database/{D1_DATABASE_ID}/query"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "User-Agent": "FMagenticL-Analytics-Fetcher/1.2",
+        "User-Agent": "FMagenticL-Analytics-Fetcher/1.3",
     }
     payload = json.dumps({"sql": sql}).encode("utf-8")
     req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        data = json.loads(resp.read().decode("utf-8"))
-        results = data.get("result", [{}])[0].get("results", [])
-        if results:
-            return int(list(results[0].values())[0])
-    return 0
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            results = data.get("result", [{}])[0].get("results", [])
+            if results:
+                return int(list(results[0].values())[0]), None
+            return 0, None
+    except Exception as e:
+        return 0, str(e)
 
 
 def fetch_d1_state(account_id: str, token: str) -> dict:
-    telemetry_cnt = 11
-    grievances_cnt = 44
-    visits_cnt = 145
-    compiled_patches = 83
+    telemetry_cnt, t_err = query_d1_count(account_id, token, "SELECT COUNT(*) FROM telemetry;")
+    grievances_cnt, g_err = query_d1_count(account_id, token, "SELECT COUNT(*) FROM grievances;")
+    visits_cnt, v_err = query_d1_count(account_id, token, "SELECT COUNT(DISTINCT model) FROM visits;")
+
+    errs = [e for e in (t_err, g_err, v_err) if e]
+
+    compiled_patches = 85
     try:
         reg_path = REPO_ROOT / "dist" / "registry.json"
         if reg_path.exists():
@@ -252,18 +288,12 @@ def fetch_d1_state(account_id: str, token: str) -> dict:
     except Exception:
         pass
 
-    try:
-        telemetry_cnt = query_d1_count(account_id, token, "SELECT COUNT(*) FROM telemetry;")
-        grievances_cnt = query_d1_count(account_id, token, "SELECT COUNT(*) FROM grievances;")
-        visits_cnt = query_d1_count(account_id, token, "SELECT COUNT(DISTINCT model) FROM visits;")
-    except Exception:
-        pass
-
     return {
         "telemetry": telemetry_cnt,
         "compiled_patches": compiled_patches,
         "grievances": grievances_cnt,
         "visits": visits_cnt,
+        "error": "; ".join(errs) if errs else None,
     }
 
 
@@ -307,29 +337,50 @@ def main():
     recent = fetch_window_metrics(account_id, recent_start, now, token)
     d1 = fetch_d1_state(account_id, token)
 
+    d1_status_str = (
+        f"{d1['telemetry']} Telemetry Submissions ({d1['compiled_patches']} Compiled Patches), {d1['grievances']} Grievances, {d1['visits']} Unique Models (visits)"
+        if not d1["error"]
+        else f"⚠️ D1 QUERY FAILED: {d1['error']}"
+    )
+
+    hist_err_str = format_paths(hist['top_error_paths'])
+    recent_err_str = format_paths(recent['top_error_paths'])
+
     report_markdown = (
-        f"### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now)\n"
+        f"### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]\n"
         f"- **Total Requests:** {hist['total_requests']:,}\n"
         f"- **Total Bandwidth:** {hist['bandwidth_mb']:.2f} MB\n"
-        f"- **Status Codes:** 2xx: {hist['c_2xx']:,} | 4xx: {hist['c_4xx']:,} | 5xx (Runtime Crashes): {hist['c_5xx_crashes']:,}\n"
-        f"- **504 Deployment Timeouts (origin: 0):** {hist['c_504_deploy']:,}\n"
+        f"- **Status Codes:** 2xx: {hist['c_2xx']:,} | 3xx: {hist['c_3xx']:,} | 4xx: {hist['c_4xx']:,} | 5xx (All Server/Gateway Errors): {hist['c_5xx_total']:,} (of which 504 Timeouts: {hist['c_504']:,}, Other 5xx: {hist['c_5xx_other']:,})\n"
+        f"- **5xx Error Rate:** {hist['rate_5xx']:.2f}%\n"
+        f"- **Top 5xx Error Paths:** [{hist_err_str}]\n"
         f"- **Top Paths:** [{format_paths(hist['top_paths'])}]\n"
         f"- **Top Countries:** [{format_countries(hist['top_countries'])}]\n"
-        f"- **D1 State:** {d1['telemetry']} Telemetry Submissions ({d1['compiled_patches']} Compiled Patches), {d1['grievances']} Grievances, {d1['visits']} Guestbook Entities (visits)\n\n"
-        f"### ⚡ LAST 4 HOURS (Post-Fix)\n"
+        f"- **D1 Database State:** {d1_status_str}\n\n"
+        f"### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]\n"
         f"- **Total Requests:** {recent['total_requests']:,}\n"
-        f"- **Status Codes:** 2xx: {recent['c_2xx']:,} | 4xx: {recent['c_4xx']:,} | 5xx (Runtime Crashes): {recent['c_5xx_crashes']:,}\n"
-        f"- **504 Deployment Timeouts (origin: 0):** {recent['c_504_deploy']:,}\n"
+        f"- **Status Codes:** 2xx: {recent['c_2xx']:,} | 3xx: {recent['c_3xx']:,} | 4xx: {recent['c_4xx']:,} | 5xx (All Server/Gateway Errors): {recent['c_5xx_total']:,} (of which 504 Timeouts: {recent['c_504']:,}, Other 5xx: {recent['c_5xx_other']:,})\n"
+        f"- **5xx Error Rate:** {recent['rate_5xx']:.2f}%\n"
+        f"- **Top 5xx Error Paths:** [{recent_err_str}]\n"
         f"- **Top Paths:** [{format_paths(recent['top_paths'])}]\n"
     )
 
-    print(report_markdown)
+    print(report_markdown.strip())
 
-    end_iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-    timestamp_entry = f"## Telemetry Entry — {end_iso}\n\n{report_markdown}\n---\n\n"
+    # Export machine-readable JSON summary for programmatic sentry consumption
+    summary_path = REPO_ROOT / "scratch" / "cf_latest_summary.json"
+    with open(summary_path, "w", encoding="utf-8") as f:
+        json.dump({
+            "updated_at": now.isoformat(),
+            "hist": hist,
+            "recent": recent,
+            "d1": d1
+        }, f, indent=2)
+
+    # Append to daily_telemetry.md
+    timestamp_header = f"\n\n## 🕒 Sentry Diagnostic Run — {now.strftime('%Y-%m-%d %H:%M:%S UTC')}\n\n"
     with open(DAILY_LOG_PATH, "a", encoding="utf-8") as f:
-        f.write(timestamp_entry)
+        f.write(timestamp_header + report_markdown + "\n---\n")
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

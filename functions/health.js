@@ -31,11 +31,10 @@ export async function onRequest(context) {
     } catch (_) {}
   }
 
-  // 2. Fallback dynamic payload if ASSETS fetch is unavailable
+  // 2. Error payload if ASSETS fetch is unavailable
   return new Response(JSON.stringify({
-    status: "ok",
-    protocol_version: "1.3.1",
-    service: "FMagenticL-Curated-Registry",
-    auth_policy: "none_public_curated_registry"
-  }), { status: 200, headers: CORS_HEADERS });
+    status: "degraded",
+    error: "assets_manifest_unavailable",
+    service: "FMagenticL-Curated-Registry"
+  }), { status: 503, headers: CORS_HEADERS });
 }

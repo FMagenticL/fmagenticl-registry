@@ -1,0 +1,1031 @@
+{
+  "date": "2026-10-26",
+  "archived_at_utc": "2026-11-02T02:30:38.427559+00:00",
+  "account_id": "f83dbbaa261d9ceac1f9f666fa9bd07b",
+  "data": {
+    "countries": [
+      {
+        "count": 1033,
+        "dimensions": {
+          "clientCountryName": "US"
+        }
+      },
+      {
+        "count": 300,
+        "dimensions": {
+          "clientCountryName": "FI"
+        }
+      },
+      {
+        "count": 244,
+        "dimensions": {
+          "clientCountryName": "KY"
+        }
+      },
+      {
+        "count": 205,
+        "dimensions": {
+          "clientCountryName": "FR"
+        }
+      },
+      {
+        "count": 159,
+        "dimensions": {
+          "clientCountryName": "DE"
+        }
+      },
+      {
+        "count": 56,
+        "dimensions": {
+          "clientCountryName": "CH"
+        }
+      },
+      {
+        "count": 44,
+        "dimensions": {
+          "clientCountryName": "NL"
+        }
+      },
+      {
+        "count": 27,
+        "dimensions": {
+          "clientCountryName": "CA"
+        }
+      },
+      {
+        "count": 16,
+        "dimensions": {
+          "clientCountryName": "GB"
+        }
+      },
+      {
+        "count": 15,
+        "dimensions": {
+          "clientCountryName": "KR"
+        }
+      },
+      {
+        "count": 13,
+        "dimensions": {
+          "clientCountryName": "BR"
+        }
+      },
+      {
+        "count": 12,
+        "dimensions": {
+          "clientCountryName": "AT"
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "clientCountryName": "IN"
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "clientCountryName": "JP"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientCountryName": "CY"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "CN"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "SE"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "UZ"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "IL"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "BE"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "RU"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientCountryName": "AE"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientCountryName": "XX"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientCountryName": "AU"
+        }
+      }
+    ],
+    "errorsByPath": [
+      {
+        "count": 17,
+        "dimensions": {
+          "clientRequestPath": "/dd83979cec568c19b0e823f1c4d180f1",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 17,
+        "dimensions": {
+          "clientRequestPath": "/8107015357e011f7d7b6f5968bdaaf7a",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ai-catalog.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientRequestPath": "/",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource/mcp",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/openapi.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/mcp/server-card",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/robots.txt",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/llms.txt",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/assets/logo.png",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/9d51f18d7f0f4d59bc2d92b7d4ad9427",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/assets/fmagenticl-logo.png",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/js/twint_ch.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server/mcp",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/jobs",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/query",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/js/raif_ch.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/js/lkk_ch.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/licensor.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/static/style/protect/index.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ard.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/js/antibot-client.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/assets/js/auth.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/assets/js/qr_modal.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/js/qrcode_twint.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/positions",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/bot-connect.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/careers",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp/.well-known/owners.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/owners.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/static/style/sys_files/index.js",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/did.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/css/support_parent.css",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/grievances.json",
+          "edgeResponseStatus": 504
+        }
+      }
+    ],
+    "hourly": [
+      {
+        "count": 74,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T00:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 307894
+        }
+      },
+      {
+        "count": 107,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T01:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 162540
+        }
+      },
+      {
+        "count": 54,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T02:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 96690
+        }
+      },
+      {
+        "count": 83,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T03:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1358511
+        }
+      },
+      {
+        "count": 107,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T04:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 302555
+        }
+      },
+      {
+        "count": 79,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T05:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1303862
+        }
+      },
+      {
+        "count": 51,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T06:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 59952
+        }
+      },
+      {
+        "count": 156,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T07:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1667882
+        }
+      },
+      {
+        "count": 65,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T08:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 76952
+        }
+      },
+      {
+        "count": 67,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T09:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 70568
+        }
+      },
+      {
+        "count": 89,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T10:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 207746
+        }
+      },
+      {
+        "count": 62,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T11:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1291770
+        }
+      },
+      {
+        "count": 74,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T12:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 178975
+        }
+      },
+      {
+        "count": 69,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T13:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 175882
+        }
+      },
+      {
+        "count": 81,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T14:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 76681
+        }
+      },
+      {
+        "count": 100,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T15:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 417739
+        }
+      },
+      {
+        "count": 144,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T16:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 545001
+        }
+      },
+      {
+        "count": 172,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T17:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 2824587
+        }
+      },
+      {
+        "count": 71,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T18:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 133253
+        }
+      },
+      {
+        "count": 104,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T19:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1466978
+        }
+      },
+      {
+        "count": 86,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T20:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 157101
+        }
+      },
+      {
+        "count": 67,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T21:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 95271
+        }
+      },
+      {
+        "count": 145,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T22:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 368699
+        }
+      },
+      {
+        "count": 57,
+        "dimensions": {
+          "datetimeHour": "2026-10-26T23:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 61007
+        }
+      }
+    ],
+    "paths": [
+      {
+        "count": 1418,
+        "dimensions": {
+          "clientRequestPath": "/mcp"
+        }
+      },
+      {
+        "count": 91,
+        "dimensions": {
+          "clientRequestPath": "/dd83979cec568c19b0e823f1c4d180f1"
+        }
+      },
+      {
+        "count": 86,
+        "dimensions": {
+          "clientRequestPath": "/"
+        }
+      },
+      {
+        "count": 51,
+        "dimensions": {
+          "clientRequestPath": "/favicon.ico"
+        }
+      },
+      {
+        "count": 43,
+        "dimensions": {
+          "clientRequestPath": "/8107015357e011f7d7b6f5968bdaaf7a"
+        }
+      },
+      {
+        "count": 40,
+        "dimensions": {
+          "clientRequestPath": "/guestbook.json"
+        }
+      },
+      {
+        "count": 39,
+        "dimensions": {
+          "clientRequestPath": "/grievances.json"
+        }
+      },
+      {
+        "count": 38,
+        "dimensions": {
+          "clientRequestPath": "/robots.txt"
+        }
+      },
+      {
+        "count": 36,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/glama.json"
+        }
+      },
+      {
+        "count": 35,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent.json"
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ai-catalog.json"
+        }
+      },
+      {
+        "count": 29,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent-card.json"
+        }
+      },
+      {
+        "count": 24,
+        "dimensions": {
+          "clientRequestPath": "/registry.json"
+        }
+      },
+      {
+        "count": 23,
+        "dimensions": {
+          "clientRequestPath": "/llms.txt"
+        }
+      },
+      {
+        "count": 21,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource"
+        }
+      },
+      {
+        "count": 18,
+        "dimensions": {
+          "clientRequestPath": "/assets/logo.png"
+        }
+      },
+      {
+        "count": 17,
+        "dimensions": {
+          "clientRequestPath": "/assets/fmagenticl-logo.png"
+        }
+      },
+      {
+        "count": 16,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource/mcp"
+        }
+      },
+      {
+        "count": 14,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402"
+        }
+      },
+      {
+        "count": 11,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp.json"
+        }
+      },
+      {
+        "count": 9,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server"
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "clientRequestPath": "/mcp/server-card"
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/openapi.json"
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server/mcp"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientRequestPath": "/sitemap.xml"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/9d51f18d7f0f4d59bc2d92b7d4ad9427"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/js/raif_ch.js"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/assets/js/auth.js"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/owners.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/licensor.js"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/careers"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/assets/js/message.js"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/js/twint_ch.js"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ard.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/did.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/query"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/positions"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp/.well-known/owners.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/js/qrcode_twint.js"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/static/style/protect/index.js"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/jobs"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/js/lkk_ch.js"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/css/support_parent.css"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/bot-connect.js"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/js/antibot-client.js"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/static/style/sys_files/index.js"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/assets/js/qr_modal.js"
+        }
+      }
+    ],
+    "statusCodes": [
+      {
+        "count": 1544,
+        "dimensions": {
+          "edgeResponseStatus": 200,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 342,
+        "dimensions": {
+          "edgeResponseStatus": 202,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 119,
+        "dimensions": {
+          "edgeResponseStatus": 504,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 99,
+        "dimensions": {
+          "edgeResponseStatus": 204,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 18,
+        "dimensions": {
+          "edgeResponseStatus": 404,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 17,
+        "dimensions": {
+          "edgeResponseStatus": 304,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 16,
+        "dimensions": {
+          "edgeResponseStatus": 499,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "edgeResponseStatus": 301,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "edgeResponseStatus": 403,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "edgeResponseStatus": 405,
+          "originResponseStatus": 0
+        }
+      }
+    ],
+    "totals": [
+      {
+        "count": 2164,
+        "sum": {
+          "edgeResponseBytes": 13408096,
+          "visits": 119
+        }
+      }
+    ]
+  }
+}

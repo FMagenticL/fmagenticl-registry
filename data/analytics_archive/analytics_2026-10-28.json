@@ -1,0 +1,1382 @@
+{
+  "date": "2026-10-28",
+  "archived_at_utc": "2026-11-02T02:30:39.478778+00:00",
+  "account_id": "f83dbbaa261d9ceac1f9f666fa9bd07b",
+  "data": {
+    "countries": [
+      {
+        "count": 728,
+        "dimensions": {
+          "clientCountryName": "US"
+        }
+      },
+      {
+        "count": 372,
+        "dimensions": {
+          "clientCountryName": "DE"
+        }
+      },
+      {
+        "count": 294,
+        "dimensions": {
+          "clientCountryName": "FI"
+        }
+      },
+      {
+        "count": 227,
+        "dimensions": {
+          "clientCountryName": "KY"
+        }
+      },
+      {
+        "count": 125,
+        "dimensions": {
+          "clientCountryName": "FR"
+        }
+      },
+      {
+        "count": 54,
+        "dimensions": {
+          "clientCountryName": "NL"
+        }
+      },
+      {
+        "count": 25,
+        "dimensions": {
+          "clientCountryName": "BE"
+        }
+      },
+      {
+        "count": 17,
+        "dimensions": {
+          "clientCountryName": "KR"
+        }
+      },
+      {
+        "count": 17,
+        "dimensions": {
+          "clientCountryName": "CA"
+        }
+      },
+      {
+        "count": 16,
+        "dimensions": {
+          "clientCountryName": "GB"
+        }
+      },
+      {
+        "count": 12,
+        "dimensions": {
+          "clientCountryName": "SE"
+        }
+      },
+      {
+        "count": 12,
+        "dimensions": {
+          "clientCountryName": "AT"
+        }
+      },
+      {
+        "count": 12,
+        "dimensions": {
+          "clientCountryName": "CY"
+        }
+      },
+      {
+        "count": 9,
+        "dimensions": {
+          "clientCountryName": "IN"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientCountryName": "RO"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "JP"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "LU"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "RU"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "PL"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "AE"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "IL"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "IE"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "SG"
+        }
+      }
+    ],
+    "errorsByPath": [
+      {
+        "count": 17,
+        "dimensions": {
+          "clientRequestPath": "/a131c452f3a08d3c89206e2b8fdb5908",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 14,
+        "dimensions": {
+          "clientRequestPath": "/8107015357e011f7d7b6f5968bdaaf7a",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/openapi.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/mcp/server-card",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/robots.txt",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/3e8e1f66a7f4e1bd01430ce6014cb43e35dee19bab96d72ecaed80380b109e2b.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ard.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/workarounds.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.svn/wc.db",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/health",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.git-credentials",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp/.well-known/owners.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/actuator/env",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.env.prod",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/%2f%2eaws%2fcredentials",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/_phpinfo.php",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/%2f%2eenv",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/backend/.env",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/terms",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.npmrc",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.env.development",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/api/.env",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/health",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/i.php",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent-card.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/php_info.php",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/pi.php",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.env.staging",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/73ba98b94e4076a7e2958d21fd181ae6718905fd52c6603610a6672258e52efa.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/app/.env",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/contact",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/grievances.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp/server-card.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.env.stage",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/about",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/glama.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/guestbook.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/secrets.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.netrc",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/debug/vars",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/info.php",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.env.dev",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.env.production",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/privacy",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/test.php",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.git/config",
+          "edgeResponseStatus": 504
+        }
+      }
+    ],
+    "hourly": [
+      {
+        "count": 51,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T00:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 53756
+        }
+      },
+      {
+        "count": 71,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T01:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 86873
+        }
+      },
+      {
+        "count": 91,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T02:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 235014
+        }
+      },
+      {
+        "count": 62,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T03:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 174616
+        }
+      },
+      {
+        "count": 84,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T04:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 184928
+        }
+      },
+      {
+        "count": 100,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T05:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 200568
+        }
+      },
+      {
+        "count": 44,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T06:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 55517
+        }
+      },
+      {
+        "count": 41,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T07:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 53304
+        }
+      },
+      {
+        "count": 65,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T08:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 76888
+        }
+      },
+      {
+        "count": 66,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T09:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 133919
+        }
+      },
+      {
+        "count": 89,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T10:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 403600
+        }
+      },
+      {
+        "count": 70,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T11:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 282173
+        }
+      },
+      {
+        "count": 53,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T12:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 90072
+        }
+      },
+      {
+        "count": 62,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T13:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 151105
+        }
+      },
+      {
+        "count": 58,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T14:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 61051
+        }
+      },
+      {
+        "count": 89,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T15:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 207736
+        }
+      },
+      {
+        "count": 88,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T16:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 665764
+        }
+      },
+      {
+        "count": 294,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T17:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1016212
+        }
+      },
+      {
+        "count": 54,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T18:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 99622
+        }
+      },
+      {
+        "count": 33,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T19:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 46134
+        }
+      },
+      {
+        "count": 71,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T20:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 69361
+        }
+      },
+      {
+        "count": 86,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T21:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 217934
+        }
+      },
+      {
+        "count": 88,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T22:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 146444
+        }
+      },
+      {
+        "count": 132,
+        "dimensions": {
+          "datetimeHour": "2026-10-28T23:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1089809
+        }
+      }
+    ],
+    "paths": [
+      {
+        "count": 1274,
+        "dimensions": {
+          "clientRequestPath": "/mcp"
+        }
+      },
+      {
+        "count": 86,
+        "dimensions": {
+          "clientRequestPath": "/a131c452f3a08d3c89206e2b8fdb5908"
+        }
+      },
+      {
+        "count": 69,
+        "dimensions": {
+          "clientRequestPath": "/"
+        }
+      },
+      {
+        "count": 51,
+        "dimensions": {
+          "clientRequestPath": "/workarounds.json"
+        }
+      },
+      {
+        "count": 48,
+        "dimensions": {
+          "clientRequestPath": "/8107015357e011f7d7b6f5968bdaaf7a"
+        }
+      },
+      {
+        "count": 36,
+        "dimensions": {
+          "clientRequestPath": "/robots.txt"
+        }
+      },
+      {
+        "count": 30,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent-card.json"
+        }
+      },
+      {
+        "count": 26,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent.json"
+        }
+      },
+      {
+        "count": 23,
+        "dimensions": {
+          "clientRequestPath": "/grievances.json"
+        }
+      },
+      {
+        "count": 22,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource"
+        }
+      },
+      {
+        "count": 22,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/009b5bbea23936ecfdf12e3ce4cee7fdc464f27cb778c2b46c2fd5edc3b0c5f0.json"
+        }
+      },
+      {
+        "count": 18,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/glama.json"
+        }
+      },
+      {
+        "count": 17,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource/mcp"
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ai-catalog.json"
+        }
+      },
+      {
+        "count": 9,
+        "dimensions": {
+          "clientRequestPath": "/registry.json"
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "clientRequestPath": "/guestbook.json"
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "clientRequestPath": "/openapi.json"
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "clientRequestPath": "/mcp/server-card"
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/favicon.ico"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp.json"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ard.json"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/secrets.json"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/health"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/3e8e1f66a7f4e1bd01430ce6014cb43e35dee19bab96d72ecaed80380b109e2b.json"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/llms.txt"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/telemetry"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/sitemap.xml"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server/mcp"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/backend/.env"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/snapshot.sig"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/health"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/73ba98b94e4076a7e2958d21fd181ae6718905fd52c6603610a6672258e52efa.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/owners.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/pi.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/imprint"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.prod"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/app/.env"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.kube/config"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/src/.env"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.svn/wc.db"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.pypirc"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.staging"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.development"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.git-credentials"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp/server-card.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/api/.env"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/snapshot.sig"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/impressum"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/_phpinfo.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/%2fbackend%2f%2eenv"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.swp"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.bak"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.netrc"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.npmrc"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/i.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/api/v1/patches"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.git/config"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/about"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env~"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/%2f%2eenv"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/privacy"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.stage"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/terms"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp/.well-known/owners.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.docker/config.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.aws/config"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/debug/vars"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.local"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/actuator/env"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/info.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/phpinfo.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.production"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/%2f%2eaws%2fcredentials"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.backup"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/actuator/configprops"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/test.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.dev"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/%2eenv"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/legal"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/php-info.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/contact"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/team"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/server-status"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/php_info.php"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.env.old"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds/langgraph"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds/uv"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds/pydantic"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/grievance/pydantic"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/security.txt"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402.json"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds/mcp"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds/gitlab-cli"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds"
+        }
+      }
+    ],
+    "statusCodes": [
+      {
+        "count": 1375,
+        "dimensions": {
+          "edgeResponseStatus": 200,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 292,
+        "dimensions": {
+          "edgeResponseStatus": 202,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 120,
+        "dimensions": {
+          "edgeResponseStatus": 504,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 81,
+        "dimensions": {
+          "edgeResponseStatus": 204,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 56,
+        "dimensions": {
+          "edgeResponseStatus": 404,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 8,
+        "dimensions": {
+          "edgeResponseStatus": 499,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "edgeResponseStatus": 301,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "edgeResponseStatus": 403,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "edgeResponseStatus": 405,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "edgeResponseStatus": 400,
+          "originResponseStatus": 0
+        }
+      }
+    ],
+    "totals": [
+      {
+        "count": 1942,
+        "sum": {
+          "edgeResponseBytes": 5802400,
+          "visits": 113
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,1065 @@
+{
+  "date": "2026-10-29",
+  "archived_at_utc": "2026-11-02T02:30:40.365746+00:00",
+  "account_id": "f83dbbaa261d9ceac1f9f666fa9bd07b",
+  "data": {
+    "countries": [
+      {
+        "count": 986,
+        "dimensions": {
+          "clientCountryName": "US"
+        }
+      },
+      {
+        "count": 307,
+        "dimensions": {
+          "clientCountryName": "FI"
+        }
+      },
+      {
+        "count": 257,
+        "dimensions": {
+          "clientCountryName": "KY"
+        }
+      },
+      {
+        "count": 146,
+        "dimensions": {
+          "clientCountryName": "NL"
+        }
+      },
+      {
+        "count": 142,
+        "dimensions": {
+          "clientCountryName": "DE"
+        }
+      },
+      {
+        "count": 121,
+        "dimensions": {
+          "clientCountryName": "FR"
+        }
+      },
+      {
+        "count": 33,
+        "dimensions": {
+          "clientCountryName": "BE"
+        }
+      },
+      {
+        "count": 20,
+        "dimensions": {
+          "clientCountryName": "GB"
+        }
+      },
+      {
+        "count": 18,
+        "dimensions": {
+          "clientCountryName": "CA"
+        }
+      },
+      {
+        "count": 15,
+        "dimensions": {
+          "clientCountryName": "AT"
+        }
+      },
+      {
+        "count": 15,
+        "dimensions": {
+          "clientCountryName": "KR"
+        }
+      },
+      {
+        "count": 15,
+        "dimensions": {
+          "clientCountryName": "AE"
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientCountryName": "PS"
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientCountryName": "AU"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientCountryName": "SE"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientCountryName": "CY"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientCountryName": "ES"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientCountryName": "BO"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientCountryName": "MA"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientCountryName": "IL"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientCountryName": "PL"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientCountryName": "BG"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientCountryName": "BF"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "VE"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "SY"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "GR"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "BW"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "JP"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "CH"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientCountryName": "UY"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "TW"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientCountryName": "RU"
+        }
+      }
+    ],
+    "errorsByPath": [
+      {
+        "count": 35,
+        "dimensions": {
+          "clientRequestPath": "/a131c452f3a08d3c89206e2b8fdb5908",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/mcp/server-card",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/workarounds.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/openapi.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp:%20tools/list%20returned%206%20tools%20to%20an%20anonymous%20client,%20including%20fmagenticl_report_telemetry%20%28write%29,%20fmagenticl_submit_grievance%20%28write%29,%20fmagenticl_report_patch_outcome%20%28write%29",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/registry.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/favicon.svg",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/favicon.ico",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent-card.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ard.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/825af577fbce131764e4c577fbf4b35c",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/glama.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agents.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/guestbook.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/robots.txt",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/discovery/resources",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/brick-blue.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/capabilities.txt",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ai-plugin.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/assets/fmagenticl-logo.png",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/%7Bfingerprint_hex%7D.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp:%20tools/assets/logo.png",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/owners.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/health",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/assets/logo.png",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp:",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/did.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/snapshot.json",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/apple-touch-icon.png",
+          "edgeResponseStatus": 504
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/llms.txt",
+          "edgeResponseStatus": 504
+        }
+      }
+    ],
+    "hourly": [
+      {
+        "count": 163,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T00:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1540255
+        }
+      },
+      {
+        "count": 56,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T01:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 76510
+        }
+      },
+      {
+        "count": 64,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T02:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 85366
+        }
+      },
+      {
+        "count": 82,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T03:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 160340
+        }
+      },
+      {
+        "count": 90,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T04:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 151013
+        }
+      },
+      {
+        "count": 105,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T05:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 225183
+        }
+      },
+      {
+        "count": 51,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T06:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 66567
+        }
+      },
+      {
+        "count": 48,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T07:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 50839
+        }
+      },
+      {
+        "count": 53,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T08:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 57787
+        }
+      },
+      {
+        "count": 83,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T09:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 164447
+        }
+      },
+      {
+        "count": 73,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T10:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 91069
+        }
+      },
+      {
+        "count": 105,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T11:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 940286
+        }
+      },
+      {
+        "count": 74,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T12:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 102712
+        }
+      },
+      {
+        "count": 147,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T13:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 313691
+        }
+      },
+      {
+        "count": 45,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T14:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 49458
+        }
+      },
+      {
+        "count": 92,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T15:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 415266
+        }
+      },
+      {
+        "count": 209,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T16:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 2149201
+        }
+      },
+      {
+        "count": 58,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T17:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 75242
+        }
+      },
+      {
+        "count": 33,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T18:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 38273
+        }
+      },
+      {
+        "count": 144,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T19:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 207782
+        }
+      },
+      {
+        "count": 51,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T20:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 64248
+        }
+      },
+      {
+        "count": 95,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T21:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 199833
+        }
+      },
+      {
+        "count": 78,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T22:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 105054
+        }
+      },
+      {
+        "count": 161,
+        "dimensions": {
+          "datetimeHour": "2026-10-29T23:00:00Z"
+        },
+        "sum": {
+          "edgeResponseBytes": 1669291
+        }
+      }
+    ],
+    "paths": [
+      {
+        "count": 1505,
+        "dimensions": {
+          "clientRequestPath": "/mcp"
+        }
+      },
+      {
+        "count": 131,
+        "dimensions": {
+          "clientRequestPath": "/"
+        }
+      },
+      {
+        "count": 106,
+        "dimensions": {
+          "clientRequestPath": "/workarounds.json"
+        }
+      },
+      {
+        "count": 92,
+        "dimensions": {
+          "clientRequestPath": "/a131c452f3a08d3c89206e2b8fdb5908"
+        }
+      },
+      {
+        "count": 52,
+        "dimensions": {
+          "clientRequestPath": "/robots.txt"
+        }
+      },
+      {
+        "count": 31,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent-card.json"
+        }
+      },
+      {
+        "count": 29,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/glama.json"
+        }
+      },
+      {
+        "count": 24,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agent.json"
+        }
+      },
+      {
+        "count": 16,
+        "dimensions": {
+          "clientRequestPath": "/favicon.ico"
+        }
+      },
+      {
+        "count": 12,
+        "dimensions": {
+          "clientRequestPath": "/v1/health"
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientRequestPath": "/health"
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource"
+        }
+      },
+      {
+        "count": 10,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ai-catalog.json"
+        }
+      },
+      {
+        "count": 9,
+        "dimensions": {
+          "clientRequestPath": "/llms.txt"
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-protected-resource/mcp"
+        }
+      },
+      {
+        "count": 7,
+        "dimensions": {
+          "clientRequestPath": "/v1/workarounds"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientRequestPath": "/grievances.json"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/mcp.json"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402"
+        }
+      },
+      {
+        "count": 6,
+        "dimensions": {
+          "clientRequestPath": "/openapi.json"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientRequestPath": "/mcp/server-card"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientRequestPath": "/registry.json"
+        }
+      },
+      {
+        "count": 5,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/favicon.svg"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/825af577fbce131764e4c577fbf4b35c"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ard.json"
+        }
+      },
+      {
+        "count": 4,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/oauth-authorization-server/mcp"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/dispute"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/guestbook.json"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/assets/logo.png"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/sitemap.xml"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/assets/fmagenticl-logo.png"
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "clientRequestPath": "/v1/snapshot.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/discovery/resources"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/apple-touch-icon.png"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/brick-blue.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/capabilities.txt"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp:%20tools/list%20returned%206%20tools%20to%20an%20anonymous%20client,%20including%20fmagenticl_report_telemetry%20%28write%29,%20fmagenticl_submit_grievance%20%28write%29,%20fmagenticl_report_patch_outcome%20%28write%29"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/v1/resolve/%7Bfingerprint_hex%7D.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp:%20tools/assets/fmagenticl-logo.png"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp:%20tools/assets/logo.png"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/owners.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp:"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/did.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/agents.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/mcp/.well-known/owners.json"
+        }
+      },
+      {
+        "count": 2,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/ai-plugin.json"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/mcp/v1"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/.well-known/x402.json"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/api/mcp"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/favicon.png"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/v1/grievances"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/sse"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/guestbook/"
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "clientRequestPath": "/api/v1/patches"
+        }
+      }
+    ],
+    "statusCodes": [
+      {
+        "count": 1560,
+        "dimensions": {
+          "edgeResponseStatus": 200,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 326,
+        "dimensions": {
+          "edgeResponseStatus": 202,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 89,
+        "dimensions": {
+          "edgeResponseStatus": 504,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 88,
+        "dimensions": {
+          "edgeResponseStatus": 204,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 65,
+        "dimensions": {
+          "edgeResponseStatus": 404,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 16,
+        "dimensions": {
+          "edgeResponseStatus": 301,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 12,
+        "dimensions": {
+          "edgeResponseStatus": 499,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 3,
+        "dimensions": {
+          "edgeResponseStatus": 405,
+          "originResponseStatus": 0
+        }
+      },
+      {
+        "count": 1,
+        "dimensions": {
+          "edgeResponseStatus": 403,
+          "originResponseStatus": 0
+        }
+      }
+    ],
+    "totals": [
+      {
+        "count": 2160,
+        "sum": {
+          "edgeResponseBytes": 8999713,
+          "visits": 84
+        }
+      }
+    ]
+  }
+}
