@@ -1,5 +1,5 @@
 {
-  "count": 211,
+  "count": 213,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1017,6 +1017,11 @@
       "type": "agent"
     },
     {
+      "entity": "allagents-verify",
+      "first_seen": "2026-11-01",
+      "type": "security_probe"
+    },
+    {
       "entity": "cre-brain",
       "first_seen": "2026-11-01",
       "type": "agent"
@@ -1047,6 +1052,11 @@
       "type": "agent"
     },
     {
+      "entity": "squatch-mcp-scanner",
+      "first_seen": "2026-11-01",
+      "type": "security_probe"
+    },
+    {
       "entity": "strand-mcp-probe",
       "first_seen": "2026-11-01",
       "type": "security_probe"
@@ -1057,5 +1067,5 @@
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-01T22:49:41Z"
+  "generated_at": "2026-11-02T02:30:55Z"
 }
