@@ -1,5 +1,5 @@
 {
-  "count": 217,
+  "count": 221,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1082,10 +1082,30 @@
       "type": "agent"
     },
     {
+      "entity": "mcp-dualstack-research",
+      "first_seen": "2026-11-02",
+      "type": "agent"
+    },
+    {
       "entity": "mcp-registry-scan",
       "first_seen": "2026-11-02",
       "type": "security_probe"
+    },
+    {
+      "entity": "offplatform-discovery",
+      "first_seen": "2026-11-02",
+      "type": "agent"
+    },
+    {
+      "entity": "pick.tools-probe",
+      "first_seen": "2026-11-02",
+      "type": "security_probe"
+    },
+    {
+      "entity": "span-pipeline",
+      "first_seen": "2026-11-02",
+      "type": "agent"
     }
   ],
-  "generated_at": "2026-11-02T11:00:30Z"
+  "generated_at": "2026-11-02T20:47:08Z"
 }
