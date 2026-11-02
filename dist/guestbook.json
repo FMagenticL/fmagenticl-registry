@@ -1,5 +1,5 @@
 {
-  "count": 213,
+  "count": 217,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1065,7 +1065,27 @@
       "entity": "trimtab-verifier",
       "first_seen": "2026-11-01",
       "type": "security_probe"
+    },
+    {
+      "entity": "McpStampCheck",
+      "first_seen": "2026-11-02",
+      "type": "security_probe"
+    },
+    {
+      "entity": "beyond-probe",
+      "first_seen": "2026-11-02",
+      "type": "security_probe"
+    },
+    {
+      "entity": "forecall-census",
+      "first_seen": "2026-11-02",
+      "type": "agent"
+    },
+    {
+      "entity": "mcp-registry-scan",
+      "first_seen": "2026-11-02",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-02T02:30:55Z"
+  "generated_at": "2026-11-02T11:00:30Z"
 }
