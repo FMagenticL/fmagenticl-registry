@@ -845,3 +845,25 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 - **Top Paths:** [`/mcp` (212), `/robots.txt` (8), `/a131c452f3a08d3c89206e2b8fdb5908` (8), `/` (6), `/.well-known/mcp.json` (3), `/sitemap.xml` (2), `/openapi.json` (2), `/.well-known/agent-card.json` (2), `/.well-known/capabilities.txt` (2), `/.well-known/mcp/server-card.json` (2)]
 
 ---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-03 13:20:01 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 23,000
+- **Total Bandwidth:** 107.23 MB
+- **Status Codes:** 2xx: 20,614 | 3xx: 111 | 4xx: 679 | 5xx (All Server/Gateway Errors): 1,597 (of which 504 Timeouts: 1,597, Other 5xx: 0)
+- **5xx Error Rate:** 6.94%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (155), `/dd83979cec568c19b0e823f1c4d180f1 (504)` (90), `/ (504)` (60), `/8107015357e011f7d7b6f5968bdaaf7a (504)` (55), `/openapi.json (504)` (41)]
+- **Top Paths:** [`/mcp` (14,948), `/` (885), `/a131c452f3a08d3c89206e2b8fdb5908` (754), `/robots.txt` (499), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/.well-known/agent-card.json` (328), `/.well-known/glama.json` (275), `/favicon.ico` (262), `/workarounds.json` (247)]
+- **Top Countries:** [US (10,048), FI (3,273), DE (1,777), NL (1,752), FR (1,708)]
+- **D1 Database State:** 12 Telemetry Submissions (85 Compiled Patches), 316 Grievances, 216 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 284
+- **Status Codes:** 2xx: 266 | 3xx: 0 | 4xx: 8 | 5xx (All Server/Gateway Errors): 10 (of which 504 Timeouts: 10, Other 5xx: 0)
+- **5xx Error Rate:** 3.52%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (3), `/llms.txt (504)` (1), `/sw.js (504)` (1), `/.well-known/capabilities.txt (504)` (1), `/docker-compose.yml (504)` (1)]
+- **Top Paths:** [`/mcp` (220), `/robots.txt` (10), `/v1/health` (10), `/a131c452f3a08d3c89206e2b8fdb5908` (9), `/` (7), `/workarounds.json` (5), `/.well-known/mcp.json` (3), `/llms.txt` (3), `/sw.js` (2), `/sitemap.xml` (2)]
+
+---
