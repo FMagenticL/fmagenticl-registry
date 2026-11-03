@@ -237,7 +237,7 @@ def main():
         print(f"  ⚠️ LIVE≠LOCAL DRIFT DETECTED: Live ({live_wa_cnt} WA / {live_grv_cnt} GRV) != Local ({local_wa_cnt} WA / {local_grv_cnt} GRV)")
         degraded_reasons.append(f"Live vs Local drift detected ({live_wa_cnt} live != {local_wa_cnt} local)")
     else:
-        print(f"  ✅ Live and local distribution in exact parity (281 items).")
+        print(f"  ✅ Live and local distribution in exact parity ({live_grv_cnt} grievances / {live_wa_cnt} verified).")
 
     # 5. Cloudflare GraphQL Analytics & Traffic
     print("\n[5/5] Pulling Cloudflare GraphQL Zone Traffic...")

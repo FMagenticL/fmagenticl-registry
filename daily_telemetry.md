@@ -779,3 +779,69 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 - **Top Paths:** [`/mcp` (231), `/robots.txt` (18), `/` (16), `/a131c452f3a08d3c89206e2b8fdb5908` (9), `/v1/health` (6), `/.well-known/oauth-protected-resource/mcp` (6), `/.well-known/agent-card.json` (4), `/.well-known/glama.json` (4), `/favicon.ico` (3), `/guestbook.json` (3)]
 
 ---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-02 07:12:14 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 20,687
+- **Total Bandwidth:** 94.55 MB
+- **Status Codes:** 2xx: 18,515 | 3xx: 104 | 4xx: 604 | 5xx (All Server/Gateway Errors): 1,464 (of which 504 Timeouts: 1,464, Other 5xx: 0)
+- **5xx Error Rate:** 7.08%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (135), `/dd83979cec568c19b0e823f1c4d180f1 (504)` (90), `/ (504)` (56), `/8107015357e011f7d7b6f5968bdaaf7a (504)` (55), `/openapi.json (504)` (36)]
+- **Top Paths:** [`/mcp` (13,336), `/` (820), `/a131c452f3a08d3c89206e2b8fdb5908` (619), `/robots.txt` (448), `/dd83979cec568c19b0e823f1c4d180f1` (350), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/.well-known/agent-card.json` (318), `/.well-known/glama.json` (266), `/favicon.ico` (248), `/.well-known/agent.json` (237)]
+- **Top Countries:** [US (8,883), FI (2,899), FR (1,637), DE (1,614), NL (1,440)]
+- **D1 Database State:** 11 Telemetry Submissions (85 Compiled Patches), 281 Grievances, 210 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 297
+- **Status Codes:** 2xx: 287 | 3xx: 1 | 4xx: 2 | 5xx (All Server/Gateway Errors): 7 (of which 504 Timeouts: 7, Other 5xx: 0)
+- **5xx Error Rate:** 2.36%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (4), `/favicon.ico (504)` (1), `/v1/health (504)` (1), `/openapi.json (504)` (1)]
+- **Top Paths:** [`/mcp` (240), `/robots.txt` (13), `/a131c452f3a08d3c89206e2b8fdb5908` (9), `/.well-known/oauth-protected-resource/mcp` (7), `/` (6), `/.well-known/glama.json` (6), `/favicon.ico` (3), `/v1/health` (3), `/openapi.json` (2), `/.well-known/agent-card.json` (2)]
+
+---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-02 07:13:07 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 20,689
+- **Total Bandwidth:** 94.73 MB
+- **Status Codes:** 2xx: 18,526 | 3xx: 104 | 4xx: 594 | 5xx (All Server/Gateway Errors): 1,465 (of which 504 Timeouts: 1,465, Other 5xx: 0)
+- **5xx Error Rate:** 7.08%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (135), `/dd83979cec568c19b0e823f1c4d180f1 (504)` (90), `/ (504)` (56), `/8107015357e011f7d7b6f5968bdaaf7a (504)` (55), `/openapi.json (504)` (36)]
+- **Top Paths:** [`/mcp` (13,332), `/` (819), `/a131c452f3a08d3c89206e2b8fdb5908` (619), `/robots.txt` (448), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/.well-known/agent-card.json` (310), `/.well-known/glama.json` (266), `/favicon.ico` (248), `/.well-known/agent.json` (237)]
+- **Top Countries:** [US (8,884), FI (2,900), FR (1,628), DE (1,613), KY (1,457)]
+- **D1 Database State:** 11 Telemetry Submissions (85 Compiled Patches), 281 Grievances, 210 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 312
+- **Status Codes:** 2xx: 301 | 3xx: 1 | 4xx: 3 | 5xx (All Server/Gateway Errors): 7 (of which 504 Timeouts: 7, Other 5xx: 0)
+- **5xx Error Rate:** 2.24%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (4), `/favicon.ico (504)` (1), `/v1/health (504)` (1), `/openapi.json (504)` (1)]
+- **Top Paths:** [`/mcp` (245), `/robots.txt` (13), `/a131c452f3a08d3c89206e2b8fdb5908` (9), `/v1/health` (7), `/.well-known/oauth-protected-resource/mcp` (7), `/` (6), `/.well-known/glama.json` (6), `/workarounds.json` (4), `/.well-known/agent-card.json` (4), `/favicon.ico` (3)]
+
+---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-03 12:13:38 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 22,912
+- **Total Bandwidth:** 105.90 MB
+- **Status Codes:** 2xx: 20,532 | 3xx: 111 | 4xx: 675 | 5xx (All Server/Gateway Errors): 1,594 (of which 504 Timeouts: 1,594, Other 5xx: 0)
+- **5xx Error Rate:** 6.96%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (155), `/dd83979cec568c19b0e823f1c4d180f1 (504)` (90), `/ (504)` (60), `/8107015357e011f7d7b6f5968bdaaf7a (504)` (55), `/openapi.json (504)` (41)]
+- **Top Paths:** [`/mcp` (14,889), `/` (882), `/a131c452f3a08d3c89206e2b8fdb5908` (753), `/robots.txt` (497), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/.well-known/agent-card.json` (328), `/.well-known/glama.json` (275), `/favicon.ico` (262), `/.well-known/agent.json` (246)]
+- **Top Countries:** [US (10,022), FI (3,258), DE (1,775), NL (1,744), FR (1,703)]
+- **D1 Database State:** 12 Telemetry Submissions (85 Compiled Patches), 316 Grievances, 216 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 250
+- **Status Codes:** 2xx: 235 | 3xx: 1 | 4xx: 7 | 5xx (All Server/Gateway Errors): 7 (of which 504 Timeouts: 7, Other 5xx: 0)
+- **5xx Error Rate:** 2.80%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (3), `/.well-known/capabilities.txt (504)` (1), `/.well-known/mcp.json (504)` (1), `/openapi.json (504)` (1), `/.well-known/mcp/server-card.json (504)` (1)]
+- **Top Paths:** [`/mcp` (212), `/robots.txt` (8), `/a131c452f3a08d3c89206e2b8fdb5908` (8), `/` (6), `/.well-known/mcp.json` (3), `/sitemap.xml` (2), `/openapi.json` (2), `/.well-known/agent-card.json` (2), `/.well-known/capabilities.txt` (2), `/.well-known/mcp/server-card.json` (2)]
+
+---

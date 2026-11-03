@@ -15,6 +15,14 @@ def test_build_distribution_execution():
     assert os.path.exists("dist/sitemap.xml")
     assert os.path.exists("dist/_redirects")
     assert os.path.exists("dist/.well-known/agent.json")
+    assert os.path.exists("dist/404.html")
+    assert os.path.exists("dist/_routes.json")
+
+    with open("dist/_routes.json", "r", encoding="utf-8") as f:
+        routes_data = json.load(f)
+        assert routes_data.get("version") == 1
+        assert "/mcp" in routes_data.get("include", [])
+        assert "/v1/health" in routes_data.get("exclude", [])
     
     with open("dist/v1/snapshot.json", "r", encoding="utf-8") as f:
         data = json.load(f)

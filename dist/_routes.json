@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "include": [
+    "/mcp",
+    "/mcp/*",
+    "/v1/*",
+    "/api/*",
+    "/health"
+  ],
+  "exclude": [
+    "/v1/health",
+    "/v1/snapshot.json",
+    "/v1/snapshot.sig"
+  ]
+}

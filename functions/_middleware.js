@@ -1,36 +1,60 @@
 /**
  * FMagenticL Cloudflare Pages Edge Middleware
- * 1. Fast 404 for exploit probes & dotfiles (prevents 36KB SPA index.html fallback timeouts).
- * 2. Dedicated handler for /mcp/server-card (resolves missing card endpoint).
- * 3. Pass-through for legitimate registry assets, API routes, and MCP protocol traffic.
+ * 1. Strict dynamic route allowlist (instantly returns 404 for unrouted probes like /api/query without context.next()).
+ * 2. Dedicated fast 200 OK handler for /mcp/server-card.
+ * 3. Pass-through for legitimate allowlisted dynamic routes only.
  */
-
-const SCANNER_PROBE_REGEX = /^\/(actuator(\/.*)?|\.env.*|\.git.*|\.vscode(\/.*)?|\.cursor(\/.*)?|wp-.*|api\/auth(\/.*)?|[a-f0-9]{32})$/i;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, Authorization",
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, Authorization, X-Public-Key, X-Signature",
 };
+
+const EXACT_ALLOWLIST = new Set([
+  "/mcp",
+  "/mcp/server-card",
+  "/health",
+  "/api/v1/patches",
+  "/v1/health",
+  "/v1/snapshot.json",
+  "/v1/snapshot.sig",
+  "/v1/telemetry",
+  "/v1/grievance",
+  "/v1/grievances",
+  "/v1/workaround",
+  "/v1/workarounds",
+  "/v1/dispute",
+  "/v1/disputes",
+  "/v1/hello",
+  "/v1/bloom.bin",
+]);
+
+const PREFIX_ALLOWLIST = [
+  "/mcp/",
+  "/v1/patches/",
+  "/v1/resolve/",
+  "/v1/deltas/",
+  "/v1/grievance/",
+  "/v1/grievances/",
+  "/v1/workaround/",
+  "/v1/workarounds/",
+];
+
+function isAllowed(path) {
+  if (EXACT_ALLOWLIST.has(path)) return true;
+  for (const prefix of PREFIX_ALLOWLIST) {
+    if (path.startsWith(prefix)) return true;
+  }
+  return false;
+}
 
 export async function onRequest(context) {
   const { request } = context;
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, "");
 
-  // 1. Fast-reject automated exploit scanner paths and random hex hashes
-  if (SCANNER_PROBE_REGEX.test(path)) {
-    return new Response("Not Found", {
-      status: 404,
-      headers: {
-        "Content-Type": "text/plain",
-        "Cache-Control": "public, max-age=3600, s-maxage=86400",
-        ...CORS_HEADERS,
-      },
-    });
-  }
-
-  // 2. Fast 200 OK for /mcp/server-card
+  // 1. Fast 200 OK for /mcp/server-card
   if (path === "/mcp/server-card") {
     const card = {
       name: "fmagenticl-registry-mcp",
@@ -52,6 +76,19 @@ export async function onRequest(context) {
     });
   }
 
-  // 3. Normal execution flow
+  // 2. Strict Allowlist Gate: Reject unapproved paths before waking asset fetchers
+  // Prevents internal asset subrequest fallback timeouts (2a06:98c0:3600::103) on unrouted scanner probes
+  if (!isAllowed(path) && !isAllowed(url.pathname)) {
+    return new Response("Not Found", {
+      status: 404,
+      headers: {
+        "Content-Type": "text/plain",
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        ...CORS_HEADERS,
+      },
+    });
+  }
+
+  // 3. Normal execution flow for allowlisted dynamic routes
   return await context.next();
 }

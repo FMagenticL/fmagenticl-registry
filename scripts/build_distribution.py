@@ -261,6 +261,31 @@ def build():
         with open(p, "wb") as f:
             f.write(authz_bytes)
 
+    # 8. Cloudflare Pages SPA Fallback Disabler & Fast CDN 404
+    # The presence of 404.html at root of dist/ disables SPA index.html fallback for unmatched static routes
+    with open("dist/404.html", "w", encoding="utf-8") as f:
+        f.write("<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1></body></html>\n")
+
+    # 9. Cloudflare Pages Functions Routing Rules (_routes.json v1)
+    # Directs all static assets to Cloudflare's static edge CDN and only invokes Pages Functions for dynamic routes
+    routes_config = {
+        "version": 1,
+        "include": [
+            "/mcp",
+            "/mcp/*",
+            "/v1/*",
+            "/api/*",
+            "/health"
+        ],
+        "exclude": [
+            "/v1/health",
+            "/v1/snapshot.json",
+            "/v1/snapshot.sig"
+        ]
+    }
+    with open("dist/_routes.json", "w", encoding="utf-8") as f:
+        json.dump(routes_config, f, indent=2)
+
     print(f"SUCCESS: Distribution built: {len(patches)} patches, {verified_workarounds_count} verified workarounds ({total_grievances_count} grievances) (total: {total_curated_entries}) compiled to dist/.")
 
 if __name__ == "__main__":
