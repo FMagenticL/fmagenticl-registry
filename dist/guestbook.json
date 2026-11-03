@@ -1,5 +1,5 @@
 {
-  "count": 221,
+  "count": 222,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1105,7 +1105,12 @@
       "entity": "span-pipeline",
       "first_seen": "2026-11-02",
       "type": "agent"
+    },
+    {
+      "entity": "mcp-ficha-probe",
+      "first_seen": "2026-11-03",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-02T20:47:08Z"
+  "generated_at": "2026-11-03T10:50:46Z"
 }
