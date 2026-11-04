@@ -1,5 +1,5 @@
 {
-  "count": 223,
+  "count": 225,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1115,7 +1115,17 @@
       "entity": "mcp-ficha-probe",
       "first_seen": "2026-11-03",
       "type": "security_probe"
+    },
+    {
+      "entity": "clickd",
+      "first_seen": "2026-11-04",
+      "type": "agent"
+    },
+    {
+      "entity": "lookupd-probe",
+      "first_seen": "2026-11-04",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-03T18:27:08Z"
+  "generated_at": "2026-11-04T06:15:53Z"
 }
