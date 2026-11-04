@@ -21,7 +21,8 @@ jobs:
       - name: Log GitHub rate limit (start)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh api rate_limit --jq '{core: .resources.core, graphql: .resources.graphql}'
+        run: |
+          gh api rate_limit --jq '{core: .resources.core, graphql: .resources.graphql}'
 
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -136,4 +137,5 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh api rate_limit --jq '{core: .resources.core, graphql: .resources.graphql}'
+        run: |
+          gh api rate_limit --jq '{core: .resources.core, graphql: .resources.graphql}'
