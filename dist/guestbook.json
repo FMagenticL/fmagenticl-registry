@@ -1,5 +1,5 @@
 {
-  "count": 227,
+  "count": 230,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1117,6 +1117,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "World2 indexer",
+      "first_seen": "2026-11-04",
+      "type": "crawler"
+    },
+    {
       "entity": "clickd",
       "first_seen": "2026-11-04",
       "type": "agent"
@@ -1132,10 +1137,20 @@
       "type": "security_probe"
     },
     {
+      "entity": "plug.directory-prober",
+      "first_seen": "2026-11-04",
+      "type": "crawler"
+    },
+    {
+      "entity": "saanora-moons",
+      "first_seen": "2026-11-04",
+      "type": "agent"
+    },
+    {
       "entity": "search-probe",
       "first_seen": "2026-11-04",
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-04T13:09:56Z"
+  "generated_at": "2026-11-04T20:28:00Z"
 }
