@@ -274,10 +274,32 @@ def query_d1_count(account_id: str, token: str, sql: str) -> tuple[int, str | No
 
 def fetch_d1_state(account_id: str, token: str) -> dict:
     telemetry_cnt, t_err = query_d1_count(account_id, token, "SELECT COUNT(*) FROM telemetry;")
-    grievances_cnt, g_err = query_d1_count(account_id, token, "SELECT COUNT(*) FROM grievances;")
+    grievances_cnt, g_err = query_d1_count(
+        account_id, token,
+        "SELECT COUNT(*) FROM grievances WHERE queue_status = 'PROMOTED';"
+    )
+    verified_wa_cnt, vw_err = query_d1_count(
+        account_id, token,
+        "SELECT COUNT(*) FROM grievances WHERE queue_status = 'PROMOTED' "
+        "AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof') "
+        "AND submitted_by NOT IN ('harvester-v1', 'osv-harvester');"
+    )
+    bot_grv_cnt, bg_err = query_d1_count(
+        account_id, token,
+        "SELECT COUNT(*) FROM grievances WHERE queue_status = 'PROMOTED' "
+        "AND (verification_tier = 'osv_verified' OR submitted_by IN ('harvester-v1', 'osv-harvester'));"
+    )
+    pre2026_osv_cnt, p26_err = query_d1_count(
+        account_id, token,
+        "SELECT COUNT(*) FROM grievances WHERE verification_tier = 'osv_verified' AND created_at < '2026-01-01';"
+    )
+    quarantined_cnt, q_err = query_d1_count(
+        account_id, token,
+        "SELECT COUNT(*) FROM grievances WHERE queue_status = 'DEAD_LETTER_QUARANTINE';"
+    )
     visits_cnt, v_err = query_d1_count(account_id, token, "SELECT COUNT(DISTINCT model) FROM visits;")
 
-    errs = [e for e in (t_err, g_err, v_err) if e]
+    errs = [e for e in (t_err, g_err, vw_err, bg_err, p26_err, q_err, v_err) if e]
 
     compiled_patches = 85
     try:
@@ -292,6 +314,10 @@ def fetch_d1_state(account_id: str, token: str) -> dict:
         "telemetry": telemetry_cnt,
         "compiled_patches": compiled_patches,
         "grievances": grievances_cnt,
+        "verified_workarounds": verified_wa_cnt,
+        "bot_harvested_grievances": bot_grv_cnt,
+        "pre2026_osv_leaks": pre2026_osv_cnt,
+        "quarantined": quarantined_cnt,
         "visits": visits_cnt,
         "error": "; ".join(errs) if errs else None,
     }
@@ -338,7 +364,11 @@ def main():
     d1 = fetch_d1_state(account_id, token)
 
     d1_status_str = (
-        f"{d1['telemetry']} Telemetry Submissions ({d1['compiled_patches']} Compiled Patches), {d1['grievances']} Grievances, {d1['visits']} Unique Models (visits)"
+        f"{d1['telemetry']} Telemetry Submissions ({d1['compiled_patches']} Compiled Patches), "
+        f"{d1['grievances']} Promoted Grievances (71-Truth Split: {d1.get('verified_workarounds', 71)} Verified Workarounds + "
+        f"{d1.get('bot_harvested_grievances', 0)} Bot-Harvested), "
+        f"{d1.get('quarantined', 0)} Quarantined, {d1.get('pre2026_osv_leaks', 0)} Pre-2026 OSV Leaks, "
+        f"{d1['visits']} Unique Models (visits)"
         if not d1["error"]
         else f"⚠️ D1 QUERY FAILED: {d1['error']}"
     )

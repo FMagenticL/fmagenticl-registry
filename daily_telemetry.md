@@ -867,3 +867,47 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 - **Top Paths:** [`/mcp` (220), `/robots.txt` (10), `/v1/health` (10), `/a131c452f3a08d3c89206e2b8fdb5908` (9), `/` (7), `/workarounds.json` (5), `/.well-known/mcp.json` (3), `/llms.txt` (3), `/sw.js` (2), `/sitemap.xml` (2)]
 
 ---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-04 13:06:54 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 24,757
+- **Total Bandwidth:** 128.97 MB
+- **Status Codes:** 2xx: 22,230 | 3xx: 116 | 4xx: 734 | 5xx (All Server/Gateway Errors): 1,677 (of which 504 Timeouts: 1,677, Other 5xx: 0)
+- **5xx Error Rate:** 6.77%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (170), `/dd83979cec568c19b0e823f1c4d180f1 (504)` (90), `/ (504)` (62), `/8107015357e011f7d7b6f5968bdaaf7a (504)` (55), `/openapi.json (504)` (45)]
+- **Top Paths:** [`/mcp` (16,221), `/` (923), `/a131c452f3a08d3c89206e2b8fdb5908` (789), `/robots.txt` (548), `/.well-known/agent-card.json` (356), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/.well-known/glama.json` (329), `/workarounds.json` (311), `/favicon.ico` (272)]
+- **Top Countries:** [US (10,775), FI (3,566), NL (2,038), DE (1,907), FR (1,788)]
+- **D1 Database State:** 12 Telemetry Submissions (85 Compiled Patches), 317 Grievances, 221 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 353
+- **Status Codes:** 2xx: 323 | 3xx: 1 | 4xx: 12 | 5xx (All Server/Gateway Errors): 17 (of which 504 Timeouts: 17, Other 5xx: 0)
+- **5xx Error Rate:** 4.82%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (3), `/sw.js (504)` (2), `/llms.txt (504)` (1), `/llms-full.txt (504)` (1), `/shards/workarounds/fastapi.json (504)` (1)]
+- **Top Paths:** [`/mcp` (238), `/` (14), `/workarounds.json` (12), `/robots.txt` (11), `/a131c452f3a08d3c89206e2b8fdb5908` (11), `/v1/health` (9), `/shards/workarounds/_recent.json` (7), `/.well-known/oauth-protected-resource/mcp` (6), `/shards/workarounds/pydantic.json` (5), `/sw.js` (4)]
+
+---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-04 13:37:50 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 24,828
+- **Total Bandwidth:** 134.09 MB
+- **Status Codes:** 2xx: 22,292 | 3xx: 116 | 4xx: 737 | 5xx (All Server/Gateway Errors): 1,683 (of which 504 Timeouts: 1,683, Other 5xx: 0)
+- **5xx Error Rate:** 6.78%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (171), `/dd83979cec568c19b0e823f1c4d180f1 (504)` (90), `/ (504)` (62), `/8107015357e011f7d7b6f5968bdaaf7a (504)` (55), `/openapi.json (504)` (45)]
+- **Top Paths:** [`/mcp` (16,243), `/` (925), `/a131c452f3a08d3c89206e2b8fdb5908` (791), `/robots.txt` (548), `/.well-known/agent-card.json` (365), `/dd83979cec568c19b0e823f1c4d180f1` (349), `/8107015357e011f7d7b6f5968bdaaf7a` (347), `/.well-known/glama.json` (331), `/workarounds.json` (323), `/favicon.ico` (272)]
+- **Top Countries:** [US (10,798), FI (3,572), NL (2,042), DE (1,907), FR (1,788)]
+- **D1 Database State:** 12 Telemetry Submissions (85 Compiled Patches), 568 Promoted Grievances (71-Truth Split: 71 Verified Workarounds + 497 Bot-Harvested), 0 Quarantined, 0 Pre-2026 OSV Leaks, 221 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 406
+- **Status Codes:** 2xx: 368 | 3xx: 1 | 4xx: 14 | 5xx (All Server/Gateway Errors): 23 (of which 504 Timeouts: 23, Other 5xx: 0)
+- **5xx Error Rate:** 5.67%
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (4), `/sw.js (504)` (2), `/.well-known/agent-card.json (504)` (2), `/llms.txt (504)` (1), `/llms-full.txt (504)` (1)]
+- **Top Paths:** [`/mcp` (242), `/workarounds.json` (24), `/` (16), `/v1/health` (15), `/a131c452f3a08d3c89206e2b8fdb5908` (13), `/robots.txt` (11), `/.well-known/agent-card.json` (11), `/shards/workarounds/_recent.json` (9), `/.well-known/agent.json` (6), `/.well-known/oauth-protected-resource/mcp` (6)]
+
+---
