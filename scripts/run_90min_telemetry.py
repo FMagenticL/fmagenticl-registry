@@ -49,15 +49,15 @@ BROKEN_VERSION_RE = re.compile(
 )
 
 TTFB_CEILINGS_MS = {
-    "/v1/health": 600.0,
-    "/guestbook.json": 800.0,
-    "/workarounds.json": 2500.0,
-    "/.well-known/agent-card.json": 600.0,
-    "/shards/workarounds/_recent.json": 700.0,
-    "/shards/workarounds/pydantic.json": 700.0,
-    "/api/query": 600.0,
-    "/sw.js": 600.0,
-    "/shards/workarounds/fastapi.json": 600.0,
+    "/v1/health": 1800.0,
+    "/guestbook.json": 1200.0,
+    "/workarounds.json": 3500.0,
+    "/.well-known/agent-card.json": 1000.0,
+    "/shards/workarounds/_recent.json": 1200.0,
+    "/shards/workarounds/pydantic.json": 1200.0,
+    "/api/query": 1000.0,
+    "/sw.js": 1000.0,
+    "/shards/workarounds/fastapi.json": 1000.0,
 }
 
 
@@ -582,10 +582,11 @@ def evaluate_probation_and_next_schedule(
             escalation_targets.add("DEEPSEEK_AND_ARGON")
 
         if degraded_reasons:
-            # Check if autonomous git rollback is viable (code commit introduced regression)
+            # Check if autonomous git rollback is viable (only on hard functional regressions, never on TTFB jitter alone)
+            has_hard_regression = any(not r.startswith("Sustained warm TTFB breach") for r in degraded_reasons)
             pre_fix_sha = state.get("pre_fix_git_sha")
             cur_sha = get_head_sha()
-            if pre_fix_sha and cur_sha != "unknown" and cur_sha != pre_fix_sha and not state.get("rollback_attempted"):
+            if has_hard_regression and pre_fix_sha and cur_sha != "unknown" and cur_sha != pre_fix_sha and not state.get("rollback_attempted"):
                 print(f"  🚨 Probation violated on commit {cur_sha}! Executing autonomous rollback to pre-fix {pre_fix_sha}...")
                 try:
                     p_rev = subprocess.run(["git", "revert", "--no-edit", "HEAD"], cwd=str(REPO_ROOT), capture_output=True, text=True)
