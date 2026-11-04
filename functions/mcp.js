@@ -232,14 +232,19 @@ export async function getUnifiedWorkarounds(env, origin, target = null) {
   const base = origin || "https://fmagenticl-registry.pages.dev";
   const fetchJson = async (path) => {
     try {
-      let res = null;
       if (env?.ASSETS) {
-        try { res = await env.ASSETS.fetch(new Request(`${base}${path}`, { method: "GET" })); } catch (_) {}
+        try {
+          const res = await env.ASSETS.fetch(new Request(`${base}${path}`, { method: "GET" }));
+          if (res && res.ok) return await res.json();
+        } catch (_) {}
+        return null;
       }
-      if ((!res || !res.ok) && origin) {
-        try { res = await fetch(`${origin}${path}`); } catch (_) {}
+      if (origin) {
+        try {
+          const res = await fetch(`${origin}${path}`);
+          if (res && res.ok) return await res.json();
+        } catch (_) {}
       }
-      if (res && res.ok) return await res.json();
     } catch (_) {}
     return null;
   };
@@ -548,48 +553,42 @@ async function fetchPatch(env, origin, hash) {
 
   const assetUrl = `${origin}/v1/resolve/${cleanHash}.json`;
 
-  if (env.ASSETS) {
-
+  if (env?.ASSETS) {
     try {
-
       const res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
-
       if (res && res.ok) return await res.json();
-
     } catch (_) { /* fall through */ }
-
+    try {
+      const regRes = await env.ASSETS.fetch(new Request(`${origin}/registry.json`, { method: "GET" }));
+      if (regRes && regRes.ok) {
+        const data = await regRes.json();
+        const list = Array.isArray(data) ? data : (data.patches || []);
+        const match = list.find(p => {
+          const pId = String(p.id || p.fingerprint || p.patch_hash || "").replace(/^sha256:/i, "").toLowerCase();
+          return pId === cleanHash;
+        });
+        if (match) return match;
+      }
+    } catch (_) { /* fall through */ }
+    return null;
   }
 
   try {
-
     const res = await fetch(assetUrl);
-
     if (res && res.ok) return await res.json();
-
   } catch (_) { /* fall through */ }
 
   try {
-
     const res = await fetch(`${origin}/api/v1/patches`);
-
     if (res && res.ok) {
-
       const data = await res.json();
-
       const list = Array.isArray(data) ? data : (data.patches || []);
-
       const match = list.find(p => {
-
         const pId = String(p.id || p.fingerprint || p.patch_hash || "").replace(/^sha256:/i, "").toLowerCase();
-
         return pId === cleanHash;
-
       });
-
       if (match) return match;
-
     }
-
   } catch (_) { /* fall through */ }
 
   return null;
@@ -834,24 +833,16 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
           const regAssetUrl = `${origin}/registry.json`;
 
-          if (env.ASSETS) {
-
+          if (env?.ASSETS) {
             try {
-
               const aRes = await env.ASSETS.fetch(new Request(regAssetUrl, { method: "GET" }));
-
               if (aRes && aRes.ok) regData = await aRes.json();
-
             } catch (_) {}
-
-          }
-
-          if (!regData) {
-
-            const regRes = await fetch(regAssetUrl);
-
-            if (regRes && regRes.ok) regData = await regRes.json();
-
+          } else if (origin) {
+            try {
+              const regRes = await fetch(regAssetUrl);
+              if (regRes && regRes.ok) regData = await regRes.json();
+            } catch (_) {}
           }
 
           if (regData) {
