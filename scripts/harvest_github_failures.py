@@ -70,7 +70,19 @@ TARGET_REPOS = [
     "run-llama/llama_index",
     "microsoft/autogen",
     "stanfordnlp/dspy",
-    "huggingface/transformers"
+    "huggingface/transformers",
+    # Push B: 11 Qualified Autonomous Agent & Workflow Toolkits
+    "BoundaryML/baml",
+    "PrefectHQ/prefect",
+    "astral-sh/ruff",
+    "infiniflow/ragflow",
+    "langfuse/langfuse",
+    "langgenius/dify",
+    "mastra-ai/mastra",
+    "pydantic/pydantic-settings",
+    "sgl-project/sglang",
+    "simonw/llm",
+    "truera/trulens"
 ]
 
 REPO_TARGET_MAP = {
@@ -99,7 +111,18 @@ REPO_TARGET_MAP = {
     "crewAIInc/crewAI": "crewai",
     "gitlab-org/cli": "gitlab-cli",
     "gitlab/cli": "gitlab-cli",
-    "glab": "gitlab-cli"
+    "glab": "gitlab-cli",
+    "BoundaryML/baml": "baml",
+    "PrefectHQ/prefect": "prefect",
+    "astral-sh/ruff": "ruff",
+    "infiniflow/ragflow": "ragflow",
+    "langfuse/langfuse": "langfuse",
+    "langgenius/dify": "dify",
+    "mastra-ai/mastra": "mastra",
+    "pydantic/pydantic-settings": "pydantic-settings",
+    "sgl-project/sglang": "sglang",
+    "simonw/llm": "llm",
+    "truera/trulens": "trulens"
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"

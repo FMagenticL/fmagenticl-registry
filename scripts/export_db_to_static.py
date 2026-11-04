@@ -121,8 +121,24 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
         'grv_gh_cloudflare_workers-sdk_16237', 'grv_gh_cloudflare_workers-sdk_16141',
         'grv_gh_modelcontextprotocol_python-sdk_3586', 'grv_gh_modelcontextprotocol_typescript-sdk_2864',
         '82e4376c-3763-4e24-a37c-4a963a11295b', '90a44e12-9311-42e6-b1fa-5f9f459fc295',
-        '7bab327e-20a8-446-8344-7546f8c8ccb0', '7bab327e-20a8-446e-8344-7546f8c8ccb0', '9d6f4f79-ca6c-4803-afe0-37757b741ef7'
+        '7bab327e-20a8-446-8344-7546f8c8ccb0', '7bab327e-20a8-446e-8344-7546f8c8ccb0', '9d6f4f79-ca6c-4803-afe0-37757b741ef7',
+        'grv_osv_PYSEC_2021_47', 'grv_osv_GHSA_5jqp_qgf6_3pvh', 'grv_osv_GHSA_8h2j_cgx8_6xv7',
+        'grv_osv_GHSA_8c93_4hch_xgxp', 'grv_osv_GHSA_8h5w_f6q9_wg35', 'grv_osv_GHSA_cfph_4qqh_w828',
+        'grv_osv_GHSA_f8mp_x433_5wpf', 'grv_osv_PYSEC_2024_38', 'grv_osv_GHSA_mr82_8j83_vxmv',
+        'grv_osv_GHSA_3hjh_jh2h_vrg6', 'grv_osv_GHSA_f2jm_rw3h_6phg', 'grv_osv_PYSEC_2025_245',
+        'grv_osv_GHSA_v3c8_3pr6_gr7p', 'grv_osv_GHSA_5hq9_5r78_2gjh', 'grv_osv_GHSA_pc6w_59fv_rh23',
+        'grv_osv_GHSA_59p9_h35m_wg4g', 'grv_osv_GHSA_7f5h_v6xp_fcq8', 'grv_osv_GHSA_c67j_w6g6_q2cm'
     }
+    purge_backup_dir = REPO_ROOT / 'data' / 'purge_backups'
+    if purge_backup_dir.exists():
+        for bkp in purge_backup_dir.glob('*.json'):
+            try:
+                bdata = json.loads(bkp.read_text(encoding='utf-8'))
+                for row in bdata.get('rows', []):
+                    if row.get('id'):
+                        PURGE_GRIEVANCE_IDS.add(row['id'])
+            except Exception:
+                pass
 
     sql = (
         "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at "

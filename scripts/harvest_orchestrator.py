@@ -59,7 +59,15 @@ TARGET_GITHUB_REPOS = [
     "run-llama/llama_index",
     "microsoft/autogen",
     "stanfordnlp/dspy",
-    "huggingface/transformers"
+    "huggingface/transformers",
+    # Push B: Qualified Release Repos
+    "mastra-ai/mastra",
+    "pydantic/pydantic-settings",
+    "sgl-project/sglang",
+    "simonw/llm",
+    "langgenius/dify",
+    "truera/trulens",
+    "Codium-ai/pr-agent",
 ]
 
 REPO_TARGET_MAP = {
