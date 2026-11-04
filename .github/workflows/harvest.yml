@@ -1,5 +1,9 @@
 name: Automated Registry Harvest
 
+concurrency:
+  group: registry-writer
+  cancel-in-progress: false
+
 on:
   schedule:
     # Run hourly at 11 minutes past the hour to avoid queue drops and agent polling bursts
@@ -12,7 +16,13 @@ permissions:
 jobs:
   harvest-and-promote:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
+      - name: Log GitHub rate limit (start)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api rate_limit --jq '{core: .resources.core, graphql: .resources.graphql}'
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -87,7 +97,7 @@ jobs:
       - name: Stage Changes & Run CI Seatbelts
         id: seatbelt-step
         run: |
-          git add patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/
+          git add patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
           if git diff --staged --quiet; then
             echo "No changes staged. Skipping test gates."
             echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -96,8 +106,9 @@ jobs:
             python scripts/air_gap_scan.py --staged
             python -m pytest tests/test_promote_d1.py -v
             python -m pytest tests/test_osv_harvester.py -v
+            python -m pytest tests/test_pr_title_filter.py tests/test_release_harvester.py tests/test_gatekeeper.py -v
             python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
-            git add patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/
+            git add patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
 
@@ -108,7 +119,7 @@ jobs:
         run: |
           git config --global user.name "FMagenticL Harvester Bot"
           git config --global user.email "harvester@fmagenticl-registry.pages.dev"
-          git add patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/
+          git add patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
           git commit -m "[BOT] chore(harvest): automated hourly harvesting and patch promotion" || echo "No changes to commit"
           git pull --rebase --autostash origin main || (git rebase --abort 2>/dev/null || true; git pull --no-rebase origin main)
           git push origin main || git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main
@@ -120,3 +131,9 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           npx wrangler pages deploy dist --project-name=fmagenticl-registry --branch=main
+
+      - name: Log GitHub rate limit (end)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api rate_limit --jq '{core: .resources.core, graphql: .resources.graphql}'

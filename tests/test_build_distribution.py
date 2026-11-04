@@ -37,3 +37,37 @@ def test_build_distribution_execution():
         assert len(reg["patches"]) >= 47
         assert all(p["signed"] is True for p in reg["patches"])
 
+
+
+def test_2_t1_static_shards_generation():
+    """Plan 2-T1: dist/shards/workarounds/_recent.json exists with count <= 100 and per-target shards match."""
+    import scripts.build_distribution as bd
+    from pathlib import Path
+    import json
+    import re
+
+    # Run build
+    bd.build()
+
+    shard_dir = bd.REPO_ROOT / "dist" / "shards" / "workarounds"
+    recent_file = shard_dir / "_recent.json"
+    assert recent_file.exists(), "_recent.json must exist in shards"
+    recent_data = json.loads(recent_file.read_text(encoding="utf-8"))
+    assert recent_data["count"] <= 100
+
+    wrk_file = bd.REPO_ROOT / "dist" / "workarounds.json"
+    assert wrk_file.exists()
+    all_wrk = json.loads(wrk_file.read_text(encoding="utf-8")).get("workarounds", [])
+
+    def _shard_key(s: str) -> str:
+        return re.sub(r"[^a-z0-9._-]", "_", (s or "").strip().lower().replace("/", "__"))[:120]
+
+    for item in all_wrk[:30]:  # sample check
+        tgt = item.get("target")
+        if tgt:
+            sk = _shard_key(tgt)
+            s_file = shard_dir / f"{sk}.json"
+            assert s_file.exists(), f"Shard file {s_file} missing for target {tgt}"
+            s_data = json.loads(s_file.read_text(encoding="utf-8"))
+            s_ids = {x.get("id") for x in s_data.get("workarounds", [])}
+            assert item.get("id") in s_ids

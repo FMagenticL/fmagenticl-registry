@@ -102,7 +102,7 @@ function scrub(text) {
 
     .replace(/password\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, 'password=[REDACTED]')
 
-    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]')
+    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]')
 
     .replace(/\(?\b[0-9]{3}\)?[-.\s][0-9]{3}[-.\s][0-9]{4}\b/g, '[REDACTED_PHONE]')
 
@@ -257,44 +257,37 @@ export async function getUnifiedWorkarounds(env, origin, target = null) {
 
   // 2. Static feed fetch (/workarounds.json) — Curated In-House Static Assets ALWAYS Overwrite D1 on ID Conflict
 
+  // 2. Static feed fetch (/shards/... or /workarounds.json)
   let staticItems = [];
-
-  try {
-
-    let res = null;
-
-    if (env?.ASSETS) {
-
-      try {
-
-        const assetUrl = origin ? `${origin}/workarounds.json` : "https://fmagenticl-registry.pages.dev/workarounds.json";
-
-        res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
-
-      } catch (_) {}
-
+  const base = origin || "https://fmagenticl-registry.pages.dev";
+  const fetchJson = async (path) => {
+    try {
+      let res = null;
+      if (env?.ASSETS) {
+        try { res = await env.ASSETS.fetch(new Request(`${base}${path}`, { method: "GET" })); } catch (_) {}
+      }
+      if ((!res || !res.ok) && origin) {
+        try { res = await fetch(`${origin}${path}`); } catch (_) {}
+      }
+      if (res && res.ok) return await res.json();
+    } catch (_) {}
+    return null;
+  };
+  const shardKey = (s) => s.trim().toLowerCase().replace(/\//g, "__").replace(/[^a-z0-9._-]/g, "_").slice(0, 120);
+  let gotShard = false;
+  const keys = targetLower ? Array.from(new Set(aliases.map(shardKey))) : ["_recent"];
+  for (const k of keys) {
+    const data = await fetchJson(`/shards/workarounds/${k}.json`);
+    if (data && Array.isArray(data.workarounds)) {
+      gotShard = true;
+      staticItems.push(...data.workarounds);
     }
-
-    if ((!res || !res.ok) && origin) {
-
-      try {
-
-        res = await fetch(`${origin}/workarounds.json`);
-
-      } catch (_) {}
-
-    }
-
-    if (res && res.ok) {
-
-      const data = await res.json();
-
-      staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
-
-    }
-
-  } catch (_) {}
-
+  }
+  if (!gotShard) {
+    // Legacy fallback (unknown target / shards not yet deployed): full feed
+    const data = await fetchJson("/workarounds.json");
+    if (data) staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+  }
 
 
   for (const item of staticItems) {
@@ -726,31 +719,22 @@ async function handleDispute(request, env) {
 
 
 async function handleGetGrievances(request, env, target) {
-
   const url = new URL(request.url);
-
   const origin = url.origin;
-
   const list = await getUnifiedWorkarounds(env, origin, target);
-
+  const MAX_ITEMS = 50;
+  const page = list.slice(0, MAX_ITEMS);
   return json({
-
     target: target || 'all',
-
     total: list.length,
-
-    count: list.length,
-
-    workarounds: list,
-
-    grievances: list
-
+    count: page.length,
+    truncated: list.length > MAX_ITEMS,
+    full_feed_url: `${origin}/workarounds.json`,
+    workarounds: page,
+    grievances: page
   }, 200, {
-
     'Cache-Control': 'public, max-age=60, s-maxage=120'
-
   });
-
 }
 
 

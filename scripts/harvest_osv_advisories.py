@@ -62,6 +62,36 @@ ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID") or "f83dbbaa261d9ceac1f9f66
 OSV_BATCH_URL = "https://api.osv.dev/v1/querybatch"
 OSV_VULN_URL = "https://api.osv.dev/v1/vulns/"
 
+SEEN_CACHE_PATH = REPO_ROOT / "data" / "osv_seen_cache.json"
+MAX_NEW_RECORDS_PER_RUN = int(os.environ.get("OSV_MAX_NEW_PER_RUN", "150"))
+
+
+def load_seen_cache() -> Dict[str, str]:
+    """{advisory_id: modified_timestamp} for every advisory already decided (accepted+inserted or rejected)."""
+    try:
+        data = json.loads(SEEN_CACHE_PATH.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def save_seen_cache(cache: Dict[str, str]) -> None:
+    SEEN_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    SEEN_CACHE_PATH.write_text(json.dumps(cache, indent=0, sort_keys=True), encoding="utf-8")
+
+
+def load_existing_registry_ids() -> set:
+    """IDs already exported to the static registry, so they never consume throttle slots."""
+    ids = set()
+    p = REPO_ROOT / "dist" / "workarounds.json"
+    try:
+        for item in json.loads(p.read_text(encoding="utf-8")).get("workarounds", []):
+            if item.get("id"):
+                ids.add(item["id"])
+    except Exception:
+        pass
+    return ids
+
 # 23 Target Packages across PyPI and npm
 OSV_TARGET_PACKAGES: List[Tuple[str, str]] = [
     # PyPI
@@ -151,10 +181,10 @@ def evaluate_osv_gates(vuln: dict, pkg_name: str, ecosystem: str) -> Optional[Di
     if vuln.get("withdrawn"):
         return None
 
-    # Gate 2: 2026 Freshness Cutoff
+    # Gate 2: 2026 Freshness Cutoff (publication date only).
+    # OSV bulk-rewrites "modified" on old records, so a modified-date path admits years-old CVEs.
     pub = vuln.get("published") or ""
-    mod = vuln.get("modified") or ""
-    if not (pub >= "2026-01-01T00:00:00Z" or mod >= "2026-04-01T00:00:00Z"):
+    if not pub or pub < "2026-01-01T00:00:00Z":
         return None
 
     # Gate 3 & Gate 4: Highest Semantic Version & Mandatory Fix
@@ -225,8 +255,9 @@ def hydrate_vuln(vuln_id: str) -> Optional[dict]:
         return None
 
 
-def harvest_osv(max_per_pkg: int = 5) -> List[Dict[str, Any]]:
-    """Stage 1: Batch query -> Stage 2: Hydrate full records in parallel."""
+def harvest_osv(max_per_pkg: Optional[int] = None, seen_cache: Optional[Dict[str, str]] = None) -> List[Dict[str, Any]]:
+    """Stage 1: Batch query -> Stage 2: Hydrate new/changed records in parallel.
+    seen_cache (optional, mutated): rejected advisories are recorded so they are not re-hydrated next run."""
     print(f"[*] Stage 1: Batch querying OSV API for {len(OSV_TARGET_PACKAGES)} package targets...", file=sys.stderr)
     queries = [{"package": {"name": name, "ecosystem": eco}} for name, eco in OSV_TARGET_PACKAGES]
     req = urllib.request.Request(
@@ -235,9 +266,8 @@ def harvest_osv(max_per_pkg: int = 5) -> List[Dict[str, Any]]:
         headers={"Content-Type": "application/json", "User-Agent": "FMagenticL-OSV-Harvester/1.0"},
         method="POST"
     )
-
     try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
+        with urllib.request.urlopen(req, timeout=30) as resp:
             batch_data = json.loads(resp.read().decode("utf-8"))
     except Exception as e:
         print(f"ERROR: OSV querybatch failed: {e}", file=sys.stderr)
@@ -245,51 +275,47 @@ def harvest_osv(max_per_pkg: int = 5) -> List[Dict[str, Any]]:
 
     batch_results = batch_data.get("results") or []
     hydration_tasks = []
-
-    # Filter stubs by modified date and deduplicate IDs
+    skipped_cached = 0
     for idx, (pkg_name, ecosystem) in enumerate(OSV_TARGET_PACKAGES):
         if idx >= len(batch_results):
             break
         vulns = batch_results[idx].get("vulns") or []
-        # Pre-filter by 2026 freshness on stub
+        # Stubs carry no publication date; 2026-modified is only a cheap pre-filter. Gate 2 decides on 'published'.
         fresh_stubs = [v for v in vulns if (v.get("modified") or "") >= "2026-01-01"]
-        # Sort descending by modified timestamp
         fresh_stubs.sort(key=lambda v: v.get("modified") or "", reverse=True)
-        # Take up to max_per_pkg per target
-        selected_stubs = fresh_stubs[:max_per_pkg]
+        selected_stubs = fresh_stubs if max_per_pkg is None else fresh_stubs[:max_per_pkg]
         for s in selected_stubs:
-            hydration_tasks.append((s["id"], pkg_name, ecosystem))
+            if seen_cache is not None and seen_cache.get(s["id"]) == (s.get("modified") or ""):
+                skipped_cached += 1
+                continue
+            hydration_tasks.append((s["id"], s.get("modified") or "", pkg_name, ecosystem))
 
-    print(f"[*] Stage 2: Hydrating {len(hydration_tasks)} high-freshness vulnerability records in parallel...", file=sys.stderr)
-
+    print(f"[*] Stage 2: Hydrating {len(hydration_tasks)} new/changed records ({skipped_cached} unchanged skipped via cache)...", file=sys.stderr)
     hydrated_records = []
     seen_advisories = set()
-
     with ThreadPoolExecutor(max_workers=8) as executor:
-        future_map = {
-            executor.submit(hydrate_vuln, vid): (vid, pkg, eco)
-            for vid, pkg, eco in hydration_tasks
-        }
+        future_map = {executor.submit(hydrate_vuln, vid): (vid, mod, pkg, eco) for vid, mod, pkg, eco in hydration_tasks}
         for future in as_completed(future_map):
-            vid, pkg, eco = future_map[future]
+            vid, mod, pkg, eco = future_map[future]
             try:
                 vuln_full = future.result()
                 if not vuln_full:
-                    continue
-                # Canonical advisory ID deduplication (including aliases e.g. CVE / GHSA)
+                    continue  # transient failure: not cached, retried next run
                 advisory_ids = {vuln_full.get("id") or vid} | set(vuln_full.get("aliases") or [])
                 if any(aid in seen_advisories for aid in advisory_ids):
                     continue
-                
                 record = evaluate_osv_gates(vuln_full, pkg, eco)
                 if record:
                     seen_advisories.update(advisory_ids)
+                    record["_osv_modified"] = vuln_full.get("modified") or mod
                     hydrated_records.append(record)
+                elif seen_cache is not None:
+                    seen_cache[vid] = vuln_full.get("modified") or mod  # rejected: remember decision
             except Exception as e:
                 print(f"[WARN] Failed hydration for {vid}: {e}", file=sys.stderr)
 
     hydrated_records.sort(key=lambda r: r.get("created_at") or "", reverse=True)
-    print(f"[+] Stage 2 complete: Harvested {len(hydrated_records)} verified OSV security advisories.", file=sys.stderr)
+    print(f"[+] Stage 2 complete: {len(hydrated_records)} verified OSV advisories passed all gates.", file=sys.stderr)
     return hydrated_records
 
 
@@ -352,17 +378,41 @@ def insert_records_to_d1(records: List[Dict[str, Any]]) -> int:
 
 
 def main():
-    records = harvest_osv(max_per_pkg=5)
+    dry_run = "--dry-run" in sys.argv
+    cache = load_seen_cache()
+    records = harvest_osv(max_per_pkg=None, seen_cache=cache)
+
+    existing = load_existing_registry_ids()
+    already = [r for r in records if r["id"] in existing]
+    new_records = [r for r in records if r["id"] not in existing]
+    batch = new_records[:MAX_NEW_RECORDS_PER_RUN]          # newest-published first (sorted in harvest_osv)
+    deferred = len(new_records) - len(batch)
+    print(f"[*] Throttle: {len(new_records)} new, inserting {len(batch)} this run, {deferred} deferred to later runs; "
+          f"{len(already)} already in registry.", file=sys.stderr)
+
     if "--output" in sys.argv:
         idx = sys.argv.index("--output")
         if idx + 1 < len(sys.argv):
             out_file = Path(sys.argv[idx + 1])
-            out_file.write_text(json.dumps(records, indent=2), encoding="utf-8")
-            print(f"[+] Saved {len(records)} records to {out_file}")
+            out_file.write_text(json.dumps([{k: v for k, v in r.items() if k != "_osv_modified"} for r in batch],
+                                           indent=2), encoding="utf-8")
+            print(f"[+] Saved {len(batch)} records to {out_file}")
 
-    if "--dry-run" not in sys.argv:
-        insert_records_to_d1(records)
+    if dry_run:
+        return 0  # dry runs never mutate the cache
 
+    clean_batch = [{k: v for k, v in r.items() if k != "_osv_modified"} for r in batch]
+    inserted = insert_records_to_d1(clean_batch)
+    if inserted == len(clean_batch):
+        for r in batch:
+            cache[r["id"].replace("grv_osv_", "").replace("_", "-")] = r["_osv_modified"]
+        for r in already:
+            cache[r["id"].replace("grv_osv_", "").replace("_", "-")] = r["_osv_modified"]
+        save_seen_cache(cache)
+    else:
+        print(f"[-] Partial D1 insert ({inserted}/{len(clean_batch)}): cache NOT updated for accepted records; "
+              f"they will be retried next run.", file=sys.stderr)
+        save_seen_cache(cache)  # rejected decisions are still safe to persist
     return 0
 
 

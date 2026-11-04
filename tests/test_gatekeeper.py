@@ -87,3 +87,20 @@ def test_model_name_reservation():
     assert Gatekeeper.check_model_name_reservation("hermes3:8b", "claimed") is None
 
 
+
+
+def test_scrubber_preserves_npm_scoped_versions():
+    """Plan 1.5: @mastra/core@1.81.0 must not be redacted as an email address."""
+    from fmagenticl.server.gatekeeper import Gatekeeper
+    raw = "@mastra/core@1.81.0 has a fix in version 1.81.1"
+    scrubbed = Gatekeeper.scrub_secrets(raw)
+    assert "@mastra/core@1.81.0" in scrubbed
+
+
+def test_scrubber_redacts_valid_email_addresses():
+    """Plan 1.5: Valid email addresses must still be redacted."""
+    from fmagenticl.server.gatekeeper import Gatekeeper
+    raw = "contact jane.doe@corp.io for help"
+    scrubbed = Gatekeeper.scrub_secrets(raw)
+    assert "jane.doe@corp.io" not in scrubbed
+    assert "[REDACTED]" in scrubbed

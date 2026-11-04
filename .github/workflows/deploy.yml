@@ -11,6 +11,10 @@
 
 name: Compile Registry & Deploy CDN
 
+concurrency:
+  group: registry-writer
+  cancel-in-progress: false
+
 on:
   push:
     branches: [ main, master ]
@@ -21,6 +25,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       pull-requests: write

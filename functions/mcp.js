@@ -227,44 +227,37 @@ export async function getUnifiedWorkarounds(env, origin, target = null) {
 
   // 2. Static feed fetch (/workarounds.json) — Curated In-House Static Assets ALWAYS Overwrite D1 on ID Conflict
 
+  // 2. Static feed fetch (/shards/... or /workarounds.json)
   let staticItems = [];
-
-  try {
-
-    let res = null;
-
-    if (env?.ASSETS) {
-
-      try {
-
-        const assetUrl = origin ? `${origin}/workarounds.json` : "https://fmagenticl-registry.pages.dev/workarounds.json";
-
-        res = await env.ASSETS.fetch(new Request(assetUrl, { method: "GET" }));
-
-      } catch (_) {}
-
+  const base = origin || "https://fmagenticl-registry.pages.dev";
+  const fetchJson = async (path) => {
+    try {
+      let res = null;
+      if (env?.ASSETS) {
+        try { res = await env.ASSETS.fetch(new Request(`${base}${path}`, { method: "GET" })); } catch (_) {}
+      }
+      if ((!res || !res.ok) && origin) {
+        try { res = await fetch(`${origin}${path}`); } catch (_) {}
+      }
+      if (res && res.ok) return await res.json();
+    } catch (_) {}
+    return null;
+  };
+  const shardKey = (s) => s.trim().toLowerCase().replace(/\//g, "__").replace(/[^a-z0-9._-]/g, "_").slice(0, 120);
+  let gotShard = false;
+  const keys = targetLower ? Array.from(new Set(aliases.map(shardKey))) : ["_recent"];
+  for (const k of keys) {
+    const data = await fetchJson(`/shards/workarounds/${k}.json`);
+    if (data && Array.isArray(data.workarounds)) {
+      gotShard = true;
+      staticItems.push(...data.workarounds);
     }
-
-    if ((!res || !res.ok) && origin) {
-
-      try {
-
-        res = await fetch(`${origin}/workarounds.json`);
-
-      } catch (_) {}
-
-    }
-
-    if (res && res.ok) {
-
-      const data = await res.json();
-
-      staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
-
-    }
-
-  } catch (_) {}
-
+  }
+  if (!gotShard) {
+    // Legacy fallback (unknown target / shards not yet deployed): full feed
+    const data = await fetchJson("/workarounds.json");
+    if (data) staticItems = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
+  }
 
 
   for (const item of staticItems) {
@@ -1148,11 +1141,17 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
 
     if (toolName === "fmagenticl_get_workarounds" || toolName === "fmagenticl_get_grievances") {
-
       const list = await getUnifiedWorkarounds(env, origin, args.target);
-
-      return ok(id, { content: [{ type: "text", text: JSON.stringify({ count: list.length, workarounds: list, grievances: list })}]});
-
+      const MAX_ITEMS = 50;
+      const page = list.slice(0, MAX_ITEMS);
+      return ok(id, { content: [{ type: "text", text: JSON.stringify({
+        count: page.length,
+        total_available: list.length,
+        truncated: list.length > MAX_ITEMS,
+        full_feed_url: `${origin}/workarounds.json`,
+        workarounds: page,
+        grievances: page
+      })}]});
     }
 
 

@@ -223,6 +223,34 @@ def build():
     with open("dist/health", "wb") as f:
         f.write(health_bytes)
 
+    # 6b. Per-target static shards (served by CDN; consumed by MCP to avoid parsing the full feed)
+    import re as _re
+    shard_dir = Path("dist/shards/workarounds")
+    shard_dir.mkdir(parents=True, exist_ok=True)
+    for old in shard_dir.glob("*.json"):
+        old.unlink()
+    def _shard_key(s: str) -> str:
+        return _re.sub(r"[^a-z0-9._-]", "_", (s or "").strip().lower().replace("/", "__"))[:120]
+    shards = {}
+    for item in workarounds_items:
+        keys = set()
+        tgt = (item.get("target") or "").strip().lower()
+        app = (item.get("applies_to") or "").strip().lower()
+        if tgt:
+            keys.add(_shard_key(tgt))
+        if app:
+            keys.add(_shard_key(app))
+            keys.add(_shard_key(app.split("/")[-1]))
+        for k in keys:
+            if k:
+                shards.setdefault(k, []).append(item)
+    for k, items in shards.items():
+        (shard_dir / f"{k}.json").write_text(json.dumps({"key": k, "count": len(items), "workarounds": items},
+                                                        separators=(",", ":")), encoding="utf-8")
+    recent = sorted(workarounds_items, key=lambda x: x.get("created_at") or "", reverse=True)[:100]
+    (shard_dir / "_recent.json").write_text(json.dumps({"key": "_recent", "count": len(recent), "workarounds": recent},
+                                                       separators=(",", ":")), encoding="utf-8")
+
     # 7. RFC 9728 OAuth 2.0 Protected Resource & Authorization Server Discovery
     os.makedirs("dist/.well-known/oauth-protected-resource", exist_ok=True)
     os.makedirs("dist/.well-known/oauth-authorization-server", exist_ok=True)

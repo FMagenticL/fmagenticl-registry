@@ -25,7 +25,7 @@ class Gatekeeper:
         re.compile(r'-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----[\s\S]+?-----END\s+(?:RSA\s+)?PRIVATE\s+KEY-----', re.IGNORECASE), # Private Keys
         re.compile(r'ey[A-Za-z0-9-_=]{20,}\.[A-Za-z0-9-_=]{20,}\.?[A-Za-z0-9-_.+/=]*'), # Raw JWT
         re.compile(r'password\s*[:=]\s*["\']?[^\s,"\'}]+["\']?', re.IGNORECASE), # Passwords
-        re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'), # Email addresses
+        re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}'), # Email addresses
         re.compile(r'\(?\b[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b'), # Phone numbers
         re.compile(r'[A-Za-z]:\\Users\\[^,\s\\]+', re.IGNORECASE),        # Windows backslash user path
         re.compile(r'[A-Za-z]:/Users/[^,\s/]+', re.IGNORECASE),          # Windows forward-slash user path

@@ -116,6 +116,18 @@ ERROR_CODE_REGEX = re.compile(
 )
 
 
+EXCLUDED_PR_TITLE_PREFIXES = (
+    "test", "add regression test", "chore(release)", "version ", "docs:", "chore:", "release:", "[release]", "ci:",
+    # Added 2026-11-04 after executive audit: feature / test / docs PRs were passing as "fixes"
+    "feat", "[test]", "[ci]", "[docs]", "[feature]", "document", "docs(", "chore(", "ci(", "refactor", "style", "build(", "build:",
+)
+
+
+def is_excluded_pr_title(pr_title: str) -> bool:
+    """True if a linked PR title denotes a non-fix change (tests, docs, features, chores, CI, releases)."""
+    return (pr_title or "").strip().lower().startswith(EXCLUDED_PR_TITLE_PREFIXES)
+
+
 def extract_pr_url(text: str) -> Optional[str]:
     match = re.search(r'(https://github\.com/[^\s\)]+/pull/\d+)', text)
     return match.group(1).lower() if match else None
@@ -388,8 +400,7 @@ def fetch_issues_with_prs(repo: str, token: str, limit: int = 25) -> list:
                 
                 # Task 5: Filter false-positive PR titles (test-only, release-checklists, docs, chore)
                 pr_title = (pr.get("title") or "").strip()
-                pr_title_lower = pr_title.lower()
-                if any(pr_title_lower.startswith(p) for p in ("test", "add regression test", "chore(release)", "version ", "docs:", "chore:", "release:", "[release]", "ci:")):
+                if is_excluded_pr_title(pr_title):
                     continue
                     
                 prs.append(pr)

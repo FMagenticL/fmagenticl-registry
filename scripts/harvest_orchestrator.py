@@ -280,76 +280,70 @@ def harvest_gitlab_mr(project_path: str, known_fps: Set[str], known_urls: Set[st
     return telemetry, grievances
 
 
-def harvest_github_releases(repo: str, github_token: str, known_fps: Set[str], known_urls: Set[str]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+LINT_RULE_ID = re.compile(r"^E\d{3,5}$")  # flake8/ruff rule IDs (E501, E402) are not runtime errors
+
+
+def harvest_github_releases(repo: str, github_token: str, known_fps: Set[str], known_urls: Set[str],
+                            max_releases: int = 5) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     telemetry: List[Dict[str, Any]] = []
     grievances: List[Dict[str, Any]] = []
-    url = f"https://api.github.com/repos/{repo}/releases/latest"
-    release_data = fetch_url(url, token=github_token)
-    if not isinstance(release_data, dict) or not release_data.get("body"):
+    releases = fetch_url(f"https://api.github.com/repos/{repo}/releases?per_page={max_releases}", token=github_token)
+    if not isinstance(releases, list):
         return telemetry, grievances
 
     target = REPO_TARGET_MAP.get(repo) or repo.split("/")[-1].lower().replace("_", "-")
-    tag_name = release_data.get("tag_name") or "latest"
-    body = release_data.get("body") or ""
-    published_at = release_data.get("published_at") or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    # Task 6: Freshness filter
-    if published_at < FRESHNESS_CUTOFF:
-        return telemetry, grievances
-
-    bullets = [line.strip() for line in body.splitlines() if line.strip().startswith(("-", "*"))]
-    for bullet in bullets:
-        pr_match = re.search(r'#(\d+)', bullet)
-        err_match = ERROR_TOKEN_REGEX.search(bullet)
-        if not (pr_match and err_match):
+    for release_data in releases:
+        if not isinstance(release_data, dict) or release_data.get("draft") or release_data.get("prerelease"):
+            continue
+        body = release_data.get("body") or ""
+        if not body:
+            continue
+        tag_name = release_data.get("tag_name") or "latest"
+        published_at = release_data.get("published_at") or ""
+        if not published_at or published_at < FRESHNESS_CUTOFF:
             continue
 
-        pr_num = pr_match.group(1)
-        error_token = err_match.group(1).strip()
-        pr_url = f"https://github.com/{repo}/pull/{pr_num}".lower()
+        bullets = [line.strip() for line in body.splitlines() if line.strip().startswith(("-", "*"))]
+        for bullet in bullets:
+            pr_match = re.search(r'#(\d+)', bullet)
+            err_match = ERROR_TOKEN_REGEX.search(bullet)
+            if not (pr_match and err_match):
+                continue
+            error_token = err_match.group(1).strip()
+            if LINT_RULE_ID.match(error_token):
+                continue
+            pr_num = pr_match.group(1)
+            pr_url = f"https://github.com/{repo}/pull/{pr_num}".lower()
+            if pr_url in known_urls:
+                continue
 
-        # Task 4: Deduplicate by PR URL
-        if pr_url in known_urls:
-            continue
+            clean_bullet = re.sub(r'^[-\*]\s*', '', bullet).strip()
+            symptom = Gatekeeper.scrub_secrets(f"{target} {tag_name}: {clean_bullet[:180]}")
+            workaround = Gatekeeper.scrub_secrets(f"Fix: {clean_bullet}. Upstream PR #{pr_num}. (Ref: https://github.com/{repo}/pull/{pr_num})")
+            fp = compute_fingerprint({"repo": repo, "target": target}, {"error_code": error_token, "symptom": symptom})
+            if fp in known_fps or fp.replace("sha256:", "") in known_fps:
+                continue
+            gid = f"grv_ghrel_{repo.replace('/', '_')}_{pr_num}"
+            if gid in known_fps:
+                continue
 
-        clean_bullet = re.sub(r'^[-\*]\s*', '', bullet).strip()
-        symptom = Gatekeeper.scrub_secrets(f"{target} {tag_name}: {clean_bullet[:180]}")
-        workaround = Gatekeeper.scrub_secrets(f"Fix: {clean_bullet}. Upstream PR #{pr_num}. (Ref: https://github.com/{repo}/pull/{pr_num})")
-
-        fp = compute_fingerprint(
-            {"repo": repo, "target": target},
-            {"error_code": error_token, "symptom": symptom}
-        )
-        if fp in known_fps or fp.replace("sha256:", "") in known_fps:
-            continue
-
-        gid = f"grv_ghrel_{repo.replace('/', '_')}_{pr_num}"
-        if gid in known_fps:
-            continue
-
-        known_fps.add(fp)
-        known_fps.add(fp.replace("sha256:", ""))
-        known_urls.add(pr_url)
-
-        # Grievance advisory
-        grievance = {
-            "id": gid,
-            "grievance_type": "ENVIRONMENT_MISMATCH",
-            "target": target,
-            "harness": "github-release-advisory",
-            "fingerprint": fp,
-            "symptom": symptom,
-            "workaround": workaround,
-            "submitted_by": SUBMITTED_BY,
-            "verification_tier": "verified_merged_pr",
-            "applies_to": repo,
-            "created_at": published_at,
-            "queue_status": "PENDING"
-        }
-        grievances.append(grievance)
-
-        # Ed25519 Snapshot Invariant: Do NOT emit telemetry candidates into patches/*.json
-        # Release fixes flow strictly through the verified grievances (workarounds) pipeline.
+            known_fps.add(fp)
+            known_fps.add(fp.replace("sha256:", ""))
+            known_urls.add(pr_url)
+            grievances.append({
+                "id": gid,
+                "grievance_type": "ENVIRONMENT_MISMATCH",
+                "target": target,
+                "harness": "github-release-advisory",
+                "fingerprint": fp,
+                "symptom": symptom,
+                "workaround": workaround,
+                "submitted_by": SUBMITTED_BY,
+                "verification_tier": "verified_merged_pr",
+                "applies_to": repo,
+                "created_at": published_at,
+                "queue_status": "PENDING"
+            })
 
     return telemetry, grievances
 
@@ -497,7 +491,7 @@ def main():
     payload = {"telemetry": unique_tel, "grievances": unique_grv}
 
     out_file = args.output
-    if args.dry_run or not out_file:
+    if not out_file:
         sandbox_dir = REPO_ROOT / "sandbox"
         sandbox_dir.mkdir(exist_ok=True)
         out_file = str(sandbox_dir / "staged_candidates.json")

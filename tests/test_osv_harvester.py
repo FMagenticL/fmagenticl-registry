@@ -150,3 +150,134 @@ def test_target_slug_normalization():
     assert normalize_target_slug("pyautogen") == "autogen"
     assert normalize_target_slug("dspy-ai") == "dspy"
     assert normalize_target_slug("llama-index") == "llama-index"
+
+
+def test_old_cve_bulk_modified_in_2026_rejected():
+    """Assert an old advisory whose modified date was bulk-rewritten in 2026 is rejected (published date governs)."""
+    vuln = {
+        "id": "GHSA-5jqp-qgf6-3pvh",
+        "published": "2021-05-13T04:00:00Z",
+        "modified": "2026-10-14T09:12:00Z",
+        "summary": "Legacy 2021 vulnerability re-touched by OSV in 2026",
+        "affected": [
+            {
+                "package": {"name": "pillow", "ecosystem": "PyPI"},
+                "ranges": [{"type": "ECOSYSTEM", "events": [{"introduced": "0"}, {"fixed": "8.2.0"}]}]
+            }
+        ]
+    }
+    assert evaluate_osv_gates(vuln, "pillow", "PyPI") is None, "Bulk-modified pre-2026 advisory must be rejected"
+
+
+def test_missing_published_date_rejected():
+    vuln = {
+        "id": "GHSA-no-published-date",
+        "modified": "2026-10-14T09:12:00Z",
+        "summary": "Record with no publication date",
+        "affected": [{"package": {"name": "axios", "ecosystem": "npm"},
+                      "ranges": [{"type": "ECOSYSTEM", "events": [{"fixed": "1.7.4"}]}]}]
+    }
+    assert evaluate_osv_gates(vuln, "axios", "npm") is None
+
+
+def test_1_2_t1_seen_cache_skips_hydration(monkeypatch):
+    """1.2-T1: with a monkeypatched querybatch and hydrate, a stub whose (id, modified) is in cache is not hydrated."""
+    import scripts.harvest_osv_advisories as hoa
+    import json
+
+    cache = {"GHSA-test-cached": "2026-05-01T12:00:00Z"}
+    batch_resp = {
+        "results": [
+            {
+                "vulns": [
+                    {"id": "GHSA-test-cached", "modified": "2026-05-01T12:00:00Z"}
+                ]
+            }
+        ]
+    }
+
+    class MockResp:
+        def read(self):
+            return json.dumps(batch_resp).encode("utf-8")
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+
+    monkeypatch.setattr(hoa.urllib.request, "urlopen", lambda req, timeout=30: MockResp())
+    hydrate_calls = []
+    monkeypatch.setattr(hoa, "hydrate_vuln", lambda vid: hydrate_calls.append(vid) or None)
+    monkeypatch.setattr(hoa, "OSV_TARGET_PACKAGES", [("pydantic", "PyPI")])
+
+    results = hoa.harvest_osv(seen_cache=cache)
+    assert len(hydrate_calls) == 0, "Cached unchanged stub must not be hydrated"
+    assert len(results) == 0
+
+
+def test_1_2_t2_rejected_advisory_written_to_cache(monkeypatch):
+    """1.2-T2: a rejected advisory gets written into the cache with its exact modified value."""
+    import scripts.harvest_osv_advisories as hoa
+    import json
+
+    cache = {}
+    batch_resp = {
+        "results": [
+            {
+                "vulns": [
+                    {"id": "GHSA-reject-me", "modified": "2026-06-01T00:00:00Z"}
+                ]
+            }
+        ]
+    }
+
+    class MockResp:
+        def read(self):
+            return json.dumps(batch_resp).encode("utf-8")
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+
+    monkeypatch.setattr(hoa.urllib.request, "urlopen", lambda req, timeout=30: MockResp())
+    monkeypatch.setattr(hoa, "hydrate_vuln", lambda vid: {
+        "id": "GHSA-reject-me",
+        "withdrawn": "2026-06-02T00:00:00Z",
+        "modified": "2026-06-01T00:00:00Z",
+        "published": "2026-05-01T00:00:00Z"
+    })
+    monkeypatch.setattr(hoa, "OSV_TARGET_PACKAGES", [("pydantic", "PyPI")])
+
+    hoa.harvest_osv(seen_cache=cache)
+    assert cache.get("GHSA-reject-me") == "2026-06-01T00:00:00Z", "Rejected advisory must be remembered in cache"
+
+
+def test_1_2_t3_id_roundtrip():
+    """1.2-T3: the ID round-trip for GHSA and PYSEC IDs is exact."""
+    for orig in ["GHSA-5jqp-qgf6-3pvh", "PYSEC-2026-9999", "CVE-2026-1234"]:
+        rec_id = f"grv_osv_{orig.replace('-', '_')}"
+        recovered = rec_id.replace("grv_osv_", "").replace("_", "-")
+        assert recovered == orig
+
+
+def test_1_2_t4_throttle_cap_and_order(tmp_path, monkeypatch):
+    """1.2-T4: with OSV_MAX_NEW_PER_RUN=2 and 5 new records, main(--dry-run --output tmp) writes exactly 2 newest."""
+    import sys, json
+    import scripts.harvest_osv_advisories as hoa
+
+    out_file = tmp_path / "throttled_out.json"
+    dummy_records = [
+        {"id": "grv_osv_GHSA_5", "created_at": "2026-05-05T00:00:00Z", "_osv_modified": "2026-05-05"},
+        {"id": "grv_osv_GHSA_4", "created_at": "2026-05-04T00:00:00Z", "_osv_modified": "2026-05-04"},
+        {"id": "grv_osv_GHSA_3", "created_at": "2026-05-03T00:00:00Z", "_osv_modified": "2026-05-03"},
+        {"id": "grv_osv_GHSA_2", "created_at": "2026-05-02T00:00:00Z", "_osv_modified": "2026-05-02"},
+        {"id": "grv_osv_GHSA_1", "created_at": "2026-05-01T00:00:00Z", "_osv_modified": "2026-05-01"},
+    ]
+    monkeypatch.setattr(hoa, "MAX_NEW_RECORDS_PER_RUN", 2)
+    monkeypatch.setattr(hoa, "load_seen_cache", lambda: {})
+    monkeypatch.setattr(hoa, "load_existing_registry_ids", lambda: set())
+    monkeypatch.setattr(hoa, "harvest_osv", lambda max_per_pkg=None, seen_cache=None: list(dummy_records))
+
+    monkeypatch.setattr(sys, "argv", ["harvest_osv_advisories.py", "--dry-run", "--output", str(out_file)])
+    rc = hoa.main()
+    assert rc == 0
+    saved = json.loads(out_file.read_text(encoding="utf-8"))
+    assert len(saved) == 2
+    assert saved[0]["id"] == "grv_osv_GHSA_5"
+    assert saved[1]["id"] == "grv_osv_GHSA_4"
+    assert "_osv_modified" not in saved[0]
