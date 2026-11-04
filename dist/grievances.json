@@ -1,7 +1,35 @@
 {
-  "count": 327,
-  "generated_at": "2026-11-03T18:27:11Z",
+  "count": 330,
+  "generated_at": "2026-11-04T00:00:16Z",
   "grievances": [
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-03T23:57:43Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7504916057e1b58e8ca021933a3582173e6c86d49961639ee89498e732f65676",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_65378",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Extensible KV cache undersizes the KV cache on integrated (UMA) GPUs, down to 0 blocks: free memory read with raw cudaMemGetInfo",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Size the extensible KV cache from UMA-corrected free memory. Target files: vllm/platforms/cuda.py, vllm/platforms/interface.py, vllm/utils/mem_utils.py. . On integrated (UMA) GPUs the extensible KV cache (#56492) sized itself from raw `cudaMemGetInfo`, which does not count reclaimable page cache as free, so it undersized the KV cache by up to 84% on a DGX Spark (GB10) and to zero blocks in disaggregated serving. This reads free memory through one helper with the same `psutil` correction the classic sizing path al... (Ref: https://github.com/vllm-project/vllm/pull/65413)"
+    },
+    {
+      "applies_to": "cloudflare/workers-sdk",
+      "created_at": "2026-11-03T21:48:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:34e8e72d01f75973ed11a7bb97ef3abf2f272663226974a8d3416e20e087712a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_cloudflare_workers-sdk_16292",
+      "submitted_by": "harvester-v1",
+      "symptom": "`wrangler d1 migrations list --remote` ignores `account_id` from the config file",
+      "target": "workers-sdk",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [wrangler] Use config account_id in d1 migrations list --remote. Target files: packages/wrangler/src/d1/migrations/list.ts, packages/wrangler/src/__tests__/d1/migrate.test.ts, .changeset/d1-migrations-list-account-id.md. `wrangler d1 migrations list --remote` ignored the `account_id` in the Wrangler configuration file. If your login can see more than one account, the command failed in non-interactive mode. In interactive mode, it asked you to select an account. (Ref: https://github.com/cloudflare/workers-sdk/pull/16688)"
+    },
     {
       "applies_to": "pydantic/pydantic-ai",
       "created_at": "2026-11-03T17:42:49Z",
@@ -3655,6 +3683,20 @@
       "target": "deepeval",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(models): add Claude Opus 5.5 to the Anthropic registry (AmazonBedrockModel unchanged). Target files: deepeval/models/llms/constants.py, tests/test_core/test_models/test_anthropic_model.py, typescript/src/models/registry/models.json. Thanks for the quick turnaround on Opus 4.7 (#2617) and the later Claude entries. This adds the matching one for Claude Opus 5.5. (Ref: https://github.com/confident-ai/deepeval/pull/3349)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-09-21T19:09:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:31d31c225bef8cac40e95a0bbcc7bdd936591e1682a16d581e2711585a5106a3",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_8318",
+      "submitted_by": "harvester-v1",
+      "symptom": "Broken links found in docs",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix the Restate durable execution backend link. Target files: docs/durable_execution/backends.md. Updates the Restate durable execution backend reference to point to the current SDK path. Related to #8318. (Ref: https://github.com/pydantic/pydantic-ai/pull/8560)"
     },
     {
       "applies_to": "run-llama/llama-agents",
@@ -4584,6 +4626,34 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-03T23:57:43Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7504916057e1b58e8ca021933a3582173e6c86d49961639ee89498e732f65676",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_65378",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Extensible KV cache undersizes the KV cache on integrated (UMA) GPUs, down to 0 blocks: free memory read with raw cudaMemGetInfo",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Size the extensible KV cache from UMA-corrected free memory. Target files: vllm/platforms/cuda.py, vllm/platforms/interface.py, vllm/utils/mem_utils.py. . On integrated (UMA) GPUs the extensible KV cache (#56492) sized itself from raw `cudaMemGetInfo`, which does not count reclaimable page cache as free, so it undersized the KV cache by up to 84% on a DGX Spark (GB10) and to zero blocks in disaggregated serving. This reads free memory through one helper with the same `psutil` correction the classic sizing path al... (Ref: https://github.com/vllm-project/vllm/pull/65413)"
+    },
+    {
+      "applies_to": "cloudflare/workers-sdk",
+      "created_at": "2026-11-03T21:48:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:34e8e72d01f75973ed11a7bb97ef3abf2f272663226974a8d3416e20e087712a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_cloudflare_workers-sdk_16292",
+      "submitted_by": "harvester-v1",
+      "symptom": "`wrangler d1 migrations list --remote` ignores `account_id` from the config file",
+      "target": "workers-sdk",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [wrangler] Use config account_id in d1 migrations list --remote. Target files: packages/wrangler/src/d1/migrations/list.ts, packages/wrangler/src/__tests__/d1/migrate.test.ts, .changeset/d1-migrations-list-account-id.md. `wrangler d1 migrations list --remote` ignored the `account_id` in the Wrangler configuration file. If your login can see more than one account, the command failed in non-interactive mode. In interactive mode, it asked you to select an account. (Ref: https://github.com/cloudflare/workers-sdk/pull/16688)"
+    },
+    {
       "applies_to": "pydantic/pydantic-ai",
       "created_at": "2026-11-03T17:42:49Z",
       "environment_json": "{}",
@@ -8236,6 +8306,20 @@
       "target": "deepeval",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(models): add Claude Opus 5.5 to the Anthropic registry (AmazonBedrockModel unchanged). Target files: deepeval/models/llms/constants.py, tests/test_core/test_models/test_anthropic_model.py, typescript/src/models/registry/models.json. Thanks for the quick turnaround on Opus 4.7 (#2617) and the later Claude entries. This adds the matching one for Claude Opus 5.5. (Ref: https://github.com/confident-ai/deepeval/pull/3349)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-09-21T19:09:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:31d31c225bef8cac40e95a0bbcc7bdd936591e1682a16d581e2711585a5106a3",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_8318",
+      "submitted_by": "harvester-v1",
+      "symptom": "Broken links found in docs",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix the Restate durable execution backend link. Target files: docs/durable_execution/backends.md. Updates the Restate durable execution backend reference to point to the current SDK path. Related to #8318. (Ref: https://github.com/pydantic/pydantic-ai/pull/8560)"
     },
     {
       "applies_to": "run-llama/llama-agents",
