@@ -1,5 +1,5 @@
 {
-  "count": 230,
+  "count": 231,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1137,6 +1137,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "minimal-witness",
+      "first_seen": "2026-11-04",
+      "type": "agent"
+    },
+    {
       "entity": "plug.directory-prober",
       "first_seen": "2026-11-04",
       "type": "crawler"
@@ -1152,5 +1157,5 @@
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-04T20:28:00Z"
+  "generated_at": "2026-11-05T01:30:20Z"
 }
