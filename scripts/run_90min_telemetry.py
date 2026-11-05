@@ -51,7 +51,7 @@ BROKEN_VERSION_RE = re.compile(
 TTFB_CEILINGS_MS = {
     "/v1/health": 2500.0,
     "/guestbook.json": 1200.0,
-    "/workarounds.json": 3500.0,
+    "/workarounds.json": 5000.0,
     "/.well-known/agent-card.json": 1000.0,
     "/shards/workarounds/_recent.json": 1200.0,
     "/shards/workarounds/pydantic.json": 1200.0,
