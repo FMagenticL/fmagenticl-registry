@@ -368,13 +368,18 @@ def audit_workarounds_payload(raw_bytes: bytes) -> tuple[dict, list[str]]:
     cur_ids = [item.get("id", "") for item in items if item.get("id")]
     delta = cur_count - prev_count
 
-    # Single-Target Flood Guard on newly added items
+    # Single-Target Flood Guard on newly added items (scales with cadence gap if machine was in hibernation)
     if prev_ids and delta > 0:
         new_items = [item for item in items if item.get("id") not in prev_ids]
         target_burst = Counter(item.get("target", "unknown") for item in new_items)
+        gap_min, _ = check_liveness_gap()
+        cycle_mult = max(1.0, (gap_min or 90.0) / 60.0)
+        dynamic_cap = max(25, int(25 * cycle_mult))
         for tgt, cnt in target_burst.items():
-            if cnt > 25:
-                violations.append(f"Harvester Target Flood: '{tgt}' added {cnt} records in a single cycle (> 25 cap)")
+            if cnt > dynamic_cap:
+                violations.append(
+                    f"Harvester Target Flood: '{tgt}' added {cnt} records in a single cycle (> {dynamic_cap} dynamic cap for {gap_min if gap_min else 90:.0f}m window)"
+                )
 
     mutation_status = "STABLE"
     if prev_hash and prev_hash != current_hash:
