@@ -1,7 +1,189 @@
 {
-  "count": 1215,
-  "generated_at": "2026-11-05T18:03:49Z",
+  "count": 1246,
+  "generated_at": "2026-11-05T23:40:53Z",
   "grievances": [
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-05T22:52:41Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:3c35f5d7f4d044346e385b8720023448cc4165d6f769e1ccc416de745a6b6576",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_39173",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] DeepSeek-V4.1-Flash + Engram: profiled SPS table (compact ragged verify) dies in CUDA-graph capture with \"engram target-verify expects one equal block per request\"",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] dsv41: Run DSpark compact verify by mapping packed verify tokens to their requests. Target files: python/sglang/kernels/ops/embeddings/engram_hash.py, python/sglang/srt/layers/attention/deepseek_v4_backend.py, python/sglang/srt/layers/attention/dsv4/dsv41_sparse.py. With `SGLANG_RAGGED_VERIFY_MODE=compact`, DSpark target verify can pack unequal numbers of tokens per request. A compact CUDA graph tier can also hold more requests than full verify windows: for example, 42 tokens over 8 slots captures as `[6, 6, 5, 5, ... (Ref: https://github.com/sgl-project/sglang/pull/42718)"
+    },
+    {
+      "applies_to": "astral-sh/ruff",
+      "created_at": "2026-11-05T22:48:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f31bd8580ff24aa21d79b9e8de759739d7ee595c26d443d128d1ea4bc1c7f6a5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_ruff_29967",
+      "submitted_by": "harvester-v1",
+      "symptom": "ICN001: unconventional-import-alias: fixer breaks code \u2192 undefined-local (F823)",
+      "target": "ruff",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [`flake8-import-conventions`] Avoid shadowing names when fixing import aliases (`ICN001`). Target files: crates/ruff_linter/src/rules/flake8_import_conventions/rules/unconventional_import_alias.rs, crates/ruff_linter/resources/test/fixtures/flake8_import_conventions/tricky.py, crates/ruff_linter/src/rules/flake8_import_conventions/snapshots/ruff_linter__rules__flake8_import_conventions__tests__tricky.snap. Fixes [Ruff #29967](https://github.com/astral-sh/ruff/issues/29967) (Ref: https://github.com/astral-sh/ruff/pull/30035)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-05T22:14:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a7e309abf76fc0c07e00c0798250486ae1f2532f06c7c127273f780cc8b55873",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29571",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] `mastra build` and `mastra dev` emit backslash import specifiers on Windows (`ERR_INVALID_MODULE_SPECIFIER`)",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(deployer): Windows backslash specifiers and deployer not stripped from build. Target files: deployers/cloudflare/src/plugins/mastra-instance-wrapper.ts, e2e-tests/monorepo/monorepo.test.ts, packages/deployer/src/build/plugins/node-modules-extension-resolver.test.ts. Both bugs are Windows-only and come from mixing native paths with slash-normalized ones in `@mastra/deployer`. (Ref: https://github.com/mastra-ai/mastra/pull/29578)"
+    },
+    {
+      "applies_to": "lancedb/lancedb",
+      "created_at": "2026-11-05T21:20:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ff386f194e4d274f563b7b63e822c78278c239566b562414517b835f614f1454",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lancedb_lancedb_4847",
+      "submitted_by": "harvester-v1",
+      "symptom": "Remote branches.delete retries a 409 three times and raises \"Hit retry limit\" instead of the conflict error",
+      "target": "lancedb",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: avoid retrying remote branch deletions. Target files: python/python/lancedb/remote/errors.py, rust/lancedb/src/remote/table.rs, python/python/tests/test_errors.py. Remote branch deletion used the generic retry path, which retries HTTP 409 by default. Deterministic conflicts became retry-limit failures, and a deletion that removed the branch ref before returning HTTP 500 could be replayed and reported as a missing branch. (Ref: https://github.com/lancedb/lancedb/pull/4854)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-05T20:41:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:dd46e3cda1892ef83bf9bebb9ca74a1ec345cddb43eb506eb1adfde0a80ee7e2",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_67379",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] graceful_shutdown_wait_loop_s=0 busy-loops the drain and floods replica logs",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [serve] Don't busy-loop the replica drain when graceful_shutdown_wait_loop_s=0. Target files: python/ray/serve/_private/constants.py, python/ray/serve/_private/replica.py, python/ray/serve/tests/unit/test_replica_quiesce.py. `graceful_shutdown_wait_loop_s` accepts 0, but then `_drain_ongoing_requests` loops on `asyncio.sleep(0)` and logs \"Waiting for an additional 0.0s to shut down\" on every pass. The replica's event loop uses a full core and the log gets thousands of lines per drain. With direct ingress, an idle replica al... (Ref: https://github.com/ray-project/ray/pull/67434)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-05T20:32:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:8b139b1eafbdc07eac169d221c6118bdbdd328696735979deb333be036db09dc",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_65985",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] Health checks replace live replicas on transient ActorUnavailableError",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Serve] Distinguish ActorUnavailableError from actor death in health checks. Target files: python/ray/serve/_private/deployment_state.py, python/ray/serve/tests/unit/test_deployment_state.py. This PR distinguishes temporary actor unavailability from actor death in Serve health checks and applies the existing consecutive-failure thresholds before replacement. Previously, health checks caught `ActorUnavailableError` in the `except RayActorError` handler and immediately marked the replica unhealthy. This means a temporary netw... (Ref: https://github.com/ray-project/ray/pull/65986)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-05T20:10:23Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:6071c87756a6873c2e674cf5cd9a9b2182ec424cc8708f752fa23fb8e54ed933",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_67782",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] With RAY_SERVE_LOG_TO_STDERR=0, print(..., file=f) in a replica writes the args tuple, which garbles every logged traceback",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Serve] Unpack args in redirected_print's builtin-print fallback. Target files: python/ray/serve/_private/logging_utils.py, python/ray/serve/tests/test_logging.py. With `RAY_SERVE_LOG_TO_STDERR=0`, `configure_component_logger` replaces `builtins.print` with `redirected_print` in every replica. The fallback branch for file targets other than stdout/stderr passed the whole `objects` tuple to the builtin print, so `print(\"a\", \"b\", file=f)` wrote `('a', 'b')`. `logging.Formatter.formatException` formats tracebacks through `prin... (Ref: https://github.com/ray-project/ray/pull/67785)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T20:00:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:fbd29d7014e521c98a6b549570ee58943f85c56c5c9b38a859a1a72d641d0c2c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2719",
+      "submitted_by": "harvester-v1",
+      "symptom": "dict, set, tuple and Iterable[str] response models fail or return invalid types",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(models): support collection responses and reuse schema wrappers safely. Target files: instructor/v2/core/function_calls.py, instructor/v2/core/handler.py, instructor/v2/core/response.py. Handle TypedDict keys that collide with Pydantic and Instructor methods while retaining requiredness, metadata and the original serialized keys. Adapt dictionaries, sets, tuples, and scalar Iterable items on streaming and non-streaming paths. (Ref: https://github.com/567-labs/instructor/pull/2929)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T19:59:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ff9120ec1e9c4fe776775676273fa471e750ee151e28ce2eee760ac9d6c6a4a5",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2745",
+      "submitted_by": "harvester-v1",
+      "symptom": "Streaming extractor drops parallel tool calls whose deltas interleave in one chunk",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming): preserve tool-call boundaries and reject injected Markdown items. Target files: instructor/v2/core/client.py, instructor/v2/core/json.py, instructor/v2/dsl/iterable.py. Stream complete native items incrementally without rescanning earlier characters. Keep fragments from separate OpenAI tool-call indices together and release upstream SDK streams on exhaustion, early close, and parse errors. Report an unfinished item at EOF. (Ref: https://github.com/567-labs/instructor/pull/2927)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-05T19:37:07Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:56c1450726508bfb442cd07e0859700190310bfc67bb569f06bff7578a3b8196",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_28645",
+      "submitted_by": "harvester-v1",
+      "symptom": "mastra build needs ~13\u00d7 more memory since @mastra/deployer 1.79.0: typescriptSourcesResolver in option extraction",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(deployer): stop option extraction from loading installed packages. Target files: e2e-tests/monorepo/monorepo.test.ts, packages/deployer/src/build/shared/extract-mastra-option.test.ts, packages/deployer/src/build/shared/extract-mastra-option.ts. Since 1.79.0, reading the `deployer`, `bundler` or `server` option from the Mastra config can load and transform every installed package the option imports, and their imports in turn, even though all of them stay external. Large apps run out of memory in `mastra build` and `mast... (Ref: https://github.com/mastra-ai/mastra/pull/29558)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T19:35:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c1d02149fa5e7c9e3b9db0a03ac9e4c32432d01843053622b01b16a69317b7fd",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2684",
+      "submitted_by": "harvester-v1",
+      "symptom": "Bedrock: from_provider with GPT-6 Sol/Luna/Astra fails with ParamValidationError (missing modelId) when response_model=None",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock): preserve Converse inputs and scope bearer tokens. Target files: instructor/v2/auto_client.py, instructor/v2/providers/anthropic/handlers.py, instructor/v2/providers/bedrock/client.py. Preserve native reasoning, tool, and system blocks and convert raw MD_JSON calls to the Converse request shape. Share Claude\u2019s automatic tool-choice rules across Anthropic and Bedrock while honoring explicit caller choices. (Ref: https://github.com/567-labs/instructor/pull/2916)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T19:30:33Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:63094a333531f7506b5c3b8a06af2d75491e566a2e24e111f7f8458f66d16edf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2726",
+      "submitted_by": "harvester-v1",
+      "symptom": "Partial streaming fails for data-aware default factories across chunk boundaries",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming): validate completed mapping models and dependent defaults. Target files: instructor/v2/dsl/partial.py, tests/dsl/test_partial.py, tests/dsl/test_partial_default_factories.py. Build typed model values inside nested dictionaries and lists during partial streaming. Resolve aliases against the raw JSON path and validate each completed child. Defer defaults that require validated data until the containing object closes, including an explicit empty JSON object. (Ref: https://github.com/567-labs/instructor/pull/2924)"
+    },
+    {
+      "applies_to": "gitlab-org/cli",
+      "created_at": "2026-11-05T18:15:32.057Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e9215e70fdbeee1d9e8cc6e4b4bea3dc8aff1527e2de51ce4c7fe5601662a481",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "gitlab-merged-mr",
+      "id": "grv_gl_gitlab-org_cli_4310",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(df): check Maven packages fetched through a mirror",
+      "target": "gitlab-cli",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(df): check Maven packages fetched through a mirror. Applied in GitLab MR !4310. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4310)"
+    },
     {
       "applies_to": "langchain-ai/langchain",
       "created_at": "2026-11-05T16:19:55Z",
@@ -5043,6 +5225,20 @@
       "workaround": "Fix: openai: preserve failures in Responses streams. Target files: middleware/openai.go, middleware/responses_errors_test.go, middleware/responses_web_search_test.go. When generation fails after `/v1/responses` starts streaming, HTTP 200 is already committed. The native `{\"error\":\"...\"}` envelope is decoded as an empty chat response, so clients receive EOF without a terminal failure event. Detect in-band generation errors and emit one `response.failed`. Preserve partial text, reasoning, and completed tool output; close unfinished ... (Ref: https://github.com/ollama/ollama/pull/19225)"
     },
     {
+      "applies_to": "authlib",
+      "created_at": "2026-10-22T22:18:05.090Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4360\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.9.0\", \"aliases\": [\"CVE-2026-114620\", \"GHSA-x4rv-c3wx-4cr8\"]}",
+      "fingerprint": "sha256:c74449fd724257eaf4456a8aeeb8594827984f783789aea998ca199e2d21fa10",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4360",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4360] Authlib is a Python library which builds OAuth and OpenID Connect servers. Prior to 1.9.0, Authlib's RFC 9101 JWTAuthenticationRequest passes the unauthentic... (Affects authlib < 1.9.0)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4360)"
+    },
+    {
       "applies_to": "pillow",
       "created_at": "2026-10-22T17:01:08Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78g4-xqwv-q3g8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"13.0.0\", \"aliases\": []}",
@@ -7255,6 +7451,20 @@
       "workaround": "Upgrade pymongo to patched release >= 4.18.2: pip install --upgrade 'pymongo>=4.18.2' (Advisory: PYSEC-2026-4295)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-15T10:22:45.361001Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4306\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.30.0\", \"aliases\": [\"CVE-2026-105756\", \"GHSA-2823-qmq8-rwvj\"]}",
+      "fingerprint": "sha256:d04ecab35525ff75b73fba270ee514c9d09aab6e1dfdf3d884e1b83707544be0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4306",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4306] vLLM: Loose `cache_salt` validation lets a single request kill EngineCore on LMCache-MP deployments \u2014 uncaught downstream `ValueError` denial of service (Affects vllm < 0.30.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4306)"
+    },
+    {
       "applies_to": "uv",
       "created_at": "2026-10-15T10:22:45.276429Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4305\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.18\", \"aliases\": [\"CVE-2026-104843\", \"GHSA-2cv4-cqwr-gwf7\"]}",
@@ -7575,6 +7785,34 @@
       "target": "pydantic",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: Support `closed` and `extra_items` via inheritance in `TypedDict`. Target files: pydantic/_internal/_generate_schema.py, tests/test_types_typeddict.py. Fixes https://github.com/pydantic/pydantic/issues/13919. (Ref: https://github.com/pydantic/pydantic/pull/13967)"
+    },
+    {
+      "applies_to": "strawberry-graphql",
+      "created_at": "2026-10-09T14:07:20Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-m952-2w3f-6r8h\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.327.2\", \"aliases\": [\"CVE-2026-107727\", \"PYSEC-2026-4302\"]}",
+      "fingerprint": "sha256:2ef6ce7b4ae301c43215de4261405b6ebcecf5998ad7e2b0c0b39ca6e0f78585",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_m952_2w3f_6r8h",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-m952-2w3f-6r8h] Strawberry legacy graphql-ws retains naturally completed subscription slots (Affects strawberry-graphql < 0.327.2)",
+      "target": "strawberry-graphql",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade strawberry-graphql to patched release >= 0.327.2: pip install --upgrade 'strawberry-graphql>=0.327.2' (Advisory: GHSA-m952-2w3f-6r8h)"
+    },
+    {
+      "applies_to": "strawberry-graphql",
+      "created_at": "2026-10-09T14:07:16Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pfvf-fwfp-25mp\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.326.1\", \"aliases\": [\"CVE-2026-107728\", \"PYSEC-2026-4303\"]}",
+      "fingerprint": "sha256:4daca135da89f6314085abee780b834a1d337dcfef818b77e9ef38082f414a28",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pfvf_fwfp_25mp",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pfvf-fwfp-25mp] Strawberry GraphQL: Synchronous permission checks can treat an awaitable authorization result as truthy (Affects strawberry-graphql < 0.326.1)",
+      "target": "strawberry-graphql",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade strawberry-graphql to patched release >= 0.326.1: pip install --upgrade 'strawberry-graphql>=0.326.1' (Advisory: GHSA-pfvf-fwfp-25mp)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -8487,6 +8725,20 @@
       "workaround": "Upgrade jupyterlab to patched release >= 4.6.4: pip install --upgrade 'jupyterlab>=4.6.4' (Advisory: PYSEC-2026-4056)"
     },
     {
+      "applies_to": "jupyterlab",
+      "created_at": "2026-10-01T16:44:34.569594Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4055\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.6.4\", \"aliases\": [\"BIT-jupyterlab-2026-102904\", \"CVE-2026-102904\", \"GHSA-3325-v43h-43rv\"]}",
+      "fingerprint": "sha256:2b345f9a55447901e7fb2c6a2a394e92be16705c9b540a04d9d99c981b421a63",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4055",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4055] JupyterLab: Argument injection in JupyterLab extension uninstall exposes server-readable files and internal URLs (Affects jupyterlab < 4.6.4)",
+      "target": "jupyterlab",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade jupyterlab to patched release >= 4.6.4: pip install --upgrade 'jupyterlab>=4.6.4' (Advisory: PYSEC-2026-4055)"
+    },
+    {
       "applies_to": "urllib3",
       "created_at": "2026-10-01T16:38:41.188251Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4176\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.8.0\", \"aliases\": [\"CVE-2026-97688\", \"GHSA-gh4c-6fx4-qh6g\"]}",
@@ -8529,6 +8781,20 @@
       "workaround": "Upgrade anyio to patched release >= 4.14.2: pip install --upgrade 'anyio>=4.14.2' (Advisory: PYSEC-2026-4025)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-01T16:38:32.983082Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4178\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.28.0\", \"aliases\": [\"CVE-2026-69147\", \"GHSA-8pw2-6jv3-mj5j\"]}",
+      "fingerprint": "sha256:ad64a90f733f9a7b5751ab371d2742c9b855b9732fbba18d318f78dc29c30b24",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4178",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4178] vLLM: Request-selected PyNvVideoCodec GPU decode bypasses static VRAM reservation (Affects vllm < 0.28.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.28.0: pip install --upgrade 'vllm>=0.28.0' (Advisory: PYSEC-2026-4178)"
+    },
+    {
       "applies_to": "django",
       "created_at": "2026-10-01T16:38:29.178928Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4035\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.0.8\", \"aliases\": [\"BIT-django-2026-15307\", \"CVE-2026-15307\", \"GHSA-wvqv-fj8w-qmhm\"]}",
@@ -8555,6 +8821,20 @@
       "target": "sentence-transformers",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade sentence-transformers to patched release >= 5.6.0: pip install --upgrade 'sentence-transformers>=5.6.0' (Advisory: PYSEC-2026-4164)"
+    },
+    {
+      "applies_to": "jupyterlab",
+      "created_at": "2026-10-01T15:22:17Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3jqq-pw4j-pqcj\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.6.4\", \"aliases\": [\"CVE-2026-102830\", \"PYSEC-2026-4056\", \"PYSEC-2026-4059\"]}",
+      "fingerprint": "sha256:0b65944fa282df9b18a8d86fcbc02a1b6d7246b36a5e358cfb47e3538e504e21",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3jqq_pw4j_pqcj",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3jqq-pw4j-pqcj] JupyterLab: Cross-site scripting (XSS) in JupyterLab via crafted language package (jupyterlab.json) (Affects jupyterlab < 4.6.4)",
+      "target": "jupyterlab",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade jupyterlab to patched release >= 4.6.4: pip install --upgrade 'jupyterlab>=4.6.4' (Advisory: GHSA-3jqq-pw4j-pqcj)"
     },
     {
       "applies_to": "jupyterlab",
@@ -10293,6 +10573,20 @@
       "workaround": "Upgrade tornado to patched release >= 6.5.8: pip install --upgrade 'tornado>=6.5.8' (Advisory: PYSEC-2026-3928)"
     },
     {
+      "applies_to": "sqlparse",
+      "created_at": "2026-09-10T09:44:59.097680Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3923\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-84305\", \"GHSA-cfqr-cjx5-5jcm\"]}",
+      "fingerprint": "sha256:3f19dfd11bca390e1afda6678df336d2c3963a46fca4c9d5a65c245cf1c2e415",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3923",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3923] sqlparse: Reindentation of tuple lists causes near-cap quadratic CPU consumption (Affects sqlparse < 0.6.0)",
+      "target": "sqlparse",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade sqlparse to patched release >= 0.6.0: pip install --upgrade 'sqlparse>=0.6.0' (Advisory: PYSEC-2026-3923)"
+    },
+    {
       "applies_to": "litellm",
       "created_at": "2026-09-10T09:44:57.753158Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3861\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.83.7\", \"aliases\": [\"CVE-2026-37004\", \"GHSA-6wvf-77m9-58rm\"]}",
@@ -11092,6 +11386,20 @@
     },
     {
       "applies_to": "sqlparse",
+      "created_at": "2026-08-19T11:56:27.110256Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3698\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-59893\", \"GHSA-prg7-hcfm-mfcr\"]}",
+      "fingerprint": "sha256:200a2ac1c105c4b69a7a8e6e5afcb9435a5e9e178aa0bc044a9c35bb7ef8b777",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3698",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3698] sqlparse: Inefficient Regex Handling of Dollar-Quoted SQL Literals Leads to ReDoS (Denial of Service) (Affects sqlparse < 0.6.0)",
+      "target": "sqlparse",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade sqlparse to patched release >= 0.6.0: pip install --upgrade 'sqlparse>=0.6.0' (Advisory: PYSEC-2026-3698)"
+    },
+    {
+      "applies_to": "sqlparse",
       "created_at": "2026-08-19T11:56:27.060920Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3699\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-54284\", \"GHSA-pwgv-4x5q-6m9f\"]}",
       "fingerprint": "sha256:ff41a0e145710c50525e2c26a3d4d055b7119722ab4f7d456c86ab44390df939",
@@ -11217,6 +11525,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: GHSA-87x5-vmc3-756j)"
     },
     {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-13T12:17:27.617Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3995\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.54\", \"aliases\": [\"CVE-2026-73624\", \"GHSA-fjr4-x663-mwxc\"]}",
+      "fingerprint": "sha256:3646c80c3e75e8b86c772ade61a70762a5ac1c950dc4fb67bd059e43e0172d46",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3995",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3995] GitPython versions before 3.1.54 contain an arbitrary file overwrite vulnerability in the Diffable.diff method that fails to validate git options passed thro... (Affects gitpython < 3.1.54)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.54: pip install --upgrade 'gitpython>=3.1.54' (Advisory: PYSEC-2026-3995)"
+    },
+    {
       "applies_to": "InternLM/lmdeploy",
       "created_at": "2026-08-12T17:06:49Z",
       "environment_json": "{}",
@@ -11257,6 +11579,34 @@
       "target": "deepeval",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(dag): reject a root node that is reachable from another root. Target files: deepeval/metrics/dag/graph.py, tests/test_metrics/test_dag.py. Declaring a node as a root when it's also a child of another root gives it two ways in, so the runner visits it once per path. In sync mode the whole subtree runs again, which means the same LLM calls are made and the cost is counted twice over. In async mode it doesn't get that far \u2014 it raises `KeyError` while looking up the node's parent. (Ref: https://github.com/confident-ai/deepeval/pull/3027)"
+    },
+    {
+      "applies_to": "keras",
+      "created_at": "2026-08-10T10:43:49.309151Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3633\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": [\"CVE-2026-9335\", \"GHSA-m8wh-29wm-52mv\"]}",
+      "fingerprint": "sha256:fa60903e20e6eaa52f52e74b67abadc2cc4eccee1e77d8baeb4f60b6c28029e0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3633",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3633] Keras: HDF5 links can disclose local file contents (Affects keras < 3.15.0)",
+      "target": "keras",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade keras to patched release >= 3.15.0: pip install --upgrade 'keras>=3.15.0' (Advisory: PYSEC-2026-3633)"
+    },
+    {
+      "applies_to": "keras",
+      "created_at": "2026-08-10T10:43:49.248554Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3634\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": [\"CVE-2026-12484\", \"GHSA-v2w2-w228-c444\"]}",
+      "fingerprint": "sha256:957c10d31aada245ee8a3d5a4e720e9373022d2aa34384a29b30d5e997949548",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3634",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3634] Keras: TorchModuleWrapper can deserialize unsafe PyTorch pickle data (Affects keras < 3.15.0)",
+      "target": "keras",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade keras to patched release >= 3.15.0: pip install --upgrade 'keras>=3.15.0' (Advisory: PYSEC-2026-3634)"
     },
     {
       "applies_to": "hono",
@@ -11931,6 +12281,20 @@
       "workaround": "Upgrade gitpython to patched release >= 3.1.51: pip install --upgrade 'gitpython>=3.1.51' (Advisory: PYSEC-2026-3947)"
     },
     {
+      "applies_to": "sentence-transformers",
+      "created_at": "2026-07-31T21:31:59Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-jhr6-gm9c-rqjv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"5.6.0\", \"aliases\": [\"CVE-2026-68770\", \"PYSEC-2026-4164\"]}",
+      "fingerprint": "sha256:3380bea202d508a3afac807047560acb12e972de5e0bac11e512f6018ffae44c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_jhr6_gm9c_rqjv",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-jhr6-gm9c-rqjv] sentence-transformers local model loading bypasses trust_remote_code and executes custom Python (Affects sentence-transformers < 5.6.0)",
+      "target": "sentence-transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade sentence-transformers to patched release >= 5.6.0: pip install --upgrade 'sentence-transformers>=5.6.0' (Advisory: GHSA-jhr6-gm9c-rqjv)"
+    },
+    {
       "applies_to": "nanoid",
       "created_at": "2026-07-29T15:31:12Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-28wg-ghj8-5hjv\", \"ecosystem\": \"npm\", \"fixed_version\": \"5.1.16\", \"aliases\": [\"CVE-2026-67214\"]}",
@@ -12153,6 +12517,20 @@
       "target": "postcss",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade postcss to patched release >= 8.5.12: npm install 'postcss@>=8.5.12' (Advisory: GHSA-6g55-p6wh-862q)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-07-23T11:41:46.534440Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3483\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.28.1\", \"aliases\": [\"CVE-2026-59950\", \"GHSA-vj7q-gjh5-988w\"]}",
+      "fingerprint": "sha256:0071396faeff0f01000dc8fe054c1c83dc05b37e7cf85f6b20ded6768cfc2300",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3483",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3483] MCP Python SDK: WebSocket server transport does not support Host/Origin validation (Affects mcp < 1.28.1)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 1.28.1: pip install --upgrade 'mcp>=1.28.1' (Advisory: PYSEC-2026-3483)"
     },
     {
       "applies_to": "jupyterlab",
@@ -13387,6 +13765,20 @@
       "workaround": "Upgrade bentoml to patched release >= 1.4.39: pip install --upgrade 'bentoml>=1.4.39' (Advisory: PYSEC-2026-2399)"
     },
     {
+      "applies_to": "mako",
+      "created_at": "2026-07-13T15:15:39.881159Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2617\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.12\", \"aliases\": [\"CVE-2026-44307\", \"GHSA-2h4p-vjrc-8xpq\"]}",
+      "fingerprint": "sha256:aed0a6f80a90cb9db3bc7234e718890a08d0b40c6d2b4326ae57327dec8aeff5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2617",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2617] Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup (Affects mako < 1.3.12)",
+      "target": "mako",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mako to patched release >= 1.3.12: pip install --upgrade 'mako>=1.3.12' (Advisory: PYSEC-2026-2617)"
+    },
+    {
       "applies_to": "fastmcp",
       "created_at": "2026-07-13T14:36:46.223793Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2476\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2026-27124\", \"GHSA-rww4-4w9c-7733\"]}",
@@ -13569,6 +13961,20 @@
       "workaround": "Fix: Fix CI AttributeError: 'str' object has no attribute '__module__'. Target files: pyproject.toml. Fix CI AttributeError: 'str' object has no attribute '__module__': - Pin transformers != 5.13.0 Fix #2487. This PR makes a minor update to the `pyproject.toml` file to address a compatibility issue with a specific version of the `transformers` library. (Ref: https://github.com/huggingface/smolagents/pull/2488)"
     },
     {
+      "applies_to": "wheel",
+      "created_at": "2026-07-07T16:03:19.867108Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2047\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.46.2\", \"aliases\": [\"CVE-2026-24049\", \"GHSA-8rrh-rw8j-w5fx\"]}",
+      "fingerprint": "sha256:dfd24bf0441b017408521293066952f2e31e88427c6331245d96c444a423050a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2047",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2047] Wheel Affected by Arbitrary File Permission Modification via Path Traversal in wheel unpack (Affects wheel < 0.46.2)",
+      "target": "wheel",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wheel to patched release >= 0.46.2: pip install --upgrade 'wheel>=0.46.2' (Advisory: PYSEC-2026-2047)"
+    },
+    {
       "applies_to": "pytest",
       "created_at": "2026-07-07T16:03:19.758250Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1845\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"9.0.3\", \"aliases\": [\"CVE-2025-71176\", \"GHSA-6w46-j5rx-g56g\"]}",
@@ -13581,6 +13987,20 @@
       "target": "pytest",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade pytest to patched release >= 9.0.3: pip install --upgrade 'pytest>=9.0.3' (Advisory: PYSEC-2026-1845)"
+    },
+    {
+      "applies_to": "pyasn1",
+      "created_at": "2026-07-07T16:03:19.018533Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1810\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.2\", \"aliases\": [\"CVE-2026-23490\", \"GHSA-63vm-454h-vhhq\"]}",
+      "fingerprint": "sha256:de572e57074c16f9ad18a6cc02adfe1230d4ff5ef65a566fc8dce5621a3bf110",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_1810",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-1810] pyasn1 has a DoS vulnerability in decoder (Affects pyasn1 < 0.6.2)",
+      "target": "pyasn1",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyasn1 to patched release >= 0.6.2: pip install --upgrade 'pyasn1>=0.6.2' (Advisory: PYSEC-2026-1810)"
     },
     {
       "applies_to": "marshmallow",
@@ -16142,6 +16562,19 @@
       "target": "ws",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade ws to patched release >= 8.21.0: npm install 'ws@>=8.21.0' (Advisory: GHSA-96hv-2xvq-fx4p)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-06-15T03:59:05Z",
+      "fingerprint": "sha256:6948b48bc6be3d1b41c66739071939b6a66bf9df8a5ae530aa66eeafa608df62",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_49216",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Tools streaming internal error when `VLLM_ENFORCE_STRICT_TOOL_CALLING=false` and `tool_choice=required`",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Frontend] Add Streaming Parser Engine and new Qwen3 Parser. Target files: vllm/parser/abstract_parser.py, vllm/parser/engine/__init__.py, vllm/parser/engine/adapters.py. Fixes https://github.com/vllm-project/vllm/issues/44873 Introduce a declarative, config-driven streaming parser engine that replaces hand-rolled per-model streaming logic with a shared state machine. The engine handles reasoning/content/tool-call transitions, incremental JSON argument extraction, and detokenizer hold-back recovery through a single Parser... (Ref: https://github.com/vllm-project/vllm/pull/45413)"
     },
     {
       "applies_to": "esbuild",
@@ -17010,6 +17443,188 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-05T22:52:41Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:3c35f5d7f4d044346e385b8720023448cc4165d6f769e1ccc416de745a6b6576",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_39173",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] DeepSeek-V4.1-Flash + Engram: profiled SPS table (compact ragged verify) dies in CUDA-graph capture with \"engram target-verify expects one equal block per request\"",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] dsv41: Run DSpark compact verify by mapping packed verify tokens to their requests. Target files: python/sglang/kernels/ops/embeddings/engram_hash.py, python/sglang/srt/layers/attention/deepseek_v4_backend.py, python/sglang/srt/layers/attention/dsv4/dsv41_sparse.py. With `SGLANG_RAGGED_VERIFY_MODE=compact`, DSpark target verify can pack unequal numbers of tokens per request. A compact CUDA graph tier can also hold more requests than full verify windows: for example, 42 tokens over 8 slots captures as `[6, 6, 5, 5, ... (Ref: https://github.com/sgl-project/sglang/pull/42718)"
+    },
+    {
+      "applies_to": "astral-sh/ruff",
+      "created_at": "2026-11-05T22:48:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f31bd8580ff24aa21d79b9e8de759739d7ee595c26d443d128d1ea4bc1c7f6a5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_ruff_29967",
+      "submitted_by": "harvester-v1",
+      "symptom": "ICN001: unconventional-import-alias: fixer breaks code \u2192 undefined-local (F823)",
+      "target": "ruff",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [`flake8-import-conventions`] Avoid shadowing names when fixing import aliases (`ICN001`). Target files: crates/ruff_linter/src/rules/flake8_import_conventions/rules/unconventional_import_alias.rs, crates/ruff_linter/resources/test/fixtures/flake8_import_conventions/tricky.py, crates/ruff_linter/src/rules/flake8_import_conventions/snapshots/ruff_linter__rules__flake8_import_conventions__tests__tricky.snap. Fixes [Ruff #29967](https://github.com/astral-sh/ruff/issues/29967) (Ref: https://github.com/astral-sh/ruff/pull/30035)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-05T22:14:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a7e309abf76fc0c07e00c0798250486ae1f2532f06c7c127273f780cc8b55873",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29571",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] `mastra build` and `mastra dev` emit backslash import specifiers on Windows (`ERR_INVALID_MODULE_SPECIFIER`)",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(deployer): Windows backslash specifiers and deployer not stripped from build. Target files: deployers/cloudflare/src/plugins/mastra-instance-wrapper.ts, e2e-tests/monorepo/monorepo.test.ts, packages/deployer/src/build/plugins/node-modules-extension-resolver.test.ts. Both bugs are Windows-only and come from mixing native paths with slash-normalized ones in `@mastra/deployer`. (Ref: https://github.com/mastra-ai/mastra/pull/29578)"
+    },
+    {
+      "applies_to": "lancedb/lancedb",
+      "created_at": "2026-11-05T21:20:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ff386f194e4d274f563b7b63e822c78278c239566b562414517b835f614f1454",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lancedb_lancedb_4847",
+      "submitted_by": "harvester-v1",
+      "symptom": "Remote branches.delete retries a 409 three times and raises \"Hit retry limit\" instead of the conflict error",
+      "target": "lancedb",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: avoid retrying remote branch deletions. Target files: python/python/lancedb/remote/errors.py, rust/lancedb/src/remote/table.rs, python/python/tests/test_errors.py. Remote branch deletion used the generic retry path, which retries HTTP 409 by default. Deterministic conflicts became retry-limit failures, and a deletion that removed the branch ref before returning HTTP 500 could be replayed and reported as a missing branch. (Ref: https://github.com/lancedb/lancedb/pull/4854)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-05T20:41:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:dd46e3cda1892ef83bf9bebb9ca74a1ec345cddb43eb506eb1adfde0a80ee7e2",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_67379",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] graceful_shutdown_wait_loop_s=0 busy-loops the drain and floods replica logs",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [serve] Don't busy-loop the replica drain when graceful_shutdown_wait_loop_s=0. Target files: python/ray/serve/_private/constants.py, python/ray/serve/_private/replica.py, python/ray/serve/tests/unit/test_replica_quiesce.py. `graceful_shutdown_wait_loop_s` accepts 0, but then `_drain_ongoing_requests` loops on `asyncio.sleep(0)` and logs \"Waiting for an additional 0.0s to shut down\" on every pass. The replica's event loop uses a full core and the log gets thousands of lines per drain. With direct ingress, an idle replica al... (Ref: https://github.com/ray-project/ray/pull/67434)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-05T20:32:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:8b139b1eafbdc07eac169d221c6118bdbdd328696735979deb333be036db09dc",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_65985",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] Health checks replace live replicas on transient ActorUnavailableError",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Serve] Distinguish ActorUnavailableError from actor death in health checks. Target files: python/ray/serve/_private/deployment_state.py, python/ray/serve/tests/unit/test_deployment_state.py. This PR distinguishes temporary actor unavailability from actor death in Serve health checks and applies the existing consecutive-failure thresholds before replacement. Previously, health checks caught `ActorUnavailableError` in the `except RayActorError` handler and immediately marked the replica unhealthy. This means a temporary netw... (Ref: https://github.com/ray-project/ray/pull/65986)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-05T20:10:23Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:6071c87756a6873c2e674cf5cd9a9b2182ec424cc8708f752fa23fb8e54ed933",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_67782",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] With RAY_SERVE_LOG_TO_STDERR=0, print(..., file=f) in a replica writes the args tuple, which garbles every logged traceback",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Serve] Unpack args in redirected_print's builtin-print fallback. Target files: python/ray/serve/_private/logging_utils.py, python/ray/serve/tests/test_logging.py. With `RAY_SERVE_LOG_TO_STDERR=0`, `configure_component_logger` replaces `builtins.print` with `redirected_print` in every replica. The fallback branch for file targets other than stdout/stderr passed the whole `objects` tuple to the builtin print, so `print(\"a\", \"b\", file=f)` wrote `('a', 'b')`. `logging.Formatter.formatException` formats tracebacks through `prin... (Ref: https://github.com/ray-project/ray/pull/67785)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T20:00:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:fbd29d7014e521c98a6b549570ee58943f85c56c5c9b38a859a1a72d641d0c2c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2719",
+      "submitted_by": "harvester-v1",
+      "symptom": "dict, set, tuple and Iterable[str] response models fail or return invalid types",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(models): support collection responses and reuse schema wrappers safely. Target files: instructor/v2/core/function_calls.py, instructor/v2/core/handler.py, instructor/v2/core/response.py. Handle TypedDict keys that collide with Pydantic and Instructor methods while retaining requiredness, metadata and the original serialized keys. Adapt dictionaries, sets, tuples, and scalar Iterable items on streaming and non-streaming paths. (Ref: https://github.com/567-labs/instructor/pull/2929)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T19:59:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ff9120ec1e9c4fe776775676273fa471e750ee151e28ce2eee760ac9d6c6a4a5",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2745",
+      "submitted_by": "harvester-v1",
+      "symptom": "Streaming extractor drops parallel tool calls whose deltas interleave in one chunk",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming): preserve tool-call boundaries and reject injected Markdown items. Target files: instructor/v2/core/client.py, instructor/v2/core/json.py, instructor/v2/dsl/iterable.py. Stream complete native items incrementally without rescanning earlier characters. Keep fragments from separate OpenAI tool-call indices together and release upstream SDK streams on exhaustion, early close, and parse errors. Report an unfinished item at EOF. (Ref: https://github.com/567-labs/instructor/pull/2927)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-05T19:37:07Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:56c1450726508bfb442cd07e0859700190310bfc67bb569f06bff7578a3b8196",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_28645",
+      "submitted_by": "harvester-v1",
+      "symptom": "mastra build needs ~13\u00d7 more memory since @mastra/deployer 1.79.0: typescriptSourcesResolver in option extraction",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(deployer): stop option extraction from loading installed packages. Target files: e2e-tests/monorepo/monorepo.test.ts, packages/deployer/src/build/shared/extract-mastra-option.test.ts, packages/deployer/src/build/shared/extract-mastra-option.ts. Since 1.79.0, reading the `deployer`, `bundler` or `server` option from the Mastra config can load and transform every installed package the option imports, and their imports in turn, even though all of them stay external. Large apps run out of memory in `mastra build` and `mast... (Ref: https://github.com/mastra-ai/mastra/pull/29558)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T19:35:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c1d02149fa5e7c9e3b9db0a03ac9e4c32432d01843053622b01b16a69317b7fd",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2684",
+      "submitted_by": "harvester-v1",
+      "symptom": "Bedrock: from_provider with GPT-6 Sol/Luna/Astra fails with ParamValidationError (missing modelId) when response_model=None",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(bedrock): preserve Converse inputs and scope bearer tokens. Target files: instructor/v2/auto_client.py, instructor/v2/providers/anthropic/handlers.py, instructor/v2/providers/bedrock/client.py. Preserve native reasoning, tool, and system blocks and convert raw MD_JSON calls to the Converse request shape. Share Claude\u2019s automatic tool-choice rules across Anthropic and Bedrock while honoring explicit caller choices. (Ref: https://github.com/567-labs/instructor/pull/2916)"
+    },
+    {
+      "applies_to": "567-labs/instructor",
+      "created_at": "2026-11-05T19:30:33Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:63094a333531f7506b5c3b8a06af2d75491e566a2e24e111f7f8458f66d16edf",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_567-labs_instructor_2726",
+      "submitted_by": "harvester-v1",
+      "symptom": "Partial streaming fails for data-aware default factories across chunk boundaries",
+      "target": "instructor",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming): validate completed mapping models and dependent defaults. Target files: instructor/v2/dsl/partial.py, tests/dsl/test_partial.py, tests/dsl/test_partial_default_factories.py. Build typed model values inside nested dictionaries and lists during partial streaming. Resolve aliases against the raw JSON path and validate each completed child. Defer defaults that require validated data until the containing object closes, including an explicit empty JSON object. (Ref: https://github.com/567-labs/instructor/pull/2924)"
+    },
+    {
+      "applies_to": "gitlab-org/cli",
+      "created_at": "2026-11-05T18:15:32.057Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e9215e70fdbeee1d9e8cc6e4b4bea3dc8aff1527e2de51ce4c7fe5601662a481",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "gitlab-merged-mr",
+      "id": "grv_gl_gitlab-org_cli_4310",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(df): check Maven packages fetched through a mirror",
+      "target": "gitlab-cli",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(df): check Maven packages fetched through a mirror. Applied in GitLab MR !4310. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4310)"
+    },
+    {
       "applies_to": "langchain-ai/langchain",
       "created_at": "2026-11-05T16:19:55Z",
       "environment_json": "{}",
@@ -22050,6 +22665,20 @@
       "workaround": "Fix: openai: preserve failures in Responses streams. Target files: middleware/openai.go, middleware/responses_errors_test.go, middleware/responses_web_search_test.go. When generation fails after `/v1/responses` starts streaming, HTTP 200 is already committed. The native `{\"error\":\"...\"}` envelope is decoded as an empty chat response, so clients receive EOF without a terminal failure event. Detect in-band generation errors and emit one `response.failed`. Preserve partial text, reasoning, and completed tool output; close unfinished ... (Ref: https://github.com/ollama/ollama/pull/19225)"
     },
     {
+      "applies_to": "authlib",
+      "created_at": "2026-10-22T22:18:05.090Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4360\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.9.0\", \"aliases\": [\"CVE-2026-114620\", \"GHSA-x4rv-c3wx-4cr8\"]}",
+      "fingerprint": "sha256:c74449fd724257eaf4456a8aeeb8594827984f783789aea998ca199e2d21fa10",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4360",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4360] Authlib is a Python library which builds OAuth and OpenID Connect servers. Prior to 1.9.0, Authlib's RFC 9101 JWTAuthenticationRequest passes the unauthentic... (Affects authlib < 1.9.0)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4360)"
+    },
+    {
       "applies_to": "pillow",
       "created_at": "2026-10-22T17:01:08Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78g4-xqwv-q3g8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"13.0.0\", \"aliases\": []}",
@@ -24262,6 +24891,20 @@
       "workaround": "Upgrade pymongo to patched release >= 4.18.2: pip install --upgrade 'pymongo>=4.18.2' (Advisory: PYSEC-2026-4295)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-15T10:22:45.361001Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4306\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.30.0\", \"aliases\": [\"CVE-2026-105756\", \"GHSA-2823-qmq8-rwvj\"]}",
+      "fingerprint": "sha256:d04ecab35525ff75b73fba270ee514c9d09aab6e1dfdf3d884e1b83707544be0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4306",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4306] vLLM: Loose `cache_salt` validation lets a single request kill EngineCore on LMCache-MP deployments \u2014 uncaught downstream `ValueError` denial of service (Affects vllm < 0.30.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4306)"
+    },
+    {
       "applies_to": "uv",
       "created_at": "2026-10-15T10:22:45.276429Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4305\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.12.18\", \"aliases\": [\"CVE-2026-104843\", \"GHSA-2cv4-cqwr-gwf7\"]}",
@@ -24582,6 +25225,34 @@
       "target": "pydantic",
       "verification_tier": "reporter_verified",
       "workaround": "Fix: Support `closed` and `extra_items` via inheritance in `TypedDict`. Target files: pydantic/_internal/_generate_schema.py, tests/test_types_typeddict.py. Fixes https://github.com/pydantic/pydantic/issues/13919. (Ref: https://github.com/pydantic/pydantic/pull/13967)"
+    },
+    {
+      "applies_to": "strawberry-graphql",
+      "created_at": "2026-10-09T14:07:20Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-m952-2w3f-6r8h\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.327.2\", \"aliases\": [\"CVE-2026-107727\", \"PYSEC-2026-4302\"]}",
+      "fingerprint": "sha256:2ef6ce7b4ae301c43215de4261405b6ebcecf5998ad7e2b0c0b39ca6e0f78585",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_m952_2w3f_6r8h",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-m952-2w3f-6r8h] Strawberry legacy graphql-ws retains naturally completed subscription slots (Affects strawberry-graphql < 0.327.2)",
+      "target": "strawberry-graphql",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade strawberry-graphql to patched release >= 0.327.2: pip install --upgrade 'strawberry-graphql>=0.327.2' (Advisory: GHSA-m952-2w3f-6r8h)"
+    },
+    {
+      "applies_to": "strawberry-graphql",
+      "created_at": "2026-10-09T14:07:16Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pfvf-fwfp-25mp\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.326.1\", \"aliases\": [\"CVE-2026-107728\", \"PYSEC-2026-4303\"]}",
+      "fingerprint": "sha256:4daca135da89f6314085abee780b834a1d337dcfef818b77e9ef38082f414a28",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_pfvf_fwfp_25mp",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-pfvf-fwfp-25mp] Strawberry GraphQL: Synchronous permission checks can treat an awaitable authorization result as truthy (Affects strawberry-graphql < 0.326.1)",
+      "target": "strawberry-graphql",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade strawberry-graphql to patched release >= 0.326.1: pip install --upgrade 'strawberry-graphql>=0.326.1' (Advisory: GHSA-pfvf-fwfp-25mp)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -25494,6 +26165,20 @@
       "workaround": "Upgrade jupyterlab to patched release >= 4.6.4: pip install --upgrade 'jupyterlab>=4.6.4' (Advisory: PYSEC-2026-4056)"
     },
     {
+      "applies_to": "jupyterlab",
+      "created_at": "2026-10-01T16:44:34.569594Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4055\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.6.4\", \"aliases\": [\"BIT-jupyterlab-2026-102904\", \"CVE-2026-102904\", \"GHSA-3325-v43h-43rv\"]}",
+      "fingerprint": "sha256:2b345f9a55447901e7fb2c6a2a394e92be16705c9b540a04d9d99c981b421a63",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4055",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4055] JupyterLab: Argument injection in JupyterLab extension uninstall exposes server-readable files and internal URLs (Affects jupyterlab < 4.6.4)",
+      "target": "jupyterlab",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade jupyterlab to patched release >= 4.6.4: pip install --upgrade 'jupyterlab>=4.6.4' (Advisory: PYSEC-2026-4055)"
+    },
+    {
       "applies_to": "urllib3",
       "created_at": "2026-10-01T16:38:41.188251Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4176\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.8.0\", \"aliases\": [\"CVE-2026-97688\", \"GHSA-gh4c-6fx4-qh6g\"]}",
@@ -25536,6 +26221,20 @@
       "workaround": "Upgrade anyio to patched release >= 4.14.2: pip install --upgrade 'anyio>=4.14.2' (Advisory: PYSEC-2026-4025)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-01T16:38:32.983082Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4178\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.28.0\", \"aliases\": [\"CVE-2026-69147\", \"GHSA-8pw2-6jv3-mj5j\"]}",
+      "fingerprint": "sha256:ad64a90f733f9a7b5751ab371d2742c9b855b9732fbba18d318f78dc29c30b24",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4178",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4178] vLLM: Request-selected PyNvVideoCodec GPU decode bypasses static VRAM reservation (Affects vllm < 0.28.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.28.0: pip install --upgrade 'vllm>=0.28.0' (Advisory: PYSEC-2026-4178)"
+    },
+    {
       "applies_to": "django",
       "created_at": "2026-10-01T16:38:29.178928Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4035\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.0.8\", \"aliases\": [\"BIT-django-2026-15307\", \"CVE-2026-15307\", \"GHSA-wvqv-fj8w-qmhm\"]}",
@@ -25562,6 +26261,20 @@
       "target": "sentence-transformers",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade sentence-transformers to patched release >= 5.6.0: pip install --upgrade 'sentence-transformers>=5.6.0' (Advisory: PYSEC-2026-4164)"
+    },
+    {
+      "applies_to": "jupyterlab",
+      "created_at": "2026-10-01T15:22:17Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-3jqq-pw4j-pqcj\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.6.4\", \"aliases\": [\"CVE-2026-102830\", \"PYSEC-2026-4056\", \"PYSEC-2026-4059\"]}",
+      "fingerprint": "sha256:0b65944fa282df9b18a8d86fcbc02a1b6d7246b36a5e358cfb47e3538e504e21",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_3jqq_pw4j_pqcj",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-3jqq-pw4j-pqcj] JupyterLab: Cross-site scripting (XSS) in JupyterLab via crafted language package (jupyterlab.json) (Affects jupyterlab < 4.6.4)",
+      "target": "jupyterlab",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade jupyterlab to patched release >= 4.6.4: pip install --upgrade 'jupyterlab>=4.6.4' (Advisory: GHSA-3jqq-pw4j-pqcj)"
     },
     {
       "applies_to": "jupyterlab",
@@ -27300,6 +28013,20 @@
       "workaround": "Upgrade tornado to patched release >= 6.5.8: pip install --upgrade 'tornado>=6.5.8' (Advisory: PYSEC-2026-3928)"
     },
     {
+      "applies_to": "sqlparse",
+      "created_at": "2026-09-10T09:44:59.097680Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3923\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-84305\", \"GHSA-cfqr-cjx5-5jcm\"]}",
+      "fingerprint": "sha256:3f19dfd11bca390e1afda6678df336d2c3963a46fca4c9d5a65c245cf1c2e415",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3923",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3923] sqlparse: Reindentation of tuple lists causes near-cap quadratic CPU consumption (Affects sqlparse < 0.6.0)",
+      "target": "sqlparse",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade sqlparse to patched release >= 0.6.0: pip install --upgrade 'sqlparse>=0.6.0' (Advisory: PYSEC-2026-3923)"
+    },
+    {
       "applies_to": "litellm",
       "created_at": "2026-09-10T09:44:57.753158Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3861\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.83.7\", \"aliases\": [\"CVE-2026-37004\", \"GHSA-6wvf-77m9-58rm\"]}",
@@ -28099,6 +28826,20 @@
     },
     {
       "applies_to": "sqlparse",
+      "created_at": "2026-08-19T11:56:27.110256Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3698\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-59893\", \"GHSA-prg7-hcfm-mfcr\"]}",
+      "fingerprint": "sha256:200a2ac1c105c4b69a7a8e6e5afcb9435a5e9e178aa0bc044a9c35bb7ef8b777",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3698",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3698] sqlparse: Inefficient Regex Handling of Dollar-Quoted SQL Literals Leads to ReDoS (Denial of Service) (Affects sqlparse < 0.6.0)",
+      "target": "sqlparse",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade sqlparse to patched release >= 0.6.0: pip install --upgrade 'sqlparse>=0.6.0' (Advisory: PYSEC-2026-3698)"
+    },
+    {
+      "applies_to": "sqlparse",
       "created_at": "2026-08-19T11:56:27.060920Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3699\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-54284\", \"GHSA-pwgv-4x5q-6m9f\"]}",
       "fingerprint": "sha256:ff41a0e145710c50525e2c26a3d4d055b7119722ab4f7d456c86ab44390df939",
@@ -28224,6 +28965,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: GHSA-87x5-vmc3-756j)"
     },
     {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-13T12:17:27.617Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3995\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.54\", \"aliases\": [\"CVE-2026-73624\", \"GHSA-fjr4-x663-mwxc\"]}",
+      "fingerprint": "sha256:3646c80c3e75e8b86c772ade61a70762a5ac1c950dc4fb67bd059e43e0172d46",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3995",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3995] GitPython versions before 3.1.54 contain an arbitrary file overwrite vulnerability in the Diffable.diff method that fails to validate git options passed thro... (Affects gitpython < 3.1.54)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.54: pip install --upgrade 'gitpython>=3.1.54' (Advisory: PYSEC-2026-3995)"
+    },
+    {
       "applies_to": "InternLM/lmdeploy",
       "created_at": "2026-08-12T17:06:49Z",
       "environment_json": "{}",
@@ -28264,6 +29019,34 @@
       "target": "deepeval",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(dag): reject a root node that is reachable from another root. Target files: deepeval/metrics/dag/graph.py, tests/test_metrics/test_dag.py. Declaring a node as a root when it's also a child of another root gives it two ways in, so the runner visits it once per path. In sync mode the whole subtree runs again, which means the same LLM calls are made and the cost is counted twice over. In async mode it doesn't get that far \u2014 it raises `KeyError` while looking up the node's parent. (Ref: https://github.com/confident-ai/deepeval/pull/3027)"
+    },
+    {
+      "applies_to": "keras",
+      "created_at": "2026-08-10T10:43:49.309151Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3633\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": [\"CVE-2026-9335\", \"GHSA-m8wh-29wm-52mv\"]}",
+      "fingerprint": "sha256:fa60903e20e6eaa52f52e74b67abadc2cc4eccee1e77d8baeb4f60b6c28029e0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3633",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3633] Keras: HDF5 links can disclose local file contents (Affects keras < 3.15.0)",
+      "target": "keras",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade keras to patched release >= 3.15.0: pip install --upgrade 'keras>=3.15.0' (Advisory: PYSEC-2026-3633)"
+    },
+    {
+      "applies_to": "keras",
+      "created_at": "2026-08-10T10:43:49.248554Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3634\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": [\"CVE-2026-12484\", \"GHSA-v2w2-w228-c444\"]}",
+      "fingerprint": "sha256:957c10d31aada245ee8a3d5a4e720e9373022d2aa34384a29b30d5e997949548",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3634",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3634] Keras: TorchModuleWrapper can deserialize unsafe PyTorch pickle data (Affects keras < 3.15.0)",
+      "target": "keras",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade keras to patched release >= 3.15.0: pip install --upgrade 'keras>=3.15.0' (Advisory: PYSEC-2026-3634)"
     },
     {
       "applies_to": "hono",
@@ -28938,6 +29721,20 @@
       "workaround": "Upgrade gitpython to patched release >= 3.1.51: pip install --upgrade 'gitpython>=3.1.51' (Advisory: PYSEC-2026-3947)"
     },
     {
+      "applies_to": "sentence-transformers",
+      "created_at": "2026-07-31T21:31:59Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-jhr6-gm9c-rqjv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"5.6.0\", \"aliases\": [\"CVE-2026-68770\", \"PYSEC-2026-4164\"]}",
+      "fingerprint": "sha256:3380bea202d508a3afac807047560acb12e972de5e0bac11e512f6018ffae44c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_jhr6_gm9c_rqjv",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-jhr6-gm9c-rqjv] sentence-transformers local model loading bypasses trust_remote_code and executes custom Python (Affects sentence-transformers < 5.6.0)",
+      "target": "sentence-transformers",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade sentence-transformers to patched release >= 5.6.0: pip install --upgrade 'sentence-transformers>=5.6.0' (Advisory: GHSA-jhr6-gm9c-rqjv)"
+    },
+    {
       "applies_to": "nanoid",
       "created_at": "2026-07-29T15:31:12Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-28wg-ghj8-5hjv\", \"ecosystem\": \"npm\", \"fixed_version\": \"5.1.16\", \"aliases\": [\"CVE-2026-67214\"]}",
@@ -29160,6 +29957,20 @@
       "target": "postcss",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade postcss to patched release >= 8.5.12: npm install 'postcss@>=8.5.12' (Advisory: GHSA-6g55-p6wh-862q)"
+    },
+    {
+      "applies_to": "mcp",
+      "created_at": "2026-07-23T11:41:46.534440Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3483\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.28.1\", \"aliases\": [\"CVE-2026-59950\", \"GHSA-vj7q-gjh5-988w\"]}",
+      "fingerprint": "sha256:0071396faeff0f01000dc8fe054c1c83dc05b37e7cf85f6b20ded6768cfc2300",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3483",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3483] MCP Python SDK: WebSocket server transport does not support Host/Origin validation (Affects mcp < 1.28.1)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 1.28.1: pip install --upgrade 'mcp>=1.28.1' (Advisory: PYSEC-2026-3483)"
     },
     {
       "applies_to": "jupyterlab",
@@ -30394,6 +31205,20 @@
       "workaround": "Upgrade bentoml to patched release >= 1.4.39: pip install --upgrade 'bentoml>=1.4.39' (Advisory: PYSEC-2026-2399)"
     },
     {
+      "applies_to": "mako",
+      "created_at": "2026-07-13T15:15:39.881159Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2617\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.12\", \"aliases\": [\"CVE-2026-44307\", \"GHSA-2h4p-vjrc-8xpq\"]}",
+      "fingerprint": "sha256:aed0a6f80a90cb9db3bc7234e718890a08d0b40c6d2b4326ae57327dec8aeff5",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2617",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2617] Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup (Affects mako < 1.3.12)",
+      "target": "mako",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mako to patched release >= 1.3.12: pip install --upgrade 'mako>=1.3.12' (Advisory: PYSEC-2026-2617)"
+    },
+    {
       "applies_to": "fastmcp",
       "created_at": "2026-07-13T14:36:46.223793Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2476\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2026-27124\", \"GHSA-rww4-4w9c-7733\"]}",
@@ -30576,6 +31401,20 @@
       "workaround": "Fix: Fix CI AttributeError: 'str' object has no attribute '__module__'. Target files: pyproject.toml. Fix CI AttributeError: 'str' object has no attribute '__module__': - Pin transformers != 5.13.0 Fix #2487. This PR makes a minor update to the `pyproject.toml` file to address a compatibility issue with a specific version of the `transformers` library. (Ref: https://github.com/huggingface/smolagents/pull/2488)"
     },
     {
+      "applies_to": "wheel",
+      "created_at": "2026-07-07T16:03:19.867108Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2047\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.46.2\", \"aliases\": [\"CVE-2026-24049\", \"GHSA-8rrh-rw8j-w5fx\"]}",
+      "fingerprint": "sha256:dfd24bf0441b017408521293066952f2e31e88427c6331245d96c444a423050a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2047",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2047] Wheel Affected by Arbitrary File Permission Modification via Path Traversal in wheel unpack (Affects wheel < 0.46.2)",
+      "target": "wheel",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade wheel to patched release >= 0.46.2: pip install --upgrade 'wheel>=0.46.2' (Advisory: PYSEC-2026-2047)"
+    },
+    {
       "applies_to": "pytest",
       "created_at": "2026-07-07T16:03:19.758250Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1845\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"9.0.3\", \"aliases\": [\"CVE-2025-71176\", \"GHSA-6w46-j5rx-g56g\"]}",
@@ -30588,6 +31427,20 @@
       "target": "pytest",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade pytest to patched release >= 9.0.3: pip install --upgrade 'pytest>=9.0.3' (Advisory: PYSEC-2026-1845)"
+    },
+    {
+      "applies_to": "pyasn1",
+      "created_at": "2026-07-07T16:03:19.018533Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1810\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.2\", \"aliases\": [\"CVE-2026-23490\", \"GHSA-63vm-454h-vhhq\"]}",
+      "fingerprint": "sha256:de572e57074c16f9ad18a6cc02adfe1230d4ff5ef65a566fc8dce5621a3bf110",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_1810",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-1810] pyasn1 has a DoS vulnerability in decoder (Affects pyasn1 < 0.6.2)",
+      "target": "pyasn1",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyasn1 to patched release >= 0.6.2: pip install --upgrade 'pyasn1>=0.6.2' (Advisory: PYSEC-2026-1810)"
     },
     {
       "applies_to": "marshmallow",
@@ -33149,6 +34002,19 @@
       "target": "ws",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade ws to patched release >= 8.21.0: npm install 'ws@>=8.21.0' (Advisory: GHSA-96hv-2xvq-fx4p)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-06-15T03:59:05Z",
+      "fingerprint": "sha256:6948b48bc6be3d1b41c66739071939b6a66bf9df8a5ae530aa66eeafa608df62",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_49216",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Tools streaming internal error when `VLLM_ENFORCE_STRICT_TOOL_CALLING=false` and `tool_choice=required`",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Frontend] Add Streaming Parser Engine and new Qwen3 Parser. Target files: vllm/parser/abstract_parser.py, vllm/parser/engine/__init__.py, vllm/parser/engine/adapters.py. Fixes https://github.com/vllm-project/vllm/issues/44873 Introduce a declarative, config-driven streaming parser engine that replaces hand-rolled per-model streaming logic with a shared state machine. The engine handles reasoning/content/tool-call transitions, incremental JSON argument extraction, and detokenizer hold-back recovery through a single Parser... (Ref: https://github.com/vllm-project/vllm/pull/45413)"
     },
     {
       "applies_to": "esbuild",

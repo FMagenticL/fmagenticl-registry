@@ -1,5 +1,5 @@
 {
-  "count": 233,
+  "count": 235,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1157,6 +1157,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "alalanet-prober",
+      "first_seen": "2026-11-05",
+      "type": "security_probe"
+    },
+    {
       "entity": "huSpace",
       "first_seen": "2026-11-05",
       "type": "agent"
@@ -1165,7 +1170,12 @@
       "entity": "mcpyp-probe",
       "first_seen": "2026-11-05",
       "type": "security_probe"
+    },
+    {
+      "entity": "suvilabs-check",
+      "first_seen": "2026-11-05",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-05T18:03:46Z"
+  "generated_at": "2026-11-05T23:40:50Z"
 }
