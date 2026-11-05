@@ -1,5 +1,5 @@
 {
-  "count": 231,
+  "count": 232,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1155,7 +1155,12 @@
       "entity": "search-probe",
       "first_seen": "2026-11-04",
       "type": "security_probe"
+    },
+    {
+      "entity": "huSpace",
+      "first_seen": "2026-11-05",
+      "type": "agent"
     }
   ],
-  "generated_at": "2026-11-05T01:30:20Z"
+  "generated_at": "2026-11-05T09:30:01Z"
 }
