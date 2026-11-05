@@ -929,6 +929,18 @@ def main():
 
     print(f"  ⏱️ NEXT_SENTRY_SCHEDULE_SECONDS: {next_seconds} (Mode: {schedule_mode})")
 
+    # Sync telemetry directly to Google Drive (FMAgenticL Maintenance folder)
+    print("\n[Google Drive Sync] Mirroring daily_telemetry.md to Google Drive...")
+    try:
+        sys.path.insert(0, str(SCRIPTS_DIR))
+        from sync_sentry_gdrive import upload_or_update_telemetry
+        gdrive_res = upload_or_update_telemetry()
+        if gdrive_res:
+            print(f"  ✅ Synced to Google Drive: {gdrive_res.get('action')} (ID: {gdrive_res.get('id')})")
+    except Exception as e:
+        print(f"  ⚠️ Google Drive Telemetry sync warning: {e}")
+
+
     print("\n" + "=" * 80)
     if not degraded_reasons:
         print("DIAGNOSTICS & TELEMETRY CYCLE COMPLETE — ALL ENDPOINTS & INVARIANTS GREEN")
