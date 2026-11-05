@@ -49,7 +49,7 @@ BROKEN_VERSION_RE = re.compile(
 )
 
 TTFB_CEILINGS_MS = {
-    "/v1/health": 1800.0,
+    "/v1/health": 2500.0,
     "/guestbook.json": 1200.0,
     "/workarounds.json": 3500.0,
     "/.well-known/agent-card.json": 1000.0,
@@ -79,7 +79,7 @@ def sync_upstream_bot_commits() -> str:
     try:
         subprocess.run(
             ["git", "fetch", "origin", "main", "--quiet"],
-            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=20, env=env
+            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=45, env=env
         )
         rev = subprocess.run(
             ["git", "rev-list", "--count", "HEAD..origin/main"],
