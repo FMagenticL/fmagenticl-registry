@@ -186,6 +186,21 @@ OSV_TARGET_PACKAGES: List[Tuple[str, str]] = [
     ("yauzl", "npm"),
     ("adm-zip", "npm"),
     ("decompress", "npm"),
+    # Recon Cycle 1-12 Curated Onboarding: 14 High-Density Agentic & Web Packages
+    ("mlflow", "PyPI"),
+    ("nuxt", "npm"),
+    ("hono", "npm"),
+    ("astro", "npm"),
+    ("jupyterlab", "PyPI"),
+    ("onnx", "PyPI"),
+    ("@sveltejs/kit", "npm"),
+    ("keras", "PyPI"),
+    ("bentoml", "PyPI"),
+    ("python-multipart", "PyPI"),
+    ("strawberry-graphql", "PyPI"),
+    ("prefect", "PyPI"),
+    ("elysia", "npm"),
+    ("sentence-transformers", "PyPI")
 ]
 
 PACKAGE_TARGET_MAP = {
@@ -196,6 +211,10 @@ PACKAGE_TARGET_MAP = {
     "dspy-ai": "dspy",
     "fastmcp": "fastmcp",
     "llama-index": "llama-index",
+    "@sveltejs/kit": "sveltekit",
+    "sentence-transformers": "sentence-transformers",
+    "strawberry-graphql": "strawberry-graphql",
+    "python-multipart": "python-multipart"
 }
 
 def normalize_target_slug(pkg_name: str) -> str:

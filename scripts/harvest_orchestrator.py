@@ -68,6 +68,10 @@ TARGET_GITHUB_REPOS = [
     "langgenius/dify",
     "truera/trulens",
     "Codium-ai/pr-agent",
+    # Recon Cycle 1-12 Curated Onboarding: 3 Release Repos
+    "axolotl-ai-cloud/axolotl",
+    "mlflow/mlflow",
+    "zenml-io/zenml"
 ]
 
 REPO_TARGET_MAP = {
@@ -87,7 +91,11 @@ REPO_TARGET_MAP = {
     "crewAIInc/crewAI": "crewai",
     "gitlab-org/cli": "gitlab-cli",
     "gitlab/cli": "gitlab-cli",
-    "glab": "gitlab-cli"
+    "glab": "gitlab-cli",
+    # Recon Release Repos Slugs
+    "axolotl-ai-cloud/axolotl": "axolotl",
+    "mlflow/mlflow": "mlflow",
+    "zenml-io/zenml": "zenml"
 }
 
 TARGET_GITLAB_PROJECTS = [

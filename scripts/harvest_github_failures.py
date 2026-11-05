@@ -82,7 +82,25 @@ TARGET_REPOS = [
     "pydantic/pydantic-settings",
     "sgl-project/sglang",
     "simonw/llm",
-    "truera/trulens"
+    "truera/trulens",
+    # Recon Cycle 1-12 Curated Onboarding: 17 High-Signal AI / Agentic / Vector Toolkits
+    "huggingface/peft",
+    "temporalio/sdk-typescript",
+    "langchain-ai/langchainjs",
+    "huggingface/accelerate",
+    "dstackai/dstack",
+    "Arize-ai/phoenix",
+    "lancedb/lancedb",
+    "huggingface/trl",
+    "ray-project/ray",
+    "temporalio/sdk-python",
+    "huggingface/datasets",
+    "skypilot-org/skypilot",
+    "InternLM/lmdeploy",
+    "daytonaio/daytona",
+    "qdrant/qdrant",
+    "openai/openai-node",
+    "wandb/wandb"
 ]
 
 REPO_TARGET_MAP = {
@@ -122,7 +140,25 @@ REPO_TARGET_MAP = {
     "pydantic/pydantic-settings": "pydantic-settings",
     "sgl-project/sglang": "sglang",
     "simonw/llm": "llm",
-    "truera/trulens": "trulens"
+    "truera/trulens": "trulens",
+    # Recon Onboarding Slugs
+    "huggingface/peft": "peft",
+    "temporalio/sdk-typescript": "temporal-ts",
+    "langchain-ai/langchainjs": "langchainjs",
+    "huggingface/accelerate": "accelerate",
+    "dstackai/dstack": "dstack",
+    "Arize-ai/phoenix": "phoenix",
+    "lancedb/lancedb": "lancedb",
+    "huggingface/trl": "trl",
+    "ray-project/ray": "ray",
+    "temporalio/sdk-python": "temporal-python",
+    "huggingface/datasets": "datasets",
+    "skypilot-org/skypilot": "skypilot",
+    "InternLM/lmdeploy": "lmdeploy",
+    "daytonaio/daytona": "daytona",
+    "qdrant/qdrant": "qdrant",
+    "openai/openai-node": "openai-node",
+    "wandb/wandb": "wandb"
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"
