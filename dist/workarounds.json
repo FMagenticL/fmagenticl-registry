@@ -1,7 +1,105 @@
 {
-  "count": 1246,
-  "generated_at": "2026-11-05T23:40:53Z",
+  "count": 1261,
+  "generated_at": "2026-11-06T06:38:46Z",
   "grievances": [
+    {
+      "applies_to": "simonw/llm",
+      "created_at": "2026-11-06T05:27:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d74d7c36690b70d87a69e2af74915782189fbffcedbbedcc94ae64cb7b9068f5",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_simonw_llm_971",
+      "submitted_by": "harvester-v1",
+      "symptom": "Enable mac clipboard via pngpaste (Support unseekable attachments)",
+      "target": "llm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Support pipe paths for CLI attachments. Target files: llm/cli.py, tests/test_attachments.py. Attachments passed through Bash process substitution, such as `llm \"Describe this image\" -a <(cat image.png)`, could not be detected because MIME probing expects a seekable file. With an explicit `--at` type, hashing and subsequent reads could instead consume the pipe and lose its content. (Ref: https://github.com/simonw/llm/pull/1857)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-06T05:12:55Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f7d4428609dee405c90e5a7afb8a66197c1a510865eb630d2dc5e105954ecd85",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_39476",
+      "submitted_by": "harvester-v1",
+      "symptom": "Relyt and AnalyticDB vector providers generate malformed SQL for metadata-filtered search",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vdb): correct malformed metadata-filter SQL in relyt and analyticdb. Target files: api/providers/vdb/vdb-analyticdb/src/dify_vdb_analyticdb/analyticdb_vector_sql.py, api/providers/vdb/vdb-relyt/src/dify_vdb_relyt/relyt_vector.py, api/providers/vdb/vdb-analyticdb/tests/unit_tests/src/dify_vdb_analyticdb/test_analyticdb_vector_sql.py. - `api/providers/vdb/vdb-relyt/src/dify_vdb_relyt/relyt_vector.py`: drop the `{key!r}` \u2192 `{key}` in the metadata-filter predicate so the key renders as `document_id`, not `'document_id'`. - ... (Ref: https://github.com/langgenius/dify/pull/39554)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-06T04:41:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:02ef98ae67b8238632cb7912acf45e71dfc8499ca5e8defaa9433f5669e53979",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_40423",
+      "submitted_by": "harvester-v1",
+      "symptom": "bare except in VDB text_exists() swallows KeyboardInterrupt/SystemExit",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vdb): narrow bare except in text_exists() to NotFoundError. Target files: api/providers/vdb/vdb-lindorm/src/dify_vdb_lindorm/lindorm_vector.py, api/providers/vdb/vdb-opensearch/src/dify_vdb_opensearch/opensearch_vector.py, api/providers/vdb/vdb-lindorm/tests/unit_tests/src/dify_vdb_lindorm/test_lindorm_vector.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 2. Ensure there is an associated issue and you have been assigned to i... (Ref: https://github.com/langgenius/dify/pull/40424)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-06T02:13:17Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:fc123dffe397730b6f499fd069387d1f1d2c3ef463275801509e8ccdc49dd2c8",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_11943",
+      "submitted_by": "harvester-v1",
+      "symptom": "Prefect flow retry re-runs a model request when message history holds non-UTF-8 binary content",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Replay Prefect tasks on flow retry when the message history holds binary content. Target files: pydantic_ai_slim/pydantic_ai/durable_exec/prefect/_cache_policies.py, tests/durable_exec/test_prefect.py, docs/durable_execution/prefect.md. Non-UTF-8 message history pushes Prefect hashing onto `cloudpickle`, whose digest depends on object sharing. Replayed responses can therefore change cache keys and repeat completed requests and tools. The shared projection now hashes these binary values by content, also covering the pro... (Ref: https://github.com/pydantic/pydantic-ai/pull/12188)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-06T01:26:52Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:55c9c782ec669d814ad5b6eec40488343a248207f570633c5351e002aae6e933",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11754",
+      "submitted_by": "harvester-v1",
+      "symptom": "openai: Responses API chat model event stream omits response_metadata.model_name",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai): set model_name on Responses API chat model stream events. Target files: libs/providers/langchain-openai/src/utils/responses_stream_events.ts, libs/providers/langchain-openai/src/utils/tests/responses_stream_events.test.ts, .changeset/openai-responses-stream-model-name.md. `convertOpenAIResponsesStream` built the `message-finish` `responseMetadata` with `model` but not `model_name`. Every other OpenAI path sets `response_metadata.model_name` to the served model: the core Chat Completions event stream, t... (Ref: https://github.com/langchain-ai/langchainjs/pull/11755)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-06T01:25:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:429c43b2d26af30585909556731f6cf18afad3b63d8932f5ddef0838e46d0ad3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11466",
+      "submitted_by": "harvester-v1",
+      "symptom": "ChatOpenAI (Responses API, streaming): response_metadata.model_name is the requested alias, not the resolved model",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai): use resolved model metadata for response streams. Target files: libs/providers/langchain-openai/src/converters/responses.ts, libs/providers/langchain-openai/src/converters/tests/responses.test.ts, .changeset/calm-models-resolve.md. - defer streamed Responses API model metadata until the completed or incomplete response carries the resolved snapshot - cover both terminal response event types with a regression test (Ref: https://github.com/langchain-ai/langchainjs/pull/11467)"
+    },
+    {
+      "applies_to": "ollama/ollama",
+      "created_at": "2026-11-06T00:56:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:56f24137176dcc79af74b5f39debfa0cea985a4decbf764deb95cc33b8492bb3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ollama_ollama_19492",
+      "submitted_by": "harvester-v1",
+      "symptom": "Responses API silently truncates oversized input with truncation disabled (0.40.13 and 0.40.14, Bonsai 27B)",
+      "target": "ollama",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: openai: forward truncation option in responses requests. Target files: openai/responses.go, openai/responses_test.go, server/responses_compact.go. \ufeff`FromResponsesRequest` previously omitted mapping the `Truncation` option to `api.ChatRequest.Truncate`. Because `Truncate` was nil on the resulting request, the chat handler defaulted `truncate` to `true`, causing oversized inputs to be silently shortened by the runner even when `truncation` was set to `\"disabled\"` (or left at the default `\"disabled\"`). (Ref: https://github.com/ollama/ollama/pull/19501)"
+    },
     {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-05T22:52:41Z",
@@ -2059,6 +2157,20 @@
       "target": "transformers",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Gemma4] Pass num_frames_per_video to get_video_features in forward. Target files: src/transformers/models/gemma4/modeling_gemma4.py, src/transformers/models/gemma4/modular_gemma4.py, src/transformers/models/gemma4_unified/modeling_gemma4_unified.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50237) (Ref: https://github.com/huggingface/transformers/pull/50237)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-02T04:03:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b34221cc51ce8c77fc9da0f513f53de2f636ceed92b84219cf8438af3f637a3e",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_11791",
+      "submitted_by": "harvester-v1",
+      "symptom": "Flaky CI and merge-queue failures: Temporal reroute timeout, leaked `sqlite3` connection, `test_ci_duration` teardown, `test_guarded` timing, Pyright time budget",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Split `tests/models/anthropic/test_stream_parity.py` across eight nodes and hold LocalStack test ports bound, fixing two CI flakes. Target files: tests/harness/localstack/_http_server.py, tests/harness/localstack/test_container.py, tests/harness/localstack/test_localstack.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12161)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -5239,6 +5351,20 @@
       "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4360)"
     },
     {
+      "applies_to": "authlib",
+      "created_at": "2026-10-22T22:18:04.930Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4359\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.9.0\", \"aliases\": [\"CVE-2026-114619\", \"GHSA-q686-2qmg-hqc7\"]}",
+      "fingerprint": "sha256:728340578a441c379d7333c240bccc266c83f6d2c07feb3222c9d3b8088427b1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4359",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4359] Authlib is a Python library which builds OAuth and OpenID Connect servers. Prior to 1.9.0, OpenIDImplicitGrant.validate_authorization_request() checks the cl... (Affects authlib < 1.9.0)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4359)"
+    },
+    {
       "applies_to": "pillow",
       "created_at": "2026-10-22T17:01:08Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78g4-xqwv-q3g8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"13.0.0\", \"aliases\": []}",
@@ -7225,6 +7351,20 @@
       "target": "powershell",
       "verification_tier": "reporter_verified",
       "workaround": "Always invoke 'curl.exe' explicitly or wrap commands in 'cmd /c \"curl.exe ...\"' with escaped quotes."
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-18T13:58:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:835b51f6b03fed2684bfba456aa9913c3c3d76414bce2d84b6c322e2d7c6b199",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43518",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Request Failed Error Code: 500 Message: litellm.APIConnectionError: APIConnectionError: Hosted_vllmException -",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming)!: map stream read timeouts to litellm.Timeout on chat, messages, and responses. Target files: litellm/litellm_core_utils/exception_mapping_utils.py, litellm/litellm_core_utils/streaming_handler.py, litellm/responses/streaming_iterator.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/47198)"
     },
     {
       "applies_to": "Codium-ai/pr-agent",
@@ -11021,6 +11161,20 @@
       "workaround": "Fix: fix(models): map the Bedrock and Mistral finish reasons that are not OpenAI values. Target files: camel/models/aws_bedrock_converse_model.py, camel/models/mistral_model.py, test/models/test_aws_bedrock_converse_model.py. Two finish-reason mappings, folded into one PR at @fengju0213's request (#4262 comment, 2026-08-21). They were opened separately as #4262 and #4267; #4267 is now closed in favour of this one. The two halves touch disjoint files and are described separately below, so they can still be reviewed or reverted inde... (Ref: https://github.com/camel-ai/camel/pull/4262)"
     },
     {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-09-06T09:28:00Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:62002c618d0f7d09e06fe376d7d5163ba7c5b92d40621fdc52ad5c0ee38f41b9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_36906",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] GLM-5.3-Flash crashes at startup under pipeline parallelism \u2014 KeyError: 'residual'",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: GLM-5.3-Flash support. Target files: python/sglang/kernels/ops/attention/dsa/quant_k_cache.py, python/sglang/kernels/ops/attention/dsa/tilelang_kernel.py, python/sglang/kernels/ops/attention/dsa_metadata.py. Support GLM-5.3-Flash. (Ref: https://github.com/sgl-project/sglang/pull/36507)"
+    },
+    {
       "applies_to": "browser-use/browser-use",
       "created_at": "2026-09-05T14:50:12Z",
       "environment_json": "{}",
@@ -11411,6 +11565,20 @@
       "target": "sqlparse",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade sqlparse to patched release >= 0.6.0: pip install --upgrade 'sqlparse>=0.6.0' (Advisory: PYSEC-2026-3699)"
+    },
+    {
+      "applies_to": "mlflow",
+      "created_at": "2026-08-19T11:56:24.904399Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3686\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.13.0rc0\", \"aliases\": [\"BIT-mlflow-2026-8147\", \"CVE-2026-8147\", \"GHSA-2cm6-r77w-6g96\"]}",
+      "fingerprint": "sha256:94f613262f59eca3595a0285423904ae75cab19a3c70cf5a7fc237bbfe5e18de",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3686",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3686] MLflow: trace API endpoints lack proper authorization validators (Affects mlflow < 3.13.0rc0)",
+      "target": "mlflow",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mlflow to patched release >= 3.13.0rc0: pip install --upgrade 'mlflow>=3.13.0rc0' (Advisory: PYSEC-2026-3686)"
     },
     {
       "applies_to": "mlflow",
@@ -11945,6 +12113,20 @@
       "workaround": "Upgrade django to patched release >= 6.1.1: pip install --upgrade 'django>=6.1.1' (Advisory: GHSA-q238-5cxm-5c9h)"
     },
     {
+      "applies_to": "onnx",
+      "created_at": "2026-08-04T11:34:41.860642Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3587\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.22.0\", \"aliases\": [\"CVE-2026-63632\", \"GHSA-p893-rvq9-2xf9\"]}",
+      "fingerprint": "sha256:8dfa1357c34ddc291e303c3f8101a7a09922ba6bccba6c65a82f34212eae76c6",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3587",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3587] ONNX: Heap-Buffer-Overflow READ in Gemm Version Converter Adapter via Undersized Input Shape (Affects onnx < 1.22.0)",
+      "target": "onnx",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade onnx to patched release >= 1.22.0: pip install --upgrade 'onnx>=1.22.0' (Advisory: PYSEC-2026-3587)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-08-04T01:58:40Z",
       "environment_json": "{}",
@@ -12251,6 +12433,20 @@
       "target": "keras",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade keras to patched release >= 3.15.0: pip install --upgrade 'keras>=3.15.0' (Advisory: GHSA-m8wh-29wm-52mv)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-08-01T21:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d92f2d107be6fcbbdabf3c8c6f2f597caf3b1f0633bfa2ff36086f66b9a396cc",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_33167",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: v1.92.0 downloads Prisma Binaries at startup",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(docker): bake prisma offline in the componentized migrations image. Target files: .github/workflows/image-scan.yml, migrations/Dockerfile, tests/proxy_migration_tests/test_offline_image_migration.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/35485)"
     },
     {
       "applies_to": "gitpython",
@@ -13735,6 +13931,20 @@
       "target": "dulwich",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade dulwich to patched release >= 1.2.5: pip install --upgrade 'dulwich>=1.2.5' (Advisory: PYSEC-2026-2462)"
+    },
+    {
+      "applies_to": "mlflow",
+      "created_at": "2026-07-13T15:46:13.877221Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2659\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.11.0rc0\", \"aliases\": [\"BIT-mlflow-2026-3198\", \"CVE-2026-3198\", \"GHSA-r5m9-wm49-959f\"]}",
+      "fingerprint": "sha256:59c2ef4b7e1e51fe31ada7f651b8c9a8e95d6d9b4760e8c4f4f493a8cace61f3",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2659",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2659] MLflow: Any authenticated user can enumerate all gateway secrets, endpoints, and model definitions (Affects mlflow < 3.11.0rc0)",
+      "target": "mlflow",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mlflow to patched release >= 3.11.0rc0: pip install --upgrade 'mlflow>=3.11.0rc0' (Advisory: PYSEC-2026-2659)"
     },
     {
       "applies_to": "langchain",
@@ -17443,6 +17653,104 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "simonw/llm",
+      "created_at": "2026-11-06T05:27:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d74d7c36690b70d87a69e2af74915782189fbffcedbbedcc94ae64cb7b9068f5",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_simonw_llm_971",
+      "submitted_by": "harvester-v1",
+      "symptom": "Enable mac clipboard via pngpaste (Support unseekable attachments)",
+      "target": "llm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Support pipe paths for CLI attachments. Target files: llm/cli.py, tests/test_attachments.py. Attachments passed through Bash process substitution, such as `llm \"Describe this image\" -a <(cat image.png)`, could not be detected because MIME probing expects a seekable file. With an explicit `--at` type, hashing and subsequent reads could instead consume the pipe and lose its content. (Ref: https://github.com/simonw/llm/pull/1857)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-06T05:12:55Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f7d4428609dee405c90e5a7afb8a66197c1a510865eb630d2dc5e105954ecd85",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_39476",
+      "submitted_by": "harvester-v1",
+      "symptom": "Relyt and AnalyticDB vector providers generate malformed SQL for metadata-filtered search",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vdb): correct malformed metadata-filter SQL in relyt and analyticdb. Target files: api/providers/vdb/vdb-analyticdb/src/dify_vdb_analyticdb/analyticdb_vector_sql.py, api/providers/vdb/vdb-relyt/src/dify_vdb_relyt/relyt_vector.py, api/providers/vdb/vdb-analyticdb/tests/unit_tests/src/dify_vdb_analyticdb/test_analyticdb_vector_sql.py. - `api/providers/vdb/vdb-relyt/src/dify_vdb_relyt/relyt_vector.py`: drop the `{key!r}` \u2192 `{key}` in the metadata-filter predicate so the key renders as `document_id`, not `'document_id'`. - ... (Ref: https://github.com/langgenius/dify/pull/39554)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-06T04:41:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:02ef98ae67b8238632cb7912acf45e71dfc8499ca5e8defaa9433f5669e53979",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_40423",
+      "submitted_by": "harvester-v1",
+      "symptom": "bare except in VDB text_exists() swallows KeyboardInterrupt/SystemExit",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vdb): narrow bare except in text_exists() to NotFoundError. Target files: api/providers/vdb/vdb-lindorm/src/dify_vdb_lindorm/lindorm_vector.py, api/providers/vdb/vdb-opensearch/src/dify_vdb_opensearch/opensearch_vector.py, api/providers/vdb/vdb-lindorm/tests/unit_tests/src/dify_vdb_lindorm/test_lindorm_vector.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 2. Ensure there is an associated issue and you have been assigned to i... (Ref: https://github.com/langgenius/dify/pull/40424)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-06T02:13:17Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:fc123dffe397730b6f499fd069387d1f1d2c3ef463275801509e8ccdc49dd2c8",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_11943",
+      "submitted_by": "harvester-v1",
+      "symptom": "Prefect flow retry re-runs a model request when message history holds non-UTF-8 binary content",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Replay Prefect tasks on flow retry when the message history holds binary content. Target files: pydantic_ai_slim/pydantic_ai/durable_exec/prefect/_cache_policies.py, tests/durable_exec/test_prefect.py, docs/durable_execution/prefect.md. Non-UTF-8 message history pushes Prefect hashing onto `cloudpickle`, whose digest depends on object sharing. Replayed responses can therefore change cache keys and repeat completed requests and tools. The shared projection now hashes these binary values by content, also covering the pro... (Ref: https://github.com/pydantic/pydantic-ai/pull/12188)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-06T01:26:52Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:55c9c782ec669d814ad5b6eec40488343a248207f570633c5351e002aae6e933",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11754",
+      "submitted_by": "harvester-v1",
+      "symptom": "openai: Responses API chat model event stream omits response_metadata.model_name",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai): set model_name on Responses API chat model stream events. Target files: libs/providers/langchain-openai/src/utils/responses_stream_events.ts, libs/providers/langchain-openai/src/utils/tests/responses_stream_events.test.ts, .changeset/openai-responses-stream-model-name.md. `convertOpenAIResponsesStream` built the `message-finish` `responseMetadata` with `model` but not `model_name`. Every other OpenAI path sets `response_metadata.model_name` to the served model: the core Chat Completions event stream, t... (Ref: https://github.com/langchain-ai/langchainjs/pull/11755)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-06T01:25:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:429c43b2d26af30585909556731f6cf18afad3b63d8932f5ddef0838e46d0ad3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11466",
+      "submitted_by": "harvester-v1",
+      "symptom": "ChatOpenAI (Responses API, streaming): response_metadata.model_name is the requested alias, not the resolved model",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai): use resolved model metadata for response streams. Target files: libs/providers/langchain-openai/src/converters/responses.ts, libs/providers/langchain-openai/src/converters/tests/responses.test.ts, .changeset/calm-models-resolve.md. - defer streamed Responses API model metadata until the completed or incomplete response carries the resolved snapshot - cover both terminal response event types with a regression test (Ref: https://github.com/langchain-ai/langchainjs/pull/11467)"
+    },
+    {
+      "applies_to": "ollama/ollama",
+      "created_at": "2026-11-06T00:56:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:56f24137176dcc79af74b5f39debfa0cea985a4decbf764deb95cc33b8492bb3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ollama_ollama_19492",
+      "submitted_by": "harvester-v1",
+      "symptom": "Responses API silently truncates oversized input with truncation disabled (0.40.13 and 0.40.14, Bonsai 27B)",
+      "target": "ollama",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: openai: forward truncation option in responses requests. Target files: openai/responses.go, openai/responses_test.go, server/responses_compact.go. \ufeff`FromResponsesRequest` previously omitted mapping the `Truncation` option to `api.ChatRequest.Truncate`. Because `Truncate` was nil on the resulting request, the chat handler defaulted `truncate` to `true`, causing oversized inputs to be silently shortened by the runner even when `truncation` was set to `\"disabled\"` (or left at the default `\"disabled\"`). (Ref: https://github.com/ollama/ollama/pull/19501)"
+    },
+    {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-05T22:52:41Z",
       "environment_json": "{}",
@@ -19499,6 +19807,20 @@
       "target": "transformers",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Gemma4] Pass num_frames_per_video to get_video_features in forward. Target files: src/transformers/models/gemma4/modeling_gemma4.py, src/transformers/models/gemma4/modular_gemma4.py, src/transformers/models/gemma4_unified/modeling_gemma4_unified.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50237) (Ref: https://github.com/huggingface/transformers/pull/50237)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-02T04:03:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b34221cc51ce8c77fc9da0f513f53de2f636ceed92b84219cf8438af3f637a3e",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_11791",
+      "submitted_by": "harvester-v1",
+      "symptom": "Flaky CI and merge-queue failures: Temporal reroute timeout, leaked `sqlite3` connection, `test_ci_duration` teardown, `test_guarded` timing, Pyright time budget",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Split `tests/models/anthropic/test_stream_parity.py` across eight nodes and hold LocalStack test ports bound, fixing two CI flakes. Target files: tests/harness/localstack/_http_server.py, tests/harness/localstack/test_container.py, tests/harness/localstack/test_localstack.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12161)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -22679,6 +23001,20 @@
       "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4360)"
     },
     {
+      "applies_to": "authlib",
+      "created_at": "2026-10-22T22:18:04.930Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4359\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.9.0\", \"aliases\": [\"CVE-2026-114619\", \"GHSA-q686-2qmg-hqc7\"]}",
+      "fingerprint": "sha256:728340578a441c379d7333c240bccc266c83f6d2c07feb3222c9d3b8088427b1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4359",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4359] Authlib is a Python library which builds OAuth and OpenID Connect servers. Prior to 1.9.0, OpenIDImplicitGrant.validate_authorization_request() checks the cl... (Affects authlib < 1.9.0)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4359)"
+    },
+    {
       "applies_to": "pillow",
       "created_at": "2026-10-22T17:01:08Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78g4-xqwv-q3g8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"13.0.0\", \"aliases\": []}",
@@ -24665,6 +25001,20 @@
       "target": "powershell",
       "verification_tier": "reporter_verified",
       "workaround": "Always invoke 'curl.exe' explicitly or wrap commands in 'cmd /c \"curl.exe ...\"' with escaped quotes."
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-18T13:58:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:835b51f6b03fed2684bfba456aa9913c3c3d76414bce2d84b6c322e2d7c6b199",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43518",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Request Failed Error Code: 500 Message: litellm.APIConnectionError: APIConnectionError: Hosted_vllmException -",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(streaming)!: map stream read timeouts to litellm.Timeout on chat, messages, and responses. Target files: litellm/litellm_core_utils/exception_mapping_utils.py, litellm/litellm_core_utils/streaming_handler.py, litellm/responses/streaming_iterator.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/47198)"
     },
     {
       "applies_to": "Codium-ai/pr-agent",
@@ -28461,6 +28811,20 @@
       "workaround": "Fix: fix(models): map the Bedrock and Mistral finish reasons that are not OpenAI values. Target files: camel/models/aws_bedrock_converse_model.py, camel/models/mistral_model.py, test/models/test_aws_bedrock_converse_model.py. Two finish-reason mappings, folded into one PR at @fengju0213's request (#4262 comment, 2026-08-21). They were opened separately as #4262 and #4267; #4267 is now closed in favour of this one. The two halves touch disjoint files and are described separately below, so they can still be reviewed or reverted inde... (Ref: https://github.com/camel-ai/camel/pull/4262)"
     },
     {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-09-06T09:28:00Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:62002c618d0f7d09e06fe376d7d5163ba7c5b92d40621fdc52ad5c0ee38f41b9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_36906",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] GLM-5.3-Flash crashes at startup under pipeline parallelism \u2014 KeyError: 'residual'",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: GLM-5.3-Flash support. Target files: python/sglang/kernels/ops/attention/dsa/quant_k_cache.py, python/sglang/kernels/ops/attention/dsa/tilelang_kernel.py, python/sglang/kernels/ops/attention/dsa_metadata.py. Support GLM-5.3-Flash. (Ref: https://github.com/sgl-project/sglang/pull/36507)"
+    },
+    {
       "applies_to": "browser-use/browser-use",
       "created_at": "2026-09-05T14:50:12Z",
       "environment_json": "{}",
@@ -28851,6 +29215,20 @@
       "target": "sqlparse",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade sqlparse to patched release >= 0.6.0: pip install --upgrade 'sqlparse>=0.6.0' (Advisory: PYSEC-2026-3699)"
+    },
+    {
+      "applies_to": "mlflow",
+      "created_at": "2026-08-19T11:56:24.904399Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3686\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.13.0rc0\", \"aliases\": [\"BIT-mlflow-2026-8147\", \"CVE-2026-8147\", \"GHSA-2cm6-r77w-6g96\"]}",
+      "fingerprint": "sha256:94f613262f59eca3595a0285423904ae75cab19a3c70cf5a7fc237bbfe5e18de",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3686",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3686] MLflow: trace API endpoints lack proper authorization validators (Affects mlflow < 3.13.0rc0)",
+      "target": "mlflow",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mlflow to patched release >= 3.13.0rc0: pip install --upgrade 'mlflow>=3.13.0rc0' (Advisory: PYSEC-2026-3686)"
     },
     {
       "applies_to": "mlflow",
@@ -29385,6 +29763,20 @@
       "workaround": "Upgrade django to patched release >= 6.1.1: pip install --upgrade 'django>=6.1.1' (Advisory: GHSA-q238-5cxm-5c9h)"
     },
     {
+      "applies_to": "onnx",
+      "created_at": "2026-08-04T11:34:41.860642Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3587\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.22.0\", \"aliases\": [\"CVE-2026-63632\", \"GHSA-p893-rvq9-2xf9\"]}",
+      "fingerprint": "sha256:8dfa1357c34ddc291e303c3f8101a7a09922ba6bccba6c65a82f34212eae76c6",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3587",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3587] ONNX: Heap-Buffer-Overflow READ in Gemm Version Converter Adapter via Undersized Input Shape (Affects onnx < 1.22.0)",
+      "target": "onnx",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade onnx to patched release >= 1.22.0: pip install --upgrade 'onnx>=1.22.0' (Advisory: PYSEC-2026-3587)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-08-04T01:58:40Z",
       "environment_json": "{}",
@@ -29691,6 +30083,20 @@
       "target": "keras",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade keras to patched release >= 3.15.0: pip install --upgrade 'keras>=3.15.0' (Advisory: GHSA-m8wh-29wm-52mv)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-08-01T21:12:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d92f2d107be6fcbbdabf3c8c6f2f597caf3b1f0633bfa2ff36086f66b9a396cc",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_33167",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: v1.92.0 downloads Prisma Binaries at startup",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(docker): bake prisma offline in the componentized migrations image. Target files: .github/workflows/image-scan.yml, migrations/Dockerfile, tests/proxy_migration_tests/test_offline_image_migration.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/35485)"
     },
     {
       "applies_to": "gitpython",
@@ -31175,6 +31581,20 @@
       "target": "dulwich",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade dulwich to patched release >= 1.2.5: pip install --upgrade 'dulwich>=1.2.5' (Advisory: PYSEC-2026-2462)"
+    },
+    {
+      "applies_to": "mlflow",
+      "created_at": "2026-07-13T15:46:13.877221Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2659\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.11.0rc0\", \"aliases\": [\"BIT-mlflow-2026-3198\", \"CVE-2026-3198\", \"GHSA-r5m9-wm49-959f\"]}",
+      "fingerprint": "sha256:59c2ef4b7e1e51fe31ada7f651b8c9a8e95d6d9b4760e8c4f4f493a8cace61f3",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2659",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2659] MLflow: Any authenticated user can enumerate all gateway secrets, endpoints, and model definitions (Affects mlflow < 3.11.0rc0)",
+      "target": "mlflow",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mlflow to patched release >= 3.11.0rc0: pip install --upgrade 'mlflow>=3.11.0rc0' (Advisory: PYSEC-2026-2659)"
     },
     {
       "applies_to": "langchain",

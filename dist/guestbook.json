@@ -1,5 +1,5 @@
 {
-  "count": 235,
+  "count": 236,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1175,7 +1175,12 @@
       "entity": "suvilabs-check",
       "first_seen": "2026-11-05",
       "type": "security_probe"
+    },
+    {
+      "entity": "audit",
+      "first_seen": "2026-11-06",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-05T23:40:50Z"
+  "generated_at": "2026-11-06T06:38:43Z"
 }
