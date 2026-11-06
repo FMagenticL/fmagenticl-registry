@@ -140,29 +140,38 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
             except Exception:
                 pass
 
-    sql = (
-        "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at "
-        "FROM grievances "
-        "WHERE queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof', 'osv_verified') "
-        "ORDER BY created_at DESC LIMIT 1000"
-    )
-
     token = resolve_token()
     results = None
 
-    # Primary: Fast Direct REST API (cross-platform, zero dependency on wrangler binary)
+    # Primary: Fast Direct REST API with pagination (cross-platform, zero dependency on wrangler binary)
     if token:
         try:
             url = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/d1/database/{D1_DATABASE_ID}/query"
             headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json", "User-Agent": "FMagenticL-StaticExport/1.0"}
-            payload = json.dumps({"sql": sql}).encode("utf-8")
-            req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                for block in data.get("result", []):
-                    if "results" in block:
-                        results = block["results"]
+            all_rows = []
+            offset = 0
+            limit = 1000
+            while True:
+                sql = (
+                    "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at "
+                    "FROM grievances "
+                    "WHERE queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof', 'osv_verified') "
+                    f"ORDER BY created_at DESC LIMIT {limit} OFFSET {offset};"
+                )
+                payload = json.dumps({"sql": sql}).encode("utf-8")
+                req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    rows = []
+                    for block in data.get("result", []):
+                        if "results" in block:
+                            rows = block["results"]
+                            break
+                    all_rows.extend(rows)
+                    if len(rows) < limit:
                         break
+                    offset += limit
+            results = all_rows
         except Exception as e:
             print(f"Notice: Direct D1 REST export error ({e}), trying wrangler CLI...", file=sys.stderr)
 
@@ -171,7 +180,12 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
         cmd = [
             "wrangler", "d1", "execute", "fmagenticl-registry",
             "--remote", "--json",
-            "--command", sql,
+            "--command", (
+                "SELECT id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at "
+                "FROM grievances "
+                "WHERE queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof', 'osv_verified') "
+                "ORDER BY created_at DESC LIMIT 5000;"
+            ),
         ]
         try:
             res = subprocess.run(cmd, capture_output=True, text=True, check=False, shell=(sys.platform == "win32"))
