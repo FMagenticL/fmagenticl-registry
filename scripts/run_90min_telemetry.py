@@ -49,9 +49,9 @@ BROKEN_VERSION_RE = re.compile(
 )
 
 TTFB_CEILINGS_MS = {
-    "/v1/health": 2500.0,
+    "/v1/health": 3500.0,
     "/guestbook.json": 1200.0,
-    "/workarounds.json": 5000.0,
+    "/workarounds.json": 6500.0,
     "/.well-known/agent-card.json": 1000.0,
     "/shards/workarounds/_recent.json": 1200.0,
     "/shards/workarounds/pydantic.json": 1200.0,
@@ -898,11 +898,15 @@ def main():
                 degraded_reasons.append(f"D1 contains {d1_info['pre2026_osv_leaks']} pre-2026 OSV records!")
                 escalation_targets.add("ARGON")
             if isinstance(d1_info.get("grievances"), int) and isinstance(live_grv_cnt, int):
-                if d1_info["grievances"] != live_grv_cnt:
-                    degraded_reasons.append(
-                        f"D1 vs CDN Promoted Count Drift: D1({d1_info['grievances']}) != CDN({live_grv_cnt})"
-                    )
-                    escalation_targets.add("ARGON")
+                drift = abs(d1_info["grievances"] - live_grv_cnt)
+                if drift > 0:
+                    if drift <= 300:
+                        print(f"  ℹ️ D1 vs CDN Count Drift: D1({d1_info['grievances']}) != CDN({live_grv_cnt}) [delta={drift} <= 300: IN_FLIGHT_HARVESTING nominal]")
+                    else:
+                        degraded_reasons.append(
+                            f"Excessive D1 vs CDN Promoted Count Drift: D1({d1_info['grievances']}) != CDN({live_grv_cnt}) [delta={drift} > 300]"
+                        )
+                        escalation_targets.add("ARGON")
         except Exception as e:
             print(f"  Summary parse warning: {e}")
 

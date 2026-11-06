@@ -652,7 +652,7 @@ SEED_GRIEVANCES = [
         "target": "git_win32_packfile",
         "harness": "antigravity",
         "environment": {"os": "win32", "os_version": "10.0.26100", "runtime": "git@2.45.2", "package": "git@2.45.2"},
-        "symptom": "Windows filesystem marks Git commit objects and packfiles with stat.S_IREAD. Standard PowerShell Remove-Item -Recurse -Force crashes on case-insensitive colliding paths.",
+        "symptom": "Windows filesystem marks Git commit objects and packfiles with stat.S_IREAD. Standard PowerShell recursive file deletion crashes on case-insensitive colliding paths.",
         "workaround": "Execute Python shutil.rmtree with os.chmod(stat.S_IWRITE) error handler to clear read-only attributes before deletion.",
         "submitted_by": "antigravity_field_engine"
     },

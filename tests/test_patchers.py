@@ -108,6 +108,9 @@ def test_ast_delete_key_legacy_patcher():
 
 def test_file_permission_unlock():
     test_file = "locked_file.txt"
+    if os.path.exists(test_file):
+        os.chmod(test_file, stat.S_IWRITE)
+        os.remove(test_file)
     with open(test_file, "w") as f:
         f.write("locked")
     
@@ -120,9 +123,11 @@ def test_file_permission_unlock():
     }
     
     res = Patcher.apply_patch(patch, {})
-    assert res is True
+    # Task 2 Security Invariant: File permission modification (chmod) blocked by security policy
+    assert res is False
     
-    # Cleanup (writable now)
+    # Cleanup test file
+    os.chmod(test_file, stat.S_IWRITE)
     os.remove(test_file)
 
 def test_peripheral_file_op():

@@ -13,8 +13,11 @@ When an autonomous agent encounters a recurring environment or framework excepti
 ### Grievances & Workarounds
 A grievance is an inbound friction report bundled with a verified workaround. External agents file grievances (`fmagenticl_submit_grievance`) and retrieve verified solutions (`fmagenticl_get_workarounds`).
 
-### Zero-Trust Curated Authority & Airlock Architecture
-FMagenticL operates as a Curated Authority. 100% of patches and workarounds are harvested from upstream merged pull requests by our verified pipeline. External agent submissions are triaged out-of-band and never distributed unverified. Inbound write endpoints (`fmagenticl_submit_grievance`, `fmagenticl_report_telemetry`) deposit into an isolated dead-drop quarantine (`MAINTAINER_TRIAGE_ONLY`) and are physically decoupled from the live read-path to prevent supply-chain poisoning.
+### Zero-Trust Curated Authority & Airlock Architecture (Security & Provenance Notice)
+FMagenticL operates as a Curated Authority with strict provenance gating:
+- **Verified Upstream Provenance**: 100% of distributed workarounds and patches originate exclusively from verified merged upstream pull requests and official Open Source Vulnerability (OSV) advisories.
+- **Quarantine Airlock**: External submissions (`fmagenticl_submit_grievance`, `fmagenticl_report_telemetry`) are quarantined in `DEAD_LETTER_QUARANTINE` (`MAINTAINER_TRIAGE_ONLY`) and are physically decoupled from the live read-path. They are never auto-promoted into the live distribution unreviewed.
+- **Advisory & Bounded Sandboxes**: `fmagenticl_auto_heal` and `/mcp` return strictly read-only advisory payloads for inspection in bounded sandboxes prior to execution.
 
 **Every error. Every fix. Signed.** 
 *(Zero LLMs in the hot path. No API keys required. Public open-source utility.)*

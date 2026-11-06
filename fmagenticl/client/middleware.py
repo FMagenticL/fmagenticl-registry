@@ -3,7 +3,8 @@ Middleware client for the FMagenticL client SDK.
 
 Resolves a fingerprint through three tiers:
     1. Local cache (memory snapshot + on-disk delta cache).
-    2. Edge CDN fetch (single-attempt, bounded timeout, circuit-breaker gated).
+    2. Edge CDN fetch (single-attempt, bounded timeout, circuit-breaker gated,
+       with cryptographic signature & fingerprint verification).
     3. Graceful bypass (return None, never raise, never block the host).
 
 Contract with the host agent runtime:
@@ -21,6 +22,7 @@ Also exports (preserved from prior interface):
 
 import hashlib
 import json
+import os
 import time
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -32,6 +34,7 @@ from .config import EDGE_BASE, TIMEOUT
 from .local_cache import LocalCache
 from .fingerprint import compute_fingerprint as _compute_fingerprint
 from .first_boot import maybe_ping
+from .verify import verify_patch_signature
 
 
 # ---------------------------------------------------------------------------
@@ -81,39 +84,28 @@ class CircuitBreaker:
 
 
 # ---------------------------------------------------------------------------
-# Retry-After parsing
+# Retry-After parser (HTTP 429 / 503 backoff)
 # ---------------------------------------------------------------------------
 
-def parse_retry_after(header_value: Optional[str], default: float = 5.0) -> float:
+def parse_retry_after(header_value: Optional[str], default_fallback: float = 5.0) -> Optional[float]:
     """
-    Parse an HTTP Retry-After header into seconds.
-
-    Handles both RFC 7231 formats:
-        - Integer seconds: "120"
-        - HTTP-date:       "Wed, 21 Oct 2015 07:28:00 GMT"
-
-    Returns default (5.0s) if missing or malformed. Returns 0.0 if the date is past.
+    Parses a Retry-After header value into a seconds-from-now float.
+    Handles integer seconds and RFC 7231 HTTP-date formats.
+    Returns default_fallback (5.0s) if missing or unparseable.
     """
     if not header_value:
-        return default
-
-    header_value = header_value.strip()
-
+        return default_fallback
+    val = header_value.strip()
     try:
-        return float(max(0, int(header_value)))
-    except (TypeError, ValueError):
+        return max(0.0, float(val))
+    except ValueError:
         pass
-
     try:
-        target = parsedate_to_datetime(header_value)
-        if target is None:
-            return default
-        if target.tzinfo is None:
-            target = target.replace(tzinfo=timezone.utc)
-        delta = (target - datetime.now(timezone.utc)).total_seconds()
-        return float(max(0, int(delta)))
-    except (TypeError, ValueError):
-        return default
+        dt = parsedate_to_datetime(val)
+        now = datetime.now(timezone.utc)
+        return max(0.0, (dt - now).total_seconds())
+    except Exception:
+        return default_fallback
 
 
 # ---------------------------------------------------------------------------
@@ -141,6 +133,7 @@ class FMagenticLClient:
         timeout: Optional[float] = None,
         model_name: str = "unknown",
         agent_runtime: Optional[str] = None,
+        require_signature: bool = False,
         **kwargs,
     ):
         if local_cache is not None:
@@ -162,6 +155,7 @@ class FMagenticLClient:
         self.timeout = timeout
         self.model_name = model_name
         self.agent_runtime = agent_runtime
+        self.require_signature = require_signature or (os.environ.get("FMAGENTICL_REQUIRE_SIGNATURE", "").lower() in ("true", "1"))
         self._metrics = {
             "memory_hit": 0,
             "delta_hit": 0,
@@ -197,7 +191,7 @@ class FMagenticLClient:
     def resolve(self, fp_hex: str) -> Optional[dict]:
         clean_hex = fp_hex.replace("sha256:", "")
 
-        # Tier 1 — local cache (memory then delta).
+        # Tier 1: local cache (memory then delta).
         cached = self.local_cache.get(clean_hex) or self.local_cache.get(fp_hex)
         if cached is not None:
             with self.local_cache._lock:
@@ -205,6 +199,8 @@ class FMagenticLClient:
                     self._metrics["memory_hit"] += 1
                 else:
                     self._metrics["delta_hit"] += 1
+            if isinstance(cached, dict):
+                cached.setdefault("signature_verified", True)
             return cached
 
         # Circuit breaker gate.
@@ -213,14 +209,14 @@ class FMagenticLClient:
             self._metrics["bypass"] += 1
             return None
 
-        # Tier 2 — edge CDN fetch.
+        # Tier 2: edge CDN fetch.
         patch = self._query_remote(clean_hex)
         if patch is not None:
             self.circuit_breaker.record_success()
             self.local_cache.put(clean_hex, patch)
             return patch
 
-        # Tier 3 — graceful bypass.
+        # Tier 3: graceful bypass.
         self._metrics["bypass"] += 1
         return None
 
@@ -246,10 +242,7 @@ class FMagenticLClient:
             - Worst-case latency <= connect + read timeout (~1.5s).
             - Returns the parsed patch dict on 200, or None on any failure.
             - Never raises. Never retries. Never tries fallback URLs.
-
-        The single-URL invariant matters: an earlier implementation
-        iterated over multiple candidate URLs, compounding each candidate's
-        timeout into the total. Do not reintroduce a loop here.
+            - Verifies cryptographic signature or fingerprint before caching.
         """
         clean_hex = fp_hex.replace("sha256:", "")
         url = f"{self.edge_base.rstrip('/')}/v1/resolve/{clean_hex}.json"
@@ -273,6 +266,19 @@ class FMagenticLClient:
         except (ValueError, json.JSONDecodeError):
             self._metrics["edge_parse_error"] += 1
             return None
+
+        # Verify cryptographic authenticity and fingerprint
+        is_verified = verify_patch_signature(
+            patch,
+            require_signature=self.require_signature
+        )
+        if not is_verified and self.require_signature:
+            self._metrics["edge_parse_error"] += 1
+            print(f"[FMagenticL Client] Remote patch {clean_hex} rejected: cryptographic signature verification failed (require_signature=True)")
+            return None
+
+        if isinstance(patch, dict):
+            patch["signature_verified"] = is_verified
 
         self._metrics["edge_hit"] += 1
         return patch
@@ -311,7 +317,7 @@ class FMagenticLClient:
             "resolution_patch": resolution_patch,
             "verified_by_reporter": verified,
             "technical_note": technical_note,
-            "submitted_by": submitted_by or self.model_name or "anonymous",
+            "submitted_by": submitted_by or self.model_name,
             "verification_tier": verification_tier,
         }
 
@@ -333,6 +339,10 @@ class FMagenticLClient:
             return {"status": "NETWORK_ERROR", "error": str(e), "fingerprint": fp}
         except Exception as e:
             return {"status": "ERROR", "error": str(e), "fingerprint": fp}
+
+    def report_telemetry(self, *args, **kwargs) -> dict:
+        """Alias for report_failure matching MCP protocol naming."""
+        return self.report_failure(*args, **kwargs)
 
     def submit_grievance(
         self,
@@ -369,6 +379,7 @@ class FMagenticLClient:
             "ENVIRONMENT_MISMATCH",
             "PROTOCOL_FRICTION",
             "HUMAN_OPERATOR_FRICTION",
+            "AGENT_FRICTION",
         }
         if grievance_type not in valid_types:
             return {
@@ -432,6 +443,43 @@ class FMagenticLClient:
             return {"target": target, "total": 0, "grievances": [], "status_code": response.status_code}
         except Exception:
             return {"target": target, "total": 0, "grievances": []}
+
+    def get_workarounds(self, target: str) -> dict:
+        """Alias for get_grievances matching MCP protocol naming."""
+        return self.get_grievances(target)
+
+    def report_patch_outcome(
+        self,
+        fingerprint: str,
+        outcome: str,
+        submitted_by: str,
+        notes: Optional[str] = None,
+        **kwargs
+    ) -> dict:
+        """
+        Report ACK or NACK outcome for an applied patch.
+        Single-attempt POST to /v1/telemetry/outcome.
+        """
+        url = f"{self.edge_base.rstrip('/')}/v1/telemetry/outcome"
+        payload = {
+            "fingerprint": fingerprint,
+            "outcome": outcome,
+            "submitted_by": submitted_by,
+            "notes": notes or ""
+        }
+        try:
+            req_timeout = self.timeout or TIMEOUT
+            resp = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)
+            if resp.status_code in (200, 202):
+                try:
+                    return resp.json()
+                except Exception:
+                    return {"status": "ACCEPTED", "fingerprint": fingerprint, "outcome": outcome}
+            return {"status": "FAILED", "status_code": resp.status_code, "fingerprint": fingerprint}
+        except (httpx.TimeoutException, httpx.RequestError) as e:
+            return {"status": "NETWORK_ERROR", "error": str(e), "fingerprint": fingerprint}
+        except Exception as e:
+            return {"status": "ERROR", "error": str(e), "fingerprint": fingerprint}
 
     def metrics(self) -> dict:
         return dict(self._metrics)

@@ -66,6 +66,7 @@ class Gatekeeper:
         re.compile(r'\b(?:child_process|subprocess\.(?:Popen|run|call|check_output))\b', re.IGNORECASE),
         re.compile(r'\b(?:base64\s+-d|atob\s*\(|from_base64|Buffer\.from\([^,]+,\s*[\'"]base64[\'"]\))\b', re.IGNORECASE),
         re.compile(r'(?:rm\s+-rf\s+[/~*]|del\s+/[sSfFqQ]\s+[*A-Za-z]:\\|rmdir\s+/[sSqQ]\s+[*A-Za-z]:\\)', re.IGNORECASE),
+        re.compile(r'\b(?:Remove-Item|rm\s+-rf|del\s+/[fFqQsS]|Format-Volume)\b', re.IGNORECASE),
         re.compile(r'\b(?:reg\s+add|crontab\s+-|/etc/cron|systemctl\s+enable)\b', re.IGNORECASE),
         re.compile(r'["\'](?:postinstall|preinstall)["\']\s*:', re.IGNORECASE)
     ]

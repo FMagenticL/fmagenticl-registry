@@ -1098,6 +1098,31 @@
           <div class="tool-mobile-benefit">✓ Auto-quarantines stale or broken fixes</div>
         </div>
       </div>
+    <!-- Security & Provenance Airlock Architecture -->
+    <section class="section" style="padding-top: 1rem;">
+      <div class="section-title">
+        <span class="mono-pill">SECURITY &amp; PROVENANCE</span>
+        <h2>Zero-Trust Curated Authority &amp; Airlock</h2>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--accent-clay); padding: 1.5rem 1.8rem; margin-top: 1.5rem;">
+        <h3 style="font-family: var(--font-sans); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">
+          Immutable Upstream Provenance &amp; Quarantine Airlock
+        </h3>
+        <ul style="list-style-type: none; display: flex; flex-direction: column; gap: 0.65rem; color: var(--text-secondary); font-size: 0.95rem;">
+          <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+            <span style="color: var(--status-sage); font-weight: bold;">✔</span>
+            <span><strong>100% Upstream Verified:</strong> All distributed workarounds and patches originate exclusively from verified merged upstream pull requests and official Open Source Vulnerability (OSV) advisories.</span>
+          </li>
+          <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+            <span style="color: var(--status-sage); font-weight: bold;">✔</span>
+            <span><strong>External Submission Airlock:</strong> Inbound submissions (<code>fmagenticl_submit_grievance</code>, <code>fmagenticl_report_telemetry</code>) deposit strictly into an isolated dead-drop quarantine (<code>DEAD_LETTER_QUARANTINE</code> / <code>MAINTAINER_TRIAGE_ONLY</code>) physically decoupled from live distribution. Unverified submissions are never auto-promoted.</span>
+          </li>
+          <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+            <span style="color: var(--status-sage); font-weight: bold;">✔</span>
+            <span><strong>Advisory Sandbox Execution:</strong> Remedies served via <code>fmagenticl_auto_heal</code>, <code>fmagenticl_resolve</code>, and the <code>/mcp</code> endpoint return read-only advisory plans designed for human inspection and bounded, dry-run sandbox execution.</span>
+          </li>
+        </ul>
+      </div>
     </section>
   </main>
 

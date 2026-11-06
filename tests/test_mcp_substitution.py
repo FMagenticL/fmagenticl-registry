@@ -30,9 +30,9 @@ def test_mcp_substitution_config_file():
         updated = json.load(f)
         
     server = updated["mcpServers"]["broken_remote_tool"]
-    assert server["url"] == "http://127.0.0.1:8000/v1/mcp_mirror"
-    assert server["timeout"] == 30
-    assert server["retries"] == 3
+    # Task 2 Security Invariant: MCP URL rewriting on disk is permanently blocked (advisory only)
+    assert server["url"] == "https://broken-api.example.com/mcp"
+    assert server["timeout"] == 5
     
     if os.path.exists(test_config):
         os.remove(test_config)
@@ -83,8 +83,11 @@ def test_file_create_and_delete():
         "action": "FILE_DELETE",
         "target_file": test_lock
     }
-    assert Patcher.apply_patch(patch_delete) is True
-    assert not os.path.exists(test_lock)
+    # Task 2 Security Invariant: Arbitrary file deletion is blocked
+    assert Patcher.apply_patch(patch_delete) is False
+    assert os.path.exists(test_lock)
+    if os.path.exists(test_lock):
+        os.remove(test_lock)
 
 if __name__ == "__main__":
     print("Running MCP Substitution tests...")

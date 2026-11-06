@@ -35,12 +35,22 @@ def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, 
     return {"status": "UNRESOLVED", "message": "No matching verified patch found in local cache or registry."}
 
 def _auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    patch = client.resolve_failure(environment, failure, context=context)
+    ctx = dict(context or {})
+    # Enforce safe advisory dry-run validation by default
+    ctx.setdefault("apply_cli", False)
+    patch = client.resolve_failure(environment, failure, context=ctx)
     if patch:
+        res_patch = patch.get("resolution_patch") or patch
+        # Validate patch applicability through Patcher in safe dry-run mode
+        is_applicable = Patcher.apply_patch(res_patch, context=ctx)
         return {
-            "status": "AUTO_HEALED",
-            "action_applied": patch.get("action"),
-            "patch_details": patch
+            "status": "VALIDATED_DRY_RUN" if is_applicable else "VALIDATION_FAILED",
+            "action": res_patch.get("action") or res_patch.get("patch_type"),
+            "patch_applicable": is_applicable,
+            "advisory_plan": ctx.get("advisory_cli") or res_patch.get("fallback_cli"),
+            "resolution_patch": res_patch,
+            "signature_verified": patch.get("signature_verified", False),
+            "notice": "Advisory dry-run validation complete. Inspect resolution patch before applying in a bounded sandbox."
         }
     return {"status": "FAILED", "message": "Could not auto-heal: No deterministic patch found."}
 
@@ -82,10 +92,23 @@ def _submit_grievance(
     )
 
 def _get_workarounds(target: str) -> Dict[str, Any]:
-    return client.get_grievances(target)
+    return client.get_workarounds(target)
 
 def _get_grievances(target: str) -> Dict[str, Any]:
     return _get_workarounds(target)
+
+def _report_patch_outcome(
+    fingerprint: str,
+    outcome: str,
+    submitted_by: str,
+    notes: Optional[str] = None
+) -> Dict[str, Any]:
+    return client.report_patch_outcome(
+        fingerprint=fingerprint,
+        outcome=outcome,
+        submitted_by=submitted_by,
+        notes=notes
+    )
 
 if HAS_FASTMCP and mcp:
     @mcp.tool()
@@ -95,7 +118,7 @@ if HAS_FASTMCP and mcp:
 
     @mcp.tool()
     def fmagenticl_auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> str:
-        """DETERMINISTIC AUTO-HEALING: Resolves and immediately executes verified AST/file patches to unlock workspace files, fix package.json/tsconfig, or release git locks without manual shell retry."""
+        """DETERMINISTIC AUTO-HEALING: Resolves and dry-run validates verified deterministic patches (RFC 6902 JSON patch, advisory CLI) to unlock workspace files, fix package.json, or resolve locks without executing arbitrary shell strings."""
         return json.dumps(_auto_heal(environment, failure, context))
 
     @mcp.tool()
@@ -106,7 +129,7 @@ if HAS_FASTMCP and mcp:
         verified: bool = True,
         technical_note: Optional[str] = None
     ) -> str:
-        """Report a newly verified self-healing patch to the collective registry for global distribution."""
+        """Report a newly verified self-healing patch to the collective registry for maintainer quarantine and review."""
         return json.dumps(_report(environment, failure, resolution_patch, verified, technical_note))
 
     @mcp.tool()
@@ -133,12 +156,22 @@ if HAS_FASTMCP and mcp:
         """Query verified community workarounds and friction alerts for a specific library, tool, or runtime daemon. (Backward-compatible alias for fmagenticl_get_workarounds)."""
         return json.dumps(_get_workarounds(target))
 
+    @mcp.tool()
+    def fmagenticl_report_patch_outcome(
+        fingerprint: str,
+        outcome: str,
+        submitted_by: str,
+        notes: Optional[str] = None
+    ) -> str:
+        """Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three consecutive NACKs quarantine the patch."""
+        return json.dumps(_report_patch_outcome(fingerprint, outcome, submitted_by, notes))
+
 def run_stdio_server():
     """Standard I/O Model Context Protocol (MCP) JSON-RPC 2.0 implementation."""
     TOOLS_LIST = [
         {
             "name": "fmagenticl_resolve",
-            "description": "EMERGENCY DETERMINISTIC RESOLUTION: Call immediately upon terminal or tool execution failure (exit code != 0, lockfile, dependency collision, EBADENGINE). Queries verified L1 patch cache to significantly reduce retry loops before spending reasoning tokens.",
+            "description": "Deterministic sub-100ms lookup of a signed patch or verified workaround for an agent execution error. Accepts raw error traceback / exception strings (raw_error), package/tool names (target), or pre-computed SHA-256 fingerprints (fingerprint).",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -156,7 +189,7 @@ def run_stdio_server():
         },
         {
             "name": "fmagenticl_auto_heal",
-            "description": "DETERMINISTIC AUTO-HEALING: Resolves and immediately executes verified AST/file patches to unlock workspace files, fix package.json/tsconfig, or release git locks without manual shell retry.",
+            "description": "Resolve and dry-run validate a deterministic patch for application. Remote endpoint cannot write to the caller's filesystem; returns the validated patch for safe local application by the client.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -178,10 +211,9 @@ def run_stdio_server():
         },
         {
             "name": "fmagenticl_report_telemetry",
-            "description": "Report a newly verified self-healing patch to the collective registry for global distribution.",
+            "description": "Submit a verified self-healing patch to the registry.",
             "inputSchema": {
                 "type": "object",
-
                 "properties": {
                     "environment": {
                         "type": "object",
@@ -209,7 +241,7 @@ def run_stdio_server():
         },
         {
             "name": "fmagenticl_submit_grievance",
-            "description": "File a structured infrastructure friction grievance with verified workaround.",
+            "description": "Submit a structured infrastructure friction report with a verified workaround. Workaround is mandatory.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -220,7 +252,8 @@ def run_stdio_server():
                             "PATCH_DISPUTE",
                             "ENVIRONMENT_MISMATCH",
                             "PROTOCOL_FRICTION",
-                            "HUMAN_OPERATOR_FRICTION"
+                            "HUMAN_OPERATOR_FRICTION",
+                            "AGENT_FRICTION"
                         ],
                         "description": "Category of grievance"
                     },
@@ -258,16 +291,43 @@ def run_stdio_server():
         },
         {
             "name": "fmagenticl_get_workarounds",
-            "description": "Query open grievances and workarounds for a specific infrastructure target.",
+            "description": "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "target": {
                         "type": "string",
-                        "description": "Target tool/package/daemon name"
+                        "description": "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)."
                     }
                 },
                 "required": ["target"]
+            }
+        },
+        {
+            "name": "fmagenticl_report_patch_outcome",
+            "description": "Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three consecutive NACKs quarantine the patch.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "fingerprint": {
+                        "type": "string",
+                        "description": "64-char hex SHA-256 fingerprint of the patch."
+                    },
+                    "outcome": {
+                        "type": "string",
+                        "enum": ["ACK", "NACK"],
+                        "description": "Outcome status"
+                    },
+                    "submitted_by": {
+                        "type": "string",
+                        "description": "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')."
+                    },
+                    "notes": {
+                        "type": "string",
+                        "description": "Optional debugging or verification notes"
+                    }
+                },
+                "required": ["fingerprint", "outcome", "submitted_by"]
             }
         }
     ]
@@ -295,7 +355,7 @@ def run_stdio_server():
                     },
                     "serverInfo": {
                         "name": "FMagenticL-Self-Healing",
-                        "version": "1.3.1"
+                        "version": "1.4.0"
                     }
                 }
             elif method == "ping":
@@ -330,6 +390,13 @@ def run_stdio_server():
                     )
                 elif tool_name in ("fmagenticl_get_workarounds", "fmagenticl_get_grievances"):
                     out = _get_workarounds(arguments.get("target", ""))
+                elif tool_name == "fmagenticl_report_patch_outcome":
+                    out = _report_patch_outcome(
+                        fingerprint=arguments.get("fingerprint", ""),
+                        outcome=arguments.get("outcome", "ACK"),
+                        submitted_by=arguments.get("submitted_by", "anonymous"),
+                        notes=arguments.get("notes")
+                    )
                 else:
                     out = {"error": f"Unknown tool: {tool_name}"}
                 result = {

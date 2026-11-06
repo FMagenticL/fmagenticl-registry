@@ -1,12 +1,14 @@
 """
 FMagenticL - Deterministic self-healing patch execution engines.
 Supports RFC 6902 JSON Patch (Track 1) and Peripheral Types (Track 2).
+Hardened against Arbitrary Code Execution (RCE), Path Traversal, and Tool Poisoning.
 """
 import os
 import stat
 import subprocess
 import json
 import copy
+import shlex
 from typing import Dict, Any, List, Optional
 
 try:
@@ -14,6 +16,25 @@ try:
     JSONPATCH_AVAILABLE = True
 except (ImportError, ModuleNotFoundError):
     JSONPATCH_AVAILABLE = False
+
+
+def _is_safe_path(target_path: Optional[str]) -> bool:
+    """
+    Validate that target_path is within the current working directory
+    and contains no path traversal sequences.
+    """
+    if not target_path:
+        return False
+    # Disallow path traversal
+    if ".." in target_path:
+        return False
+    try:
+        abs_target = os.path.abspath(target_path)
+        cwd = os.path.abspath(os.getcwd())
+        # Target must reside within current working directory
+        return os.path.commonpath([abs_target, cwd]) == cwd
+    except Exception:
+        return False
 
 
 class Patcher:
@@ -26,7 +47,7 @@ class Patcher:
         Supports Track 1 (RFC 6902 application/json-patch+json) and Track 2 (peripheral types).
         Returns True if patch applied cleanly, False otherwise with zero partial application on failure.
         """
-        context = context or {}
+        context = context if context is not None else {}
         patch_type = patch.get("patch_type")
         action = patch.get("action")
         
@@ -38,6 +59,10 @@ class Patcher:
             ops = patch.get("json_patch")
             
             if not target_file or not ops:
+                return False
+                
+            if not _is_safe_path(target_file):
+                print(f"[FMagenticL Patcher] Target file outside working directory rejected: {target_file}")
                 return False
                 
             if not os.path.exists(target_file):
@@ -96,38 +121,82 @@ class Patcher:
         # Track 2: Peripheral Types & Legacy Actions
         # -------------------------------------------------------------
         
-        # 2a. CLI Override
+        # 2a. CLI Override (Strict Dry-Run by default, zero shell=True)
         if patch_type == "cli-override" or action == "CLI_OVERRIDE" or ("fallback_cli" in patch and not patch_type):
             fallback_cli = patch.get("fallback_cli")
-            if fallback_cli:
-                try:
-                    res = subprocess.run(
-                        fallback_cli, 
-                        shell=True, 
-                        stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE,
-                        timeout=30
-                    )
-                    return res.returncode == 0
-                except Exception as e:
-                    print(f"[FMagenticL Patcher] CLI Override failed: {e}")
-            return False
+            if not fallback_cli:
+                return False
+            
+            apply_cli = context.get("apply_cli", False)
+            if not apply_cli:
+                # Default behavior: Dry-run / Advisory Plan output
+                print(f"[FMagenticL Patcher] Advisory CLI plan (dry-run mode): {fallback_cli}")
+                if isinstance(context, dict):
+                    context["advisory_cli"] = fallback_cli
+                    context["applied"] = False
+                return True
+            
+            # Explicit execution requested (apply_cli=True)
+            # Hard-block dangerous shell metacharacters
+            DANGEROUS_SHELL_CHARS = [";", "&", "|", ">", "<", "$", "`", "(", ")", "\n", "\r"]
+            if any(ch in fallback_cli for ch in DANGEROUS_SHELL_CHARS):
+                print(f"[FMagenticL Patcher] Rejected CLI execution: shell metacharacters detected in '{fallback_cli}'")
+                return False
+            
+            try:
+                tokens = shlex.split(fallback_cli)
+            except Exception as e:
+                print(f"[FMagenticL Patcher] Failed to parse CLI command: {e}")
+                return False
+                
+            if not tokens:
+                return False
+                
+            ALLOWLISTED_COMMANDS = {"pip", "npm", "uv", "pytest", "git"}
+            cmd_base = os.path.basename(tokens[0]).lower().rstrip(".exe")
+            if cmd_base not in ALLOWLISTED_COMMANDS:
+                print(f"[FMagenticL Patcher] Rejected CLI execution: '{cmd_base}' is not in allowlisted commands {ALLOWLISTED_COMMANDS}")
+                return False
+                
+            try:
+                res = subprocess.run(
+                    tokens, 
+                    shell=False, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE,
+                    timeout=30
+                )
+                if isinstance(context, dict):
+                    context["applied"] = (res.returncode == 0)
+                    context["stdout"] = res.stdout.decode("utf-8", errors="replace")
+                    context["stderr"] = res.stderr.decode("utf-8", errors="replace")
+                return res.returncode == 0
+            except Exception as e:
+                print(f"[FMagenticL Patcher] Allowlisted CLI execution failed: {e}")
+                return False
 
         # 2b. File Operations (file-op, FILE_PERMISSION_UNLOCK, FILE_DELETE, FILE_CREATE)
         if patch_type == "file-op" or action in ["FILE_PERMISSION_UNLOCK", "FILE_DELETE", "FILE_CREATE"]:
+            # Hard-block destructive file deletion
+            if action == "FILE_DELETE":
+                print(f"[FMagenticL Patcher] Rejected destructive file deletion: {patch.get('target_file')}")
+                return False
+
+            # Hard-block permission modification (chmod)
+            if action == "FILE_PERMISSION_UNLOCK":
+                print(f"[FMagenticL Patcher] File permission modification (chmod) blocked by security policy: {patch.get('target_file')}")
+                return False
+
             # Handle structured file_ops list
             if "file_ops" in patch and isinstance(patch["file_ops"], list):
                 for fop in patch["file_ops"]:
                     op_kind = fop.get("op")
                     fpath = fop.get("target_file") or fop.get("file")
-                    if not fpath:
+                    if not fpath or not _is_safe_path(fpath):
                         return False
-                    if op_kind == "unlock_write":
-                        if os.path.exists(fpath):
-                            os.chmod(fpath, stat.S_IWRITE)
-                    elif op_kind == "delete":
-                        if os.path.exists(fpath):
-                            os.remove(fpath)
+                    if op_kind in ("delete", "unlock_write"):
+                        print(f"[FMagenticL Patcher] Operation '{op_kind}' on '{fpath}' is blocked by security policy.")
+                        return False
                     elif op_kind == "create":
                         pdir = os.path.dirname(os.path.abspath(fpath))
                         if pdir:
@@ -136,30 +205,9 @@ class Patcher:
                             fh.write(fop.get("content", ""))
                 return True
 
-            # Handle single action
-            if action == "FILE_PERMISSION_UNLOCK":
-                target_file = patch.get("target_file") or context.get("locked_file")
-                if target_file and os.path.exists(target_file):
-                    try:
-                        os.chmod(target_file, stat.S_IWRITE)
-                        return True
-                    except Exception as e:
-                        print(f"[FMagenticL Patcher] Permission unlock failed: {e}")
-                return False
-
-            elif action == "FILE_DELETE":
+            if action == "FILE_CREATE":
                 target_file = patch.get("target_file")
-                if target_file and os.path.exists(target_file):
-                    try:
-                        os.remove(target_file)
-                        return True
-                    except Exception as e:
-                        print(f"[FMagenticL Patcher] File deletion failed: {e}")
-                return False
-
-            elif action == "FILE_CREATE":
-                target_file = patch.get("target_file")
-                if target_file:
+                if target_file and _is_safe_path(target_file):
                     try:
                         parent_dir = os.path.dirname(os.path.abspath(target_file))
                         if parent_dir:
@@ -171,53 +219,27 @@ class Patcher:
                         print(f"[FMagenticL Patcher] File creation failed: {e}")
                 return False
 
-        # 2c. MCP Substitution
+        # 2c. MCP Substitution (Advisory only; zero config URL rewriting on disk)
         if patch_type == "mcp-substitution" or action == "MCP_SUBSTITUTION":
-            target_file = patch.get("target_file")
             mcp_uri = patch.get("mcp_uri")
-            config_patch = patch.get("config_patch")
-            
-            # Case 1: Updating an MCP config file (e.g. mcp_config.json)
-            if target_file and os.path.exists(target_file):
-                try:
-                    with open(target_file, "r", encoding="utf-8") as f:
-                        cfg = json.load(f)
-                    
-                    server_name = patch.get("server_name") or "mcpServers"
-                    if "mcpServers" in cfg:
-                        if mcp_uri and server_name in cfg["mcpServers"]:
-                            cfg["mcpServers"][server_name]["url"] = mcp_uri
-                        if config_patch and server_name in cfg["mcpServers"]:
-                            cfg["mcpServers"][server_name].update(config_patch)
-                    elif config_patch and isinstance(cfg, dict):
-                        cfg.update(config_patch)
-                        
-                    with open(target_file, "w", encoding="utf-8") as f:
-                        json.dump(cfg, f, indent=2)
-                    print(f"[FMagenticL Patcher] Successfully remapped MCP config at {target_file}")
-                    return True
-                except Exception as e:
-                    print(f"[FMagenticL Patcher] MCP config substitution failed: {e}")
-                    return False
-            
-            # Case 2: In-memory/Runtime dynamic remapping
-            if mcp_uri or config_patch:
-                print(f"[FMagenticL Patcher] Dynamic runtime MCP substitution applied: URI={mcp_uri}")
-                return True
-                
-            return False
+            print(f"[FMagenticL Patcher] Advisory MCP substitution (disk config mutation blocked): {mcp_uri}")
+            if isinstance(context, dict):
+                context["advisory_mcp_uri"] = mcp_uri
+            return True
 
         # 2d. Retry Strategy
         if patch_type == "retry-strategy":
             strategy = patch.get("strategy")
             print(f"[FMagenticL Patcher] Retry strategy configured: {strategy}")
+            if isinstance(context, dict):
+                context["retry_strategy"] = strategy
             return True
 
         # Legacy AST_DELETE_KEY translation
         if action == "AST_DELETE_KEY":
             target_file = patch.get("target_file")
             key_path = patch.get("key_path")
-            if target_file and key_path and os.path.exists(target_file):
+            if target_file and key_path and _is_safe_path(target_file) and os.path.exists(target_file):
                 try:
                     with open(target_file, "r", encoding="utf-8") as f:
                         data = json.load(f)
@@ -243,7 +265,7 @@ class Patcher:
         if action == "CONFIG_INJECT":
             target_file = patch.get("target_file")
             config_patch = patch.get("config_patch")
-            if target_file and config_patch:
+            if target_file and config_patch and _is_safe_path(target_file):
                 try:
                     data = {}
                     if os.path.exists(target_file):

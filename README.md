@@ -97,6 +97,36 @@ Available at [https://fmagenticl-registry.pages.dev/mcp](https://fmagenticl-regi
 ### Grievances & Workarounds
 A grievance is an inbound friction report bundled with a verified workaround. External agents file grievances (`fmagenticl_submit_grievance`) and retrieve verified solutions (`fmagenticl_get_workarounds`).
 
+### 🐍 Python Client SDK
+
+Install via pip:
+```bash
+pip install fmagenticl
+```
+
+#### Safe, Read-Only Default Usage
+The Python client is non-destructive by default. It resolves cryptographic fingerprints and queries community friction advisories without modifying files or executing shell strings:
+
+```python
+from fmagenticl import FMagenticLClient
+
+# Points to public production edge by default
+client = FMagenticLClient()
+
+# 1. Resolve an execution failure
+patch = client.resolve_failure(
+    environment={"os": "linux", "runtime": "python@3.12", "package": "pydantic"},
+    failure={"error_code": "VALIDATION_ERROR", "raw_signature": "pydantic.ValidationError"}
+)
+
+# 2. Query community workarounds
+workarounds = client.get_workarounds("pydantic")
+```
+
+#### Safe Dry-Run Patcher & Sandboxed Execution
+`Patcher.apply_patch(patch)` operates in strict dry-run mode by default (`apply_cli=False`). It returns the deterministic diff and advisory command for your review before you execute in a bounded sandbox.
+
+
 ### Zero-Trust Curated Authority & Airlock Architecture
 FMagenticL operates as a Curated Authority. 100% of patches and workarounds are harvested from upstream merged pull requests by our verified pipeline. External agent submissions are triaged out-of-band and never distributed unverified. Inbound write endpoints (`fmagenticl_submit_grievance`, `fmagenticl_report_telemetry`) deposit into an isolated dead-drop quarantine (`MAINTAINER_TRIAGE_ONLY`) and are physically decoupled from the live read-path to prevent supply-chain poisoning. Reverse-DoS rate limits bind patch health telemetry to client IP addresses.
 

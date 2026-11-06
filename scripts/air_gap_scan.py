@@ -58,6 +58,14 @@ GENERIC_LEAK_PATTERNS = [
     ("Unix Home Path", re.compile(r'/(?:home|Users)/[a-zA-Z0-9_.-]+', re.IGNORECASE)),
 ]
 
+# Destructive shell command patterns forbidden in patches and distributions
+DESTRUCTIVE_COMMAND_PATTERNS = [
+    ("Destructive Command: Remove-Item", re.compile(r'\bRemove-Item\b', re.IGNORECASE)),
+    ("Destructive Command: rm -rf", re.compile(r'\brm\s+-rf\b', re.IGNORECASE)),
+    ("Destructive Command: del /f", re.compile(r'\bdel\s+/[fFqQsS]\b', re.IGNORECASE)),
+    ("Destructive Command: Format-Volume", re.compile(r'\bFormat-Volume\b', re.IGNORECASE)),
+]
+
 IGNORE_DIRS = {'.git', '.pytest_cache', '__pycache__', 'venv', '.venv', 'build', '.egg-info', '.wrangler', '.agents'}
 IGNORE_FILES = {'air_gap_scan.py', 'sanitize_scan.py', 'full_privacy_audit.py', 'probe_external_surfaces.py', 'inspect_candidates.py'}
 
@@ -85,6 +93,12 @@ def scan_text_lines(content: str, source_label: str, is_test_file: bool = False)
             if pat.search(line):
                 violations.append((line_idx, f"PII_BLOCKLIST:{term}", line.strip()[:100]))
 
+        # Scan Destructive Commands (skip in security scanner itself and tests)
+        if not is_test_file and not any(ign in source_label.lower() for ign in ('air_gap_scan', 'sanitize_scan', 'gatekeeper', 'test', '.md', '.txt')):
+            for label, pat in DESTRUCTIVE_COMMAND_PATTERNS:
+                if pat.search(line):
+                    violations.append((line_idx, f"DESTRUCTIVE_CMD:{label}", line.strip()[:100]))
+
         # Scan Generic Leaks (skip in tests)
         if not is_test_file:
             for label, pat in GENERIC_LEAK_PATTERNS:
@@ -104,6 +118,10 @@ def scan_file(filepath: Path) -> List[Tuple[int, str, str]]:
     # Check extension
     if filepath.suffix.lower() in FORBIDDEN_EXTENSIONS:
         violations.append((0, "FORBIDDEN_EXTENSION", f"File extension '{filepath.suffix}' is prohibited from repository"))
+        return violations
+
+    # Skip binary databases, archives, and compiled bytecodes from text regex parsing
+    if filepath.suffix.lower() in {'.db', '.sqlite', '.sqlite3', '.pyc', '.pyd', '.so', '.dll', '.zip', '.tar', '.gz'} or '.backup.' in filepath.name:
         return violations
 
     try:

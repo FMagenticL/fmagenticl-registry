@@ -111,7 +111,7 @@ def build():
     if not patches_unchanged:
         # 2. Base Snapshot
         snapshot = {
-            "version": "1.3.1",
+            "version": "1.4.0",
             "generated_at": now_iso,
             "total_patches": len(patches),
             "patches": patches,
@@ -148,7 +148,7 @@ def build():
 
         # 4. Deltas & Latest Marker
         delta = {
-            "base_version": "1.3.1",
+            "base_version": "1.4.0",
             "generated_at": now_iso,
             "added": list(patches.keys()),
             "removed": [],
@@ -209,7 +209,7 @@ def build():
     total_curated_entries = len(patches) + total_grievances_count
     health_payload = {
         "status": "ok",
-        "protocol_version": "1.3.1",
+        "protocol_version": "1.4.0",
         "total_entries": total_curated_entries,
         "compiled_patches": len(patches),
         "verified_workarounds": verified_workarounds_count,
