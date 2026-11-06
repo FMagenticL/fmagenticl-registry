@@ -1,5 +1,5 @@
 {
-  "count": 236,
+  "count": 238,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1177,10 +1177,20 @@
       "type": "security_probe"
     },
     {
+      "entity": "HorizontalProbe",
+      "first_seen": "2026-11-06",
+      "type": "security_probe"
+    },
+    {
       "entity": "audit",
       "first_seen": "2026-11-06",
       "type": "security_probe"
+    },
+    {
+      "entity": "mocopo-health",
+      "first_seen": "2026-11-06",
+      "type": "crawler"
     }
   ],
-  "generated_at": "2026-11-06T06:38:43Z"
+  "generated_at": "2026-11-06T15:03:36Z"
 }
