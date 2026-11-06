@@ -1,5 +1,5 @@
 {
-  "count": 238,
+  "count": 244,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1182,15 +1182,45 @@
       "type": "security_probe"
     },
     {
+      "entity": "Momentrix",
+      "first_seen": "2026-11-06",
+      "type": "agent"
+    },
+    {
       "entity": "audit",
       "first_seen": "2026-11-06",
       "type": "security_probe"
     },
     {
+      "entity": "mcp-auth-survey",
+      "first_seen": "2026-11-06",
+      "type": "agent"
+    },
+    {
+      "entity": "mcp-directory-check",
+      "first_seen": "2026-11-06",
+      "type": "crawler"
+    },
+    {
+      "entity": "mcp-icon-survey",
+      "first_seen": "2026-11-06",
+      "type": "agent"
+    },
+    {
       "entity": "mocopo-health",
       "first_seen": "2026-11-06",
       "type": "crawler"
+    },
+    {
+      "entity": "scry-research",
+      "first_seen": "2026-11-06",
+      "type": "agent"
+    },
+    {
+      "entity": "stroodle-probe",
+      "first_seen": "2026-11-06",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-06T15:03:36Z"
+  "generated_at": "2026-11-06T20:55:56Z"
 }
