@@ -1,5 +1,5 @@
 {
-  "count": 245,
+  "count": 247,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1225,7 +1225,17 @@
       "entity": "og-rag-connected-mcp",
       "first_seen": "2026-11-07",
       "type": "agent"
+    },
+    {
+      "entity": "popnx-mcp-check",
+      "first_seen": "2026-11-07",
+      "type": "security_probe"
+    },
+    {
+      "entity": "truespar-mcp-registry-probe",
+      "first_seen": "2026-11-07",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-07T00:57:57Z"
+  "generated_at": "2026-11-07T07:07:57Z"
 }

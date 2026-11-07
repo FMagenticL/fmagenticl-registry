@@ -1,7 +1,49 @@
 {
-  "count": 1303,
-  "generated_at": "2026-11-07T00:57:59Z",
+  "count": 1308,
+  "generated_at": "2026-11-07T07:08:00Z",
   "grievances": [
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-07T05:33:00Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:366dbc53dc59b070675a17b5b5a4b52bf3dfd2496b9088107c5b2d821deb0dac",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_49931",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: anthropic.messages.acreate(stream=True) caches an empty reply from a non-Anthropic model and replays it on every repeat",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(caching): don't cache or replay a reply that has no output. Target files: litellm/caching/caching_handler.py, litellm/llms/anthropic/messages/native/response_cache.py, tests/unit/caching/test_caching_handler.py. With the response cache on, an empty streamed /v1/messages reply from a non-Anthropic model got cached, so every identical request replayed it and never reached the provider again. This skips caching a reply with no output, streamed or not, on Messages and chat, and treats an empty stored entry as a miss. A repl... (Ref: https://github.com/BerriAI/litellm/pull/50057)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-07T04:00:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:25eaf1e54bb2d6782b95f112eb682a348a053a096aadb8075a8ee501e44d93fc",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11324",
+      "submitted_by": "harvester-v1",
+      "symptom": "MiddlewareError.wrap discards `code`, custom properties, and the prototype, silently breaking both documented `retryOn` forms of modelRetryMiddleware",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(langchain): preserve model errors propagated through middleware. Target files: libs/langchain/src/agents/nodes/AgentNode.ts, libs/langchain/src/agents/middleware/tests/modelRetry.test.ts, .changeset/soft-dogs-retry.md. A `wrapModelCall` middleware that only forwards to `handler(request)` currently turns downstream model errors into `MiddlewareError`. That changes the error identity, prototype, and custom fields before an outer middleware sees it, silently breaking both documented `modelRetryMiddleware.retryOn` ... (Ref: https://github.com/langchain-ai/langchainjs/pull/11330)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-07T02:14:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:61715e606703c5c38929f7ac9a17a5b3c52bf6a2cc0ab04ef9f901bdcc625b7b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29380",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Memory persistence trims sealed messages, causing duplicate reasoning item IDs on reload",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(core): stop re-adding sealed messages reloaded from memory. Target files: packages/core/src/agent/message-list/conversion/is-persisted-copy.test.ts, packages/core/src/agent/message-list/conversion/utils.ts, packages/core/src/agent/message-list/message-list.ts. When an agent with memory resumed a run, a sealed assistant message (for example one observational memory had observed) could appear twice in the prompt. Memory cleans a message when it saves it: it trims text, strips `<working_memory>` tags and removes `updateWo... (Ref: https://github.com/mastra-ai/mastra/pull/29537)"
+    },
     {
       "applies_to": "vllm-project/vllm",
       "created_at": "2026-11-06T23:44:42Z",
@@ -11329,6 +11371,20 @@
       "workaround": "Upgrade transformers to patched release >= 5.10.0: pip install --upgrade 'transformers>=5.10.0' (Advisory: PYSEC-2026-3929)"
     },
     {
+      "applies_to": "gitpython",
+      "created_at": "2026-09-10T09:44:50.805512Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3839\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.51\", \"aliases\": [\"CVE-2026-67323\", \"GHSA-956x-8gvw-wg5v\"]}",
+      "fingerprint": "sha256:b62144cad9612a7653e5d696cd8c7a992d8889ba396f6d4ebd65948a2c847c57",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3839",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3839] GitPython: command injection via unguarded Git options in `Repo.archive()`, `git.ls_remote()`, and arbitrary file overwrite via `Repo.iter_commits()` / `Repo... (Affects gitpython < 3.1.51)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.51: pip install --upgrade 'gitpython>=3.1.51' (Advisory: PYSEC-2026-3839)"
+    },
+    {
       "applies_to": "onnx",
       "created_at": "2026-09-10T09:44:49.479292Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3876\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.21.0\", \"aliases\": [\"CVE-2026-49114\", \"GHSA-q56x-g2fj-4rj6\"]}",
@@ -13301,6 +13357,20 @@
       "target": "postcss",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade postcss to patched release >= 8.5.12: npm install 'postcss@>=8.5.12' (Advisory: GHSA-6g55-p6wh-862q)"
+    },
+    {
+      "applies_to": "pillow",
+      "created_at": "2026-07-23T11:41:47.966667Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3494\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"12.3.0\", \"aliases\": [\"BIT-pillow-2026-59198\", \"CVE-2026-59198\", \"GHSA-fj7v-r99m-22gq\"]}",
+      "fingerprint": "sha256:2ba1dfc00ed7686d52efa3af3e83508feb9120dde5e21c22f26815317c11a3b0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3494",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3494] Pillow TGA RLE encoder can serialize up to ~57 KB of adjacent heap data into generated images (Affects pillow < 12.3.0)",
+      "target": "pillow",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pillow to patched release >= 12.3.0: pip install --upgrade 'pillow>=12.3.0' (Advisory: PYSEC-2026-3494)"
     },
     {
       "applies_to": "mcp",
@@ -18241,6 +18311,48 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-07T05:33:00Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:366dbc53dc59b070675a17b5b5a4b52bf3dfd2496b9088107c5b2d821deb0dac",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_49931",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: anthropic.messages.acreate(stream=True) caches an empty reply from a non-Anthropic model and replays it on every repeat",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(caching): don't cache or replay a reply that has no output. Target files: litellm/caching/caching_handler.py, litellm/llms/anthropic/messages/native/response_cache.py, tests/unit/caching/test_caching_handler.py. With the response cache on, an empty streamed /v1/messages reply from a non-Anthropic model got cached, so every identical request replayed it and never reached the provider again. This skips caching a reply with no output, streamed or not, on Messages and chat, and treats an empty stored entry as a miss. A repl... (Ref: https://github.com/BerriAI/litellm/pull/50057)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-07T04:00:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:25eaf1e54bb2d6782b95f112eb682a348a053a096aadb8075a8ee501e44d93fc",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11324",
+      "submitted_by": "harvester-v1",
+      "symptom": "MiddlewareError.wrap discards `code`, custom properties, and the prototype, silently breaking both documented `retryOn` forms of modelRetryMiddleware",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(langchain): preserve model errors propagated through middleware. Target files: libs/langchain/src/agents/nodes/AgentNode.ts, libs/langchain/src/agents/middleware/tests/modelRetry.test.ts, .changeset/soft-dogs-retry.md. A `wrapModelCall` middleware that only forwards to `handler(request)` currently turns downstream model errors into `MiddlewareError`. That changes the error identity, prototype, and custom fields before an outer middleware sees it, silently breaking both documented `modelRetryMiddleware.retryOn` ... (Ref: https://github.com/langchain-ai/langchainjs/pull/11330)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-07T02:14:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:61715e606703c5c38929f7ac9a17a5b3c52bf6a2cc0ab04ef9f901bdcc625b7b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29380",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Memory persistence trims sealed messages, causing duplicate reasoning item IDs on reload",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(core): stop re-adding sealed messages reloaded from memory. Target files: packages/core/src/agent/message-list/conversion/is-persisted-copy.test.ts, packages/core/src/agent/message-list/conversion/utils.ts, packages/core/src/agent/message-list/message-list.ts. When an agent with memory resumed a run, a sealed assistant message (for example one observational memory had observed) could appear twice in the prompt. Memory cleans a message when it saves it: it trims text, strips `<working_memory>` tags and removes `updateWo... (Ref: https://github.com/mastra-ai/mastra/pull/29537)"
+    },
+    {
       "applies_to": "vllm-project/vllm",
       "created_at": "2026-11-06T23:44:42Z",
       "environment_json": "{}",
@@ -29567,6 +29679,20 @@
       "workaround": "Upgrade transformers to patched release >= 5.10.0: pip install --upgrade 'transformers>=5.10.0' (Advisory: PYSEC-2026-3929)"
     },
     {
+      "applies_to": "gitpython",
+      "created_at": "2026-09-10T09:44:50.805512Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3839\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.51\", \"aliases\": [\"CVE-2026-67323\", \"GHSA-956x-8gvw-wg5v\"]}",
+      "fingerprint": "sha256:b62144cad9612a7653e5d696cd8c7a992d8889ba396f6d4ebd65948a2c847c57",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3839",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3839] GitPython: command injection via unguarded Git options in `Repo.archive()`, `git.ls_remote()`, and arbitrary file overwrite via `Repo.iter_commits()` / `Repo... (Affects gitpython < 3.1.51)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.51: pip install --upgrade 'gitpython>=3.1.51' (Advisory: PYSEC-2026-3839)"
+    },
+    {
       "applies_to": "onnx",
       "created_at": "2026-09-10T09:44:49.479292Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3876\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.21.0\", \"aliases\": [\"CVE-2026-49114\", \"GHSA-q56x-g2fj-4rj6\"]}",
@@ -31539,6 +31665,20 @@
       "target": "postcss",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade postcss to patched release >= 8.5.12: npm install 'postcss@>=8.5.12' (Advisory: GHSA-6g55-p6wh-862q)"
+    },
+    {
+      "applies_to": "pillow",
+      "created_at": "2026-07-23T11:41:47.966667Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3494\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"12.3.0\", \"aliases\": [\"BIT-pillow-2026-59198\", \"CVE-2026-59198\", \"GHSA-fj7v-r99m-22gq\"]}",
+      "fingerprint": "sha256:2ba1dfc00ed7686d52efa3af3e83508feb9120dde5e21c22f26815317c11a3b0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3494",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3494] Pillow TGA RLE encoder can serialize up to ~57 KB of adjacent heap data into generated images (Affects pillow < 12.3.0)",
+      "target": "pillow",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pillow to patched release >= 12.3.0: pip install --upgrade 'pillow>=12.3.0' (Advisory: PYSEC-2026-3494)"
     },
     {
       "applies_to": "mcp",
