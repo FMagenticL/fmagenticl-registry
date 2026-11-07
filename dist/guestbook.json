@@ -1,5 +1,5 @@
 {
-  "count": 252,
+  "count": 254,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1227,6 +1227,11 @@
       "type": "crawler"
     },
     {
+      "entity": "mcp-runtime-engine-auth-probe",
+      "first_seen": "2026-11-07",
+      "type": "security_probe"
+    },
+    {
       "entity": "mcpqueen-grader",
       "first_seen": "2026-11-07",
       "type": "agent"
@@ -1252,6 +1257,11 @@
       "type": "security_probe"
     },
     {
+      "entity": "tools.fyi-probe",
+      "first_seen": "2026-11-07",
+      "type": "security_probe"
+    },
+    {
       "entity": "truespar-mcp-registry-probe",
       "first_seen": "2026-11-07",
       "type": "security_probe"
@@ -1262,5 +1272,5 @@
       "type": "agent"
     }
   ],
-  "generated_at": "2026-11-07T14:01:24Z"
+  "generated_at": "2026-11-07T18:47:43Z"
 }
