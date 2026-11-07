@@ -1,7 +1,35 @@
 {
-  "count": 1686,
-  "generated_at": "2026-11-07T18:47:46Z",
+  "count": 1693,
+  "generated_at": "2026-11-07T22:46:36Z",
   "grievances": [
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-07T22:37:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9328a7a835e3e51940500639ba089ce486760823b00ce620e44b4d2efe0d8f57",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12774",
+      "submitted_by": "harvester-v1",
+      "symptom": "Latest versions canary: AssertionError in tests/clai2/test_mcp_on_demand.py",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Accept logfire 5.5's reworded propagator warning in the test suite. Target files: pyproject.toml, tests/durable_exec/test_prefect.py, tests/models/test_batch.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12783)"
+    },
+    {
+      "applies_to": "Codium-ai/pr-agent",
+      "created_at": "2026-11-07T22:35:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2bced85595dfe6cb6690843abc99202569a8cb411d923bc04b9727003988ab12",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_Codium-ai_pr-agent_4482",
+      "submitted_by": "harvester-v1",
+      "symptom": "pr-agent v0.50.0: test: clean up SyntaxWarning escape sequences and PytestRemovedIn10Warning by @itsvrushabh in #4482",
+      "target": "pr-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: test: clean up SyntaxWarning escape sequences and PytestRemovedIn10Warning by @itsvrushabh in #4482. Upstream PR #4482. (Ref: https://github.com/Codium-ai/pr-agent/pull/4482)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-07T17:38:47Z",
@@ -11372,6 +11400,20 @@
     },
     {
       "applies_to": "vllm",
+      "created_at": "2026-09-10T09:45:00.831333Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3934\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.26.0\", \"aliases\": [\"CVE-2026-73560\", \"GHSA-4hhp-h66f-j5j7\"]}",
+      "fingerprint": "sha256:26a0c720ccef308da3b442d44e71e9e8d81e939b4a3534808ebf270e4ad640ed",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3934",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3934] vLLM: SSRF + arbitrary local file read in MiMoV2OmniMultiModalProcessor `_fetch_image` and audio loader bypass MediaConnector protections (Affects vllm < 0.26.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: PYSEC-2026-3934)"
+    },
+    {
+      "applies_to": "vllm",
       "created_at": "2026-09-10T09:45:00.769969Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3935\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.27.0\", \"aliases\": [\"CVE-2026-73558\", \"GHSA-7m6h-x95x-82q5\"]}",
       "fingerprint": "sha256:392906d6c161db577e00aa02d5c60825d908a5958983b7381c8d5c081b8ee15c",
@@ -11383,6 +11425,20 @@
       "target": "vllm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade vllm to patched release >= 0.27.0: pip install --upgrade 'vllm>=0.27.0' (Advisory: PYSEC-2026-3935)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-09-10T09:45:00.190897Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3933\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.26.0\", \"aliases\": [\"CVE-2026-73556\", \"GHSA-48jh-3gj7-fg8v\"]}",
+      "fingerprint": "sha256:058a07c69a2c306040c7b97c07553ddf22da6717d4df2cf8b4f9fdefa0b47e71",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3933",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3933] vLLM: ReDoS via structured_outputs.regex in the lm-format-enforcer backend (no compile timeout) \u2014 missed sibling of GHSA-rwxx-mrjm-wc2m (Affects vllm < 0.26.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: PYSEC-2026-3933)"
     },
     {
       "applies_to": "tornado",
@@ -12433,6 +12489,20 @@
       "target": "vllm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: GHSA-87x5-vmc3-756j)"
+    },
+    {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-13T12:17:27.753Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3953\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.54\", \"aliases\": [\"CVE-2026-73625\", \"GHSA-r9mr-m37c-5fr3\"]}",
+      "fingerprint": "sha256:e8eb882992e1575c18a5a903eea5941c424c2146948e47d3c8b74e26882c83e8",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3953",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3953] GitPython versions before 3.1.54 contain a remote code execution vulnerability in the check_unsafe_options guard that can be bypassed by smuggling git option... (Affects gitpython < 3.1.54)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.54: pip install --upgrade 'gitpython>=3.1.54' (Advisory: PYSEC-2026-3953)"
     },
     {
       "applies_to": "gitpython",
@@ -21787,6 +21857,20 @@
       "workaround": "Upgrade mlflow to patched release >= 3.9.0rc0: pip install --upgrade 'mlflow>=3.9.0rc0' (Advisory: GHSA-fhff-qmm8-h2fp)"
     },
     {
+      "applies_to": "pyopenssl",
+      "created_at": "2026-03-18T00:16:19.107Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2268\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"26.0.0\", \"aliases\": [\"CVE-2026-27448\", \"GHSA-vp96-hxj8-p424\"]}",
+      "fingerprint": "sha256:506726ae28ddfa30b46e0f874812ccf66d6dc9381fea73d4a4220319e3698606",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2268",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2268] pyOpenSSL is a Python wrapper around the OpenSSL library. Starting in version 0.14.0 and prior to version 26.0.0, if a user provided callback to `set_tlsext_... (Affects pyopenssl < 26.0.0)",
+      "target": "pyopenssl",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyopenssl to patched release >= 26.0.0: pip install --upgrade 'pyopenssl>=26.0.0' (Advisory: PYSEC-2026-2268)"
+    },
+    {
       "applies_to": "elysia",
       "created_at": "2026-03-17T16:17:41Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8hq9-phh3-p2wp\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.4.27\", \"aliases\": [\"CVE-2026-31865\"]}",
@@ -23199,6 +23283,20 @@
       "target": "wheel",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade wheel to patched release >= 0.46.2: pip install --upgrade 'wheel>=0.46.2' (Advisory: GHSA-8rrh-rw8j-w5fx)"
+    },
+    {
+      "applies_to": "pytest",
+      "created_at": "2026-01-22T06:30:29Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-6w46-j5rx-g56g\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"9.0.3\", \"aliases\": [\"CVE-2025-71176\", \"PYSEC-2026-1845\"]}",
+      "fingerprint": "sha256:5da08ad07d79ce3f4313c76611c5417eaa762c5df83e08892dfb44b3b28adc79",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_6w46_j5rx_g56g",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-6w46-j5rx-g56g] pytest has vulnerable tmpdir handling (Affects pytest < 9.0.3)",
+      "target": "pytest",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pytest to patched release >= 9.0.3: pip install --upgrade 'pytest>=9.0.3' (Advisory: GHSA-6w46-j5rx-g56g)"
     },
     {
       "applies_to": "lodash",
@@ -23610,6 +23708,34 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-07T22:37:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9328a7a835e3e51940500639ba089ce486760823b00ce620e44b4d2efe0d8f57",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12774",
+      "submitted_by": "harvester-v1",
+      "symptom": "Latest versions canary: AssertionError in tests/clai2/test_mcp_on_demand.py",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Accept logfire 5.5's reworded propagator warning in the test suite. Target files: pyproject.toml, tests/durable_exec/test_prefect.py, tests/models/test_batch.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12783)"
+    },
+    {
+      "applies_to": "Codium-ai/pr-agent",
+      "created_at": "2026-11-07T22:35:29Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2bced85595dfe6cb6690843abc99202569a8cb411d923bc04b9727003988ab12",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_Codium-ai_pr-agent_4482",
+      "submitted_by": "harvester-v1",
+      "symptom": "pr-agent v0.50.0: test: clean up SyntaxWarning escape sequences and PytestRemovedIn10Warning by @itsvrushabh in #4482",
+      "target": "pr-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: test: clean up SyntaxWarning escape sequences and PytestRemovedIn10Warning by @itsvrushabh in #4482. Upstream PR #4482. (Ref: https://github.com/Codium-ai/pr-agent/pull/4482)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-07T17:38:47Z",
       "environment_json": "{}",
@@ -34979,6 +35105,20 @@
     },
     {
       "applies_to": "vllm",
+      "created_at": "2026-09-10T09:45:00.831333Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3934\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.26.0\", \"aliases\": [\"CVE-2026-73560\", \"GHSA-4hhp-h66f-j5j7\"]}",
+      "fingerprint": "sha256:26a0c720ccef308da3b442d44e71e9e8d81e939b4a3534808ebf270e4ad640ed",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3934",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3934] vLLM: SSRF + arbitrary local file read in MiMoV2OmniMultiModalProcessor `_fetch_image` and audio loader bypass MediaConnector protections (Affects vllm < 0.26.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: PYSEC-2026-3934)"
+    },
+    {
+      "applies_to": "vllm",
       "created_at": "2026-09-10T09:45:00.769969Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3935\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.27.0\", \"aliases\": [\"CVE-2026-73558\", \"GHSA-7m6h-x95x-82q5\"]}",
       "fingerprint": "sha256:392906d6c161db577e00aa02d5c60825d908a5958983b7381c8d5c081b8ee15c",
@@ -34990,6 +35130,20 @@
       "target": "vllm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade vllm to patched release >= 0.27.0: pip install --upgrade 'vllm>=0.27.0' (Advisory: PYSEC-2026-3935)"
+    },
+    {
+      "applies_to": "vllm",
+      "created_at": "2026-09-10T09:45:00.190897Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3933\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.26.0\", \"aliases\": [\"CVE-2026-73556\", \"GHSA-48jh-3gj7-fg8v\"]}",
+      "fingerprint": "sha256:058a07c69a2c306040c7b97c07553ddf22da6717d4df2cf8b4f9fdefa0b47e71",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3933",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3933] vLLM: ReDoS via structured_outputs.regex in the lm-format-enforcer backend (no compile timeout) \u2014 missed sibling of GHSA-rwxx-mrjm-wc2m (Affects vllm < 0.26.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: PYSEC-2026-3933)"
     },
     {
       "applies_to": "tornado",
@@ -36040,6 +36194,20 @@
       "target": "vllm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade vllm to patched release >= 0.26.0: pip install --upgrade 'vllm>=0.26.0' (Advisory: GHSA-87x5-vmc3-756j)"
+    },
+    {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-13T12:17:27.753Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3953\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.54\", \"aliases\": [\"CVE-2026-73625\", \"GHSA-r9mr-m37c-5fr3\"]}",
+      "fingerprint": "sha256:e8eb882992e1575c18a5a903eea5941c424c2146948e47d3c8b74e26882c83e8",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3953",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3953] GitPython versions before 3.1.54 contain a remote code execution vulnerability in the check_unsafe_options guard that can be bypassed by smuggling git option... (Affects gitpython < 3.1.54)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.54: pip install --upgrade 'gitpython>=3.1.54' (Advisory: PYSEC-2026-3953)"
     },
     {
       "applies_to": "gitpython",
@@ -45394,6 +45562,20 @@
       "workaround": "Upgrade mlflow to patched release >= 3.9.0rc0: pip install --upgrade 'mlflow>=3.9.0rc0' (Advisory: GHSA-fhff-qmm8-h2fp)"
     },
     {
+      "applies_to": "pyopenssl",
+      "created_at": "2026-03-18T00:16:19.107Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2268\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"26.0.0\", \"aliases\": [\"CVE-2026-27448\", \"GHSA-vp96-hxj8-p424\"]}",
+      "fingerprint": "sha256:506726ae28ddfa30b46e0f874812ccf66d6dc9381fea73d4a4220319e3698606",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2268",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2268] pyOpenSSL is a Python wrapper around the OpenSSL library. Starting in version 0.14.0 and prior to version 26.0.0, if a user provided callback to `set_tlsext_... (Affects pyopenssl < 26.0.0)",
+      "target": "pyopenssl",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyopenssl to patched release >= 26.0.0: pip install --upgrade 'pyopenssl>=26.0.0' (Advisory: PYSEC-2026-2268)"
+    },
+    {
       "applies_to": "elysia",
       "created_at": "2026-03-17T16:17:41Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-8hq9-phh3-p2wp\", \"ecosystem\": \"npm\", \"fixed_version\": \"1.4.27\", \"aliases\": [\"CVE-2026-31865\"]}",
@@ -46806,6 +46988,20 @@
       "target": "wheel",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade wheel to patched release >= 0.46.2: pip install --upgrade 'wheel>=0.46.2' (Advisory: GHSA-8rrh-rw8j-w5fx)"
+    },
+    {
+      "applies_to": "pytest",
+      "created_at": "2026-01-22T06:30:29Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-6w46-j5rx-g56g\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"9.0.3\", \"aliases\": [\"CVE-2025-71176\", \"PYSEC-2026-1845\"]}",
+      "fingerprint": "sha256:5da08ad07d79ce3f4313c76611c5417eaa762c5df83e08892dfb44b3b28adc79",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_6w46_j5rx_g56g",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-6w46-j5rx-g56g] pytest has vulnerable tmpdir handling (Affects pytest < 9.0.3)",
+      "target": "pytest",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pytest to patched release >= 9.0.3: pip install --upgrade 'pytest>=9.0.3' (Advisory: GHSA-6w46-j5rx-g56g)"
     },
     {
       "applies_to": "lodash",

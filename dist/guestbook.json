@@ -1,5 +1,5 @@
 {
-  "count": 254,
+  "count": 256,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1227,6 +1227,16 @@
       "type": "crawler"
     },
     {
+      "entity": "agentrecord-census",
+      "first_seen": "2026-11-07",
+      "type": "agent"
+    },
+    {
+      "entity": "bots.st-checker",
+      "first_seen": "2026-11-07",
+      "type": "security_probe"
+    },
+    {
       "entity": "mcp-runtime-engine-auth-probe",
       "first_seen": "2026-11-07",
       "type": "security_probe"
@@ -1272,5 +1282,5 @@
       "type": "agent"
     }
   ],
-  "generated_at": "2026-11-07T18:47:43Z"
+  "generated_at": "2026-11-07T22:46:33Z"
 }
