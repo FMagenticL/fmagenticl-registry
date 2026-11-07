@@ -1,7 +1,49 @@
 {
-  "count": 1298,
-  "generated_at": "2026-11-06T20:56:00Z",
+  "count": 1303,
+  "generated_at": "2026-11-07T00:57:59Z",
   "grievances": [
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-06T23:44:42Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:76bbf7dd8b01f4338a96bd5b372da590f2ef62cbbe0228504261a695f6fccd97",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_60303",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Images above Pillow's pixel limit get HTTP 500 instead of 400",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Frontend] Return 400 for images rejected by Pillow's bomb check. Target files: vllm/multimodal/media/image.py, tests/multimodal/media/test_image.py. `ImageMediaIO.load_bytes` lets Pillow's `DecompressionBombError` escape, so an image above Pillow's pixel limit gets an HTTP 500 from the API server. This converts it to a `ValueError` like the other undecodable-image errors, so the client gets a 400. (Ref: https://github.com/vllm-project/vllm/pull/60308)"
+    },
+    {
+      "applies_to": "Arize-ai/phoenix",
+      "created_at": "2026-11-06T22:01:25Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d3a28408fbac9d228adc76ad6d7a9d58cd9a93d1515d9614f9ffdf6faae4d943",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Arize-ai_phoenix_16395",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG]: phoenix-evals AnthropicAdapter structured output fails on Claude Opus 5.5 (Bedrock): forced tool_choice rejected with 400",
+      "target": "phoenix",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(evaluators): run LLM evaluators on Claude models that reject forced tool use. Target files: src/phoenix/server/api/evaluators.py, src/phoenix/server/api/helpers/playground_clients.py, tests/unit/server/api/helpers/test_evaluators.py. LLM evaluators fail on `claude-opus-5-5`, `claude-sonnet-5-5`, and `claude-fable-5-1`. Every request returns a 400 error. (Ref: https://github.com/Arize-ai/phoenix/pull/17679)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-06T21:35:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0872a567a33f054c29de6a93f24f3188cd9585f8a1a4e71a2a275f8ae4b95c10",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11829",
+      "submitted_by": "harvester-v1",
+      "symptom": "bug(openai): binary standard audio/file blocks become decimal strings in Chat Completions",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai): base64-encode binary data blocks in Chat Completions. Target files: libs/providers/langchain-openai/src/converters/completions.ts, libs/providers/langchain-openai/src/converters/tests/completions.test.ts, .changeset/openai-completions-binary-data.md. Standard image, audio and file content blocks accept `data` as a base64 string or a `Uint8Array`. The Chat Completions converter put the data straight into a string, so binary data was sent as comma-separated decimal bytes. For bytes `[82, 73, 70, 70]`: (Ref: https://github.com/langchain-ai/langchainjs/pull/11846)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-06T19:32:09Z",
@@ -9019,6 +9061,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4198)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-05T23:17:01.867Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4197\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.28.0\", \"aliases\": [\"CVE-2026-105753\", \"GHSA-ph3r-5jfg-f84f\"]}",
+      "fingerprint": "sha256:fa3898b0fd02e8e660f2692798d8f9f60235eac2d49182ed7d2464dc0861eccb",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4197",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4197] vLLM is an inference and serving engine for large language models. Prior to 0.28.0, the default mirrored multimodal LRU cache can commit a media hash in the ... (Affects vllm < 0.28.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.28.0: pip install --upgrade 'vllm>=0.28.0' (Advisory: PYSEC-2026-4197)"
+    },
+    {
       "applies_to": "huggingface/datasets",
       "created_at": "2026-10-05T14:18:56Z",
       "environment_json": "{}",
@@ -11985,6 +12041,20 @@
       "target": "vllm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade vllm to patched release >= 0.27.0: pip install --upgrade 'vllm>=0.27.0' (Advisory: PYSEC-2026-4003)"
+    },
+    {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-25T02:16:52.313Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3788\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.59\", \"aliases\": [\"CVE-2026-78678\", \"GHSA-5xxx-qhh7-9287\"]}",
+      "fingerprint": "sha256:9df366dc838aa5f9337cf9863fb14deb7dffed2b32fc882dd5f059218c4d205b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3788",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3788] GitPython versions before 3.1.59 contain an incomplete denylist in the unsafe_git_revision_options guard that omits --contents and -S options, allowing attac... (Affects gitpython < 3.1.59)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.59: pip install --upgrade 'gitpython>=3.1.59' (Advisory: PYSEC-2026-3788)"
     },
     {
       "applies_to": "gitpython",
@@ -18171,6 +18241,48 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-06T23:44:42Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:76bbf7dd8b01f4338a96bd5b372da590f2ef62cbbe0228504261a695f6fccd97",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_60303",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Images above Pillow's pixel limit get HTTP 500 instead of 400",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Frontend] Return 400 for images rejected by Pillow's bomb check. Target files: vllm/multimodal/media/image.py, tests/multimodal/media/test_image.py. `ImageMediaIO.load_bytes` lets Pillow's `DecompressionBombError` escape, so an image above Pillow's pixel limit gets an HTTP 500 from the API server. This converts it to a `ValueError` like the other undecodable-image errors, so the client gets a 400. (Ref: https://github.com/vllm-project/vllm/pull/60308)"
+    },
+    {
+      "applies_to": "Arize-ai/phoenix",
+      "created_at": "2026-11-06T22:01:25Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d3a28408fbac9d228adc76ad6d7a9d58cd9a93d1515d9614f9ffdf6faae4d943",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Arize-ai_phoenix_16395",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG]: phoenix-evals AnthropicAdapter structured output fails on Claude Opus 5.5 (Bedrock): forced tool_choice rejected with 400",
+      "target": "phoenix",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(evaluators): run LLM evaluators on Claude models that reject forced tool use. Target files: src/phoenix/server/api/evaluators.py, src/phoenix/server/api/helpers/playground_clients.py, tests/unit/server/api/helpers/test_evaluators.py. LLM evaluators fail on `claude-opus-5-5`, `claude-sonnet-5-5`, and `claude-fable-5-1`. Every request returns a 400 error. (Ref: https://github.com/Arize-ai/phoenix/pull/17679)"
+    },
+    {
+      "applies_to": "langchain-ai/langchainjs",
+      "created_at": "2026-11-06T21:35:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0872a567a33f054c29de6a93f24f3188cd9585f8a1a4e71a2a275f8ae4b95c10",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langchain-ai_langchainjs_11829",
+      "submitted_by": "harvester-v1",
+      "symptom": "bug(openai): binary standard audio/file blocks become decimal strings in Chat Completions",
+      "target": "langchainjs",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openai): base64-encode binary data blocks in Chat Completions. Target files: libs/providers/langchain-openai/src/converters/completions.ts, libs/providers/langchain-openai/src/converters/tests/completions.test.ts, .changeset/openai-completions-binary-data.md. Standard image, audio and file content blocks accept `data` as a base64 string or a `Uint8Array`. The Chat Completions converter put the data straight into a string, so binary data was sent as comma-separated decimal bytes. For bytes `[82, 73, 70, 70]`: (Ref: https://github.com/langchain-ai/langchainjs/pull/11846)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-06T19:32:09Z",
       "environment_json": "{}",
@@ -27187,6 +27299,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4198)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-10-05T23:17:01.867Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4197\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.28.0\", \"aliases\": [\"CVE-2026-105753\", \"GHSA-ph3r-5jfg-f84f\"]}",
+      "fingerprint": "sha256:fa3898b0fd02e8e660f2692798d8f9f60235eac2d49182ed7d2464dc0861eccb",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4197",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4197] vLLM is an inference and serving engine for large language models. Prior to 0.28.0, the default mirrored multimodal LRU cache can commit a media hash in the ... (Affects vllm < 0.28.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.28.0: pip install --upgrade 'vllm>=0.28.0' (Advisory: PYSEC-2026-4197)"
+    },
+    {
       "applies_to": "huggingface/datasets",
       "created_at": "2026-10-05T14:18:56Z",
       "environment_json": "{}",
@@ -30153,6 +30279,20 @@
       "target": "vllm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade vllm to patched release >= 0.27.0: pip install --upgrade 'vllm>=0.27.0' (Advisory: PYSEC-2026-4003)"
+    },
+    {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-25T02:16:52.313Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3788\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.59\", \"aliases\": [\"CVE-2026-78678\", \"GHSA-5xxx-qhh7-9287\"]}",
+      "fingerprint": "sha256:9df366dc838aa5f9337cf9863fb14deb7dffed2b32fc882dd5f059218c4d205b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3788",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3788] GitPython versions before 3.1.59 contain an incomplete denylist in the unsafe_git_revision_options guard that omits --contents and -S options, allowing attac... (Affects gitpython < 3.1.59)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.59: pip install --upgrade 'gitpython>=3.1.59' (Advisory: PYSEC-2026-3788)"
     },
     {
       "applies_to": "gitpython",

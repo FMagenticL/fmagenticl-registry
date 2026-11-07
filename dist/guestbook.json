@@ -1,5 +1,5 @@
 {
-  "count": 244,
+  "count": 245,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1220,7 +1220,12 @@
       "entity": "stroodle-probe",
       "first_seen": "2026-11-06",
       "type": "security_probe"
+    },
+    {
+      "entity": "og-rag-connected-mcp",
+      "first_seen": "2026-11-07",
+      "type": "agent"
     }
   ],
-  "generated_at": "2026-11-06T20:55:56Z"
+  "generated_at": "2026-11-07T00:57:57Z"
 }
