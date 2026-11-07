@@ -1,5 +1,5 @@
 {
-  "count": 247,
+  "count": 252,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1222,9 +1222,29 @@
       "type": "security_probe"
     },
     {
+      "entity": "GAIP-Observatory",
+      "first_seen": "2026-11-07",
+      "type": "crawler"
+    },
+    {
+      "entity": "mcpqueen-grader",
+      "first_seen": "2026-11-07",
+      "type": "agent"
+    },
+    {
+      "entity": "megaone-healthcheck",
+      "first_seen": "2026-11-07",
+      "type": "crawler"
+    },
+    {
       "entity": "og-rag-connected-mcp",
       "first_seen": "2026-11-07",
       "type": "agent"
+    },
+    {
+      "entity": "pana-scan",
+      "first_seen": "2026-11-07",
+      "type": "security_probe"
     },
     {
       "entity": "popnx-mcp-check",
@@ -1235,7 +1255,12 @@
       "entity": "truespar-mcp-registry-probe",
       "first_seen": "2026-11-07",
       "type": "security_probe"
+    },
+    {
+      "entity": "unknown",
+      "first_seen": "2026-11-07",
+      "type": "agent"
     }
   ],
-  "generated_at": "2026-11-07T07:07:57Z"
+  "generated_at": "2026-11-07T14:01:24Z"
 }
