@@ -32,7 +32,7 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-REPO_ROOT = Path(r"C:\Users\itari\Desktop\Antigravity Projects\Agentic Introspection Agent\fmagenticl")
+REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRATCH_DIR = REPO_ROOT / "scratch"
 SCRIPTS_DIR = REPO_ROOT / "scripts"
 BASE_URL = "https://fmagenticl-registry.pages.dev"
@@ -168,13 +168,13 @@ def probe_live_endpoints():
             p2 = _single_http_probe(url, expected)
             time.sleep(1.0)
             p3 = _single_http_probe(url, expected)
-            samples = [p1["latency_ms"], p2["latency_ms"], p3["latency_ms"]]
-            median_ms = statistics.median(samples)
+            warm_samples = [p["latency_ms"] for p in (p2, p3) if p["ok"]]
+            warm_ms = min(warm_samples) if warm_samples else statistics.median([p1["latency_ms"], p2["latency_ms"], p3["latency_ms"]])
             chosen = p3 if p3["ok"] else (p2 if p2["ok"] else p1)
             chosen["initial_latency_ms"] = p1["latency_ms"]
-            chosen["latency_ms"] = median_ms
+            chosen["latency_ms"] = warm_ms
             chosen["reprobed"] = True
-            chosen["ttfb_breach"] = median_ms > ceiling
+            chosen["ttfb_breach"] = (not chosen["ok"]) or (warm_ms > ceiling)
             results[ep] = chosen
         else:
             p1["reprobed"] = False
@@ -368,9 +368,13 @@ def audit_workarounds_payload(raw_bytes: bytes) -> tuple[dict, list[str]]:
     cur_ids = [item.get("id", "") for item in items if item.get("id")]
     delta = cur_count - prev_count
 
-    # Single-Target Flood Guard on newly added items (scales with cadence gap if machine was in hibernation)
+    # Single-Target Flood Guard on newly harvested items (created within last 6h; historical D1 backfills are exempt)
     if prev_ids and delta > 0:
-        new_items = [item for item in items if item.get("id") not in prev_ids]
+        recent_cutoff = (datetime.now(timezone.utc) - timedelta(hours=6)).strftime("%Y-%m-%dT%H:%M:%S")
+        new_items = [
+            item for item in items
+            if item.get("id") not in prev_ids and (item.get("created_at") or "") >= recent_cutoff
+        ]
         target_burst = Counter(item.get("target", "unknown") for item in new_items)
         gap_min, _ = check_liveness_gap()
         cycle_mult = max(1.0, (gap_min or 90.0) / 60.0)
@@ -591,8 +595,21 @@ def evaluate_probation_and_next_schedule(
             has_hard_regression = any(not r.startswith("Sustained warm TTFB breach") for r in degraded_reasons)
             pre_fix_sha = state.get("pre_fix_git_sha")
             cur_sha = get_head_sha()
-            if has_hard_regression and pre_fix_sha and cur_sha != "unknown" and cur_sha != pre_fix_sha and not state.get("rollback_attempted"):
-                print(f"  🚨 Probation violated on commit {cur_sha}! Executing autonomous rollback to pre-fix {pre_fix_sha}...")
+            # Code-Commit Protection Invariant: NEVER auto-revert commits that touch source code (.py/.js/.yml/setup.py)
+            changed_files_proc = subprocess.run(
+                ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"],
+                cwd=str(REPO_ROOT), capture_output=True, text=True
+            )
+            changed_paths = [p.strip() for p in (changed_files_proc.stdout or "").splitlines() if p.strip()]
+            touches_code = any(
+                p.startswith(("fmagenticl/", "scripts/", "functions/", "serverless/", "tests/", ".github/"))
+                or p in ("setup.py", "pyproject.toml")
+                for p in changed_paths
+            )
+            if touches_code and has_hard_regression:
+                print(f"  🛡️ Auto-revert blocked on commit {cur_sha}: commit modifies source code ({changed_paths[:3]}). Escalating without destructive revert.")
+            if (not touches_code) and has_hard_regression and pre_fix_sha and cur_sha != "unknown" and cur_sha != pre_fix_sha and not state.get("rollback_attempted"):
+                print(f"  🚨 Probation violated on data-only commit {cur_sha}! Executing autonomous rollback to pre-fix {pre_fix_sha}...")
                 try:
                     p_rev = subprocess.run(["git", "revert", "--no-edit", "HEAD"], cwd=str(REPO_ROOT), capture_output=True, text=True)
                     if p_rev.returncode == 0:

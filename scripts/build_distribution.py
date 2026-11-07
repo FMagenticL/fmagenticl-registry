@@ -5,6 +5,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+try:
+    from fmagenticl import __version__ as PKG_VERSION
+except Exception:
+    PKG_VERSION = "1.4.1"
+
 SIGNING_KEY_B64 = os.environ.get("FMAGENTICL_SIGNING_KEY", "PLACEHOLDER_SIGNING_KEY_NOT_SET")
 if SIGNING_KEY_B64 == "PLACEHOLDER_SIGNING_KEY_NOT_SET":
     print("WARNING: Signing key not set. Emitting unsigned snapshot. Set FMAGENTICL_SIGNING_KEY to enable signing.")
@@ -20,6 +25,7 @@ else:
         SIGNING_ENABLED = False
         priv = None
 
+
 def load_patches():
     out = {}
     for pf in sorted(glob.glob("patches/*.json")):
@@ -29,10 +35,12 @@ def load_patches():
         out[fp_hex] = data
     return out
 
+
 def sign_payload(payload_bytes: bytes) -> str:
     if not SIGNING_ENABLED or priv is None:
         return ""
     return base64.b64encode(priv.sign(payload_bytes)).decode()
+
 
 def build():
     os.makedirs("dist/v1/resolve", exist_ok=True)
@@ -59,7 +67,7 @@ def build():
         attribution = p_data.get("attribution") or p_data.get("submitted_by")
         if not attribution or attribution == "anonymous" or attribution == "DeepSeek":
             attribution = "deepseek-v3"
-        
+
         registry_patches.append({
             "id": fp_hex,
             "attribution": attribution,
@@ -68,11 +76,31 @@ def build():
             "signed": True,
         })
 
-    # 1. Per-patch files (individually cacheable, only write if missing or changed)
+    # 1. Per-patch files (individually cacheable; Ed25519-signed when SIGNING_ENABLED)
     resolve_changed = False
     for fp_hex, data in patches.items():
         resolve_path = Path(f"dist/v1/resolve/{fp_hex}.json")
-        serialized = json.dumps(data, separators=(",", ":"))
+        out_data = dict(data)
+        out_data.setdefault("fingerprint", f"sha256:{fp_hex}")
+        if SIGNING_ENABLED:
+            clean_patch = {
+                k: v
+                for k, v in out_data.items()
+                if k not in ("signature", "ed25519_sig", "signature_verified", "fingerprint_verified")
+            }
+            canon_bytes = json.dumps(clean_patch, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            out_data["ed25519_sig"] = sign_payload(canon_bytes)
+        elif resolve_path.exists():
+            # Preserve existing ed25519_sig on disk during unsigned local builds if canonical content matches
+            try:
+                prev_disk = json.loads(resolve_path.read_text(encoding="utf-8"))
+                if prev_disk.get("ed25519_sig"):
+                    prev_clean = {k: v for k, v in prev_disk.items() if k != "ed25519_sig"}
+                    if prev_clean == out_data:
+                        out_data["ed25519_sig"] = prev_disk["ed25519_sig"]
+            except Exception:
+                pass
+        serialized = json.dumps(out_data, separators=(",", ":"), sort_keys=True)
         if not resolve_path.exists() or resolve_path.read_text(encoding="utf-8") != serialized:
             resolve_path.write_text(serialized, encoding="utf-8")
             resolve_changed = True
@@ -111,7 +139,7 @@ def build():
     if not patches_unchanged:
         # 2. Base Snapshot
         snapshot = {
-            "version": "1.4.0",
+            "version": PKG_VERSION,
             "generated_at": now_iso,
             "total_patches": len(patches),
             "patches": patches,
@@ -148,7 +176,7 @@ def build():
 
         # 4. Deltas & Latest Marker
         delta = {
-            "base_version": "1.4.0",
+            "base_version": PKG_VERSION,
             "generated_at": now_iso,
             "added": list(patches.keys()),
             "removed": [],
@@ -209,7 +237,7 @@ def build():
     total_curated_entries = len(patches) + total_grievances_count
     health_payload = {
         "status": "ok",
-        "protocol_version": "1.4.0",
+        "protocol_version": PKG_VERSION,
         "total_entries": total_curated_entries,
         "compiled_patches": len(patches),
         "verified_workarounds": verified_workarounds_count,
@@ -229,8 +257,10 @@ def build():
     shard_dir.mkdir(parents=True, exist_ok=True)
     for old in shard_dir.glob("*.json"):
         old.unlink()
+
     def _shard_key(s: str) -> str:
         return _re.sub(r"[^a-z0-9._-]", "_", (s or "").strip().lower().replace("/", "__"))[:120]
+
     shards = {}
     for item in workarounds_items:
         keys = set()
@@ -245,11 +275,15 @@ def build():
             if k:
                 shards.setdefault(k, []).append(item)
     for k, items in shards.items():
-        (shard_dir / f"{k}.json").write_text(json.dumps({"key": k, "count": len(items), "workarounds": items},
-                                                        separators=(",", ":")), encoding="utf-8")
+        (shard_dir / f"{k}.json").write_text(
+            json.dumps({"key": k, "count": len(items), "workarounds": items}, separators=(",", ":")),
+            encoding="utf-8",
+        )
     recent = sorted(workarounds_items, key=lambda x: x.get("created_at") or "", reverse=True)[:100]
-    (shard_dir / "_recent.json").write_text(json.dumps({"key": "_recent", "count": len(recent), "workarounds": recent},
-                                                       separators=(",", ":")), encoding="utf-8")
+    (shard_dir / "_recent.json").write_text(
+        json.dumps({"key": "_recent", "count": len(recent), "workarounds": recent}, separators=(",", ":")),
+        encoding="utf-8",
+    )
 
     # 7. RFC 9728 OAuth 2.0 Protected Resource & Authorization Server Discovery
     os.makedirs("dist/.well-known/oauth-protected-resource", exist_ok=True)
@@ -290,12 +324,10 @@ def build():
             f.write(authz_bytes)
 
     # 8. Cloudflare Pages SPA Fallback Disabler & Fast CDN 404
-    # The presence of 404.html at root of dist/ disables SPA index.html fallback for unmatched static routes
     with open("dist/404.html", "w", encoding="utf-8") as f:
         f.write("<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1></body></html>\n")
 
     # 9. Cloudflare Pages Functions Routing Rules (_routes.json v1)
-    # Directs all static assets to Cloudflare's static edge CDN and only invokes Pages Functions for dynamic routes
     routes_config = {
         "version": 1,
         "include": [
@@ -315,6 +347,7 @@ def build():
         json.dump(routes_config, f, indent=2)
 
     print(f"SUCCESS: Distribution built: {len(patches)} patches, {verified_workarounds_count} verified workarounds ({total_grievances_count} grievances) (total: {total_curated_entries}) compiled to dist/.")
+
 
 if __name__ == "__main__":
     build()

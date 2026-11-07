@@ -69,41 +69,77 @@ def verify_signature(
 def verify_patch_signature(
     patch: Dict[str, Any],
     public_key_b64: Optional[str] = None,
-    require_signature: bool = False,
+    require_signature: bool = True,
 ) -> bool:
     """
-    Verify the authenticity and integrity of a resolved patch.
-    
-    1. If the patch contains an Ed25519 signature (field 'signature' or 'ed25519_sig'),
-       verifies the cryptographic signature against the public key.
-    2. If no Ed25519 signature is present:
-       - If require_signature=True, rejects the patch (returns False).
-       - Otherwise, verifies SHA-256 fingerprint consistency against failure/resolution fields.
+    Verify the Ed25519 cryptographic authenticity of a resolved patch.
+
+    STRICT INVARIANT:
+    Returns True ONLY when an authentic Ed25519 signature ('signature' or 'ed25519_sig')
+    is present on the patch and passes Ed25519PublicKey.verify() against the canonical
+    JSON payload. Never returns True on unsigned payloads or shape-only checks.
     """
     if not isinstance(patch, dict):
         return False
 
     sig_b64 = patch.get("signature") or patch.get("ed25519_sig")
-    if sig_b64:
-        # Build canonical payload omitting signature fields
-        clean_patch = {k: v for k, v in patch.items() if k not in ("signature", "ed25519_sig", "signature_verified")}
-        payload_bytes = canonical_json_bytes(clean_patch)
-        return verify_signature(payload_bytes, sig_b64, public_key_b64)
-
-    if require_signature:
-        # Strict mode: missing cryptographic signature is an automatic failure
+    if not sig_b64:
         return False
 
-    # Standard integrity verification: verify fingerprint or content hash
-    fp = patch.get("fingerprint") or ""
-    clean_fp = fp.replace("sha256:", "").lower()
-    
-    # If fingerprint is present and well-formed (64 hex characters)
-    if clean_fp and len(clean_fp) == 64 and all(c in "0123456789abcdef" for c in clean_fp):
-        # Fingerprint is structurally valid and trusted from authoritative CDN
-        return True
+    clean_patch = {
+        k: v
+        for k, v in patch.items()
+        if k not in ("signature", "ed25519_sig", "signature_verified", "fingerprint_verified")
+    }
+    payload_bytes = canonical_json_bytes(clean_patch)
+    return verify_signature(payload_bytes, sig_b64, public_key_b64)
 
-    return False
+
+def verify_patch_fingerprint(
+    patch: Dict[str, Any],
+    expected_fp: Optional[str] = None,
+) -> bool:
+    """
+    Verify deterministic SHA-256 fingerprint integrity of a patch payload.
+
+    1. Validates that the fingerprint is a well-formed 64-character hex digest
+       and matches expected_fp (when supplied).
+    2. When 'environment' and 'failure' dicts are embedded in the patch,
+       recomputes compute_fingerprint(environment, failure) and asserts
+       exact cryptographic equality against the claimed fingerprint.
+    3. Ensures the payload carries at least one recognized deterministic patch field.
+    """
+    if not isinstance(patch, dict):
+        return False
+
+    raw_fp = patch.get("fingerprint") or ""
+    clean_fp = raw_fp.replace("sha256:", "").strip().lower()
+    clean_expected = (expected_fp or "").replace("sha256:", "").strip().lower()
+
+    if clean_expected:
+        if clean_fp and clean_fp != clean_expected:
+            return False
+        target_fp = clean_expected
+    else:
+        target_fp = clean_fp
+
+    if len(target_fp) != 64 or not all(c in "0123456789abcdef" for c in target_fp):
+        return False
+
+    env = patch.get("environment")
+    fail = patch.get("failure")
+    if isinstance(env, dict) and isinstance(fail, dict):
+        from fmagenticl.client.fingerprint import compute_fingerprint
+        recomputed = compute_fingerprint(env, fail).replace("sha256:", "").strip().lower()
+        if recomputed != target_fp:
+            return False
+
+    patch_body = patch.get("resolution_patch") if isinstance(patch.get("resolution_patch"), dict) else patch
+    valid_fields = ("patch_type", "action", "json_patch", "fallback_cli", "file_ops", "mcp_uri", "strategy", "config_patch")
+    if not any(k in patch_body for k in valid_fields):
+        return False
+
+    return True
 
 
 def verify_snapshot_file(

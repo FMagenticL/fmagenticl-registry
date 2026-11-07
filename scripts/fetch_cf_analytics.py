@@ -34,19 +34,19 @@ CORE_STATIC_EXACT = {
 def classify_error_path(path: str) -> str:
     """
     Classify request path into:
-      - 'bucket_a_runtime': /mcp, /mcp/*, dynamic /v1/*, /health, /api/v1/patches
-      - 'bucket_b_static': core static CDN files, /shards/*, /.well-known/*
-      - 'bucket_c_scanner': unmapped scanner / bot probes (e.g. /a131c452..., /sw.js)
+      - 'bucket_a_runtime': /mcp, /mcp/server-card, dynamic /v1/*, /health, /api/v1/patches
+      - 'bucket_b_static': core static CDN files, /shards/*, /.well-known/*, /mcp/.well-known/oauth-*
+      - 'bucket_c_scanner': unmapped scanner / bot probes (e.g. /a131c452..., /sw.js, /mcp/random)
     """
     p = (path or "/").rstrip("/") or "/"
     if (
         p in ("/mcp", "/mcp/server-card", "/health", "/api/v1/patches")
-        or p.startswith("/mcp/")
         or (p.startswith("/v1/") and p not in STATIC_V1_PATHS)
     ):
         return "bucket_a_runtime"
     if (
         p in CORE_STATIC_EXACT
+        or p in ("/mcp/.well-known/oauth-protected-resource", "/mcp/.well-known/oauth-authorization-server")
         or (p.startswith("/shards/") and p != "/shards/workarounds/fastapi.json")
         or p.startswith("/.well-known/")
     ):
@@ -272,7 +272,8 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
                     bucket_a_504 += reqs
                 else:
                     bucket_a_5xx_crash += reqs
-                if path == "/mcp" or path.startswith("/mcp/"):
+                p_norm = (path or "/").rstrip("/") or "/"
+                if p_norm in ("/mcp", "/mcp/server-card"):
                     if code == 504:
                         mcp_504 += reqs
                     else:
@@ -290,8 +291,10 @@ def fetch_window_metrics(account_id: str, start_dt: datetime, end_dt: datetime, 
             country_counts[country] += reqs
 
     rate_5xx = (c_5xx_total / total_requests * 100) if total_requests > 0 else 0.0
-    mcp_requests = path_counts.get("/mcp", 0) + sum(
-        v for k, v in path_counts.items() if k.startswith("/mcp/")
+    mcp_requests = (
+        path_counts.get("/mcp", 0)
+        + path_counts.get("/mcp/", 0)
+        + path_counts.get("/mcp/server-card", 0)
     )
     mcp_5xx_total = mcp_504 + mcp_5xx_crash
     mcp_5xx_rate = (mcp_5xx_total / mcp_requests * 100.0) if mcp_requests > 0 else 0.0

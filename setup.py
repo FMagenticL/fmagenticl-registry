@@ -9,21 +9,29 @@ if os.path.exists(readme_path):
 
 setup(
     name="fmagenticl",
-    version="1.4.0",
+    version="1.4.1",
     packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=[
-        "fastapi>=0.100.0",
-        "uvicorn[standard]>=0.20.0",
-        "redis>=5.0.0",
         "pydantic>=1.10.0,<3.0.0",
         "requests>=2.30.0",
         "httpx>=0.24.0",
         "cryptography>=41.0.0",
         "jsonpatch>=1.33",
     ],
+    extras_require={
+        "server": [
+            "fastapi>=0.100.0",
+            "uvicorn[standard]>=0.20.0",
+            "redis>=5.0.0",
+        ],
+        "mcp": [
+            "fastmcp>=0.1.0",
+        ],
+    },
     entry_points={
         "console_scripts": [
+            "fmagenticl-mcp=fmagenticl.client.fastmcp_server:main",
             "fmagenticl-server=fmagenticl.server.main:main",
         ]
     },

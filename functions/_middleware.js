@@ -1,7 +1,7 @@
 /**
  * FMagenticL Cloudflare Pages Edge Middleware
- * 1. Strict dynamic route allowlist (instantly returns 404 for unrouted probes like /api/query without context.next()).
- * 2. Dedicated fast 200 OK handler for /mcp/server-card.
+ * 1. Strict dynamic route allowlist (instantly returns 404 for unrouted probes like /api/query or /mcp/random without context.next()).
+ * 2. Dedicated fast 200 OK handlers for /mcp/server-card and /mcp/.well-known/oauth-* RFC 9728 discovery.
  * 3. Pass-through for legitimate allowlisted dynamic routes only.
  */
 
@@ -14,6 +14,8 @@ const CORS_HEADERS = {
 const EXACT_ALLOWLIST = new Set([
   "/mcp",
   "/mcp/server-card",
+  "/mcp/.well-known/oauth-protected-resource",
+  "/mcp/.well-known/oauth-authorization-server",
   "/health",
   "/api/v1/patches",
   "/v1/health",
@@ -31,7 +33,6 @@ const EXACT_ALLOWLIST = new Set([
 ]);
 
 const PREFIX_ALLOWLIST = [
-  "/mcp/",
   "/v1/patches/",
   "/v1/resolve/",
   "/v1/deltas/",
@@ -54,11 +55,11 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, "");
 
-  // 1. Fast 200 OK for /mcp/server-card
+  // 1a. Fast 200 OK for /mcp/server-card
   if (path === "/mcp/server-card") {
     const card = {
       name: "fmagenticl-registry-mcp",
-      version: "1.4.0",
+      version: "1.4.1",
       description: "FMagenticL Deterministic Failure Depository and Self-Healing Registry for AI Agents",
       transport: "streamable-http",
       endpoint: `${url.origin}/mcp`,
@@ -71,6 +72,45 @@ export async function onRequest(context) {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
         "Cache-Control": "public, max-age=3600",
+        ...CORS_HEADERS,
+      },
+    });
+  }
+
+  // 1b. Fast 200 OK for MCP-prefixed RFC 9728 OAuth discovery probes (/mcp/.well-known/oauth-*)
+  if (path === "/mcp/.well-known/oauth-protected-resource") {
+    const meta = {
+      resource: url.origin,
+      authorization_servers: [],
+      scopes_supported: [],
+      bearer_methods_supported: ["none"],
+      resource_documentation: `${url.origin}/mcp`,
+      auth_policy: "none_public_curated_registry",
+    };
+    return new Response(JSON.stringify(meta, null, 2), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        ...CORS_HEADERS,
+      },
+    });
+  }
+
+  if (path === "/mcp/.well-known/oauth-authorization-server") {
+    const meta = {
+      issuer: url.origin,
+      authorization_endpoint: null,
+      token_endpoint: null,
+      response_types_supported: [],
+      grant_types_supported: [],
+      auth_policy: "none_public_curated_registry",
+    };
+    return new Response(JSON.stringify(meta, null, 2), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
         ...CORS_HEADERS,
       },
     });

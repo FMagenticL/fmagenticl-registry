@@ -66,7 +66,7 @@ DESTRUCTIVE_COMMAND_PATTERNS = [
     ("Destructive Command: Format-Volume", re.compile(r'\bFormat-Volume\b', re.IGNORECASE)),
 ]
 
-IGNORE_DIRS = {'.git', '.pytest_cache', '__pycache__', 'venv', '.venv', 'build', '.egg-info', '.wrangler', '.agents'}
+IGNORE_DIRS = {'.git', '.pytest_cache', '__pycache__', 'venv', '.venv', 'build', '.egg-info', '.wrangler', '.agents', 'node_modules'}
 IGNORE_FILES = {'air_gap_scan.py', 'sanitize_scan.py', 'full_privacy_audit.py', 'probe_external_surfaces.py', 'inspect_candidates.py'}
 
 KNOWN_TEST_ALLOWLIST = [
@@ -121,7 +121,7 @@ def scan_file(filepath: Path) -> List[Tuple[int, str, str]]:
         return violations
 
     # Skip binary databases, archives, and compiled bytecodes from text regex parsing
-    if filepath.suffix.lower() in {'.db', '.sqlite', '.sqlite3', '.pyc', '.pyd', '.so', '.dll', '.zip', '.tar', '.gz'} or '.backup.' in filepath.name:
+    if filepath.suffix.lower() in {'.db', '.sqlite', '.sqlite3', '.pyc', '.pyd', '.so', '.dll', '.zip', '.tar', '.gz', '.whl', '.bin'} or '.backup.' in filepath.name:
         return violations
 
     try:

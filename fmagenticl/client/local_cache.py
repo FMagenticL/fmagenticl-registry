@@ -47,6 +47,7 @@ class LocalCache:
         self._lock = threading.Lock()
         self._memory: dict = {}
         self._delta: dict = {}
+        self._snapshot_signature_verified: bool = False
         self._load_snapshot()
         self._load_delta()
 
@@ -54,6 +55,7 @@ class LocalCache:
         if not os.path.exists(self.snapshot_path):
             return
 
+        snap_sig_ok = False
         if self.verify_signature:
             if not verify_snapshot_file(
                 self.snapshot_path,
@@ -61,6 +63,7 @@ class LocalCache:
                 public_key_b64=self.public_key_b64,
             ):
                 return
+            snap_sig_ok = True
 
         try:
             with open(self.snapshot_path, "r", encoding="utf-8") as f:
@@ -68,6 +71,7 @@ class LocalCache:
             patches = data.get("patches", {}) if isinstance(data, dict) else {}
             with self._lock:
                 self._memory = patches
+                self._snapshot_signature_verified = snap_sig_ok
         except (OSError, ValueError):
             # Snapshot unreadable. Operate in edge-only mode.
             pass

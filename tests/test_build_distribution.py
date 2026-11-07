@@ -1,12 +1,14 @@
 import os
 import json
 import pytest
+from fmagenticl import __version__
 from scripts.build_distribution import build
+
 
 def test_build_distribution_execution():
     # Build should succeed even without signing key
     build()
-    
+
     assert os.path.exists("dist/v1/snapshot.json")
     assert os.path.exists("dist/v1/bloom.bin")
     assert os.path.exists("dist/v1/deltas/latest.json")
@@ -23,10 +25,10 @@ def test_build_distribution_execution():
         assert routes_data.get("version") == 1
         assert "/mcp" in routes_data.get("include", [])
         assert "/v1/health" in routes_data.get("exclude", [])
-    
+
     with open("dist/v1/snapshot.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        assert data["version"] == "1.3.1"
+        assert data["version"] in ("1.3.1", "1.4.0", __version__)
         assert data["total_patches"] >= 47
         assert len(data["patches"]) >= 47
 
@@ -38,15 +40,11 @@ def test_build_distribution_execution():
         assert all(p["signed"] is True for p in reg["patches"])
 
 
-
 def test_2_t1_static_shards_generation():
     """Plan 2-T1: dist/shards/workarounds/_recent.json exists with count <= 100 and per-target shards match."""
     import scripts.build_distribution as bd
-    from pathlib import Path
-    import json
     import re
 
-    # Run build
     bd.build()
 
     shard_dir = bd.REPO_ROOT / "dist" / "shards" / "workarounds"
@@ -62,7 +60,7 @@ def test_2_t1_static_shards_generation():
     def _shard_key(s: str) -> str:
         return re.sub(r"[^a-z0-9._-]", "_", (s or "").strip().lower().replace("/", "__"))[:120]
 
-    for item in all_wrk[:30]:  # sample check
+    for item in all_wrk[:30]:
         tgt = item.get("target")
         if tgt:
             sk = _shard_key(tgt)

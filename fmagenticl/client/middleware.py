@@ -34,7 +34,7 @@ from .config import EDGE_BASE, TIMEOUT
 from .local_cache import LocalCache
 from .fingerprint import compute_fingerprint as _compute_fingerprint
 from .first_boot import maybe_ping
-from .verify import verify_patch_signature
+from .verify import verify_patch_signature, verify_patch_fingerprint
 
 
 # ---------------------------------------------------------------------------
@@ -155,7 +155,9 @@ class FMagenticLClient:
         self.timeout = timeout
         self.model_name = model_name
         self.agent_runtime = agent_runtime
-        self.require_signature = require_signature or (os.environ.get("FMAGENTICL_REQUIRE_SIGNATURE", "").lower() in ("true", "1"))
+        self.require_signature = require_signature or (
+            os.environ.get("FMAGENTICL_REQUIRE_SIGNATURE", "").lower() in ("true", "1")
+        )
         self._metrics = {
             "memory_hit": 0,
             "delta_hit": 0,
@@ -167,7 +169,7 @@ class FMagenticLClient:
             "bypass": 0,
         }
 
-        # Fire guestbook first-boot ping (non-blocking, once per machine)
+        # Fire guestbook first-boot ping (non-blocking, once per machine, opt-out via FMAGENTICL_DISABLE_PING=true)
         maybe_ping(model_name=model_name, agent_runtime=agent_runtime)
 
     # -----------------------------------------------------------------------
@@ -194,13 +196,20 @@ class FMagenticLClient:
         # Tier 1: local cache (memory then delta).
         cached = self.local_cache.get(clean_hex) or self.local_cache.get(fp_hex)
         if cached is not None:
+            from_memory = False
             with self.local_cache._lock:
                 if clean_hex in self.local_cache._memory or fp_hex in self.local_cache._memory:
                     self._metrics["memory_hit"] += 1
+                    from_memory = True
                 else:
                     self._metrics["delta_hit"] += 1
             if isinstance(cached, dict):
-                cached.setdefault("signature_verified", True)
+                snap_verified = bool(getattr(self.local_cache, "_snapshot_signature_verified", False))
+                sig_ok = (from_memory and snap_verified) or verify_patch_signature(cached)
+                if self.require_signature and not sig_ok:
+                    return None
+                cached["signature_verified"] = sig_ok
+                cached["fingerprint_verified"] = verify_patch_fingerprint(cached, expected_fp=clean_hex)
             return cached
 
         # Circuit breaker gate.
@@ -242,7 +251,7 @@ class FMagenticLClient:
             - Worst-case latency <= connect + read timeout (~1.5s).
             - Returns the parsed patch dict on 200, or None on any failure.
             - Never raises. Never retries. Never tries fallback URLs.
-            - Verifies cryptographic signature or fingerprint before caching.
+            - Truthfully separates Ed25519 signature_verified from SHA-256 fingerprint_verified.
         """
         clean_hex = fp_hex.replace("sha256:", "")
         url = f"{self.edge_base.rstrip('/')}/v1/resolve/{clean_hex}.json"
@@ -267,18 +276,25 @@ class FMagenticLClient:
             self._metrics["edge_parse_error"] += 1
             return None
 
-        # Verify cryptographic authenticity and fingerprint
-        is_verified = verify_patch_signature(
-            patch,
-            require_signature=self.require_signature
-        )
-        if not is_verified and self.require_signature:
+        if not isinstance(patch, dict):
             self._metrics["edge_parse_error"] += 1
-            print(f"[FMagenticL Client] Remote patch {clean_hex} rejected: cryptographic signature verification failed (require_signature=True)")
             return None
 
-        if isinstance(patch, dict):
-            patch["signature_verified"] = is_verified
+        sig_ok = verify_patch_signature(patch)
+        fp_ok = verify_patch_fingerprint(patch, expected_fp=clean_hex)
+
+        if self.require_signature and not sig_ok:
+            self._metrics["edge_parse_error"] += 1
+            print(f"[FMagenticL Client] Remote patch {clean_hex} rejected: Ed25519 signature verification failed (require_signature=True)")
+            return None
+
+        if not sig_ok and not fp_ok:
+            self._metrics["edge_parse_error"] += 1
+            print(f"[FMagenticL Client] Remote patch {clean_hex} rejected: fingerprint/structure integrity verification failed")
+            return None
+
+        patch["signature_verified"] = sig_ok
+        patch["fingerprint_verified"] = fp_ok
 
         self._metrics["edge_hit"] += 1
         return patch

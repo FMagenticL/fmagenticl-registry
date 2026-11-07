@@ -22,11 +22,29 @@ except ImportError:
     mcp = None
     HAS_FASTMCP = False
 
+from fmagenticl import __version__
 from fmagenticl.client.middleware import FMagenticLClient
 from fmagenticl.client.patchers import Patcher
 
 api_base = os.environ.get("FMAGENTICL_API_BASE", "https://fmagenticl-registry.pages.dev")
-client = FMagenticLClient(api_base=api_base)
+_client_instance: Optional[FMagenticLClient] = None
+
+
+def _get_client() -> FMagenticLClient:
+    """Lazy-initialize FMagenticLClient on first tool invocation (zero network I/O on module import)."""
+    global _client_instance
+    if _client_instance is None:
+        _client_instance = FMagenticLClient(api_base=api_base)
+    return _client_instance
+
+
+class _LazyClientProxy:
+    def __getattr__(self, name: str):
+        return getattr(_get_client(), name)
+
+
+client = _LazyClientProxy()
+
 
 def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, Any]:
     patch = client.resolve_failure(environment, failure)
@@ -34,25 +52,32 @@ def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, 
         return {"status": "RESOLVED", "patch": patch}
     return {"status": "UNRESOLVED", "message": "No matching verified patch found in local cache or registry."}
 
+
 def _auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     ctx = dict(context or {})
-    # Enforce safe advisory dry-run validation by default
-    ctx.setdefault("apply_cli", False)
+    # Hard security invariant: MCP _auto_heal ALWAYS executes in read-only dry-run mode
+    # (never overridden by caller-supplied context['apply_cli'] or context['dry_run']).
+    ctx["dry_run"] = True
+    ctx["apply_cli"] = False
     patch = client.resolve_failure(environment, failure, context=ctx)
     if patch:
         res_patch = patch.get("resolution_patch") or patch
-        # Validate patch applicability through Patcher in safe dry-run mode
-        is_applicable = Patcher.apply_patch(res_patch, context=ctx)
+        # Validate patch applicability strictly in memory (zero disk mutation, zero shell execution)
+        is_applicable = Patcher.apply_patch(res_patch, context=ctx, dry_run=True)
         return {
             "status": "VALIDATED_DRY_RUN" if is_applicable else "VALIDATION_FAILED",
             "action": res_patch.get("action") or res_patch.get("patch_type"),
             "patch_applicable": is_applicable,
+            "applied": False,
             "advisory_plan": ctx.get("advisory_cli") or res_patch.get("fallback_cli"),
+            "preview_patched_doc": ctx.get("preview_patched_doc"),
             "resolution_patch": res_patch,
-            "signature_verified": patch.get("signature_verified", False),
-            "notice": "Advisory dry-run validation complete. Inspect resolution patch before applying in a bounded sandbox."
+            "signature_verified": bool(patch.get("signature_verified", False)),
+            "fingerprint_verified": bool(patch.get("fingerprint_verified", False)),
+            "notice": "Advisory dry-run validation complete (zero files modified). Inspect resolution patch before applying in a bounded sandbox."
         }
     return {"status": "FAILED", "message": "Could not auto-heal: No deterministic patch found."}
+
 
 def _report(
     environment: Dict[str, str],
@@ -69,6 +94,7 @@ def _report(
         technical_note=technical_note
     )
     return {"status": "QUEUED_FOR_SYNC", "message": "Telemetry queued for background ingestion."}
+
 
 def _submit_grievance(
     grievance_type: str,
@@ -91,11 +117,14 @@ def _submit_grievance(
         submitted_by=submitted_by
     )
 
+
 def _get_workarounds(target: str) -> Dict[str, Any]:
     return client.get_workarounds(target)
 
+
 def _get_grievances(target: str) -> Dict[str, Any]:
-    return _get_workarounds(target)
+    return client.get_grievances(target)
+
 
 def _report_patch_outcome(
     fingerprint: str,
@@ -110,6 +139,7 @@ def _report_patch_outcome(
         notes=notes
     )
 
+
 if HAS_FASTMCP and mcp:
     @mcp.tool()
     def fmagenticl_resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> str:
@@ -118,7 +148,7 @@ if HAS_FASTMCP and mcp:
 
     @mcp.tool()
     def fmagenticl_auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> str:
-        """DETERMINISTIC AUTO-HEALING: Resolves and dry-run validates verified deterministic patches (RFC 6902 JSON patch, advisory CLI) to unlock workspace files, fix package.json, or resolve locks without executing arbitrary shell strings."""
+        """DETERMINISTIC AUTO-HEALING: Resolves and dry-run validates verified deterministic patches (RFC 6902 JSON patch, advisory CLI) in memory without mutating workspace files or executing shell strings."""
         return json.dumps(_auto_heal(environment, failure, context))
 
     @mcp.tool()
@@ -166,6 +196,7 @@ if HAS_FASTMCP and mcp:
         """Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three consecutive NACKs quarantine the patch."""
         return json.dumps(_report_patch_outcome(fingerprint, outcome, submitted_by, notes))
 
+
 def run_stdio_server():
     """Standard I/O Model Context Protocol (MCP) JSON-RPC 2.0 implementation."""
     TOOLS_LIST = [
@@ -189,7 +220,7 @@ def run_stdio_server():
         },
         {
             "name": "fmagenticl_auto_heal",
-            "description": "Resolve and dry-run validate a deterministic patch for application. Remote endpoint cannot write to the caller's filesystem; returns the validated patch for safe local application by the client.",
+            "description": "Resolve and dry-run validate a deterministic patch strictly in memory (zero disk writes, zero shell execution). Returns the validated patch and preview for safe developer-inspected application.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -355,7 +386,7 @@ def run_stdio_server():
                     },
                     "serverInfo": {
                         "name": "FMagenticL-Self-Healing",
-                        "version": "1.4.0"
+                        "version": __version__
                     }
                 }
             elif method == "ping":
@@ -433,9 +464,9 @@ def run_stdio_server():
             sys.stdout.write(json.dumps(err_resp) + "\n")
             sys.stdout.flush()
 
-if __name__ == "__main__":
+
+def main():
     if "--test" in sys.argv:
-        # Self-test routine
         env = {"os": "win32", "os_version": "10.0.26100", "runtime": "node@24.15.0", "package": "hermes-agent@0.4.8"}
         fail = {"error_code": "EBADENGINE", "exit_code": 1, "raw_signature": "npm ERR! code EBADENGINE"}
         res = _resolve(env, fail)
@@ -446,3 +477,7 @@ if __name__ == "__main__":
         mcp.run()
     else:
         run_stdio_server()
+
+
+if __name__ == "__main__":
+    main()
