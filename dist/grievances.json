@@ -1,7 +1,63 @@
 {
-  "count": 1702,
-  "generated_at": "2026-11-08T02:29:07Z",
+  "count": 1711,
+  "generated_at": "2026-11-08T10:18:24Z",
   "grievances": [
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-08T07:13:41Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:263429b4557591a1c24ae5eabc4fa641ea8efb31c5bfa769a293937288b1216e",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_44810",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] DeepSeek-V4 BF16 checkpoint is routed to the MXFP4 expert path and fails in fused MoE",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] deepseek_v4: route unquantized BF16/F16/F32 checkpoints off the MXFP4 expert path. Target files: python/sglang/srt/configs/deepseek_v4.py, test/registered/unit/configs/test_deepseek_v4_fp4_detect.py. Fixes https://github.com/sgl-project/sglang/issues/44810. (Ref: https://github.com/sgl-project/sglang/pull/44813)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-08T05:49:53Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cbf4194d7008260a7108b1a274dbeddc29c19c9add0722674d980fa2b7366943",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_39889",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] WordExtractor cannot extract remote .docx files on Windows (PermissionError: temp file is still open)",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(rag): close downloaded temp file before reopening it in WordExtractor. Target files: api/core/rag/extractor/word_extractor.py, api/tests/unit_tests/core/rag/extractor/test_word_extractor.py. - Close the `NamedTemporaryFile` handle immediately after writing the remote response so the path can be reopened on Windows. - Keep only the temp path on the instance and unlink it in `close()`; `close()` stays idempotent and tolerates a missing file. - Update the extractor unit tests to cover path-based cleanup (unlink, idempotenc... (Ref: https://github.com/langgenius/dify/pull/39894)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-08T03:03:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:53604e56bf517da156b3be0fcc3bc28db5ac11e6769814e5c5cda713642a9e84",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_64874",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: [ROCm][GLM-5.3-Flash]: \"Workspace is locked\" AssertionError in rocm_fp8_paged_mqa_logits under high decode concurrency (glm5next AMD indexer reserves decode logits via torch.empty, not the workspace)",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][ROCm] Reserve kpool decode indexer logits in workspace during profiling. Target files: vllm/models/glm5next/amd/sparse_indexer.py, tests/models/glm5next/test_sparse_indexer_topk_dispatch.py. Serving `GLM-5.3-Flash` on ROCm crashes in decode once `batch_size * next_n * max_pool_len * 4` outgrows both the prefill K-gather workspace and the largest captured CUDA graph batch (`AssertionError: Workspace is locked but allocation from 'rocm_aiter_mla_sparse.py:...:rocm_fp8_paged_mqa_logits' requires 276.00 MB, current s... (Ref: https://github.com/vllm-project/vllm/pull/65092)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T02:49:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f9f44230e2724ca24f18c721da36212a419bf1467af49d5e5fa863b6887f8fd1",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43571",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: GET /key/info returns 500 MissingRequiredValueError (`where.token`) when the authenticated principal has no virtual key (api_key=None) instead of a clean 4xx",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(key/info): return 400 instead of 500 when no key is provided. Target files: litellm/proxy/management_endpoints/key_management_endpoints.py, tests/unit/proxy/management_endpoints/test_key_management_endpoints.py. `GET /key/info` returns a 500 `MissingRequiredValueError` when both the `?key=` query parameter and the authenticated principal's `api_key` are `None` (e.g. an admin-UI session token). The endpoint passed `hashed_key=None` straight to Prisma `find_unique(where={\"token\": None})`, which the database rejects. (Ref: https://github.com/BerriAI/litellm/pull/43577)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-08T02:21:32Z",
@@ -8278,6 +8334,20 @@
     },
     {
       "applies_to": "vllm",
+      "created_at": "2026-10-15T10:22:45.443277Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4309\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.30.0\", \"aliases\": [\"CVE-2026-105754\", \"GHSA-ph72-cqr5-qpp7\"]}",
+      "fingerprint": "sha256:78999310ad28c801e0ddee615d5a2c22dc310311b0b1690d188aef23bbad0e8b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4309",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4309] vLLM: Scale-out disaggregated multimodal transport trusts caller-supplied features (Affects vllm < 0.30.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4309)"
+    },
+    {
+      "applies_to": "vllm",
       "created_at": "2026-10-15T10:22:45.361001Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4306\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.30.0\", \"aliases\": [\"CVE-2026-105756\", \"GHSA-2823-qmq8-rwvj\"]}",
       "fingerprint": "sha256:d04ecab35525ff75b73fba270ee514c9d09aab6e1dfdf3d884e1b83707544be0",
@@ -15179,6 +15249,20 @@
       "workaround": "Fix: Fix CI AttributeError: 'str' object has no attribute '__module__'. Target files: pyproject.toml. Fix CI AttributeError: 'str' object has no attribute '__module__': - Pin transformers != 5.13.0 Fix #2487. This PR makes a minor update to the `pyproject.toml` file to address a compatibility issue with a specific version of the `transformers` library. (Ref: https://github.com/huggingface/smolagents/pull/2488)"
     },
     {
+      "applies_to": "bentoml",
+      "created_at": "2026-07-07T16:03:20.232952Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1218\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.4.34\", \"aliases\": [\"CVE-2026-24123\", \"GHSA-6r62-w2q3-48hf\"]}",
+      "fingerprint": "sha256:4f69cb322d51e63276747a05c34ff063133204b0410d0a862ae10960fdf5a108",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_1218",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-1218] BentoML has a Path Traversal via Bentofile Configuration (Affects bentoml < 1.4.34)",
+      "target": "bentoml",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade bentoml to patched release >= 1.4.34: pip install --upgrade 'bentoml>=1.4.34' (Advisory: PYSEC-2026-1218)"
+    },
+    {
       "applies_to": "wheel",
       "created_at": "2026-07-07T16:03:19.867108Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2047\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.46.2\", \"aliases\": [\"CVE-2026-24049\", \"GHSA-8rrh-rw8j-w5fx\"]}",
@@ -21843,6 +21927,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.18.0: pip install --upgrade 'vllm>=0.18.0' (Advisory: GHSA-7972-pg2x-xr59)"
     },
     {
+      "applies_to": "streamlit",
+      "created_at": "2026-03-26T22:16:30.880Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2285\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.54.0\", \"aliases\": [\"CVE-2026-33682\", \"GHSA-7p48-42j8-8846\"]}",
+      "fingerprint": "sha256:99f294d1e748da1cb218651ec3a40e58cf0e7a377d7b388d142d8805aba78534",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2285",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2285] Streamlit is a data oriented application development framework for python. Streamlit Open Source versions prior to 1.54.0 running on Windows hosts have an un... (Affects streamlit < 1.54.0)",
+      "target": "streamlit",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade streamlit to patched release >= 1.54.0: pip install --upgrade 'streamlit>=1.54.0' (Advisory: PYSEC-2026-2285)"
+    },
+    {
       "applies_to": "astro",
       "created_at": "2026-03-26T18:45:17Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-g735-7g2w-hh3f\", \"ecosystem\": \"npm\", \"fixed_version\": \"5.18.1\", \"aliases\": [\"CVE-2026-33769\"]}",
@@ -21953,6 +22051,20 @@
       "target": "mlflow",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade mlflow to patched release >= 3.9.0rc0: pip install --upgrade 'mlflow>=3.9.0rc0' (Advisory: GHSA-fhff-qmm8-h2fp)"
+    },
+    {
+      "applies_to": "pyopenssl",
+      "created_at": "2026-03-18T00:16:19.273Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2269\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"26.0.0\", \"aliases\": [\"CVE-2026-27459\", \"GHSA-5pwr-322w-8jr4\"]}",
+      "fingerprint": "sha256:21fb150bc0f90cc56ad3200c0e2dab0e4862ddf429c42fb500d8586e5196db0a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2269",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2269] pyOpenSSL is a Python wrapper around the OpenSSL library. Starting in version 22.0.0 and prior to version 26.0.0, if a user provided callback to `set_cookie_... (Affects pyopenssl < 26.0.0)",
+      "target": "pyopenssl",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyopenssl to patched release >= 26.0.0: pip install --upgrade 'pyopenssl>=26.0.0' (Advisory: PYSEC-2026-2269)"
     },
     {
       "applies_to": "pyopenssl",
@@ -22975,6 +23087,20 @@
       "target": "litestar",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade litestar to patched release >= 2.20.0: pip install --upgrade 'litestar>=2.20.0' (Advisory: PYSEC-2026-2196)"
+    },
+    {
+      "applies_to": "litestar",
+      "created_at": "2026-02-09T20:15:57.017Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2195\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.20.0\", \"aliases\": [\"CVE-2026-25478\", \"GHSA-2p2x-hpg8-cqp2\"]}",
+      "fingerprint": "sha256:4671c9f88bcc4d680cf263311d5ca759ab95b1b64da4e5b4055ca02533b0926a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2195",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2195] Litestar is an Asynchronous Server Gateway Interface (ASGI) framework. Prior to 2.20.0, CORSConfig.allowed_origins_regex is constructed using a regex built f... (Affects litestar < 2.20.0)",
+      "target": "litestar",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litestar to patched release >= 2.20.0: pip install --upgrade 'litestar>=2.20.0' (Advisory: PYSEC-2026-2195)"
     },
     {
       "applies_to": "axios",
@@ -23834,6 +23960,62 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-08T07:13:41Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:263429b4557591a1c24ae5eabc4fa641ea8efb31c5bfa769a293937288b1216e",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_44810",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] DeepSeek-V4 BF16 checkpoint is routed to the MXFP4 expert path and fails in fused MoE",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] deepseek_v4: route unquantized BF16/F16/F32 checkpoints off the MXFP4 expert path. Target files: python/sglang/srt/configs/deepseek_v4.py, test/registered/unit/configs/test_deepseek_v4_fp4_detect.py. Fixes https://github.com/sgl-project/sglang/issues/44810. (Ref: https://github.com/sgl-project/sglang/pull/44813)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-08T05:49:53Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cbf4194d7008260a7108b1a274dbeddc29c19c9add0722674d980fa2b7366943",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_39889",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] WordExtractor cannot extract remote .docx files on Windows (PermissionError: temp file is still open)",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(rag): close downloaded temp file before reopening it in WordExtractor. Target files: api/core/rag/extractor/word_extractor.py, api/tests/unit_tests/core/rag/extractor/test_word_extractor.py. - Close the `NamedTemporaryFile` handle immediately after writing the remote response so the path can be reopened on Windows. - Keep only the temp path on the instance and unlink it in `close()`; `close()` stays idempotent and tolerates a missing file. - Update the extractor unit tests to cover path-based cleanup (unlink, idempotenc... (Ref: https://github.com/langgenius/dify/pull/39894)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-08T03:03:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:53604e56bf517da156b3be0fcc3bc28db5ac11e6769814e5c5cda713642a9e84",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_64874",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: [ROCm][GLM-5.3-Flash]: \"Workspace is locked\" AssertionError in rocm_fp8_paged_mqa_logits under high decode concurrency (glm5next AMD indexer reserves decode logits via torch.empty, not the workspace)",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][ROCm] Reserve kpool decode indexer logits in workspace during profiling. Target files: vllm/models/glm5next/amd/sparse_indexer.py, tests/models/glm5next/test_sparse_indexer_topk_dispatch.py. Serving `GLM-5.3-Flash` on ROCm crashes in decode once `batch_size * next_n * max_pool_len * 4` outgrows both the prefill K-gather workspace and the largest captured CUDA graph batch (`AssertionError: Workspace is locked but allocation from 'rocm_aiter_mla_sparse.py:...:rocm_fp8_paged_mqa_logits' requires 276.00 MB, current s... (Ref: https://github.com/vllm-project/vllm/pull/65092)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T02:49:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f9f44230e2724ca24f18c721da36212a419bf1467af49d5e5fa863b6887f8fd1",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43571",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: GET /key/info returns 500 MissingRequiredValueError (`where.token`) when the authenticated principal has no virtual key (api_key=None) instead of a clean 4xx",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(key/info): return 400 instead of 500 when no key is provided. Target files: litellm/proxy/management_endpoints/key_management_endpoints.py, tests/unit/proxy/management_endpoints/test_key_management_endpoints.py. `GET /key/info` returns a 500 `MissingRequiredValueError` when both the `?key=` query parameter and the authenticated principal's `api_key` are `None` (e.g. an admin-UI session token). The endpoint passed `hashed_key=None` straight to Prisma `find_unique(where={\"token\": None})`, which the database rejects. (Ref: https://github.com/BerriAI/litellm/pull/43577)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-08T02:21:32Z",
       "environment_json": "{}",
@@ -32109,6 +32291,20 @@
     },
     {
       "applies_to": "vllm",
+      "created_at": "2026-10-15T10:22:45.443277Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4309\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.30.0\", \"aliases\": [\"CVE-2026-105754\", \"GHSA-ph72-cqr5-qpp7\"]}",
+      "fingerprint": "sha256:78999310ad28c801e0ddee615d5a2c22dc310311b0b1690d188aef23bbad0e8b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4309",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4309] vLLM: Scale-out disaggregated multimodal transport trusts caller-supplied features (Affects vllm < 0.30.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4309)"
+    },
+    {
+      "applies_to": "vllm",
       "created_at": "2026-10-15T10:22:45.361001Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4306\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.30.0\", \"aliases\": [\"CVE-2026-105756\", \"GHSA-2823-qmq8-rwvj\"]}",
       "fingerprint": "sha256:d04ecab35525ff75b73fba270ee514c9d09aab6e1dfdf3d884e1b83707544be0",
@@ -39010,6 +39206,20 @@
       "workaround": "Fix: Fix CI AttributeError: 'str' object has no attribute '__module__'. Target files: pyproject.toml. Fix CI AttributeError: 'str' object has no attribute '__module__': - Pin transformers != 5.13.0 Fix #2487. This PR makes a minor update to the `pyproject.toml` file to address a compatibility issue with a specific version of the `transformers` library. (Ref: https://github.com/huggingface/smolagents/pull/2488)"
     },
     {
+      "applies_to": "bentoml",
+      "created_at": "2026-07-07T16:03:20.232952Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-1218\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.4.34\", \"aliases\": [\"CVE-2026-24123\", \"GHSA-6r62-w2q3-48hf\"]}",
+      "fingerprint": "sha256:4f69cb322d51e63276747a05c34ff063133204b0410d0a862ae10960fdf5a108",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_1218",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-1218] BentoML has a Path Traversal via Bentofile Configuration (Affects bentoml < 1.4.34)",
+      "target": "bentoml",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade bentoml to patched release >= 1.4.34: pip install --upgrade 'bentoml>=1.4.34' (Advisory: PYSEC-2026-1218)"
+    },
+    {
       "applies_to": "wheel",
       "created_at": "2026-07-07T16:03:19.867108Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2047\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.46.2\", \"aliases\": [\"CVE-2026-24049\", \"GHSA-8rrh-rw8j-w5fx\"]}",
@@ -45674,6 +45884,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.18.0: pip install --upgrade 'vllm>=0.18.0' (Advisory: GHSA-7972-pg2x-xr59)"
     },
     {
+      "applies_to": "streamlit",
+      "created_at": "2026-03-26T22:16:30.880Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2285\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.54.0\", \"aliases\": [\"CVE-2026-33682\", \"GHSA-7p48-42j8-8846\"]}",
+      "fingerprint": "sha256:99f294d1e748da1cb218651ec3a40e58cf0e7a377d7b388d142d8805aba78534",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2285",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2285] Streamlit is a data oriented application development framework for python. Streamlit Open Source versions prior to 1.54.0 running on Windows hosts have an un... (Affects streamlit < 1.54.0)",
+      "target": "streamlit",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade streamlit to patched release >= 1.54.0: pip install --upgrade 'streamlit>=1.54.0' (Advisory: PYSEC-2026-2285)"
+    },
+    {
       "applies_to": "astro",
       "created_at": "2026-03-26T18:45:17Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-g735-7g2w-hh3f\", \"ecosystem\": \"npm\", \"fixed_version\": \"5.18.1\", \"aliases\": [\"CVE-2026-33769\"]}",
@@ -45784,6 +46008,20 @@
       "target": "mlflow",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade mlflow to patched release >= 3.9.0rc0: pip install --upgrade 'mlflow>=3.9.0rc0' (Advisory: GHSA-fhff-qmm8-h2fp)"
+    },
+    {
+      "applies_to": "pyopenssl",
+      "created_at": "2026-03-18T00:16:19.273Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2269\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"26.0.0\", \"aliases\": [\"CVE-2026-27459\", \"GHSA-5pwr-322w-8jr4\"]}",
+      "fingerprint": "sha256:21fb150bc0f90cc56ad3200c0e2dab0e4862ddf429c42fb500d8586e5196db0a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2269",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2269] pyOpenSSL is a Python wrapper around the OpenSSL library. Starting in version 22.0.0 and prior to version 26.0.0, if a user provided callback to `set_cookie_... (Affects pyopenssl < 26.0.0)",
+      "target": "pyopenssl",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyopenssl to patched release >= 26.0.0: pip install --upgrade 'pyopenssl>=26.0.0' (Advisory: PYSEC-2026-2269)"
     },
     {
       "applies_to": "pyopenssl",
@@ -46806,6 +47044,20 @@
       "target": "litestar",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade litestar to patched release >= 2.20.0: pip install --upgrade 'litestar>=2.20.0' (Advisory: PYSEC-2026-2196)"
+    },
+    {
+      "applies_to": "litestar",
+      "created_at": "2026-02-09T20:15:57.017Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2195\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.20.0\", \"aliases\": [\"CVE-2026-25478\", \"GHSA-2p2x-hpg8-cqp2\"]}",
+      "fingerprint": "sha256:4671c9f88bcc4d680cf263311d5ca759ab95b1b64da4e5b4055ca02533b0926a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2195",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2195] Litestar is an Asynchronous Server Gateway Interface (ASGI) framework. Prior to 2.20.0, CORSConfig.allowed_origins_regex is constructed using a regex built f... (Affects litestar < 2.20.0)",
+      "target": "litestar",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade litestar to patched release >= 2.20.0: pip install --upgrade 'litestar>=2.20.0' (Advisory: PYSEC-2026-2195)"
     },
     {
       "applies_to": "axios",
