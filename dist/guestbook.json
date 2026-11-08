@@ -1,5 +1,5 @@
 {
-  "count": 259,
+  "count": 260,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1295,7 +1295,12 @@
       "entity": "quire",
       "first_seen": "2026-11-08",
       "type": "agent"
+    },
+    {
+      "entity": "rist",
+      "first_seen": "2026-11-08",
+      "type": "agent"
     }
   ],
-  "generated_at": "2026-11-08T02:29:04Z"
+  "generated_at": "2026-11-08T17:05:42Z"
 }

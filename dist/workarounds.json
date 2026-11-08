@@ -1,7 +1,35 @@
 {
-  "count": 1711,
-  "generated_at": "2026-11-08T10:18:24Z",
+  "count": 1717,
+  "generated_at": "2026-11-08T17:05:45Z",
   "grievances": [
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-08T13:45:14Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:606ba366efeddf9f2f42574e3c3d4d86df06aa004635295564e6901f54729676",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12855",
+      "submitted_by": "harvester-v1",
+      "symptom": "Harness `Shell` on macOS: stopping a job fails with `Operation not permitted` once its process group holds only zombies",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Report the exit code of a `Shell` job whose command makes its job directory read-only, and stop it without a retry. Target files: src/pydantic_ai_harness/pydantic_ai_harness/shell/_jobs.py, src/pydantic_ai_harness/pydantic_ai_harness/shell/_toolset.py, tests/harness/shell/test_persistent.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12830)"
+    },
+    {
+      "applies_to": "pydantic/pydantic",
+      "created_at": "2026-11-08T11:52:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d3db90af65e9fbf9cf85cd61142322f51e783e6b0930538d440735483b6f5584",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic_14237",
+      "submitted_by": "harvester-v1",
+      "symptom": "ValidationError traceback cycles retain failed model instances after gc.collect()",
+      "target": "pydantic",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix more issues about GC tracking in `pydantic-core`. Target files: pydantic-core/src/argument_markers.rs, pydantic-core/src/build_tools.rs, pydantic-core/src/errors/types.rs. Missed in https://github.com/pydantic/pydantic/pull/13819... (Ref: https://github.com/pydantic/pydantic/pull/14253)"
+    },
     {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-08T07:13:41Z",
@@ -6063,6 +6091,20 @@
       "target": "authlib",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4359)"
+    },
+    {
+      "applies_to": "authlib",
+      "created_at": "2026-10-22T22:18:04.257Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4355\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.9.0\", \"aliases\": [\"CVE-2026-114615\", \"GHSA-7vr2-2fgp-9w7p\"]}",
+      "fingerprint": "sha256:724aceaa76cb9df4db029e2215b457091d05bf4d2e4c83c513e4a82586e4d802",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4355",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4355] Authlib is a Python library which builds OAuth and OpenID Connect servers. From 1.3.1 until 1.9.0, OctKey.import_key() checks asymmetric-key markers only at ... (Affects authlib < 1.9.0)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4355)"
     },
     {
       "applies_to": "pillow",
@@ -15011,6 +15053,20 @@
       "workaround": "Upgrade mlflow to patched release >= 3.10.0: pip install --upgrade 'mlflow>=3.10.0' (Advisory: PYSEC-2026-2654)"
     },
     {
+      "applies_to": "langchain-core",
+      "created_at": "2026-07-13T15:15:43.058361Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2564\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.3\", \"aliases\": [\"CVE-2026-44843\", \"GHSA-pjwx-r37v-7724\"]}",
+      "fingerprint": "sha256:332056645b13dc25b0197ea4805642ac50c2af92ab6ab120ead1deb88463a9a7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2564",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2564] LangChain vulnerable to unsafe deserialization of attacker-controlled objects through overly broad `load()` allowlists (Affects langchain-core < 1.3.3)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.3.3: pip install --upgrade 'langchain-core>=1.3.3' (Advisory: PYSEC-2026-2564)"
+    },
+    {
       "applies_to": "bentoml",
       "created_at": "2026-07-13T15:15:40.797682Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2399\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.4.39\", \"aliases\": [\"CVE-2026-40610\", \"GHSA-mcfx-4vc6-qgxv\"]}",
@@ -18749,6 +18805,20 @@
       "workaround": "Upgrade keras to patched release >= 3.14.0: pip install --upgrade 'keras>=3.14.0' (Advisory: PYSEC-2026-2324)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-06-11T12:32:44Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-wcwg-c5fc-9vrc\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.19.0\", \"aliases\": [\"CVE-2026-5497\", \"PYSEC-2026-2302\"]}",
+      "fingerprint": "sha256:57092eb6ec7ed6e7cb6799a2640f950ed5480cd26a27cb50cc533d7ecaf79bbb",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_wcwg_c5fc_9vrc",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-wcwg-c5fc-9vrc] vLLM is vulnerable to an Out-of-Memory (OOM) Denial of Service (DoS) attack due to unbounded frame count processing in the `VideoMediaIO.load_base64()` method (Affects vllm < 0.19.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.19.0: pip install --upgrade 'vllm>=0.19.0' (Advisory: GHSA-wcwg-c5fc-9vrc)"
+    },
+    {
       "applies_to": "daytonaio/daytona",
       "created_at": "2026-06-11T12:06:46Z",
       "environment_json": "{}",
@@ -20749,6 +20819,20 @@
       "target": "litellm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade litellm to patched release >= 1.83.7: pip install --upgrade 'litellm>=1.83.7' (Advisory: GHSA-v4p8-mg3p-g94g)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-04-25T22:36:50Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ad06d875a442376e1707cc439cbd757c40ae9edbd5b873bd44b57ec842cd933c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_24549",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Xiaomi MiMo models: 'output_config' parameter causes AsyncCompletions.create() to fail with Claude Code",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(adapters,vertex): pass output_config through to backends that accept it (closes #23380, supersedes #23475/#23396/#23706/#22727). Target files: litellm/llms/anthropic/experimental_pass_through/adapters/handler.py, litellm/llms/anthropic/experimental_pass_through/adapters/transformation.py, litellm/llms/vertex_ai/vertex_ai_partner_models/anthropic/experimental_pass_through/transformation.py. Pass `output_config` through to backends that accept it (Vertex AI Claude, Anthropic-direct) and stop forwarding the raw Anthropic-s... (Ref: https://github.com/BerriAI/litellm/pull/26439)"
     },
     {
       "applies_to": "litellm",
@@ -23960,6 +24044,34 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-08T13:45:14Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:606ba366efeddf9f2f42574e3c3d4d86df06aa004635295564e6901f54729676",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12855",
+      "submitted_by": "harvester-v1",
+      "symptom": "Harness `Shell` on macOS: stopping a job fails with `Operation not permitted` once its process group holds only zombies",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Report the exit code of a `Shell` job whose command makes its job directory read-only, and stop it without a retry. Target files: src/pydantic_ai_harness/pydantic_ai_harness/shell/_jobs.py, src/pydantic_ai_harness/pydantic_ai_harness/shell/_toolset.py, tests/harness/shell/test_persistent.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12830)"
+    },
+    {
+      "applies_to": "pydantic/pydantic",
+      "created_at": "2026-11-08T11:52:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d3db90af65e9fbf9cf85cd61142322f51e783e6b0930538d440735483b6f5584",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic_14237",
+      "submitted_by": "harvester-v1",
+      "symptom": "ValidationError traceback cycles retain failed model instances after gc.collect()",
+      "target": "pydantic",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix more issues about GC tracking in `pydantic-core`. Target files: pydantic-core/src/argument_markers.rs, pydantic-core/src/build_tools.rs, pydantic-core/src/errors/types.rs. Missed in https://github.com/pydantic/pydantic/pull/13819... (Ref: https://github.com/pydantic/pydantic/pull/14253)"
+    },
+    {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-08T07:13:41Z",
       "environment_json": "{}",
@@ -30020,6 +30132,20 @@
       "target": "authlib",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4359)"
+    },
+    {
+      "applies_to": "authlib",
+      "created_at": "2026-10-22T22:18:04.257Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4355\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.9.0\", \"aliases\": [\"CVE-2026-114615\", \"GHSA-7vr2-2fgp-9w7p\"]}",
+      "fingerprint": "sha256:724aceaa76cb9df4db029e2215b457091d05bf4d2e4c83c513e4a82586e4d802",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4355",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4355] Authlib is a Python library which builds OAuth and OpenID Connect servers. From 1.3.1 until 1.9.0, OctKey.import_key() checks asymmetric-key markers only at ... (Affects authlib < 1.9.0)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4355)"
     },
     {
       "applies_to": "pillow",
@@ -38968,6 +39094,20 @@
       "workaround": "Upgrade mlflow to patched release >= 3.10.0: pip install --upgrade 'mlflow>=3.10.0' (Advisory: PYSEC-2026-2654)"
     },
     {
+      "applies_to": "langchain-core",
+      "created_at": "2026-07-13T15:15:43.058361Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2564\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.3\", \"aliases\": [\"CVE-2026-44843\", \"GHSA-pjwx-r37v-7724\"]}",
+      "fingerprint": "sha256:332056645b13dc25b0197ea4805642ac50c2af92ab6ab120ead1deb88463a9a7",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2564",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2564] LangChain vulnerable to unsafe deserialization of attacker-controlled objects through overly broad `load()` allowlists (Affects langchain-core < 1.3.3)",
+      "target": "langchain",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade langchain-core to patched release >= 1.3.3: pip install --upgrade 'langchain-core>=1.3.3' (Advisory: PYSEC-2026-2564)"
+    },
+    {
       "applies_to": "bentoml",
       "created_at": "2026-07-13T15:15:40.797682Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2399\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.4.39\", \"aliases\": [\"CVE-2026-40610\", \"GHSA-mcfx-4vc6-qgxv\"]}",
@@ -42706,6 +42846,20 @@
       "workaround": "Upgrade keras to patched release >= 3.14.0: pip install --upgrade 'keras>=3.14.0' (Advisory: PYSEC-2026-2324)"
     },
     {
+      "applies_to": "vllm",
+      "created_at": "2026-06-11T12:32:44Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-wcwg-c5fc-9vrc\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.19.0\", \"aliases\": [\"CVE-2026-5497\", \"PYSEC-2026-2302\"]}",
+      "fingerprint": "sha256:57092eb6ec7ed6e7cb6799a2640f950ed5480cd26a27cb50cc533d7ecaf79bbb",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_wcwg_c5fc_9vrc",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-wcwg-c5fc-9vrc] vLLM is vulnerable to an Out-of-Memory (OOM) Denial of Service (DoS) attack due to unbounded frame count processing in the `VideoMediaIO.load_base64()` method (Affects vllm < 0.19.0)",
+      "target": "vllm",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade vllm to patched release >= 0.19.0: pip install --upgrade 'vllm>=0.19.0' (Advisory: GHSA-wcwg-c5fc-9vrc)"
+    },
+    {
       "applies_to": "daytonaio/daytona",
       "created_at": "2026-06-11T12:06:46Z",
       "environment_json": "{}",
@@ -44706,6 +44860,20 @@
       "target": "litellm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade litellm to patched release >= 1.83.7: pip install --upgrade 'litellm>=1.83.7' (Advisory: GHSA-v4p8-mg3p-g94g)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-04-25T22:36:50Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ad06d875a442376e1707cc439cbd757c40ae9edbd5b873bd44b57ec842cd933c",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_24549",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Xiaomi MiMo models: 'output_config' parameter causes AsyncCompletions.create() to fail with Claude Code",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(adapters,vertex): pass output_config through to backends that accept it (closes #23380, supersedes #23475/#23396/#23706/#22727). Target files: litellm/llms/anthropic/experimental_pass_through/adapters/handler.py, litellm/llms/anthropic/experimental_pass_through/adapters/transformation.py, litellm/llms/vertex_ai/vertex_ai_partner_models/anthropic/experimental_pass_through/transformation.py. Pass `output_config` through to backends that accept it (Vertex AI Claude, Anthropic-direct) and stop forwarding the raw Anthropic-s... (Ref: https://github.com/BerriAI/litellm/pull/26439)"
     },
     {
       "applies_to": "litellm",
