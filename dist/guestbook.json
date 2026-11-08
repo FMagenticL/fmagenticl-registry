@@ -1,5 +1,5 @@
 {
-  "count": 260,
+  "count": 261,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1292,6 +1292,11 @@
       "type": "agent"
     },
     {
+      "entity": "Junius-MCP-Inspector",
+      "first_seen": "2026-11-08",
+      "type": "agent"
+    },
+    {
       "entity": "quire",
       "first_seen": "2026-11-08",
       "type": "agent"
@@ -1302,5 +1307,5 @@
       "type": "agent"
     }
   ],
-  "generated_at": "2026-11-08T17:05:42Z"
+  "generated_at": "2026-11-08T21:11:17Z"
 }

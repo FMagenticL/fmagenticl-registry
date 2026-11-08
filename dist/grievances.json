@@ -1,7 +1,35 @@
 {
-  "count": 1717,
-  "generated_at": "2026-11-08T17:05:45Z",
+  "count": 1722,
+  "generated_at": "2026-11-08T21:11:20Z",
   "grievances": [
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-08T20:26:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7ef557224789dbf6a8f2323a6dc576973dd5245de1c3a4624265c19338b0a9cd",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_45784",
+      "submitted_by": "harvester-v1",
+      "symptom": "email() validator accepts leading, trailing, or consecutive dots in the local part",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(validation): reject email local parts with leading, trailing, or consecutive dots. Target files: api/libs/helper.py, api/tests/unit_tests/libs/test_email_local_part.py. `email()` in `api/libs/helper.py` (the `EmailStr` validator used for API request fields) folds a literal dot into the local-part character class: (Ref: https://github.com/langgenius/dify/pull/45786)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-08T19:33:11Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:dba1f863658f5dabd79666206200a14a788b851e487017892c37c2f6fa4098d2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_45403",
+      "submitted_by": "harvester-v1",
+      "symptom": "Agent node fails with `'str' object has no attribute 'get'` when a non-string parameter references a variable containing JSON-special characters",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(api): resolve agent node parameter templates without a JSON round-trip. Target files: api/core/workflow/nodes/agent/runtime_support.py, api/tests/unit_tests/core/workflow/nodes/agent/test_runtime_support.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 1. Ensure there is an associated issue > 1. Use the correct syntax to link this PR: `Fixes #<issue number>`. (Ref: https://github.com/langgenius/dify/pull/45419)"
+    },
     {
       "applies_to": "pydantic/pydantic-ai",
       "created_at": "2026-11-08T13:45:14Z",
@@ -13765,6 +13793,20 @@
       "workaround": "Upgrade mcp to patched release >= 1.28.1: pip install --upgrade 'mcp>=1.28.1' (Advisory: PYSEC-2026-3483)"
     },
     {
+      "applies_to": "mcp",
+      "created_at": "2026-07-23T11:41:46.472358Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3482\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.27.2\", \"aliases\": [\"CVE-2026-52869\", \"GHSA-jpw9-pfvf-9f58\"]}",
+      "fingerprint": "sha256:6a4bc019737abb2c13681ea9d039009222edae1ae9d1dc3c3819c73d04854e0d",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3482",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3482] MCP Python SDK: HTTP transports serve session requests without verifying the authenticated principal (Affects mcp < 1.27.2)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 1.27.2: pip install --upgrade 'mcp>=1.27.2' (Advisory: PYSEC-2026-3482)"
+    },
+    {
       "applies_to": "jupyterlab",
       "created_at": "2026-07-22T23:16:18Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pppj-hq3g-57pj\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.6.2\", \"aliases\": [\"BIT-jupyterlab-2026-73417\", \"CVE-2026-73417\", \"PYSEC-2026-3672\"]}",
@@ -15121,6 +15163,20 @@
       "target": "fastmcp",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: PYSEC-2026-2476)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-07-13T14:36:46.084219Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2475\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2025-64340\", \"GHSA-m8x7-r2rg-vh5g\"]}",
+      "fingerprint": "sha256:fc305f590a2f1c8da39418c5dcec899bda134fbd15a767761037c870b4009227",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2475",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2475] FastMCP has a Command Injection vulnerability - Gemini CLI (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: PYSEC-2026-2475)"
     },
     {
       "applies_to": "pygments",
@@ -22891,6 +22947,20 @@
       "target": "gradio",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade gradio to patched release >= 6.7.0: pip install --upgrade 'gradio>=6.7.0' (Advisory: PYSEC-2026-64)"
+    },
+    {
+      "applies_to": "gradio",
+      "created_at": "2026-02-27T22:16:22.820Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-63\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.6.0\", \"aliases\": [\"CVE-2026-27167\", \"GHSA-h3h8-3v2v-rg7m\"]}",
+      "fingerprint": "sha256:94e785c345df2caa4857fa802df7a6b71ee243b68fc113258ce1445257d34fba",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_63",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-63] Gradio is an open-source Python package designed for quick prototyping. Starting in version 4.16.0 and prior to version 6.6.0, Gradio applications running ou... (Affects gradio < 6.6.0)",
+      "target": "gradio",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gradio to patched release >= 6.6.0: pip install --upgrade 'gradio>=6.6.0' (Advisory: PYSEC-2026-63)"
     },
     {
       "applies_to": "uv",
@@ -24044,6 +24114,34 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-08T20:26:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7ef557224789dbf6a8f2323a6dc576973dd5245de1c3a4624265c19338b0a9cd",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_45784",
+      "submitted_by": "harvester-v1",
+      "symptom": "email() validator accepts leading, trailing, or consecutive dots in the local part",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(validation): reject email local parts with leading, trailing, or consecutive dots. Target files: api/libs/helper.py, api/tests/unit_tests/libs/test_email_local_part.py. `email()` in `api/libs/helper.py` (the `EmailStr` validator used for API request fields) folds a literal dot into the local-part character class: (Ref: https://github.com/langgenius/dify/pull/45786)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-08T19:33:11Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:dba1f863658f5dabd79666206200a14a788b851e487017892c37c2f6fa4098d2",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_45403",
+      "submitted_by": "harvester-v1",
+      "symptom": "Agent node fails with `'str' object has no attribute 'get'` when a non-string parameter references a variable containing JSON-special characters",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(api): resolve agent node parameter templates without a JSON round-trip. Target files: api/core/workflow/nodes/agent/runtime_support.py, api/tests/unit_tests/core/workflow/nodes/agent/test_runtime_support.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 1. Ensure there is an associated issue > 1. Use the correct syntax to link this PR: `Fixes #<issue number>`. (Ref: https://github.com/langgenius/dify/pull/45419)"
+    },
+    {
       "applies_to": "pydantic/pydantic-ai",
       "created_at": "2026-11-08T13:45:14Z",
       "environment_json": "{}",
@@ -37806,6 +37904,20 @@
       "workaround": "Upgrade mcp to patched release >= 1.28.1: pip install --upgrade 'mcp>=1.28.1' (Advisory: PYSEC-2026-3483)"
     },
     {
+      "applies_to": "mcp",
+      "created_at": "2026-07-23T11:41:46.472358Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3482\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.27.2\", \"aliases\": [\"CVE-2026-52869\", \"GHSA-jpw9-pfvf-9f58\"]}",
+      "fingerprint": "sha256:6a4bc019737abb2c13681ea9d039009222edae1ae9d1dc3c3819c73d04854e0d",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3482",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3482] MCP Python SDK: HTTP transports serve session requests without verifying the authenticated principal (Affects mcp < 1.27.2)",
+      "target": "mcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mcp to patched release >= 1.27.2: pip install --upgrade 'mcp>=1.27.2' (Advisory: PYSEC-2026-3482)"
+    },
+    {
       "applies_to": "jupyterlab",
       "created_at": "2026-07-22T23:16:18Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-pppj-hq3g-57pj\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.6.2\", \"aliases\": [\"BIT-jupyterlab-2026-73417\", \"CVE-2026-73417\", \"PYSEC-2026-3672\"]}",
@@ -39162,6 +39274,20 @@
       "target": "fastmcp",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: PYSEC-2026-2476)"
+    },
+    {
+      "applies_to": "fastmcp",
+      "created_at": "2026-07-13T14:36:46.084219Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2475\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.2.0\", \"aliases\": [\"CVE-2025-64340\", \"GHSA-m8x7-r2rg-vh5g\"]}",
+      "fingerprint": "sha256:fc305f590a2f1c8da39418c5dcec899bda134fbd15a767761037c870b4009227",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2475",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2475] FastMCP has a Command Injection vulnerability - Gemini CLI (Affects fastmcp < 3.2.0)",
+      "target": "fastmcp",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade fastmcp to patched release >= 3.2.0: pip install --upgrade 'fastmcp>=3.2.0' (Advisory: PYSEC-2026-2475)"
     },
     {
       "applies_to": "pygments",
@@ -46932,6 +47058,20 @@
       "target": "gradio",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade gradio to patched release >= 6.7.0: pip install --upgrade 'gradio>=6.7.0' (Advisory: PYSEC-2026-64)"
+    },
+    {
+      "applies_to": "gradio",
+      "created_at": "2026-02-27T22:16:22.820Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-63\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.6.0\", \"aliases\": [\"CVE-2026-27167\", \"GHSA-h3h8-3v2v-rg7m\"]}",
+      "fingerprint": "sha256:94e785c345df2caa4857fa802df7a6b71ee243b68fc113258ce1445257d34fba",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_63",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-63] Gradio is an open-source Python package designed for quick prototyping. Starting in version 4.16.0 and prior to version 6.6.0, Gradio applications running ou... (Affects gradio < 6.6.0)",
+      "target": "gradio",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gradio to patched release >= 6.6.0: pip install --upgrade 'gradio>=6.6.0' (Advisory: PYSEC-2026-63)"
     },
     {
       "applies_to": "uv",
