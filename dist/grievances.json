@@ -1,7 +1,49 @@
 {
-  "count": 1693,
-  "generated_at": "2026-11-07T22:46:36Z",
+  "count": 1702,
+  "generated_at": "2026-11-08T02:29:07Z",
   "grievances": [
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T02:21:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:55bdd9c0d4e272fd4de436671e1a689264f9cc0bdbb1546d8ded8ef6f57ab3c3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_50475",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Accounting metrics scan all retained SpendLogDelivery rows on every spend flush",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(accounting): stop delivery metrics from scanning retained receipts on every flush. Target files: litellm/accounting/metrics.py, litellm/accounting/worker.py, litellm/proxy/db/db_spend_update_writer.py. Stop flush from reading every record in SpendLogsDelivery <details> <summary>Details</summary> (Ref: https://github.com/BerriAI/litellm/pull/50565)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T01:54:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b82813ae51028be8ea0105fe6442874c5c53bcf17df64cf4f3528c45b203c31f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_50566",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: litellm.completion rejects a tool_choice forcing a hosted tool, such as {\"type\": \"web_search\"}, which the Responses API accepts",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(completion): accept a tool_choice that forces an OpenAI hosted tool. Target files: litellm/litellm_core_utils/allowed_tools_tool_choice.py, litellm/main.py, litellm/utils.py. accept hosted tools for openai endpoints <details> <summary>Details</summary> (Ref: https://github.com/BerriAI/litellm/pull/50578)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T00:02:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d1d623e482e5fd9e27ad682e5d034737d7d44ea08bea68101aeb8a50aa939905",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_50554",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Anthropic WIF requests can retry with an expired Authorization header",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(anthropic): refresh the WIF bearer token on the connection error retry. Target files: litellm/llms/base_llm/auth/token_exchange.py, litellm/llms/custom_httpx/http_handler.py, tests/unit/llms/custom_httpx/test_http_handler.py. access token corresponding to a anthropic_identity_token could expire during retry. expired access tokens now get swapped for fresh ones during retry (Ref: https://github.com/BerriAI/litellm/pull/50570)"
+    },
     {
       "applies_to": "pydantic/pydantic-ai",
       "created_at": "2026-11-07T22:37:22Z",
@@ -309,6 +351,20 @@
       "target": "pydantic-ai",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix flaky `test_recovery_reaches_the_same_decision` by closing the event loop `run_sync` leaves on the DBOS executor thread. Target files: tests/harness/detect_loops/test_dbos.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12724)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-06T16:38:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:5b482150aff9f0fadcbeafdcb79480231f4795ca49268c30683fc4874259b2ca",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12589",
+      "submitted_by": "harvester-v1",
+      "symptom": "Latest versions canary: AssertionError in tests/models/test_model_names.py",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Cap `google-genai<3` so fresh installs keep `GoogleModel` on the `v1beta` Gemini API. Target files: pydantic_ai_slim/pyproject.toml, .github/scripts/pydantic-ai-runner.lock, uv.lock. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12700)"
     },
     {
       "applies_to": "Arize-ai/phoenix",
@@ -20653,6 +20709,20 @@
       "workaround": "Upgrade postcss to patched release >= 8.5.10: npm install 'postcss@>=8.5.10' (Advisory: GHSA-qx2v-qp2m-jg93)"
     },
     {
+      "applies_to": "mako",
+      "created_at": "2026-04-23T19:17:29.270Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-88\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.11\", \"aliases\": [\"CVE-2026-41205\", \"GHSA-v92g-xgxw-vvmm\"]}",
+      "fingerprint": "sha256:f27c0b0ac5404292f87de0230e4290db1ff593b25dac8360a15dea6728169cb0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_88",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-88] Mako is a template library written in Python. Prior to 1.3.11, TemplateLookup.get_template() is vulnerable to path traversal when a URI starts with // (e.g.,... (Affects mako < 1.3.11)",
+      "target": "mako",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mako to patched release >= 1.3.11: pip install --upgrade 'mako>=1.3.11' (Advisory: PYSEC-2026-88)"
+    },
+    {
       "applies_to": "uuid",
       "created_at": "2026-04-22T20:53:24Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-w5hq-g745-h8pq\", \"ecosystem\": \"npm\", \"fixed_version\": \"13.0.1\", \"aliases\": [\"CVE-2026-41907\", \"CVE-2026-41988\"]}",
@@ -21043,6 +21113,20 @@
       "target": "strawberry-graphql",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade strawberry-graphql to patched release >= 0.312.3: pip install --upgrade 'strawberry-graphql>=0.312.3' (Advisory: PYSEC-2026-133)"
+    },
+    {
+      "applies_to": "strawberry-graphql",
+      "created_at": "2026-04-07T16:16:28.843Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-134\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.312.3\", \"aliases\": [\"CVE-2026-35526\", \"GHSA-hv3w-m4g2-5x77\"]}",
+      "fingerprint": "sha256:9589a249152b4a0bd986a286b74dffef0fadc1480aa572736df7a7045d3b3af0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_134",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-134] Strawberry GraphQL is a library for creating GraphQL APIs. Prior to 0.312.3, Strawberry GraphQL's WebSocket subscription handlers for both the graphql-transp... (Affects strawberry-graphql < 0.312.3)",
+      "target": "strawberry-graphql",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade strawberry-graphql to patched release >= 0.312.3: pip install --upgrade 'strawberry-graphql>=0.312.3' (Advisory: PYSEC-2026-134)"
     },
     {
       "applies_to": "django",
@@ -21561,6 +21645,20 @@
       "target": "aiohttp",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade aiohttp to patched release >= 3.13.4: pip install --upgrade 'aiohttp>=3.13.4' (Advisory: GHSA-w2fm-2cpv-w7v5)"
+    },
+    {
+      "applies_to": "onnx",
+      "created_at": "2026-04-01T18:16:30.810Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-104\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.21.0\", \"aliases\": [\"CVE-2026-34447\", \"GHSA-p433-9wv8-28xj\"]}",
+      "fingerprint": "sha256:cebdd9578addeddd7506127abd3e8b8068aaae39a3816a311f0bbfd09267045b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_104",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-104] Open Neural Network Exchange (ONNX) is an open standard for machine learning interoperability. Prior to version 1.21.0, there is a symlink traversal vulnerab... (Affects onnx < 1.21.0)",
+      "target": "onnx",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade onnx to patched release >= 1.21.0: pip install --upgrade 'onnx>=1.21.0' (Advisory: PYSEC-2026-104)"
     },
     {
       "applies_to": "fastmcp",
@@ -22235,6 +22333,20 @@
       "workaround": "Upgrade yauzl to patched release >= 3.2.1: npm install 'yauzl@>=3.2.1' (Advisory: GHSA-gmq8-994r-jv83)"
     },
     {
+      "applies_to": "tornado",
+      "created_at": "2026-03-11T20:16:16.617Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-140\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.5.5\", \"aliases\": [\"CVE-2026-31958\", \"GHSA-qjxf-f2mg-c6mc\"]}",
+      "fingerprint": "sha256:31664c8f3ec7eafdfc466bc2c01535b0919566f5144bf5afc48a0be7837cd74b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_140",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-140] Tornado is a Python web framework and asynchronous networking library. In versions of Tornado prior to 6.5.5, the only limit on the number of parts in multip... (Affects tornado < 6.5.5)",
+      "target": "tornado",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade tornado to patched release >= 6.5.5: pip install --upgrade 'tornado>=6.5.5' (Advisory: PYSEC-2026-140)"
+    },
+    {
       "applies_to": "black",
       "created_at": "2026-03-11T20:16:15.960Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2120\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"26.3.0\", \"aliases\": [\"CVE-2026-31900\", \"GHSA-v53h-f6m7-xcgm\"]}",
@@ -22569,6 +22681,20 @@
       "target": "sveltekit",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade @sveltejs/kit to patched release >= 2.53.3: npm install '@sveltejs/kit@>=2.53.3' (Advisory: GHSA-fpg4-jhqr-589c)"
+    },
+    {
+      "applies_to": "gradio",
+      "created_at": "2026-02-27T22:16:24.330Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-64\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.7.0\", \"aliases\": [\"CVE-2026-28414\", \"GHSA-39mp-8hj3-5c49\"]}",
+      "fingerprint": "sha256:8a6416ee402e86efd55fd9121398df4c3b2e3aec3db71b22a955ba8ec0fe927b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_64",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-64] Gradio is an open-source Python package designed for quick prototyping. Prior to version 6.7, Gradio apps running on Window with Python 3.13+ are vulnerable ... (Affects gradio < 6.7.0)",
+      "target": "gradio",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gradio to patched release >= 6.7.0: pip install --upgrade 'gradio>=6.7.0' (Advisory: PYSEC-2026-64)"
     },
     {
       "applies_to": "uv",
@@ -23708,6 +23834,48 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T02:21:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:55bdd9c0d4e272fd4de436671e1a689264f9cc0bdbb1546d8ded8ef6f57ab3c3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_50475",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Accounting metrics scan all retained SpendLogDelivery rows on every spend flush",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(accounting): stop delivery metrics from scanning retained receipts on every flush. Target files: litellm/accounting/metrics.py, litellm/accounting/worker.py, litellm/proxy/db/db_spend_update_writer.py. Stop flush from reading every record in SpendLogsDelivery <details> <summary>Details</summary> (Ref: https://github.com/BerriAI/litellm/pull/50565)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T01:54:58Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b82813ae51028be8ea0105fe6442874c5c53bcf17df64cf4f3528c45b203c31f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_50566",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: litellm.completion rejects a tool_choice forcing a hosted tool, such as {\"type\": \"web_search\"}, which the Responses API accepts",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(completion): accept a tool_choice that forces an OpenAI hosted tool. Target files: litellm/litellm_core_utils/allowed_tools_tool_choice.py, litellm/main.py, litellm/utils.py. accept hosted tools for openai endpoints <details> <summary>Details</summary> (Ref: https://github.com/BerriAI/litellm/pull/50578)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-08T00:02:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d1d623e482e5fd9e27ad682e5d034737d7d44ea08bea68101aeb8a50aa939905",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_50554",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Anthropic WIF requests can retry with an expired Authorization header",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(anthropic): refresh the WIF bearer token on the connection error retry. Target files: litellm/llms/base_llm/auth/token_exchange.py, litellm/llms/custom_httpx/http_handler.py, tests/unit/llms/custom_httpx/test_http_handler.py. access token corresponding to a anthropic_identity_token could expire during retry. expired access tokens now get swapped for fresh ones during retry (Ref: https://github.com/BerriAI/litellm/pull/50570)"
+    },
+    {
       "applies_to": "pydantic/pydantic-ai",
       "created_at": "2026-11-07T22:37:22Z",
       "environment_json": "{}",
@@ -24014,6 +24182,20 @@
       "target": "pydantic-ai",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix flaky `test_recovery_reaches_the_same_decision` by closing the event loop `run_sync` leaves on the DBOS executor thread. Target files: tests/harness/detect_loops/test_dbos.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12724)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-06T16:38:21Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:5b482150aff9f0fadcbeafdcb79480231f4795ca49268c30683fc4874259b2ca",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12589",
+      "submitted_by": "harvester-v1",
+      "symptom": "Latest versions canary: AssertionError in tests/models/test_model_names.py",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Cap `google-genai<3` so fresh installs keep `GoogleModel` on the `v1beta` Gemini API. Target files: pydantic_ai_slim/pyproject.toml, .github/scripts/pydantic-ai-runner.lock, uv.lock. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12700)"
     },
     {
       "applies_to": "Arize-ai/phoenix",
@@ -44358,6 +44540,20 @@
       "workaround": "Upgrade postcss to patched release >= 8.5.10: npm install 'postcss@>=8.5.10' (Advisory: GHSA-qx2v-qp2m-jg93)"
     },
     {
+      "applies_to": "mako",
+      "created_at": "2026-04-23T19:17:29.270Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-88\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.3.11\", \"aliases\": [\"CVE-2026-41205\", \"GHSA-v92g-xgxw-vvmm\"]}",
+      "fingerprint": "sha256:f27c0b0ac5404292f87de0230e4290db1ff593b25dac8360a15dea6728169cb0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_88",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-88] Mako is a template library written in Python. Prior to 1.3.11, TemplateLookup.get_template() is vulnerable to path traversal when a URI starts with // (e.g.,... (Affects mako < 1.3.11)",
+      "target": "mako",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade mako to patched release >= 1.3.11: pip install --upgrade 'mako>=1.3.11' (Advisory: PYSEC-2026-88)"
+    },
+    {
       "applies_to": "uuid",
       "created_at": "2026-04-22T20:53:24Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-w5hq-g745-h8pq\", \"ecosystem\": \"npm\", \"fixed_version\": \"13.0.1\", \"aliases\": [\"CVE-2026-41907\", \"CVE-2026-41988\"]}",
@@ -44748,6 +44944,20 @@
       "target": "strawberry-graphql",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade strawberry-graphql to patched release >= 0.312.3: pip install --upgrade 'strawberry-graphql>=0.312.3' (Advisory: PYSEC-2026-133)"
+    },
+    {
+      "applies_to": "strawberry-graphql",
+      "created_at": "2026-04-07T16:16:28.843Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-134\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.312.3\", \"aliases\": [\"CVE-2026-35526\", \"GHSA-hv3w-m4g2-5x77\"]}",
+      "fingerprint": "sha256:9589a249152b4a0bd986a286b74dffef0fadc1480aa572736df7a7045d3b3af0",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_134",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-134] Strawberry GraphQL is a library for creating GraphQL APIs. Prior to 0.312.3, Strawberry GraphQL's WebSocket subscription handlers for both the graphql-transp... (Affects strawberry-graphql < 0.312.3)",
+      "target": "strawberry-graphql",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade strawberry-graphql to patched release >= 0.312.3: pip install --upgrade 'strawberry-graphql>=0.312.3' (Advisory: PYSEC-2026-134)"
     },
     {
       "applies_to": "django",
@@ -45266,6 +45476,20 @@
       "target": "aiohttp",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade aiohttp to patched release >= 3.13.4: pip install --upgrade 'aiohttp>=3.13.4' (Advisory: GHSA-w2fm-2cpv-w7v5)"
+    },
+    {
+      "applies_to": "onnx",
+      "created_at": "2026-04-01T18:16:30.810Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-104\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.21.0\", \"aliases\": [\"CVE-2026-34447\", \"GHSA-p433-9wv8-28xj\"]}",
+      "fingerprint": "sha256:cebdd9578addeddd7506127abd3e8b8068aaae39a3816a311f0bbfd09267045b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_104",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-104] Open Neural Network Exchange (ONNX) is an open standard for machine learning interoperability. Prior to version 1.21.0, there is a symlink traversal vulnerab... (Affects onnx < 1.21.0)",
+      "target": "onnx",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade onnx to patched release >= 1.21.0: pip install --upgrade 'onnx>=1.21.0' (Advisory: PYSEC-2026-104)"
     },
     {
       "applies_to": "fastmcp",
@@ -45940,6 +46164,20 @@
       "workaround": "Upgrade yauzl to patched release >= 3.2.1: npm install 'yauzl@>=3.2.1' (Advisory: GHSA-gmq8-994r-jv83)"
     },
     {
+      "applies_to": "tornado",
+      "created_at": "2026-03-11T20:16:16.617Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-140\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.5.5\", \"aliases\": [\"CVE-2026-31958\", \"GHSA-qjxf-f2mg-c6mc\"]}",
+      "fingerprint": "sha256:31664c8f3ec7eafdfc466bc2c01535b0919566f5144bf5afc48a0be7837cd74b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_140",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-140] Tornado is a Python web framework and asynchronous networking library. In versions of Tornado prior to 6.5.5, the only limit on the number of parts in multip... (Affects tornado < 6.5.5)",
+      "target": "tornado",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade tornado to patched release >= 6.5.5: pip install --upgrade 'tornado>=6.5.5' (Advisory: PYSEC-2026-140)"
+    },
+    {
       "applies_to": "black",
       "created_at": "2026-03-11T20:16:15.960Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2120\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"26.3.0\", \"aliases\": [\"CVE-2026-31900\", \"GHSA-v53h-f6m7-xcgm\"]}",
@@ -46274,6 +46512,20 @@
       "target": "sveltekit",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade @sveltejs/kit to patched release >= 2.53.3: npm install '@sveltejs/kit@>=2.53.3' (Advisory: GHSA-fpg4-jhqr-589c)"
+    },
+    {
+      "applies_to": "gradio",
+      "created_at": "2026-02-27T22:16:24.330Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-64\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.7.0\", \"aliases\": [\"CVE-2026-28414\", \"GHSA-39mp-8hj3-5c49\"]}",
+      "fingerprint": "sha256:8a6416ee402e86efd55fd9121398df4c3b2e3aec3db71b22a955ba8ec0fe927b",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_64",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-64] Gradio is an open-source Python package designed for quick prototyping. Prior to version 6.7, Gradio apps running on Window with Python 3.13+ are vulnerable ... (Affects gradio < 6.7.0)",
+      "target": "gradio",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gradio to patched release >= 6.7.0: pip install --upgrade 'gradio>=6.7.0' (Advisory: PYSEC-2026-64)"
     },
     {
       "applies_to": "uv",
