@@ -1,7 +1,21 @@
 {
-  "count": 1722,
-  "generated_at": "2026-11-08T21:11:20Z",
+  "count": 1723,
+  "generated_at": "2026-11-09T00:57:11Z",
   "grievances": [
+    {
+      "applies_to": "astral-sh/ruff",
+      "created_at": "2026-11-08T21:49:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:bad2b7d4d30543ec76517ba2685fb538a902ee42195b6aa59be616c7dabaae54",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_ruff_30174",
+      "submitted_by": "harvester-v1",
+      "symptom": "The last version fails to build on FreeBSD",
+      "target": "ruff",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix FreeBSD source builds with libc 0.2.190. Target files: Cargo.lock. Update the locked Mio dependency from 1.0.4 to 1.2.4, which includes the upstream fix for the removed `libc::NOTE_PCTRLMASK` constant. This resolves the compilation failure reported in #30174. (Ref: https://github.com/astral-sh/ruff/pull/30176)"
+    },
     {
       "applies_to": "langgenius/dify",
       "created_at": "2026-11-08T20:26:10Z",
@@ -24113,6 +24127,20 @@
   ],
   "version": "1.0.0",
   "workarounds": [
+    {
+      "applies_to": "astral-sh/ruff",
+      "created_at": "2026-11-08T21:49:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:bad2b7d4d30543ec76517ba2685fb538a902ee42195b6aa59be616c7dabaae54",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_astral-sh_ruff_30174",
+      "submitted_by": "harvester-v1",
+      "symptom": "The last version fails to build on FreeBSD",
+      "target": "ruff",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix FreeBSD source builds with libc 0.2.190. Target files: Cargo.lock. Update the locked Mio dependency from 1.0.4 to 1.2.4, which includes the upstream fix for the removed `libc::NOTE_PCTRLMASK` constant. This resolves the compilation failure reported in #30174. (Ref: https://github.com/astral-sh/ruff/pull/30176)"
+    },
     {
       "applies_to": "langgenius/dify",
       "created_at": "2026-11-08T20:26:10Z",
