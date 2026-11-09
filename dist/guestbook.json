@@ -1,5 +1,5 @@
 {
-  "count": 262,
+  "count": 266,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1310,7 +1310,27 @@
       "entity": "MCPMeasurement",
       "first_seen": "2026-11-09",
       "type": "agent"
+    },
+    {
+      "entity": "amp-compat-check",
+      "first_seen": "2026-11-09",
+      "type": "security_probe"
+    },
+    {
+      "entity": "deus-marketplace-factory",
+      "first_seen": "2026-11-09",
+      "type": "crawler"
+    },
+    {
+      "entity": "exodus",
+      "first_seen": "2026-11-09",
+      "type": "agent"
+    },
+    {
+      "entity": "mcp-index",
+      "first_seen": "2026-11-09",
+      "type": "crawler"
     }
   ],
-  "generated_at": "2026-11-09T07:58:24Z"
+  "generated_at": "2026-11-09T18:47:29Z"
 }
