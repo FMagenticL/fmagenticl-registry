@@ -43,23 +43,42 @@ DIST_PROPOSALS.mkdir(parents=True, exist_ok=True)
 CREDS_PATH = Path.home() / ".config" / "google-drive-mcp" / "credentials.json"
 BOOTSTRAP_DROP_FOLDER_ID = "1zlUgvPbpGpzeG53ALTDDN1X224-Rwla3"
 
-# Existing Adopted Baseline Repositories (DO NOT RE-PROPOSE)
-ALREADY_ADOPTED_REPOS = {
-    "letta-ai/letta", "run-llama/llama-agents", "camel-ai/camel", "agno-agi/agno",
-    "mem0ai/mem0", "browser-use/browser-use", "confident-ai/deepeval",
-    "huggingface/smolagents", "pydantic/pydantic-ai", "modelcontextprotocol/python-sdk",
-    "modelcontextprotocol/typescript-sdk", "modelcontextprotocol/servers",
-    "jlowin/fastmcp", "pydantic/pydantic", "langchain-ai/langchain", "crewaiinc/crewai",
-    "cloudflare/workers-sdk", "langchain-ai/langgraph", "berriai/litellm",
-    "astral-sh/uv", "encode/httpx", "openai/openai-python", "anthropics/anthropic-sdk-python",
-    "jxnl/instructor", "vllm-project/vllm", "ollama/ollama", "run-llama/llama_index",
-    "microsoft/autogen", "stanfordnlp/dspy", "huggingface/transformers",
-    "boundaryml/baml", "prefecthq/prefect", "astral-sh/ruff", "infiniflow/ragflow",
-    "langfuse/langfuse", "langgenius/dify", "mastra-ai/mastra", "pydantic/pydantic-settings",
-    "sgl-project/sglang", "simonw/llm", "truera/trulens", "cline/cline",
-    "roovetgit/roo-cline", "all-hands-ai/openhands", "paul-gauthier/aider",
-    "continuedev/continue"
+# Existing Adopted Baseline + Rejected Repositories (DO NOT RE-PROPOSE)
+try:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from harvest_github_failures import TARGET_REPOS as _LIVE_TARGET_REPOS
+except Exception:
+    _LIVE_TARGET_REPOS = []
+
+REJECTED_OR_PRUNED_REPOS = {
+    "rddmwmddr/android-ad-cleaner", "dentalpin/dentalpin", "bd-loser/opencode-bionic",
+    "crisandrews/clawcode", "rlaope/oh-my-hermes", "github/copilot-cli",
+    "microsoft/tokeneconomizer", "vigil-soc/vigil", "derrors/iphone-control",
+    "codepawl/67.js", "wingedguardian/genesis-agi", "adityam2402/agentlens",
+    "fiddler-labs/fiddler-auditor", "alvinreal/awesome-opensource-ai",
+    "kyrolabs/awesome-langchain", "e2b-dev/awesome-ai-agents"
 }
+
+ALREADY_ADOPTED_REPOS = {
+    r.lower() for r in (
+        list(_LIVE_TARGET_REPOS) + [
+            "letta-ai/letta", "run-llama/llama-agents", "camel-ai/camel", "agno-agi/agno",
+            "mem0ai/mem0", "browser-use/browser-use", "confident-ai/deepeval",
+            "huggingface/smolagents", "pydantic/pydantic-ai", "modelcontextprotocol/python-sdk",
+            "modelcontextprotocol/typescript-sdk", "modelcontextprotocol/servers",
+            "jlowin/fastmcp", "pydantic/pydantic", "langchain-ai/langchain", "crewaiinc/crewai",
+            "cloudflare/workers-sdk", "langchain-ai/langgraph", "berriai/litellm",
+            "astral-sh/uv", "encode/httpx", "openai/openai-python", "anthropics/anthropic-sdk-python",
+            "jxnl/instructor", "vllm-project/vllm", "ollama/ollama", "run-llama/llama_index",
+            "microsoft/autogen", "stanfordnlp/dspy", "huggingface/transformers",
+            "boundaryml/baml", "prefecthq/prefect", "astral-sh/ruff", "infiniflow/ragflow",
+            "langfuse/langfuse", "langgenius/dify", "mastra-ai/mastra", "pydantic/pydantic-settings",
+            "sgl-project/sglang", "simonw/llm", "truera/trulens", "cline/cline",
+            "roovetgit/roo-cline", "all-hands-ai/openhands", "paul-gauthier/aider",
+            "continuedev/continue"
+        ]
+    )
+} | REJECTED_OR_PRUNED_REPOS
 
 DISCOVERY_SEARCH_QUERIES = [
     "topic:mcp-server stars:>20 pushed:>2026-04-01",
@@ -250,6 +269,21 @@ def upload_proposals_to_gdrive(payload: dict, cycle_num: int) -> Optional[dict]:
         return None
 
 
+def load_already_proposed_repos() -> Set[str]:
+    """Scans dist/proposals/*.json to prevent re-proposing repos across cycles."""
+    proposed = set()
+    for f in DIST_PROPOSALS.glob("discovered_targets_*.json"):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            for t in data.get("discovered_targets", []):
+                r = t.get("repository", "").strip().lower()
+                if r:
+                    proposed.add(r)
+        except Exception:
+            pass
+    return proposed
+
+
 def run_discovery_cycle(cycle_num: int = 1) -> dict:
     print(f"\n{'=' * 80}")
     print(f"RECON TARGET DISCOVERY SCOUT — CYCLE #{cycle_num} — {datetime.now(timezone.utc).isoformat()}")
@@ -261,7 +295,9 @@ def run_discovery_cycle(cycle_num: int = 1) -> dict:
     else:
         print("  [Scout Mode] Unauthenticated public REST discovery with adaptive rate pacing.")
         
-    seen_in_cycle = set()
+    prior_proposed = load_already_proposed_repos()
+    print(f"  [Memory Guard] Loaded {len(prior_proposed)} previously proposed repositories for cross-cycle deduplication.")
+    seen_in_cycle = set(prior_proposed)
     candidate_repos = []
     
     for q in DISCOVERY_SEARCH_QUERIES:
@@ -294,8 +330,8 @@ def run_discovery_cycle(cycle_num: int = 1) -> dict:
             traces, pr_fixes, sample_tokens = query_repo_issues_sample(owner, name, token)
             time.sleep(1.0)  # Rate pacing
             
-            # Gate: Must show evidence of active bugs and fixes
-            if pr_fixes >= 1 or traces >= 2:
+            # Gate: Must show evidence of BOTH authentic error traces AND merged bug-fix PRs
+            if pr_fixes >= 1 and traces >= 1:
                 yield_rating = "HIGH" if (pr_fixes >= 2 and traces >= 2) else "MEDIUM"
                 candidate = {
                     "repository": full_name,
@@ -345,7 +381,8 @@ def main():
     parser.add_argument("--loop", type=int, default=0, help="Cadence loop in seconds (e.g. 21600 for 6h). Default 0 (single run).")
     args = parser.parse_args()
     
-    cycle = 1
+    existing_proposals = list(DIST_PROPOSALS.glob("discovered_targets_*.json"))
+    cycle = len(existing_proposals) + 1
     if args.loop <= 0:
         run_discovery_cycle(cycle)
     else:

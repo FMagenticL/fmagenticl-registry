@@ -169,8 +169,9 @@ class FMagenticLClient:
             "bypass": 0,
         }
 
-        # Fire guestbook first-boot ping (non-blocking, once per machine, opt-out via FMAGENTICL_DISABLE_PING=true)
-        maybe_ping(model_name=model_name, agent_runtime=agent_runtime)
+        # Opt-in guestbook first-boot ping (disabled by default; enable via auto_ping=True or FMAGENTICL_GUESTBOOK=1)
+        if kwargs.get("auto_ping", False) or os.environ.get("FMAGENTICL_GUESTBOOK", "").lower() in ("1", "true"):
+            maybe_ping(model_name=model_name, agent_runtime=agent_runtime)
 
     # -----------------------------------------------------------------------
     # Fingerprint computation (static, called at import time by seed modules)

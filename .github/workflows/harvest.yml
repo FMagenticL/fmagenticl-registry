@@ -55,6 +55,12 @@ jobs:
           # Harvests up to 10 issues per repo to avoid rate limits
           python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
 
+      - name: Run Agent-Native Harvester
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/harvest_agent_native.py --limit 10 --output harvested_agent_native.json || true
+
       - name: Run OSV Advisory Harvester
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

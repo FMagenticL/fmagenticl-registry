@@ -56,8 +56,62 @@ class Patcher:
         """
         context = context if context is not None else {}
         is_dry_run = bool(dry_run or (isinstance(context, dict) and context.get("dry_run", False)))
-        patch_type = patch.get("patch_type")
+        patch_type = patch.get("patch_type") or patch.get("remediation_class")
         action = patch.get("action")
+
+        # -------------------------------------------------------------
+        # Track 0: Explicit Remediation Classes (workaround_advisory, dependency_pin, code_diff)
+        # -------------------------------------------------------------
+        if patch_type == "workaround_advisory":
+            advisory = patch.get("workaround") or patch.get("description") or patch.get("advisory", "")
+            if isinstance(context, dict):
+                context["advisory_workaround"] = advisory
+                context["remediation_class"] = "workaround_advisory"
+                context["applied"] = False
+            return True
+
+        if patch_type == "dependency_pin":
+            pkg_spec = patch.get("package_spec") or patch.get("fallback_cli", "")
+            if isinstance(context, dict):
+                context["advisory_dependency_pin"] = pkg_spec
+                context["remediation_class"] = "dependency_pin"
+                context["applied"] = False
+            return bool(pkg_spec)
+
+        if patch_type == "code_diff":
+            diff_text = patch.get("diff") or patch.get("code_diff", "")
+            if not diff_text:
+                return False
+            if is_dry_run or not context.get("apply_diff", False):
+                if isinstance(context, dict):
+                    context["advisory_diff"] = diff_text
+                    context["remediation_class"] = "code_diff"
+                    context["applied"] = False
+                return True
+            try:
+                res = subprocess.run(
+                    ["git", "apply", "--check", "-"],
+                    input=diff_text.encode("utf-8"),
+                    shell=False,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    timeout=15,
+                )
+                if res.returncode != 0:
+                    return False
+                res_apply = subprocess.run(
+                    ["git", "apply", "-"],
+                    input=diff_text.encode("utf-8"),
+                    shell=False,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    timeout=15,
+                )
+                if isinstance(context, dict):
+                    context["applied"] = (res_apply.returncode == 0)
+                return res_apply.returncode == 0
+            except Exception:
+                return False
 
         # -------------------------------------------------------------
         # Track 1: Standard RFC 6902 JSON Patch (application/json-patch+json)
@@ -76,6 +130,16 @@ class Patcher:
             if not os.path.exists(target_file):
                 print(f"[FMagenticL Patcher] Target file not found: {target_file}")
                 return False
+
+            # Guard against pseudo-JSON patches targeting non-JSON source files (e.g. .py, .ts)
+            if not str(target_file).lower().endswith(".json"):
+                advisory_val = ops[0].get("value") if isinstance(ops, list) and ops and isinstance(ops[0], dict) else str(ops)
+                print(f"[FMagenticL Patcher] Non-JSON target '{target_file}' routed to workaround_advisory.")
+                if isinstance(context, dict):
+                    context["advisory_workaround"] = advisory_val
+                    context["remediation_class"] = "workaround_advisory"
+                    context["applied"] = False
+                return True
 
             try:
                 with open(target_file, "r", encoding="utf-8") as f:

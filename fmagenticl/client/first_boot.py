@@ -28,17 +28,17 @@ PING_TIMEOUT = httpx.Timeout(connect=1.0, read=2.0, write=1.0, pool=1.0)
 
 def _client_hash() -> str:
     """
-    Per-machine identity for rate limiting. Not stable across machines.
-    Not an IP. Not a user agent. Just a hash of machine identifiers that
-    the local OS already exposes to any process.
+    Anonymous, non-identifying rate-limit token for guestbook check-in.
+    Collects zero hardware, hostname, OS, or user identifiers.
     """
-    parts = [
-        platform.node(),
-        platform.system(),
-        platform.machine(),
-        str(os.getuid() if hasattr(os, "getuid") else os.getlogin() if os.getlogin else ""),
-    ]
-    return hashlib.sha256("|".join(parts).encode()).hexdigest()[:32]
+    return hashlib.sha256(b"fmagenticl-anon-checkin").hexdigest()[:32]
+
+
+def check_in(model_name: str, agent_runtime: Optional[str] = None) -> bool:
+    """
+    Explicit opt-in guestbook check-in (`fmagenticl check-in` / `client.check_in()`).
+    """
+    return _fire_ping(model_name, agent_runtime)
 
 
 def _fire_ping(model_name: str, agent_runtime: Optional[str] = None) -> bool:

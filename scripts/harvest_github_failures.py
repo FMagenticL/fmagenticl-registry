@@ -132,7 +132,15 @@ TARGET_REPOS = [
     "millw14/merrymen",
     "agentic-research/mache",
     "giantswarm/mcp-debug",
-    "demi-sh/demi"
+    "demi-sh/demi",
+    # Recon Discovery Cycle 4 Promoted Targets: 7 Verified Agent & Runtime Repositories
+    "raullenchai/Rapid-MLX",
+    "Agent-Field/CodeAF",
+    "vstorm-co/agenticos",
+    "gominimal/minimal",
+    "prime-radiant-inc/evener",
+    "wlsdks/ontology-atlas",
+    "moonlight-lupin/agent-skills"
 ]
 
 REPO_TARGET_MAP = {
@@ -222,7 +230,15 @@ REPO_TARGET_MAP = {
     "millw14/merrymen": "merrymen",
     "agentic-research/mache": "mache",
     "giantswarm/mcp-debug": "mcp-debug",
-    "demi-sh/demi": "demi"
+    "demi-sh/demi": "demi",
+    # Recon Discovery Cycle 4 Promoted Target Slugs
+    "raullenchai/Rapid-MLX": "rapid-mlx",
+    "Agent-Field/CodeAF": "codeaf",
+    "vstorm-co/agenticos": "agenticos",
+    "gominimal/minimal": "gominimal",
+    "prime-radiant-inc/evener": "evener",
+    "wlsdks/ontology-atlas": "ontology-atlas",
+    "moonlight-lupin/agent-skills": "hermes-agent-skills"
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"

@@ -819,6 +819,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
       const errorCodeMatch = args.failure?.error_code || (rawText.match(/\b([E][A-Z0-9_]{3,24}|[A-Z0-9_]{4,32}_ERROR|ERR_[A-Z0-9_]+)\b/) || [])[1];
 
+      const excMatch = (rawText.match(/\b([A-Z][A-Za-z0-9_]*(?:Error|Exception|Fault))\b/) || [])[1];
+
       const targetHint = args.target || (rawText.match(/\b(wrangler|workers-sdk|powershell|tailwind|nextjs|next|prisma|pydantic|docker|git|npm|python|sqlite|sqlite3|litellm|crewai|langchain|langgraph|fastmcp|mcp|uv|gitlab-cli|gitlab|glab|cli|vllm|llama-index|anthropic|transformers|fastapi|starlette)\b/i) || [])[1];
 
 
@@ -851,7 +853,14 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
             const queryToken = (errorCodeMatch || targetHint).toLowerCase();
 
-            const matchedMeta = patches.find(p => (p.failure_mode || "").toLowerCase().includes(queryToken));
+            const matchedMeta = patches.find(p => {
+              const fm = (p.failure_mode || "").toLowerCase();
+              if (!fm.includes(queryToken)) return false;
+              if (!errorCodeMatch && excMatch && !fm.includes(excMatch.toLowerCase())) {
+                return false;
+              }
+              return true;
+            });
 
             if (matchedMeta) {
 
