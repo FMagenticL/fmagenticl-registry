@@ -155,7 +155,34 @@ def upload_or_update_telemetry() -> dict | None:
         )
         res["escalations_digest_id"] = esc_res.get("id")
         res["escalations_digest_link"] = esc_res.get("link")
+
+    # Read and log latest transaction from SWARM_LIVE_LEDGER.jsonl
+    try:
+        latest_entry = read_latest_swarm_ledger_entry(token)
+        if latest_entry:
+            res["latest_swarm_entry"] = latest_entry
+            print(f"  Swarm Ledger Status: [{latest_entry.get('event')}] node={latest_entry.get('node', latest_entry.get('active_node'))} status={latest_entry.get('status')}")
+    except Exception as e:
+        print(f"  Swarm Ledger read warning: {e}")
+
     return res
+
+
+def read_latest_swarm_ledger_entry(token: str) -> dict | None:
+    ledger_folder_id = "1fs6MIksbKuOkVH5rwoiHku6_KtTRnpeS"
+    file_info = find_file_in_folder(token, "SWARM_LIVE_LEDGER.jsonl", ledger_folder_id)
+    if not file_info:
+        return None
+    file_id = file_info["id"]
+    url = f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media"
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+    with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT_SEC) as resp:
+        content = resp.read().decode("utf-8")
+        lines = [line.strip() for line in content.splitlines() if line.strip()]
+        if lines:
+            return json.loads(lines[-1])
+    return None
+
 
 
 if __name__ == "__main__":

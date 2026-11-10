@@ -97,3 +97,5 @@ sandbox/
 # Proprietary Team Playbook (Local Only)
 PLAYBOOK.md
 PLAYBOOK_*.md
+
+dist/proposals/

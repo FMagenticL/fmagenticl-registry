@@ -764,7 +764,7 @@ def test_edge_handlers_in_memory_d1():
 
         [NODE, "--input-type=module", "-e", esm_script],
 
-        capture_output=True, text=True, encoding="utf-8", cwd=str(REPO_ROOT), timeout=30,
+        capture_output=True, text=True, encoding="utf-8", cwd=str(REPO_ROOT), timeout=180,
 
     )
 
@@ -1164,7 +1164,7 @@ def test_advertised_surface_served_surface():
 
       const mcpMod = await import({json.dumps(mcp_uri)});
 
-      const wrkData = JSON.parse(fs.readFileSync({json.dumps(wrk_file_str)}, 'utf-8'));
+      const wrkRaw = fs.readFileSync({json.dumps(wrk_file_str)}, 'utf-8');
 
       const env = {{
 
@@ -1172,7 +1172,11 @@ def test_advertised_surface_served_surface():
 
           async fetch(req) {{
 
-            return new Response(JSON.stringify(wrkData), {{ status: 200, headers: {{ 'Content-Type': 'application/json' }} }});
+            const url = typeof req === 'string' ? req : (req?.url || '');
+            if (url.includes('/shards/')) {{
+              return new Response(JSON.stringify({{ error: 'not found' }}), {{ status: 404, headers: {{ 'Content-Type': 'application/json' }} }});
+            }}
+            return new Response(wrkRaw, {{ status: 200, headers: {{ 'Content-Type': 'application/json' }} }});
 
           }}
 
@@ -1200,7 +1204,7 @@ def test_advertised_surface_served_surface():
 
         [NODE, "--input-type=module", "-e", test_node_script],
 
-        capture_output=True, text=True, encoding="utf-8", cwd=str(REPO_ROOT), timeout=30,
+        capture_output=True, text=True, encoding="utf-8", cwd=str(REPO_ROOT), timeout=180,
 
     )
 

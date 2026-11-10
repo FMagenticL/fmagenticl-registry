@@ -1,1 +1,1 @@
-{"name": "test", "engines": {"node": ">=22"}}
+{"name": "test", "type": "module", "engines": {"node": ">=22"}}

@@ -65,7 +65,7 @@ def get_head_sha() -> str:
     try:
         p = subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
-            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=5
+            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=20
         )
         return (p.stdout or "").strip()
     except Exception:
@@ -79,17 +79,36 @@ def sync_upstream_bot_commits() -> str:
     try:
         subprocess.run(
             ["git", "fetch", "origin", "main", "--quiet"],
-            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=45, env=env
+            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=60, env=env
         )
         rev = subprocess.run(
             ["git", "rev-list", "--count", "HEAD..origin/main"],
-            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=10, env=env
+            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=20, env=env
         )
         behind = int((rev.stdout or "0").strip() or "0")
         if behind > 0:
+            subprocess.run(
+                ["git", "checkout", "--", "dist"],
+                cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=60, env=env
+            )
+            # Clear local untracked analytics archives that already exist in origin/main so midnight local captures never block rebase
+            untracked = subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard", "data/analytics_archive/"],
+                cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=20, env=env
+            )
+            for rel_path in (untracked.stdout or "").splitlines():
+                rel_path = rel_path.strip()
+                if not rel_path:
+                    continue
+                exists_upstream = subprocess.run(
+                    ["git", "cat-file", "-e", f"origin/main:{rel_path}"],
+                    cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=10, env=env
+                )
+                if exists_upstream.returncode == 0:
+                    (REPO_ROOT / rel_path).unlink(missing_ok=True)
             pull = subprocess.run(
                 ["git", "pull", "--rebase", "--autostash", "origin", "main"],
-                cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=30, env=env
+                cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=60, env=env
             )
             if pull.returncode == 0:
                 return f"Auto-pulled {behind} upstream commit(s) from origin/main (with --autostash)."
@@ -704,8 +723,7 @@ def main():
 
     sync_msg = sync_upstream_bot_commits()
     print(f"      Git Upstream Sync: {sync_msg}")
-    if sync_msg.startswith("Auto-pulled"):
-        auto_healed_actions.append(sync_msg)
+    # Routine upstream harvest git pull is normal sync hygiene (does not enter 3-stage probation).
 
     # 1. Probe Live Endpoints & Fast-404s (with Two-Strike Warm TTFB Re-Probe)
     print("\n[1/8] Probing Live Edge Endpoints, Static Shards & Fast-404 Shielding (Warm-TTFB Guard)...")
@@ -779,7 +797,10 @@ def main():
     live_health = json.loads(live_health_body.decode("utf-8")) if live_health_body else {}
 
     local_health_path = REPO_ROOT / "dist" / "v1" / "health"
-    local_health = json.loads(local_health_path.read_text(encoding="utf-8")) if local_health_path.exists() else {}
+    try:
+        local_health = json.loads(local_health_path.read_text(encoding="utf-8")) if local_health_path.exists() else {}
+    except Exception:
+        local_health = {}
 
     live_wa_cnt = live_health.get("verified_workarounds", "N/A")
     local_wa_cnt = local_health.get("verified_workarounds", "N/A")
@@ -817,7 +838,6 @@ def main():
             if live_wa_cnt == local_wa_cnt and live_grv_cnt == local_grv_cnt:
                 msg = f"Auto-synchronized local dist/ to match live D1/CDN ({live_grv_cnt} grievances / {live_wa_cnt} verified)."
                 print(f"  ✅ {msg}")
-                auto_healed_actions.append(msg)
             else:
                 degraded_reasons.append(f"Live vs Local drift persists after re-export (Live {live_grv_cnt} != Local {local_grv_cnt})")
                 escalation_targets.add("ARGON")
@@ -830,6 +850,8 @@ def main():
     # 5. GitHub Actions CI/CD & Harvester Workflow Health
     print("\n[5/8] Checking GitHub Actions Workflow Health (deploy.yml & harvest.yml)...")
     gh_summary, gh_issues = check_github_actions_health()
+    if gh_summary.get("error"):
+        print(f"  ⚠️ GitHub Actions API warning: {gh_summary['error']}")
     for wf, info in gh_summary.items():
         if isinstance(info, dict):
             print(f"  {wf:<35} -> status={info.get('status')}, conclusion={info.get('conclusion')}, commit={info.get('head_sha')} ({info.get('event')})")
@@ -845,8 +867,6 @@ def main():
     if not arch_ok:
         degraded_reasons.append(arch_msg)
         escalation_targets.add("ARGON")
-    elif arch_msg.startswith("Auto-healed"):
-        auto_healed_actions.append(arch_msg)
 
     # 7. Cloudflare GraphQL Analytics (Bucket A/B/C 5xx Split) & Dual-Table D1 Airlock State
     print("\n[7/8] Pulling Cloudflare GraphQL Zone Traffic (Bucket A/B/C Split) & D1 Airlock State...")
@@ -939,6 +959,38 @@ def main():
     next_seconds, schedule_mode, dossier_file = evaluate_probation_and_next_schedule(
         degraded_reasons, escalation_targets, auto_healed_actions, summary_data
     )
+
+    # 8b. Elephant-Goldfish Model (EGM) 3-Cycle Cadence Hook
+    egm_counter_file = SCRATCH_DIR / ".sentry_egm_cycle_counter.json"
+    egm_cycle_data = {"cycle_count": 0, "last_egm_run": None}
+    if egm_counter_file.exists():
+        try:
+            egm_cycle_data = json.loads(egm_counter_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    egm_cycle_data["cycle_count"] = egm_cycle_data.get("cycle_count", 0) + 1
+    current_cycle = egm_cycle_data["cycle_count"]
+    print(f"\n[EGM Cadence] Sentry Cycle #{current_cycle} (EGM cadence: every 3 cycles)")
+
+    if current_cycle % 3 == 0:
+        print("  Executing scheduled Elephant-Goldfish Model (EGM) spec-to-code drift audit...")
+        cmd_egm = [sys.executable, str(SCRIPTS_DIR / "run_egm_cadence.py")]
+        p_egm = subprocess.run(cmd_egm, cwd=str(REPO_ROOT), capture_output=True, text=True, encoding="utf-8")
+        egm_cycle_data["last_egm_run"] = datetime.now(timezone.utc).isoformat()
+        if p_egm.returncode == 0:
+            print("  [EGM] Drift & Review Passed: Zero specification drift detected.")
+        else:
+            print(f"  [EGM] Drift Detected:\n{p_egm.stdout[-300:]}")
+            degraded_reasons.append("EGM Cadence: Unresolved specification drift detected")
+            escalation_targets.add("ARGON")
+    else:
+        cycles_left = 3 - (current_cycle % 3)
+        print(f"  Next EGM audit scheduled in {cycles_left} Sentry cycle(s) ({cycles_left * 90} minutes).")
+
+    try:
+        egm_counter_file.write_text(json.dumps(egm_cycle_data, indent=2), encoding="utf-8")
+    except Exception as e:
+        print(f"  Warning: failed to persist EGM cycle counter: {e}")
 
     print(f"\n[8/8] Adaptive Probation & Schedule Decision: {schedule_mode}")
     if auto_healed_actions:
