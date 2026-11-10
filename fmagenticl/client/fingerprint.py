@@ -27,13 +27,15 @@ def normalize_error_signature(raw_str: str) -> str:
     return s
 
 
-def compute_fingerprint(environment: dict, failure: dict) -> str:
+def compute_fingerprint(environment: dict, failure: dict, normalize: bool = False) -> str:
     """Type-safe deterministic SHA-256 fingerprint hashing using canonical sorted keys."""
     env_str = "|".join(f"{k}:{v}" for k, v in sorted(environment.items()) if v is not None)
-    norm_fail = {}
-    for k, v in sorted(failure.items()):
-        if v is not None:
-            norm_fail[k] = normalize_error_signature(v) if isinstance(v, str) else v
-    fail_str = "|".join(f"{k}:{v}" for k, v in norm_fail.items())
+    fail_dict = failure
+    if normalize:
+        fail_dict = {}
+        for k, v in sorted(failure.items()):
+            if v is not None:
+                fail_dict[k] = normalize_error_signature(v) if isinstance(v, str) else v
+    fail_str = "|".join(f"{k}:{v}" for k, v in sorted(fail_dict.items()) if v is not None)
     raw = f"{env_str}||{fail_str}"
     return "sha256:" + hashlib.sha256(raw.encode('utf-8')).hexdigest()
