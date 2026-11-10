@@ -140,7 +140,18 @@ TARGET_REPOS = [
     "gominimal/minimal",
     "prime-radiant-inc/evener",
     "wlsdks/ontology-atlas",
-    "moonlight-lupin/agent-skills"
+    "moonlight-lupin/agent-skills",
+    # Recon Discovery Cycle 6 Promoted Targets: 10 Verified Agent & MCP Repositories
+    "DeusData/codebase-memory-mcp",
+    "lobu-ai/lobu",
+    "IvanMurzak/Godot-MCP",
+    "AliKarami/MikroMCP",
+    "PrefectHQ/fastmcp",
+    "KochC/opencode-llm-proxy",
+    "vivekchand/clawmetry",
+    "oaslananka/kicad-mcp-pro",
+    "ai4protein/VenusFactory2",
+    "openai/openai-agents-python"
 ]
 
 REPO_TARGET_MAP = {
@@ -238,7 +249,18 @@ REPO_TARGET_MAP = {
     "gominimal/minimal": "gominimal",
     "prime-radiant-inc/evener": "evener",
     "wlsdks/ontology-atlas": "ontology-atlas",
-    "moonlight-lupin/agent-skills": "hermes-agent-skills"
+    "moonlight-lupin/agent-skills": "hermes-agent-skills",
+    # Recon Discovery Cycle 6 Promoted Target Slugs
+    "DeusData/codebase-memory-mcp": "codebase-memory-mcp",
+    "lobu-ai/lobu": "lobu",
+    "IvanMurzak/Godot-MCP": "godot-mcp",
+    "AliKarami/MikroMCP": "mikromcp",
+    "PrefectHQ/fastmcp": "fastmcp",
+    "KochC/opencode-llm-proxy": "opencode-llm-proxy",
+    "vivekchand/clawmetry": "clawmetry",
+    "oaslananka/kicad-mcp-pro": "kicad-mcp-pro",
+    "ai4protein/VenusFactory2": "venusfactory2",
+    "openai/openai-agents-python": "openai-agents-python"
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"
