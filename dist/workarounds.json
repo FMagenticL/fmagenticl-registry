@@ -1,7 +1,175 @@
 {
-  "count": 1789,
-  "generated_at": "2026-11-10T09:47:12Z",
+  "count": 1833,
+  "generated_at": "2026-11-10T17:50:56Z",
   "grievances": [
+    {
+      "applies_to": "huggingface/datasets",
+      "created_at": "2026-11-10T17:24:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:583fc31599d19258500ef88f112838a10c298ded1e40b661f932e0fe089b64a3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_datasets_8965",
+      "submitted_by": "harvester-v1",
+      "symptom": "batch(by_column=...) merges different groups when the key column contains nulls",
+      "target": "datasets",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix batch(by_column=) merging groups that are separated by null values. Target files: src/datasets/table.py, tests/test_arrow_dataset.py. `Dataset.batch(by_column=...)` and `IterableDataset.batch(by_column=...)` treated a null key as equal to its neighbours, so different groups were merged into one batch. Keys `[1, None, 2]` gave a single batch. A key column with only nulls raised `ArrowNotImplementedError`. Now a null is its own value: equal to other nulls, different from any non-null value. (Ref: https://github.com/huggingface/datasets/pull/8966)"
+    },
+    {
+      "applies_to": "Cotal-AI/Cotal",
+      "created_at": "2026-11-10T17:22:52Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:60836b2745dabb1c872c2a2b5dcaf953942695654e404364753d4299e9a1ec12",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Cotal-AI_Cotal_6230",
+      "submitted_by": "harvester-v1",
+      "symptom": "cli update --self: fails with a raw npm 404 for the first minutes after a release, while a dependency's tarball is not served yet",
+      "target": "cotal",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(cli): check the release's archives are served before self-update installs. Target files: implementations/cli/smoke/command-kernel.smoke.ts, implementations/cli/src/commands/update.ts, .changeset/check-update-release-archives.md. For the first minutes after a release, `cotal update --self` could fail with a raw npm 404: the registry already named the new version as `latest` for `cotal-ai` while the tarball of a package it depends on was not served yet. Nothing was damaged, but the person upgrading saw \"install failed\" with... (Ref: https://github.com/Cotal-AI/Cotal/pull/6255)"
+    },
+    {
+      "applies_to": "Cotal-AI/Cotal",
+      "created_at": "2026-11-10T17:07:55Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c35e9a5541a253a69536336ec13cf7a192f3d9c1619fa0d07362e4b9388a88fe",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Cotal-AI_Cotal_6224",
+      "submitted_by": "harvester-v1",
+      "symptom": "run ps: a Manager newer than the space's auth service fails with a raw broker permission error instead of naming the version gap",
+      "target": "cotal",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(runtime): explain a missing run-list grant from an older auth service. Target files: implementations/runtime/smoke/run-command.smoke.ts, implementations/runtime/src/run-host.ts, .changeset/run-list-auth-upgrade.md. `cotal run ps` against a Manager from 0.149.0 on, in a space whose auth service is older, failed with the broker's raw text: `Permissions Violation for Publish to \"$JS.API.DIRECT.GET.KV_cotal_records_<space>\"`. Run listing has read its records in batches since 0.149.0, and the grant for that read is issued by t... (Ref: https://github.com/Cotal-AI/Cotal/pull/6252)"
+    },
+    {
+      "applies_to": "kirodotdev/KiroCrew",
+      "created_at": "2026-11-10T17:05:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:79f523be6ea18fc02e5da803d894e9efbdf5511834a70c7f185704d7e1310c52",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_kirodotdev_KiroCrew_31049",
+      "submitted_by": "harvester-v1",
+      "symptom": "Cron-born chat tabs vanish on every gateway restart: restore reads dashboard_cron-<id>.jsonl, a name never written",
+      "target": "kirocrew",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(dashboard): restore cron chat tabs by their written transcript name. Target files: src/kiro_crew/dashboard/chat_utils.py, src/kiro_crew/dashboard/chat_utils_slots.py, test/test_cron_slot_restore_name.py. **Goal:** Keep cron-born chat tabs in the sidebar across a gateway restart instead of silently dropping them. (Ref: https://github.com/kirodotdev/KiroCrew/pull/31309)"
+    },
+    {
+      "applies_to": "huggingface/trl",
+      "created_at": "2026-11-10T16:22:08Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9ca9e71c84397badff9c6ba43b19e69c9797c30fa72f6f02b6d3254995154b1b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_trl_8230",
+      "submitted_by": "harvester-v1",
+      "symptom": "compute_flops_per_token fails on Gemma 4, whose head_dim is per layer",
+      "target": "trl",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Only estimate FLOPs for the model types the formula describes, and omit MFU otherwise. Target files: trl/experimental/async_distillation/async_distillation_trainer.py, trl/experimental/async_grpo/async_grpo_trainer.py, trl/trainer/utils.py. `compute_flops_per_token` reads config fields that most MoE families name differently, so AsyncGRPO and AsyncDistillation crash at the end of the first step on 8 of 9 tiny MoE checkpoints and on Gemma 4. They also log a wrong MFU for hybrid models like Qwen3.5 or Gemma 3. It now returns `... (Ref: https://github.com/huggingface/trl/pull/8236)"
+    },
+    {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T15:48:53Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:45db855655f61cdd10a0ef802d7cfcee3f02baad655577791f9d030aec172e1d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_148644",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] Async delegate child dies with KeyError(<parent session id>) once the parent's live session is gone (inherited local-viewer print sink)",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(gateway): recover from a background subagent's failure while its parent chat is idle. Target files: gateway/run_notifications.py, gateway/session_authority.py, gateway/session_automation.py. When Hermes hands a job to a helper agent and that helper fails, for example because the AI provider's safety filter refused the request, the main conversation used to stay silent until you came back and asked what happened. Worse, the real reason was sometimes lost and replaced by a meaningless error. Now the failure com... (Ref: https://github.com/NousResearch/hermes-agent/pull/149568)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-11-10T15:46:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:209cba94277ed13fcc260baa7bb7497e31135a9a42c6a6053a8f5b62b8ef6819",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_49536",
+      "submitted_by": "harvester-v1",
+      "symptom": "Mamba2: non-fused gated RMSNorm ignores n_groups and disagrees with fused training",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix grouped RMSNorm in Mamba2's non-fused path. Target files: src/transformers/models/bamba/modeling_bamba.py, src/transformers/models/bamba/modular_bamba.py, src/transformers/models/falcon_h1/modeling_falcon_h1.py. . Mamba2's non-fused gated RMSNorm currently normalizes across the entire intermediate dimension. When `n_groups > 1`, this disagrees with the grouped normalization used by the fused training path, so the same weights and inputs can produce different outputs depending on the execution path. This change ... (Ref: https://github.com/huggingface/transformers/pull/49744)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-10T14:56:15Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:71564534dd0320d82acee267673fb13aa3db8af7250ed1375877ca8aeddc5875",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_25350",
+      "submitted_by": "harvester-v1",
+      "symptom": "OM `manageWorkingMemory` with Markdown working memory: Observer can skip the optional `<working-memory>` section and the update is silently dropped",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(memory): require the working memory section in single-thread observer calls for Markdown working memory. Target files: packages/memory/src/processors/observational-memory/extractor.ts, packages/memory/src/processors/observational-memory/observer-runner.ts, packages/memory/src/processors/observational-memory/working-memory-extractor.ts. When observational memory manages Markdown working memory (`observation.manageWorkingMemory: true` without a working memory schema), the Observer updates working memory by writing a `<wo... (Ref: https://github.com/mastra-ai/mastra/pull/26203)"
+    },
+    {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T14:44:30Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ef6499a90eba8444d4b864c95a26136ed113cdbead026712eb1436f061766c6c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_149291",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: connect_tracked: a tracked connection garbage-collected without close() stays \"live\" in the registry until restart",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(state): release a tracked connection's entry only after SQLite has closed its files. Target files: hermes_cli/sqlite_safe_read.py, tests/hermes_cli/test_sqlite_safe_read_finalizer.py. Makes a tracked SQLite connection release its registry entry when it's garbage-collected without `close()`, and never before its files are actually closed. (Ref: https://github.com/NousResearch/hermes-agent/pull/149309)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-10T13:20:43Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ebc9fc7e97d458e3d151fd17191eb6dffa52c1f9d44ab9e9a5a066981b746c67",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_27259",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Transformed Standard Schema tool inputs are decoded then revalidated as raw input in agent execution",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(core): run tools with decoded input when the input schema transforms values. Target files: packages/core/src/loop/test-utils/aimock/scenarios/transformed-tool-input.scenario.test.ts, packages/core/src/tools/tool-builder/builder.ts, .changeset/hot-rats-rescue.md. Tools whose input schema transforms the model's arguments (for example `z.string().transform(s => new URL(s))`, or Effect's `URLFromString`) failed when an agent called them: (Ref: https://github.com/mastra-ai/mastra/pull/29555)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-10T13:11:30Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:3cc1545e7e7fce1ff6901141a639b696aad62059de47cfa5beac878fa7a76a27",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_13005",
+      "submitted_by": "harvester-v1",
+      "symptom": "Confirm the Gateway and Bedrock serve `claude-fable-5-2` and `claude-mythos-5-2`",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Add Claude Fable 5.2 (`claude-fable-5-2`) and Claude Mythos 5.2 (`claude-mythos-5-2`) support. Target files: pydantic_ai_slim/pydantic_ai/models/_known_model_names.py, pydantic_ai_slim/pydantic_ai/models/anthropic/__init__.py, pydantic_ai_slim/pydantic_ai/models/anthropic/_thinking_binding.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12970)"
+    },
+    {
+      "applies_to": "volcengine/OpenViking",
+      "created_at": "2026-11-10T11:50:37Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4666bd780232506f75e392f3c7b5c7823ff447d077b95ff0b57e917efdeb8a7c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_volcengine_OpenViking_7076",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: \u4e66\u7b7e\u76ee\u6807\u5199\u5728 /A /GoTo \u52a8\u4f5c\u4e2d\u7684 PDF \u5168\u90e8\u65e0\u6cd5\u89e3\u6790\uff0c\u7ae0\u8282\u7ed3\u6784\u4e22\u5931",
+      "target": "openviking",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(pdf): \u89e3\u6790\u5199\u5728 /A /GoTo \u52a8\u4f5c\u4e2d\u7684\u4e66\u7b7e\u76ee\u6807. Target files: openviking/parse/parsers/pdf.py, tests/parse/test_pdf_bookmark_extraction.py. \u672c\u5730\u5bfc\u5165 PDF \u65f6\uff0c\u4e66\u7b7e\u4f1a\u7528\u6765\u751f\u6210\u7ae0\u8282\u3002\u4e4b\u524d\u89e3\u6790\u5668\u53ea\u8bfb\u53d6\u4e66\u7b7e\u7684 `/Dest`\uff1b\u82e5\u540c\u4e00\u76ee\u6807\u5199\u5728 `/A << /S /GoTo /D [...] >>`\uff0c\u6b63\u6587\u4ecd\u80fd\u63d0\u53d6\uff0c\u4f46\u8be5\u4e66\u7b7e\u65e0\u6cd5\u5b9a\u4f4d\u9875\u7801\uff0c\u56e0\u6b64\u4e0d\u80fd\u751f\u6210\u5bf9\u5e94\u7ae0\u8282\u3002 (Ref: https://github.com/volcengine/OpenViking/pull/7077)"
+    },
     {
       "applies_to": "vllm-project/vllm",
       "created_at": "2026-11-10T09:43:17Z",
@@ -45,6 +213,20 @@
       "workaround": "Fix: fix(parser): align XLSParser fallback and parse_method normalization with spreadsheet family. Target files: internal/parser/parser/xls_parser.go, internal/parser/parser/xlsx_parse_method_test.go, internal/parser/parser/xlsx_parser.go. In the spreadsheet parser family (`internal/parser/parser`), `XLSXParser` and `CSVParser` both treat un-routable / generic / PDF-specific parse methods (e.g., `General`, `PaddleOCR`, `MinerU`, `Docling`, `SoMark`) as the default local parsing path (`// PDF-specific methods like \"DeepDOC\" / ... (Ref: https://github.com/infiniflow/ragflow/pull/21967)"
     },
     {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T07:23:47Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:78fa5cb802197d8517e172cc45c7cb0dae6485575a2ccce44e78d3758b1dc58f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_125920",
+      "submitted_by": "harvester-v1",
+      "symptom": "xAI grok-4.7 compression no-ops on encrypted reasoning, then structural_backoff blocks retry",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Long Codex, xAI and Claude chats no longer hide their reasoning from compression (#125920). Target files: agent/context_compressor.py, agent/context_compressor_tail.py, agent/message_metadata.py. On Codex, xAI and Claude, the model's hidden reasoning from earlier turns is sent back on every call, and the provider bills for it. Hermes counted that reasoning as zero (or, for Claude, as its much shorter summary), so compression thought a heavy session was small, found \"nothing to cut\" and blocked itself, while the r... (Ref: https://github.com/NousResearch/hermes-agent/pull/152422)"
+    },
+    {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-10T05:39:26Z",
       "environment_json": "{}",
@@ -57,6 +239,20 @@
       "target": "sglang",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Fix] rust-server: Pass architectures to ModelConfig in test_rust_server_crash_dump. Target files: test/registered/rust/test_rust_server_crash_dump.py. [by Claude Code] (Ref: https://github.com/sgl-project/sglang/pull/49461)"
+    },
+    {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T05:16:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c3027e7da11246574fab75ad92e928481d0ba555d32601e7993c5d6b9bd8e03f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_70983",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(dashboard): sidebar controls fail WCAG 2.5.8 target size (21px < 24px, 15px, 12px)",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(dashboard): sidebar controls meet WCAG 2.5.8 target size (24px). Target files: web/src/components/AuthWidget.tsx, web/src/components/LanguageSwitcher.tsx, web/src/components/SidebarFooter.tsx. Supersedes #134035 (branch renamed from `bb/70983-wcag-target-size` to `austin/70983-wcag-target-size`). (Ref: https://github.com/NousResearch/hermes-agent/pull/152026)"
     },
     {
       "applies_to": "ray-project/ray",
@@ -73,6 +269,20 @@
       "workaround": "Fix: [serve] Copy the ASGI lifespan state into each request scope. Target files: python/ray/serve/_private/http_util.py, python/ray/serve/tests/test_fastapi.py, python/ray/serve/tests/unit/test_http_util.py. A FastAPI app or ASGI middleware that stores resources in its lifespan state can't read them from a request in Ray Serve. Under plain FastAPI plus uvicorn, each request's `scope[\"state\"]` holds a shallow copy of the lifespan state, as the [ASGI lifespan state spec](https://asgi.readthedocs.io/en/latest/specs/lifespan.html#li... (Ref: https://github.com/ray-project/ray/pull/67844)"
     },
     {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T04:58:56Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4ef6e235ac8c37f0b7e3fd6a783603a2c55307f0ba617a886b46856474160453",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_69723",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Desktop. Hermes.app missing com.apple.security.automation.apple-events entitlement \u2014 AppleScript automation (Apple Notes) silently denied under hardened runtime",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(desktop): grant the Apple Events automation entitlement on macOS (#69723). Target files: tests-js/desktop-mac-entitlements.test.ts, apps/desktop/electron/entitlements.mac.inherit.plist, apps/desktop/electron/entitlements.mac.plist. Supersedes #134178 (branch renamed from `bb/69723-apple-events-entitlement` to `austin/69723-apple-events-entitlement`). (Ref: https://github.com/NousResearch/hermes-agent/pull/152018)"
+    },
+    {
       "applies_to": "langgenius/dify",
       "created_at": "2026-11-10T04:06:25Z",
       "environment_json": "{}",
@@ -85,6 +295,20 @@
       "target": "dify",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(agent): tolerate malformed ReAct action payloads. Target files: api/core/agent/output_parser/cot_output_parser.py, api/tests/unit_tests/core/agent/output_parser/test_cot_output_parser.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 1. Ensure there is an associated issue > 1. Use the correct syntax to link this PR: `Fixes #<issue number>`. (Ref: https://github.com/langgenius/dify/pull/45201)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-10T02:39:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:efb79bdb8c1d1db086ad545e995856f3bd38b930dbad3f4c556c8a150d530f31",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_8313",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Windows: portfolio real-tool scenario fails \u2014 node:sqlite cannot open the 267-char authority path (MAX_PATH); a second host-dependent layer behind it",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(sqlite_authority_store): surface underlying SQLite error in status. Target files: loopx/control_plane/coordination/sqlite_authority_store.ts. The issue was that SQLite errors (like \"unable to open database file\" due to path length limits on Windows) were being collapsed into a generic \"lock contention\" message in the `readFailure` function. This made it difficult to diagnose the root cause of database opening failures. (Ref: https://github.com/loopx-project/loopx/pull/8459)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -113,6 +337,20 @@
       "target": "transformers",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix Qwen VL positions when a text cache is reused with a new image. Target files: src/transformers/models/cohere_compass/modeling_cohere_compass.py, src/transformers/models/cosmos3_omni/modeling_cosmos3_omni.py, src/transformers/models/ernie4_5_vl_moe/modeling_ernie4_5_vl_moe.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50427) (Ref: https://github.com/huggingface/transformers/pull/50427)"
+    },
+    {
+      "applies_to": "xuiltul/animaworks",
+      "created_at": "2026-11-10T01:08:56Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:271d6e950e35d4b45c83821712fc901495acba233a64e6bd52cca0c65ea7eadb",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_xuiltul_animaworks_414",
+      "submitted_by": "harvester-v1",
+      "symptom": "Mode A \u3067 openai/gpt-* \u3092\u4f7f\u3046\u3068 enable_thinking / chat_template_kwargs \u304c OpenAI API \u306b\u9001\u3089\u308c 400 \u306b\u306a\u308b",
+      "target": "animaworks",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(litellm): stop sending vLLM thinking fields to OpenAI-hosted models. Target files: core/execution/base.py, core/execution/engines/litellm/_litellm_context.py, scripts/i18n/manifest.json. In Mode A, every `openai/` model got `enable_thinking` and `chat_template_kwargs` in `extra_body`. Those fields switch thinking in the chat template of self-hosted servers (vLLM, llama.cpp). The OpenAI API rejects them with `400 Unrecognized request argument supplied: enable_thinking`. (Ref: https://github.com/xuiltul/animaworks/pull/430)"
     },
     {
       "applies_to": "langgenius/dify",
@@ -239,6 +477,48 @@
       "target": "workers-sdk",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [create-cloudflare] Fix Svelte configuration parsing with object spread. Target files: packages/autoconfig/src/frameworks/utils/vite-config.ts, packages/shared-ast-primitives/src/index.ts, packages/shared-ast-primitives/tsup.config.ts. . Supersedes #13886, carrying forward the original contribution from @tstewart-klaudhaus onto current main. (Ref: https://github.com/cloudflare/workers-sdk/pull/16758)"
+    },
+    {
+      "applies_to": "ArcReel/ArcReel",
+      "created_at": "2026-11-09T17:06:16Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d9a83df3d1f2b373ccbc14ddd0f36d165b99b300a474930be8e04b548486fbc6",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ArcReel_ArcReel_3684",
+      "submitted_by": "harvester-v1",
+      "symptom": "get_prompt_preview \u5bf9 reference_video \u7684 unit_id \u8fd4\u56de item_not_found\uff0c\u4e0e\u5de5\u5177\u53c2\u6570\u5951\u7ea6\u4e0d\u7b26",
+      "target": "arcreel",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agent): get_prompt_preview \u652f\u6301\u53c2\u8003\u751f\u89c6\u9891\u5355\u5143. Target files: server/agent_toolset/orientation.py, server/services/admission/prompt_preview.py, server/services/admission/reference_prompt_preview.py. `get_prompt_preview` \u73b0\u5728\u80fd\u9884\u89c8\u53c2\u8003\u751f\u89c6\u9891\u5355\u5143\u7684\u6700\u7ec8\u89c6\u9891\u63d0\u793a\u8bcd\uff0c\u4e0e Web \u7aef\u548c\u5b9e\u9645\u8bf7\u6c42\u4f7f\u7528\u540c\u4e00\u4efd\u6295\u5f71\u548c\u6e32\u67d3\u3002 (Ref: https://github.com/ArcReel/ArcReel/pull/3751)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-09T16:51:11Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a51e09f35ca9688f1be3de58fd355fdbb65e13360bed7081708d75c1e50cb12b",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12956",
+      "submitted_by": "harvester-v1",
+      "symptom": "Flaky tests/harness/subagents/test_dbos.py::test_background_task_survives_recovery",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Support OpenAI's `gpt-image-2.6-flare` and `gpt-image-2.6-sunburst` image models. Target files: pydantic_ai_slim/pydantic_ai/capabilities/image_generation.py, pydantic_ai_slim/pydantic_ai/common_tools/image_generation.py, pydantic_ai_slim/pydantic_ai/images/__init__.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12820)"
+    },
+    {
+      "applies_to": "escoffier-labs/brigade",
+      "created_at": "2026-11-09T16:02:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2a3d5697bc2daf5813926a2f31057b4a16598c60b607a78966e962571cbdd9d1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_escoffier-labs_brigade_2417",
+      "submitted_by": "harvester-v1",
+      "symptom": "Flake: scanner target-root swap test fails in a full shard (order dependent)",
+      "target": "brigade",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(test): fix stations timeout and scanner import flakes at the cause. Target files: src/brigade/work_cmd/scanners.py, tests/test_stations_verify.py, tests/test_work_cmd_scanners.py. Both flakes had a concrete cause. Neither is fixed by a longer timeout. (Ref: https://github.com/escoffier-labs/brigade/pull/2432)"
     },
     {
       "applies_to": "huggingface/transformers",
@@ -465,6 +745,20 @@
       "workaround": "Fix: fix(evals): block evaluators on a bare HTTP 403 like Topics does. Target files: packages/shared/src/server/evals/classifyEvaluatorLlmError.ts, packages/shared/src/server/llm/nativeErrors.test.ts, worker/src/features/topics/provider-error.ts. \ud83d\udfe1 **Live preview: [pr-19940 app preview](https://pr-19940.preview.langfuse.com)** (Ref: https://github.com/langfuse/langfuse/pull/19940)"
     },
     {
+      "applies_to": "volcengine/OpenViking",
+      "created_at": "2026-11-09T08:59:57Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9ae6c6047a8f36c937a6ff35f79e47a4ce60c2734cb1bb5a1ee9d478ea09530b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_volcengine_OpenViking_7219",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Markdown directory link rewriting changes literal links in code examples",
+      "target": "openviking",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(parse): preserve relative link examples in Markdown code. Target files: openviking/parse/parsers/markdown.py, tests/parse/test_markdown_link_rewrite.py. . Directory ingestion rewrites relative Markdown links to account for the document\u2019s new location. The same pass also rewrites link syntax shown as literal text in fenced code blocks and inline code spans. (Ref: https://github.com/volcengine/OpenViking/pull/7220)"
+    },
+    {
       "applies_to": "astral-sh/ruff",
       "created_at": "2026-11-09T08:33:28Z",
       "environment_json": "{}",
@@ -533,6 +827,20 @@
       "target": "gitlab-cli",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(issuable view): fetch all note pages when showing comments. Applied in GitLab MR !4330. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4330)"
+    },
+    {
+      "applies_to": "nesquena/hermes-webui",
+      "created_at": "2026-11-09T07:22:57Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:05357491af2ea994e9f334a99d022154de3e3e56f19c55d4a0566823e5a19f68",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_nesquena_hermes-webui_8938",
+      "submitted_by": "harvester-v1",
+      "symptom": "Context-length lookup: disabled records still count, api_key_env is never read, three rules unpinned (#8935 review follow-ups; settle before stable carries #8918)",
+      "target": "hermes-webui",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(context-length): a lookup key may also go where a config source holding the same value sends it (#8918). Target files: api/routes.py, tests/test_issue8428_native_custom_provider_read_view.py, tests/test_issue8918_context_lookup_value_owned_key.py. #8917 (shipped in exp-v0.52.655) made the context-length lookup send key K for provider P and URL U only if every host the installed Agent contacts for (P, U) is owned by K's own config source. That closed every cross-source pair v0.52.544 sent. It also dropped pairs v0.5... (Ref: https://github.com/nesquena/hermes-webui/pull/8935)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -941,6 +1249,20 @@
       "workaround": "Fix: fix(caching): don't cache or replay a reply that has no output. Target files: litellm/caching/caching_handler.py, litellm/llms/anthropic/messages/native/response_cache.py, tests/unit/caching/test_caching_handler.py. With the response cache on, an empty streamed /v1/messages reply from a non-Anthropic model got cached, so every identical request replayed it and never reached the provider again. This skips caching a reply with no output, streamed or not, on Messages and chat, and treats an empty stored entry as a miss. A repl... (Ref: https://github.com/BerriAI/litellm/pull/50057)"
     },
     {
+      "applies_to": "pipeshub-ai/pipeshub-ai",
+      "created_at": "2026-11-07T05:02:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:12faa6802267fecb3de768edd9819079b0c35f7fa0ae5f6d52ba2e163f26ef73",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pipeshub-ai_pipeshub-ai_5476",
+      "submitted_by": "harvester-v1",
+      "symptom": "nul.ts filename causes checkout failures when cloning on Windows",
+      "target": "pipeshub",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(nodejs): rename nul.ts so native Windows clones can check out the tree. Target files: backend/nodejs/apps/src/libs/repositories/activity/pg.ts, backend/nodejs/apps/src/libs/repositories/connectors-config/pg.ts, backend/nodejs/apps/src/libs/repositories/conversation/pg.ts. `git clone https://github.com/pipeshub-ai/pipeshub-ai.git` fails to complete checkout on native Windows because `backend/nodejs/apps/src/libs/repositories/nul.ts` uses the reserved device name `NUL` (with extension). The clone downloads but the ... (Ref: https://github.com/pipeshub-ai/pipeshub-ai/pull/5500)"
+    },
+    {
       "applies_to": "langchain-ai/langchainjs",
       "created_at": "2026-11-07T04:00:13Z",
       "environment_json": "{}",
@@ -1303,6 +1625,20 @@
       "target": "vllm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Bugfix] Fix Gemma 4 vision crash with online FP8 quantization. Target files: vllm/model_executor/models/gemma4_mm.py, tests/models/multimodal/processing/test_gemma4.py. . With `--quantization fp8`, an image request to Gemma 4 returns HTTP 500 and kills the engine core. The transformers patch embedder casts the pixel values to `input_proj.weight.dtype`. Once vLLM quantizes that layer, this dtype is `float8_e4m3fn`, so the FP8 linear gets an FP8 input. This PR runs the patch embedder steps in `gemma4_mm.py` with the pixel ... (Ref: https://github.com/vllm-project/vllm/pull/64168)"
+    },
+    {
+      "applies_to": "pipeshub-ai/pipeshub-ai",
+      "created_at": "2026-11-06T10:24:06Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:de8ece3e5352559d549090fd7038f91be6285f671acf619db05a5dc93449babd",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pipeshub-ai_pipeshub-ai_5370",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] A non-owner editor can turn an agent into a service agent that searches with the owner's access",
+      "target": "pipeshub",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agents): only the owner or an administrator can turn an agent into a service agent. Target files: backend/python/app/api/routes/agent.py, frontend/app/(main)/agents/agent-builder/agent-builder-permissions.ts, backend/nodejs/apps/src/modules/api-docs/pipeshub-openapi.yaml. `PUT /api/v1/agent/{agent_id}` accepted `isServiceAccount: true` from anyone with `can_edit` on the agent. `check_agent_permission` grants `can_edit` to WRITER and ORGANIZER as well as OWNER, and the administrator check only ran when `serviceAcc... (Ref: https://github.com/pipeshub-ai/pipeshub-ai/pull/5395)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -1821,6 +2157,20 @@
       "target": "crewai",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(openai): call GPT-6 Astra and GPT-6.1 Sol tools through the Responses API. Target files: lib/cli/src/crewai_cli/constants.py, lib/cli/src/crewai_cli/create_crew.py, lib/cli/src/crewai_cli/create_json_crew.py. **Targets `main`. Merge first.** This branch also carries #9028 (model lists), which was merged into this branch while the PRs were stacked; it reaches `main` with this PR. Merge order for the rest: #9035 \u2192 #9029 \u2192 #9032 \u2192 #9033 \u2192 #9034. (Ref: https://github.com/crewAIInc/crewAI/pull/9035)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-05T03:21:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:54f399d5e20eab121ba78f54a455b213fbab3e543ec52f243607535cdf1b6b40",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_8030",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Host recovery I/O uses the locale codec, silently dropping non-ASCII Antigravity Stop events on cp936",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(runtime): pin UTF-8 on host recovery I/O. Target files: loopx/agy_goal_mode/host_runtime.py, loopx/hosts/managed_service_runtime.py, tests/test_antigravity_host_runtime.py. Latest `main` fails its two package-wide UTF-8 guards, so every pull request inherits a red Python test lane; the same omissions silently discard non-ASCII Antigravity Stop recovery on cp936 Windows and can block managed-runtime journal recovery. (Ref: https://github.com/loopx-project/loopx/pull/8031)"
     },
     {
       "applies_to": "mastra-ai/mastra",
@@ -2803,6 +3153,20 @@
       "workaround": "Fix: fix(azure_ai): keep azure_ad_token out of the request body. Target files: litellm/images/main.py, litellm/utils.py, tests/unit/llms/azure_ai/test_azure_ai_entra_auth.py. Calling an Azure AI Foundry model through `azure_ai/` with an Entra token (`azure_ad_token`) and no API key failed with a 400, because litellm sent the token in the JSON body as well as the `Authorization: Bearer` header. Foundry rejects unknown body params, so GPT, Claude and Cohere embedding deployments all answered 400 (Ref: https://github.com/BerriAI/litellm/pull/49769)"
     },
     {
+      "applies_to": "Sma1lboy/rove",
+      "created_at": "2026-11-03T06:55:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ca9b7a693ad650e1d783c9992e1a692f858ed3306eb115d1c1183d533240f091",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Sma1lboy_rove_1632",
+      "submitted_by": "harvester-v1",
+      "symptom": "status mismatch: dir task row draws dead while task activity says turn_complete",
+      "target": "rove",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: align task activity and row status priority. Target files: packages/rove-daemon/src/daemon/activity-rollup.ts, packages/rove-daemon/src/daemon/cwd-task.ts, packages/rove-daemon/src/daemon/row-status.ts. . Shared urgency keeps running and permission-needed sources above attention, preserving archive/rewind protection. Dead tabs outrank newer completions. Home cwd attribution requires an exact match. (Ref: https://github.com/Sma1lboy/rove/pull/1633)"
+    },
+    {
       "applies_to": "vllm-project/vllm",
       "created_at": "2026-11-03T06:35:49Z",
       "environment_json": "{}",
@@ -3125,6 +3489,20 @@
       "workaround": "Fix: fix: reject renaming or dropping embedding columns. Target files: nodejs/lancedb/table.ts, python/python/lancedb/table.py, rust/lancedb/src/table.rs. Renaming or dropping an embedding source or vector column leaves schema metadata pointing at missing fields, causing later `add()` calls to fail. (Ref: https://github.com/lancedb/lancedb/pull/4764)"
     },
     {
+      "applies_to": "Dodaios/Dodaios",
+      "created_at": "2026-11-02T21:27:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:22a381080c954b184f59bbfdaf5e6ce0dacd2502e06444eff32d7ad7b561012d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Dodaios_Dodaios_458",
+      "submitted_by": "harvester-v1",
+      "symptom": "Test suite is not hermetic in an installer-managed checkout: writes society DBs into <repo>/data and fails when .jarvis-managed-install exists (v2.9.0)",
+      "target": "dodaios",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: keep the test suite out of the checkout's data dir. Target files: dodaios/core/config.py, dodaios/core/paths.py, dodaios/core/review/audit.py. #1095 pointed the suite at a temp `JARVIS_DATA_DIR`. A full local run with an audit hook on every write under `<repo>/data` found the stores that still ignored it. Each one now takes its default from the runtime data dir instead of a cwd-relative or hard-coded `data/`: (Ref: https://github.com/Dodaios/Dodaios/pull/1119)"
+    },
+    {
       "applies_to": "lancedb/lancedb",
       "created_at": "2026-11-02T21:05:30Z",
       "environment_json": "{}",
@@ -3263,6 +3641,20 @@
       "target": "vllm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Bugfix][KV Offload] Drain unfetched P2P stores before cache reset. Target files: vllm/v1/kv_offload/tiering/p2p/manager.py, vllm/v1/kv_offload/tiering/p2p/session/server.py, vllm/v1/kv_offload/tiering/p2p/session/session.py. Fix cache reset on P2P prefill nodes when store jobs are waiting for a decoder to fetch their KV blocks. . (Ref: https://github.com/vllm-project/vllm/pull/63988)"
+    },
+    {
+      "applies_to": "Dodaios/Dodaios",
+      "created_at": "2026-11-02T17:42:17Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c898015fa2e039e616d6af30dea7a80c74e59fb611cf586686d7179930ce7d2f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Dodaios_Dodaios_1018",
+      "submitted_by": "harvester-v1",
+      "symptom": "[regression] Linux update to v4.1.x aborts at \"dependency consistency check\": pip check fails on system-site-packages otel exporters after opentelemetry floor bump (v4.1.2)",
+      "target": "dodaios",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(installer): isolate headless Linux venvs and tolerate host-only pip check conflicts. Target files: install/installer.py, install/install.sh, tests/unit/install/test_install_sh_venv_isolation.py. Headless Linux installs linked the host's site-packages and resolved the runtime from the open pyproject ranges (`pip install -e .`), so pip took host copies of fastapi, uvicorn, opentelemetry and friends as \"already satisfied\" and the server ran on host versions (#456). The same linked site-packages made `pip check` judge packag... (Ref: https://github.com/Dodaios/Dodaios/pull/1088)"
     },
     {
       "applies_to": "mastra-ai/mastra",
@@ -3489,6 +3881,20 @@
       "workaround": "Fix: API changes: requests sent while generation is paused return HTTP 503 (#51488); `kv_transfer_params` / `ec_transfer_params` moved to the top level of render output (#61241); LoRA on a model without LoRA support fails at validation (#61884); the RL weight-transfer API now uses `ParamMeta`, `iter_full()` and `iter_local()` (#63256); beam search scores are normalized by generated length (#62928).. Upstream PR #51488. (Ref: https://github.com/vllm-project/vllm/pull/51488)"
     },
     {
+      "applies_to": "jin-bo/agentao",
+      "created_at": "2026-11-02T10:03:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:eaf2a3cc51647804149f3b065b5d2ebe380100f995b3f0ec8d4a8e44c65144aa",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_jin-bo_agentao_613",
+      "submitted_by": "harvester-v1",
+      "symptom": "image_url: non-dict value raises, dropped detail not logged",
+      "target": "agentao",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: preserve explicit image detail in Responses requests. Target files: agentao/llm/_openai_responses.py, tests/test_openai_responses_adapter.py, CHANGELOG.md. The Responses adapter omitted explicit image detail preferences when translating Chat-shaped history. Preserve the supported `low`, `high`, `auto` and `original` values in outbound `input_image` items through a strict allowlist. Read the image payload once and leave stored history unchanged. Unsupported or absent values retain their previous omission behavior. (Ref: https://github.com/jin-bo/agentao/pull/608)"
+    },
+    {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-11-02T08:36:45Z",
       "environment_json": "{}",
@@ -3599,6 +4005,34 @@
       "target": "prefect",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Return 422 instead of 503/500 for invalid values in request bodies. Target files: src/prefect/server/api/server.py, src/prefect/server/utilities/server.py, tests/server/api/test_server.py. This PR makes the server return 422 for invalid values in request bodies. Before, some of these values gave 503 (which the client retries) or 500. (Ref: https://github.com/PrefectHQ/prefect/pull/23619)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-01T16:25:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ed46d2f43a35e72a6de004c33dfcb6a0988f076694654179b7d86d36fcd293e1",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_7808",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: native Windows Codex App settlement plans emit a POSIX-only Turn reference",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(quota): render host-native settlement Turn references. Target files: loopx/control_plane/quota/effect_program.py, tests/control_plane/test_quota_settlement.py. Native Windows Codex App admission can block every no-Turn settlement after the work succeeds because the returned plan contains a POSIX-only Turn placeholder that PowerShell forwards as an empty argument; this affects the supported native Windows App journey and the validation, writeback, spend, and closeout steps generated from it. (Ref: https://github.com/loopx-project/loopx/pull/7823)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-01T14:38:16Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1d6e6850a10ab5c272c08af5083b086a8e615c36947d23f366cdf36d72e84a4f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_7805",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: native Windows --write-worktree scoped observation rejects every in-scope path",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(leases): accept scoped native Windows worktree paths. Target files: loopx/control_plane/work_items/task_lease_workspace.ts, .github/workflows/python-tests.yml, scripts/ci/test_windows_lane_coverage.py. Native Windows `--write-worktree` observation rejected existing in-scope entries because `realpath()` returns native separators while the containment test appended a literal slash. Use the existing Node path owner to compare the physical child's relative location, preserving rejection of the root, parent escapes and ab... (Ref: https://github.com/loopx-project/loopx/pull/7817)"
     },
     {
       "applies_to": "agno-agi/agno",
@@ -3795,6 +4229,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(proxy): price OpenAI pass-through /v1/decisions calls like native Decisions. Target files: litellm/proxy/_types.py, litellm/proxy/pass_through_endpoints/llm_provider_handlers/openai_passthrough_logging_handler.py, litellm/proxy/pass_through_endpoints/success_handler.py. Calls to OpenAI's Decisions API through the `/openai` pass-through route now show up in spend logs with real token counts and cost. Before this, they reached OpenAI and came back fine but were logged at $0 with no tokens, so key and team budgets never mo... (Ref: https://github.com/BerriAI/litellm/pull/49392)"
+    },
+    {
+      "applies_to": "pipeshub-ai/pipeshub-ai",
+      "created_at": "2026-10-31T14:26:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c8e84a3532a84603d1a33092948cfeeec1c216bcf81585dfa8a19d8bd8d4ea9a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pipeshub-ai_pipeshub-ai_5126",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Empty Claude reply fails the run on the direct Anthropic transport (400)",
+      "target": "pipeshub",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agent-loop): skip empty assistant turn when replaying history to Anthropic. Target files: backend/python/app/agent_loop_lib/transport/anthropic.py, backend/python/tests/unit/agent_loop_lib/transport/test_anthropic_coverage.py. With `PIPESHUB_AGENT_TRANSPORT=direct` and an Anthropic model, an empty Claude reply (no text, no tool calls) is stored as an `AssistantMessage` and replayed by `AnthropicTransport` as `{\"type\": \"text\", \"text\": \"\"}`. Anthropic rejects that with `messages: text content blocks must be non-emp... (Ref: https://github.com/pipeshub-ai/pipeshub-ai/pull/5137)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -5981,6 +6429,20 @@
       "workaround": "Fix: Use AMD64 for x86-64 Windows platform markers. Target files: crates/uv-configuration/src/target_triple.rs, crates/uv/tests/pip_install/pip_install.rs. CPython reports `platform.machine()` as `AMD64` on x86-64 Windows. We now use that value for `--python-platform x86_64-pc-windows-msvc` and its `windows` alias. Previously, both used `x86_64`, so uv skipped dependencies guarded by `platform_machine == 'AMD64'` and rejected `pylock.toml` files that used the same marker in `environments`. (Ref: https://github.com/astral-sh/uv/pull/22935)"
     },
     {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-10-26T14:14:54Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4833df2e96da5f455459b37fc5b0047b9a1c35e6074bfa0cb29b4f28dfcb301d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_7378",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: the required chat-bundle-browser lane is red on main \u2014 the read-only source badge repeats the visible Goal title",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(workspace): stop the read-only source badge from repeating the Goal title. Target files: apps/presentation/dashboard/smoke/chat-model-menu-smoke.mjs, apps/presentation/dashboard/src/features/personal-workspace/channel-header.tsx, apps/presentation/dashboard/src/features/personal-workspace/i18n.tsx. **Required merge gate:** since #7376, the required `chat-bundle-browser` job of `Python Tests` (one of the five jobs `checks` verifies; `checks` feeds `pytest` \u2192 `merge-gate`) fails deterministically for every PR whose cha... (Ref: https://github.com/loopx-project/loopx/pull/7380)"
+    },
+    {
       "applies_to": "agno-agi/agno",
       "created_at": "2026-10-26T13:39:50Z",
       "environment_json": "{}",
@@ -6707,6 +7169,20 @@
       "target": "crewAI",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix: Crew.test emits its start event before setup so a failed setup pairs. Target files: lib/crewai/src/crewai/crew.py, lib/crewai/tests/test_crew.py. `Crew.test` emits `CrewTestStartedEvent` before `create_llm` (`eval_llm` now carries the requested spec, which the field's `str | Any | None` type already allows) instead of after it, so a setup failure's `CrewTestFailedEvent` has its opener on the scope stack. (Ref: https://github.com/crewAIInc/crewAI/pull/8420)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-23T05:14:27Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f0254795615e49d31c5eaed679376c1406683c2ad5fb70753483318f261920af",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_58532",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Triton fused MoE incorrectly indexes per-channel weight scales with per-tensor activations",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Make online FP8 MoE experts batch-invariant under VLLM_BATCH_INVARIANT. Target files: vllm/model_executor/layers/fused_moe/experts/fused_batched_moe.py, vllm/model_executor/layers/fused_moe/fused_moe.py, vllm/model_executor/layers/quantization/fp8.py. With `VLLM_BATCH_INVARIANT=1`, a MoE model served with `--quantization fp8` (online per-tensor FP8, Triton experts) still produces output that depends on which other requests share its batch: greedy tokens flip within the first ~10 positions and prefix-cached K/V di... (Ref: https://github.com/vllm-project/vllm/pull/57092)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -13065,6 +13541,20 @@
       "workaround": "Upgrade tornado to patched release >= 6.5.8: pip install --upgrade 'tornado>=6.5.8' (Advisory: GHSA-mpf4-983q-p7j4)"
     },
     {
+      "applies_to": "codeofaxel/Kiln",
+      "created_at": "2026-09-02T07:28:54Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:994ce981a1031bfdd7b910c485b8f6278a6cd3e27c915dae938542e7c38af119",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_codeofaxel_Kiln_146",
+      "submitted_by": "harvester-v1",
+      "symptom": "Windows: signal.SIGBUS AttributeError makes every CLI/MCP entrypoint unusable (1.4.1.1)",
+      "target": "kiln",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Windows: build the crash-signal sets from what the platform defines. Target files: kiln/src/kiln/openscad_runner.py, kiln/src/kiln/slicer.py, kiln/tests/test_openscad_runner.py. CPython's `signal` module on Windows has no `SIGBUS` and no `SIGTRAP`. `openscad_runner` read `SIGBUS` at import time, and `kiln.cli.main` reaches it through `kiln.generation`, so every entrypoint (`serve`, `doctor`, `--help`) died with `AttributeError` on 1.4.1.1. `kiln.slicer` carried the same fault twice over, one lazy import further down: the firs... (Ref: https://github.com/codeofaxel/Kiln/pull/147)"
+    },
+    {
       "applies_to": "sqlparse",
       "created_at": "2026-09-01T21:20:11Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-cfqr-cjx5-5jcm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-84305\", \"PYSEC-2026-3923\"]}",
@@ -13121,6 +13611,20 @@
       "workaround": "Upgrade nanoid to patched release >= 5.1.11: npm install 'nanoid@>=5.1.11' (Advisory: GHSA-xwg4-73v4-xw9w)"
     },
     {
+      "applies_to": "decocms/studio",
+      "created_at": "2026-09-01T19:14:01Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cf753b16b622e022fbbd0e71713ca6f73adabef5b9f29073979ca4372d9efb13",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_decocms_studio_2265",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Workflow creation not working before MCP-Studio setup",
+      "target": "decocms",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(decopilot): surface a missing model credential as a clear permanent error. Target files: apps/api/src/api/routes/decopilot/dispatch-run.test.ts, apps/api/src/api/routes/decopilot/dispatch-run.ts, apps/api/src/core/dispatch-errors.ts. Follows #2265 (\"Workflow creation not working before MCP-Studio setup\") \u2014 the reported root cause there was a raw Postgres error (\"relation ... does not exist\") reaching the user because a required piece of org setup was incomplete. The same class of bug exists in the dispatch path: `resolveS... (Ref: https://github.com/decocms/studio/pull/6829)"
+    },
+    {
       "applies_to": "mlflow",
       "created_at": "2026-09-01T17:04:30Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-gqvg-gmmx-x4hm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": []}",
@@ -13147,6 +13651,20 @@
       "target": "openai-node",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix: support Jest 28 CommonJS package imports. Target files: ecosystem-tests/cli.ts, ecosystem-tests/node-ts-cjs-auto/tests/import.test.ts, ecosystem-tests/node-ts-cjs-web/tests/import.test.ts. After #2507 fixes the CommonJS + browser-condition Jest failure, the main-only examples job still has two CommonJS fixtures that fail under Jest 28: (Ref: https://github.com/openai/openai-node/pull/2511)"
+    },
+    {
+      "applies_to": "decocms/studio",
+      "created_at": "2026-08-28T17:06:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ffb58d5e1926a1047901cdf4b0dfa0a27bf60c1e5189bc4a3441a5b5e98f16bd",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_decocms_studio_6673",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: orphaned pinned view renders a permanent agent tab that cannot be removed",
+      "target": "decocms",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(virtual-mcp): prune homeTile/homeTiles when their connection is removed. Target files: apps/api/src/storage/prune-orphaned-ui-refs.test.ts, apps/api/src/storage/prune-orphaned-ui-refs.ts, apps/api/src/storage/virtual.ts. Follow-up to #6674 (merged, 's orphaned pinned-view tab). That PR's own body flagged this exact gap under \"Not in scope\": (Ref: https://github.com/decocms/studio/pull/6704)"
     },
     {
       "applies_to": "567-labs/instructor",
@@ -13273,6 +13791,20 @@
       "target": "gitpython",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade gitpython to patched release >= 3.1.59: pip install --upgrade 'gitpython>=3.1.59' (Advisory: PYSEC-2026-3786)"
+    },
+    {
+      "applies_to": "infiniflow/ragflow",
+      "created_at": "2026-08-21T05:56:06Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2d8dc2260ff0dd5bba4a085dcafd57706dac8a4337122550db01ba27cfa06699",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_infiniflow_ragflow_17123",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: rag/utils/{es_conn,opensearch_conn}.py write/delete paths silently swallow transient errors",
+      "target": "ragflow",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(doc_store): retry transient connection errors in pool init. Target files: common/doc_store/es_conn_pool.py, common/doc_store/infinity_conn_base.py, common/doc_store/infinity_conn_pool.py. Fix the silent-failure health-check retry loops in `common/doc_store/{es_conn_pool, ob_conn_pool, infinity_conn_pool, infinity_conn_base}.py`. These pool initializers run at module import via `@singleton`; a brief blip during pod start currently crashes the whole worker process. The fix retries with exponential backoff, logs each at... (Ref: https://github.com/infiniflow/ragflow/pull/17196)"
     },
     {
       "applies_to": "InternLM/lmdeploy",
@@ -13821,6 +14353,20 @@
       "workaround": "Fix: **Fields with unresolved forward references now emit a warning** ([#901](https://github.com/pydantic/pydantic-settings/pull/901)). Settings sources can silently fail to resolve such fields; they now raise `IncompleteFieldDefinitionWarning` telling you to call `model_rebuild()`. If you have `filterwarnings = error` configured, this may surface as a new failure.. Upstream PR #901. (Ref: https://github.com/pydantic/pydantic-settings/pull/901)"
     },
     {
+      "applies_to": "raphaeltm/simple-agent-manager",
+      "created_at": "2026-08-06T05:28:36Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0edd94c81786e3002caa9b7c5a80c485f89af498c77ddeb599a1b351927b991e",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_raphaeltm_simple-agent-manager_1614",
+      "submitted_by": "harvester-v1",
+      "symptom": "Deployment fails on new Cloudflare accounts due to legacy Durable Object migrations",
+      "target": "simple-agent-manager",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: preserve Durable Object migration compatibility. Target files: package.json, scripts/deploy/durable-object-migrations.ts, scripts/deploy/sync-wrangler-config.ts. - Fixes fresh-install Cloudflare error 10099 without rewriting the immutable v1-v17 Durable Object history in `apps/api/wrangler.toml`. - Reads the target API Worker's deployed `migration_tag` before generating environment configuration. Applied migrations remain structurally unchanged; only pending `new_classes` creates become `new_sqlite_classe... (Ref: https://github.com/raphaeltm/simple-agent-manager/pull/1649)"
+    },
+    {
       "applies_to": "nuxt",
       "created_at": "2026-08-05T21:43:03Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-9pgf-384g-p7mv\", \"ecosystem\": \"npm\", \"fixed_version\": \"4.5.1\", \"aliases\": [\"CVE-2026-71321\"]}",
@@ -14323,6 +14869,20 @@
       "target": "gitpython",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade gitpython to patched release >= 3.1.51: pip install --upgrade 'gitpython>=3.1.51' (Advisory: PYSEC-2026-3947)"
+    },
+    {
+      "applies_to": "xuiltul/animaworks",
+      "created_at": "2026-08-01T09:45:37Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:62f29d8e7b4c396e8e7e5a3ba23934220e557cdac421937658433c6019b13767",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_xuiltul_animaworks_246",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix: _check_process_health STOPPING-stuck path writes failure state without a shutdown guard",
+      "target": "animaworks",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: guard remaining failure-tracking writers against mid-shutdown races. Target files: core/supervisor/_mgr_health.py, core/supervisor/_mgr_reconcile.py, core/supervisor/manager.py. `shutdown_all()` sets `self._shutdown = True` so the failure-tracking machinery (`_failure_reasons`, `_permanently_failed`, `_start_fail_counts`/`_start_failed_times`, `handle.state = FAILED`) becomes a no-op during teardown: state written after shutdown begins is never read again and only pollutes the next server start. Follow-up to #241/#242... (Ref: https://github.com/xuiltul/animaworks/pull/244)"
     },
     {
       "applies_to": "sentence-transformers",
@@ -21885,6 +22445,20 @@
       "workaround": "Fix: fix(core): prevent `KeyError` in `DocumentSummaryIndex.delete_nodes` when invalid node ID is provided ([#21067](https://github.com/run-llama/llama_index/pull/21067)). Upstream PR #21067. (Ref: https://github.com/run-llama/llama_index/pull/21067)"
     },
     {
+      "applies_to": "raphaeltm/simple-agent-manager",
+      "created_at": "2026-04-18T11:24:50Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:09c93c424a37aba9eff6cd5e6018260baa9b1383e19c64e47fb0da78da763120",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_raphaeltm_simple-agent-manager_1",
+      "submitted_by": "harvester-v1",
+      "symptom": "Security: Sign and verify VM Agent binaries",
+      "target": "simple-agent-manager",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vm-agent): firewall INPUT-DROP removal + HTTP transport resilience. Target files: packages/cloud-init/src/template.ts, packages/vm-agent/internal/acp/session_host.go, packages/vm-agent/internal/bootlog/reporter.go. Fixes the ~6-minute \\\"Cloudflare API unreachable\\\" outage window during VM boot by eliminating two independent root causes: (Ref: https://github.com/raphaeltm/simple-agent-manager/pull/747)"
+    },
+    {
       "applies_to": "authlib",
       "created_at": "2026-04-16T22:38:03Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-jj8c-mmj3-mmgv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.6.11\", \"aliases\": [\"CVE-2026-41425\", \"PYSEC-2026-25\"]}",
@@ -21981,6 +22555,20 @@
       "target": "keras",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade keras to patched release >= 3.13.2: pip install --upgrade 'keras>=3.13.2' (Advisory: GHSA-4f3f-g24h-fr8m)"
+    },
+    {
+      "applies_to": "agentic-research/mache",
+      "created_at": "2026-04-12T18:23:14Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:21698d2ebdd9d68f779e5d5fbae13a5042aeae7e739ae4c7545c4a2bc7d4c3c3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_agentic-research_mache_112",
+      "submitted_by": "harvester-v1",
+      "symptom": "Missing leyline binary",
+      "target": "mache",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: graceful error messages when ley-line not available. Target files: cmd/serve_handlers.go, cmd/serve_lsp.go, internal/graph/graph.go. Replace internal error dumps (`discover/start leyline: no ley-line socket found...`) with user-friendly messages when ley-line daemon isn't available: (Ref: https://github.com/agentic-research/mache/pull/153)"
     },
     {
       "applies_to": "axios",
@@ -23524,6 +24112,20 @@
     },
     {
       "applies_to": "tornado",
+      "created_at": "2026-03-11T22:17:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78cv-mqj4-43f7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.5.5\", \"aliases\": [\"CVE-2026-35536\", \"GHSA-fqwm-6jpj-5wxc\", \"PYSEC-2026-2287\"]}",
+      "fingerprint": "sha256:a1083c8d8c799a74f6eb546c8c1143175bdd85f46ac4363ff0451b34bf8fc241",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_78cv_mqj4_43f7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-78cv-mqj4-43f7] Tornado has incomplete validation of cookie attributes (Affects tornado < 6.5.5)",
+      "target": "tornado",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade tornado to patched release >= 6.5.5: pip install --upgrade 'tornado>=6.5.5' (Advisory: GHSA-78cv-mqj4-43f7)"
+    },
+    {
+      "applies_to": "tornado",
       "created_at": "2026-03-11T20:16:16.617Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-140\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.5.5\", \"aliases\": [\"CVE-2026-31958\", \"GHSA-qjxf-f2mg-c6mc\"]}",
       "fingerprint": "sha256:31664c8f3ec7eafdfc466bc2c01535b0919566f5144bf5afc48a0be7837cd74b",
@@ -24627,6 +25229,20 @@
       "target": "wheel",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade wheel to patched release >= 0.46.2: pip install --upgrade 'wheel>=0.46.2' (Advisory: GHSA-8rrh-rw8j-w5fx)"
+    },
+    {
+      "applies_to": "orjson",
+      "created_at": "2026-01-22T17:16:01.433Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-107\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.11.5\", \"aliases\": [\"CVE-2025-67221\", \"GHSA-hx9q-6w63-j58v\"]}",
+      "fingerprint": "sha256:d6586a42f9de6abf7dca069aa8ede53d12c9007b295cb742799cb7ba9b31d410",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_107",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-107] The orjson.dumps function in orjson thru 3.11.4 does not limit recursion for deeply nested JSON documents. (Affects orjson < 3.11.5)",
+      "target": "orjson",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade orjson to patched release >= 3.11.5: pip install --upgrade 'orjson>=3.11.5' (Advisory: PYSEC-2026-107)"
     },
     {
       "applies_to": "pytest",
@@ -25052,6 +25668,174 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "huggingface/datasets",
+      "created_at": "2026-11-10T17:24:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:583fc31599d19258500ef88f112838a10c298ded1e40b661f932e0fe089b64a3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_datasets_8965",
+      "submitted_by": "harvester-v1",
+      "symptom": "batch(by_column=...) merges different groups when the key column contains nulls",
+      "target": "datasets",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix batch(by_column=) merging groups that are separated by null values. Target files: src/datasets/table.py, tests/test_arrow_dataset.py. `Dataset.batch(by_column=...)` and `IterableDataset.batch(by_column=...)` treated a null key as equal to its neighbours, so different groups were merged into one batch. Keys `[1, None, 2]` gave a single batch. A key column with only nulls raised `ArrowNotImplementedError`. Now a null is its own value: equal to other nulls, different from any non-null value. (Ref: https://github.com/huggingface/datasets/pull/8966)"
+    },
+    {
+      "applies_to": "Cotal-AI/Cotal",
+      "created_at": "2026-11-10T17:22:52Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:60836b2745dabb1c872c2a2b5dcaf953942695654e404364753d4299e9a1ec12",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Cotal-AI_Cotal_6230",
+      "submitted_by": "harvester-v1",
+      "symptom": "cli update --self: fails with a raw npm 404 for the first minutes after a release, while a dependency's tarball is not served yet",
+      "target": "cotal",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(cli): check the release's archives are served before self-update installs. Target files: implementations/cli/smoke/command-kernel.smoke.ts, implementations/cli/src/commands/update.ts, .changeset/check-update-release-archives.md. For the first minutes after a release, `cotal update --self` could fail with a raw npm 404: the registry already named the new version as `latest` for `cotal-ai` while the tarball of a package it depends on was not served yet. Nothing was damaged, but the person upgrading saw \"install failed\" with... (Ref: https://github.com/Cotal-AI/Cotal/pull/6255)"
+    },
+    {
+      "applies_to": "Cotal-AI/Cotal",
+      "created_at": "2026-11-10T17:07:55Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c35e9a5541a253a69536336ec13cf7a192f3d9c1619fa0d07362e4b9388a88fe",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Cotal-AI_Cotal_6224",
+      "submitted_by": "harvester-v1",
+      "symptom": "run ps: a Manager newer than the space's auth service fails with a raw broker permission error instead of naming the version gap",
+      "target": "cotal",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(runtime): explain a missing run-list grant from an older auth service. Target files: implementations/runtime/smoke/run-command.smoke.ts, implementations/runtime/src/run-host.ts, .changeset/run-list-auth-upgrade.md. `cotal run ps` against a Manager from 0.149.0 on, in a space whose auth service is older, failed with the broker's raw text: `Permissions Violation for Publish to \"$JS.API.DIRECT.GET.KV_cotal_records_<space>\"`. Run listing has read its records in batches since 0.149.0, and the grant for that read is issued by t... (Ref: https://github.com/Cotal-AI/Cotal/pull/6252)"
+    },
+    {
+      "applies_to": "kirodotdev/KiroCrew",
+      "created_at": "2026-11-10T17:05:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:79f523be6ea18fc02e5da803d894e9efbdf5511834a70c7f185704d7e1310c52",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_kirodotdev_KiroCrew_31049",
+      "submitted_by": "harvester-v1",
+      "symptom": "Cron-born chat tabs vanish on every gateway restart: restore reads dashboard_cron-<id>.jsonl, a name never written",
+      "target": "kirocrew",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(dashboard): restore cron chat tabs by their written transcript name. Target files: src/kiro_crew/dashboard/chat_utils.py, src/kiro_crew/dashboard/chat_utils_slots.py, test/test_cron_slot_restore_name.py. **Goal:** Keep cron-born chat tabs in the sidebar across a gateway restart instead of silently dropping them. (Ref: https://github.com/kirodotdev/KiroCrew/pull/31309)"
+    },
+    {
+      "applies_to": "huggingface/trl",
+      "created_at": "2026-11-10T16:22:08Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9ca9e71c84397badff9c6ba43b19e69c9797c30fa72f6f02b6d3254995154b1b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_trl_8230",
+      "submitted_by": "harvester-v1",
+      "symptom": "compute_flops_per_token fails on Gemma 4, whose head_dim is per layer",
+      "target": "trl",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Only estimate FLOPs for the model types the formula describes, and omit MFU otherwise. Target files: trl/experimental/async_distillation/async_distillation_trainer.py, trl/experimental/async_grpo/async_grpo_trainer.py, trl/trainer/utils.py. `compute_flops_per_token` reads config fields that most MoE families name differently, so AsyncGRPO and AsyncDistillation crash at the end of the first step on 8 of 9 tiny MoE checkpoints and on Gemma 4. They also log a wrong MFU for hybrid models like Qwen3.5 or Gemma 3. It now returns `... (Ref: https://github.com/huggingface/trl/pull/8236)"
+    },
+    {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T15:48:53Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:45db855655f61cdd10a0ef802d7cfcee3f02baad655577791f9d030aec172e1d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_148644",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] Async delegate child dies with KeyError(<parent session id>) once the parent's live session is gone (inherited local-viewer print sink)",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(gateway): recover from a background subagent's failure while its parent chat is idle. Target files: gateway/run_notifications.py, gateway/session_authority.py, gateway/session_automation.py. When Hermes hands a job to a helper agent and that helper fails, for example because the AI provider's safety filter refused the request, the main conversation used to stay silent until you came back and asked what happened. Worse, the real reason was sometimes lost and replaced by a meaningless error. Now the failure com... (Ref: https://github.com/NousResearch/hermes-agent/pull/149568)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-11-10T15:46:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:209cba94277ed13fcc260baa7bb7497e31135a9a42c6a6053a8f5b62b8ef6819",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_49536",
+      "submitted_by": "harvester-v1",
+      "symptom": "Mamba2: non-fused gated RMSNorm ignores n_groups and disagrees with fused training",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix grouped RMSNorm in Mamba2's non-fused path. Target files: src/transformers/models/bamba/modeling_bamba.py, src/transformers/models/bamba/modular_bamba.py, src/transformers/models/falcon_h1/modeling_falcon_h1.py. . Mamba2's non-fused gated RMSNorm currently normalizes across the entire intermediate dimension. When `n_groups > 1`, this disagrees with the grouped normalization used by the fused training path, so the same weights and inputs can produce different outputs depending on the execution path. This change ... (Ref: https://github.com/huggingface/transformers/pull/49744)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-10T14:56:15Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:71564534dd0320d82acee267673fb13aa3db8af7250ed1375877ca8aeddc5875",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_25350",
+      "submitted_by": "harvester-v1",
+      "symptom": "OM `manageWorkingMemory` with Markdown working memory: Observer can skip the optional `<working-memory>` section and the update is silently dropped",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(memory): require the working memory section in single-thread observer calls for Markdown working memory. Target files: packages/memory/src/processors/observational-memory/extractor.ts, packages/memory/src/processors/observational-memory/observer-runner.ts, packages/memory/src/processors/observational-memory/working-memory-extractor.ts. When observational memory manages Markdown working memory (`observation.manageWorkingMemory: true` without a working memory schema), the Observer updates working memory by writing a `<wo... (Ref: https://github.com/mastra-ai/mastra/pull/26203)"
+    },
+    {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T14:44:30Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ef6499a90eba8444d4b864c95a26136ed113cdbead026712eb1436f061766c6c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_149291",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: connect_tracked: a tracked connection garbage-collected without close() stays \"live\" in the registry until restart",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(state): release a tracked connection's entry only after SQLite has closed its files. Target files: hermes_cli/sqlite_safe_read.py, tests/hermes_cli/test_sqlite_safe_read_finalizer.py. Makes a tracked SQLite connection release its registry entry when it's garbage-collected without `close()`, and never before its files are actually closed. (Ref: https://github.com/NousResearch/hermes-agent/pull/149309)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-10T13:20:43Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ebc9fc7e97d458e3d151fd17191eb6dffa52c1f9d44ab9e9a5a066981b746c67",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_27259",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Transformed Standard Schema tool inputs are decoded then revalidated as raw input in agent execution",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(core): run tools with decoded input when the input schema transforms values. Target files: packages/core/src/loop/test-utils/aimock/scenarios/transformed-tool-input.scenario.test.ts, packages/core/src/tools/tool-builder/builder.ts, .changeset/hot-rats-rescue.md. Tools whose input schema transforms the model's arguments (for example `z.string().transform(s => new URL(s))`, or Effect's `URLFromString`) failed when an agent called them: (Ref: https://github.com/mastra-ai/mastra/pull/29555)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-10T13:11:30Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:3cc1545e7e7fce1ff6901141a639b696aad62059de47cfa5beac878fa7a76a27",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_13005",
+      "submitted_by": "harvester-v1",
+      "symptom": "Confirm the Gateway and Bedrock serve `claude-fable-5-2` and `claude-mythos-5-2`",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Add Claude Fable 5.2 (`claude-fable-5-2`) and Claude Mythos 5.2 (`claude-mythos-5-2`) support. Target files: pydantic_ai_slim/pydantic_ai/models/_known_model_names.py, pydantic_ai_slim/pydantic_ai/models/anthropic/__init__.py, pydantic_ai_slim/pydantic_ai/models/anthropic/_thinking_binding.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12970)"
+    },
+    {
+      "applies_to": "volcengine/OpenViking",
+      "created_at": "2026-11-10T11:50:37Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4666bd780232506f75e392f3c7b5c7823ff447d077b95ff0b57e917efdeb8a7c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_volcengine_OpenViking_7076",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: \u4e66\u7b7e\u76ee\u6807\u5199\u5728 /A /GoTo \u52a8\u4f5c\u4e2d\u7684 PDF \u5168\u90e8\u65e0\u6cd5\u89e3\u6790\uff0c\u7ae0\u8282\u7ed3\u6784\u4e22\u5931",
+      "target": "openviking",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(pdf): \u89e3\u6790\u5199\u5728 /A /GoTo \u52a8\u4f5c\u4e2d\u7684\u4e66\u7b7e\u76ee\u6807. Target files: openviking/parse/parsers/pdf.py, tests/parse/test_pdf_bookmark_extraction.py. \u672c\u5730\u5bfc\u5165 PDF \u65f6\uff0c\u4e66\u7b7e\u4f1a\u7528\u6765\u751f\u6210\u7ae0\u8282\u3002\u4e4b\u524d\u89e3\u6790\u5668\u53ea\u8bfb\u53d6\u4e66\u7b7e\u7684 `/Dest`\uff1b\u82e5\u540c\u4e00\u76ee\u6807\u5199\u5728 `/A << /S /GoTo /D [...] >>`\uff0c\u6b63\u6587\u4ecd\u80fd\u63d0\u53d6\uff0c\u4f46\u8be5\u4e66\u7b7e\u65e0\u6cd5\u5b9a\u4f4d\u9875\u7801\uff0c\u56e0\u6b64\u4e0d\u80fd\u751f\u6210\u5bf9\u5e94\u7ae0\u8282\u3002 (Ref: https://github.com/volcengine/OpenViking/pull/7077)"
+    },
+    {
       "applies_to": "vllm-project/vllm",
       "created_at": "2026-11-10T09:43:17Z",
       "environment_json": "{}",
@@ -25094,6 +25878,20 @@
       "workaround": "Fix: fix(parser): align XLSParser fallback and parse_method normalization with spreadsheet family. Target files: internal/parser/parser/xls_parser.go, internal/parser/parser/xlsx_parse_method_test.go, internal/parser/parser/xlsx_parser.go. In the spreadsheet parser family (`internal/parser/parser`), `XLSXParser` and `CSVParser` both treat un-routable / generic / PDF-specific parse methods (e.g., `General`, `PaddleOCR`, `MinerU`, `Docling`, `SoMark`) as the default local parsing path (`// PDF-specific methods like \"DeepDOC\" / ... (Ref: https://github.com/infiniflow/ragflow/pull/21967)"
     },
     {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T07:23:47Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:78fa5cb802197d8517e172cc45c7cb0dae6485575a2ccce44e78d3758b1dc58f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_125920",
+      "submitted_by": "harvester-v1",
+      "symptom": "xAI grok-4.7 compression no-ops on encrypted reasoning, then structural_backoff blocks retry",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Long Codex, xAI and Claude chats no longer hide their reasoning from compression (#125920). Target files: agent/context_compressor.py, agent/context_compressor_tail.py, agent/message_metadata.py. On Codex, xAI and Claude, the model's hidden reasoning from earlier turns is sent back on every call, and the provider bills for it. Hermes counted that reasoning as zero (or, for Claude, as its much shorter summary), so compression thought a heavy session was small, found \"nothing to cut\" and blocked itself, while the r... (Ref: https://github.com/NousResearch/hermes-agent/pull/152422)"
+    },
+    {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-10T05:39:26Z",
       "environment_json": "{}",
@@ -25106,6 +25904,20 @@
       "target": "sglang",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Fix] rust-server: Pass architectures to ModelConfig in test_rust_server_crash_dump. Target files: test/registered/rust/test_rust_server_crash_dump.py. [by Claude Code] (Ref: https://github.com/sgl-project/sglang/pull/49461)"
+    },
+    {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T05:16:32Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c3027e7da11246574fab75ad92e928481d0ba555d32601e7993c5d6b9bd8e03f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_70983",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(dashboard): sidebar controls fail WCAG 2.5.8 target size (21px < 24px, 15px, 12px)",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(dashboard): sidebar controls meet WCAG 2.5.8 target size (24px). Target files: web/src/components/AuthWidget.tsx, web/src/components/LanguageSwitcher.tsx, web/src/components/SidebarFooter.tsx. Supersedes #134035 (branch renamed from `bb/70983-wcag-target-size` to `austin/70983-wcag-target-size`). (Ref: https://github.com/NousResearch/hermes-agent/pull/152026)"
     },
     {
       "applies_to": "ray-project/ray",
@@ -25122,6 +25934,20 @@
       "workaround": "Fix: [serve] Copy the ASGI lifespan state into each request scope. Target files: python/ray/serve/_private/http_util.py, python/ray/serve/tests/test_fastapi.py, python/ray/serve/tests/unit/test_http_util.py. A FastAPI app or ASGI middleware that stores resources in its lifespan state can't read them from a request in Ray Serve. Under plain FastAPI plus uvicorn, each request's `scope[\"state\"]` holds a shallow copy of the lifespan state, as the [ASGI lifespan state spec](https://asgi.readthedocs.io/en/latest/specs/lifespan.html#li... (Ref: https://github.com/ray-project/ray/pull/67844)"
     },
     {
+      "applies_to": "NousResearch/hermes-agent",
+      "created_at": "2026-11-10T04:58:56Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4ef6e235ac8c37f0b7e3fd6a783603a2c55307f0ba617a886b46856474160453",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_NousResearch_hermes-agent_69723",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Desktop. Hermes.app missing com.apple.security.automation.apple-events entitlement \u2014 AppleScript automation (Apple Notes) silently denied under hardened runtime",
+      "target": "hermes-agent",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(desktop): grant the Apple Events automation entitlement on macOS (#69723). Target files: tests-js/desktop-mac-entitlements.test.ts, apps/desktop/electron/entitlements.mac.inherit.plist, apps/desktop/electron/entitlements.mac.plist. Supersedes #134178 (branch renamed from `bb/69723-apple-events-entitlement` to `austin/69723-apple-events-entitlement`). (Ref: https://github.com/NousResearch/hermes-agent/pull/152018)"
+    },
+    {
       "applies_to": "langgenius/dify",
       "created_at": "2026-11-10T04:06:25Z",
       "environment_json": "{}",
@@ -25134,6 +25960,20 @@
       "target": "dify",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(agent): tolerate malformed ReAct action payloads. Target files: api/core/agent/output_parser/cot_output_parser.py, api/tests/unit_tests/core/agent/output_parser/test_cot_output_parser.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 1. Ensure there is an associated issue > 1. Use the correct syntax to link this PR: `Fixes #<issue number>`. (Ref: https://github.com/langgenius/dify/pull/45201)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-10T02:39:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:efb79bdb8c1d1db086ad545e995856f3bd38b930dbad3f4c556c8a150d530f31",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_8313",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Windows: portfolio real-tool scenario fails \u2014 node:sqlite cannot open the 267-char authority path (MAX_PATH); a second host-dependent layer behind it",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(sqlite_authority_store): surface underlying SQLite error in status. Target files: loopx/control_plane/coordination/sqlite_authority_store.ts. The issue was that SQLite errors (like \"unable to open database file\" due to path length limits on Windows) were being collapsed into a generic \"lock contention\" message in the `readFailure` function. This made it difficult to diagnose the root cause of database opening failures. (Ref: https://github.com/loopx-project/loopx/pull/8459)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -25162,6 +26002,20 @@
       "target": "transformers",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix Qwen VL positions when a text cache is reused with a new image. Target files: src/transformers/models/cohere_compass/modeling_cohere_compass.py, src/transformers/models/cosmos3_omni/modeling_cosmos3_omni.py, src/transformers/models/ernie4_5_vl_moe/modeling_ernie4_5_vl_moe.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50427) (Ref: https://github.com/huggingface/transformers/pull/50427)"
+    },
+    {
+      "applies_to": "xuiltul/animaworks",
+      "created_at": "2026-11-10T01:08:56Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:271d6e950e35d4b45c83821712fc901495acba233a64e6bd52cca0c65ea7eadb",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_xuiltul_animaworks_414",
+      "submitted_by": "harvester-v1",
+      "symptom": "Mode A \u3067 openai/gpt-* \u3092\u4f7f\u3046\u3068 enable_thinking / chat_template_kwargs \u304c OpenAI API \u306b\u9001\u3089\u308c 400 \u306b\u306a\u308b",
+      "target": "animaworks",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(litellm): stop sending vLLM thinking fields to OpenAI-hosted models. Target files: core/execution/base.py, core/execution/engines/litellm/_litellm_context.py, scripts/i18n/manifest.json. In Mode A, every `openai/` model got `enable_thinking` and `chat_template_kwargs` in `extra_body`. Those fields switch thinking in the chat template of self-hosted servers (vLLM, llama.cpp). The OpenAI API rejects them with `400 Unrecognized request argument supplied: enable_thinking`. (Ref: https://github.com/xuiltul/animaworks/pull/430)"
     },
     {
       "applies_to": "langgenius/dify",
@@ -25288,6 +26142,48 @@
       "target": "workers-sdk",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [create-cloudflare] Fix Svelte configuration parsing with object spread. Target files: packages/autoconfig/src/frameworks/utils/vite-config.ts, packages/shared-ast-primitives/src/index.ts, packages/shared-ast-primitives/tsup.config.ts. . Supersedes #13886, carrying forward the original contribution from @tstewart-klaudhaus onto current main. (Ref: https://github.com/cloudflare/workers-sdk/pull/16758)"
+    },
+    {
+      "applies_to": "ArcReel/ArcReel",
+      "created_at": "2026-11-09T17:06:16Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d9a83df3d1f2b373ccbc14ddd0f36d165b99b300a474930be8e04b548486fbc6",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ArcReel_ArcReel_3684",
+      "submitted_by": "harvester-v1",
+      "symptom": "get_prompt_preview \u5bf9 reference_video \u7684 unit_id \u8fd4\u56de item_not_found\uff0c\u4e0e\u5de5\u5177\u53c2\u6570\u5951\u7ea6\u4e0d\u7b26",
+      "target": "arcreel",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agent): get_prompt_preview \u652f\u6301\u53c2\u8003\u751f\u89c6\u9891\u5355\u5143. Target files: server/agent_toolset/orientation.py, server/services/admission/prompt_preview.py, server/services/admission/reference_prompt_preview.py. `get_prompt_preview` \u73b0\u5728\u80fd\u9884\u89c8\u53c2\u8003\u751f\u89c6\u9891\u5355\u5143\u7684\u6700\u7ec8\u89c6\u9891\u63d0\u793a\u8bcd\uff0c\u4e0e Web \u7aef\u548c\u5b9e\u9645\u8bf7\u6c42\u4f7f\u7528\u540c\u4e00\u4efd\u6295\u5f71\u548c\u6e32\u67d3\u3002 (Ref: https://github.com/ArcReel/ArcReel/pull/3751)"
+    },
+    {
+      "applies_to": "pydantic/pydantic-ai",
+      "created_at": "2026-11-09T16:51:11Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a51e09f35ca9688f1be3de58fd355fdbb65e13360bed7081708d75c1e50cb12b",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pydantic_pydantic-ai_12956",
+      "submitted_by": "harvester-v1",
+      "symptom": "Flaky tests/harness/subagents/test_dbos.py::test_background_task_survives_recovery",
+      "target": "pydantic-ai",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Support OpenAI's `gpt-image-2.6-flare` and `gpt-image-2.6-sunburst` image models. Target files: pydantic_ai_slim/pydantic_ai/capabilities/image_generation.py, pydantic_ai_slim/pydantic_ai/common_tools/image_generation.py, pydantic_ai_slim/pydantic_ai/images/__init__.py. > This pull request was posted by Claude Code using claude-opus-5-5 on behalf of David. (Ref: https://github.com/pydantic/pydantic-ai/pull/12820)"
+    },
+    {
+      "applies_to": "escoffier-labs/brigade",
+      "created_at": "2026-11-09T16:02:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2a3d5697bc2daf5813926a2f31057b4a16598c60b607a78966e962571cbdd9d1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_escoffier-labs_brigade_2417",
+      "submitted_by": "harvester-v1",
+      "symptom": "Flake: scanner target-root swap test fails in a full shard (order dependent)",
+      "target": "brigade",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(test): fix stations timeout and scanner import flakes at the cause. Target files: src/brigade/work_cmd/scanners.py, tests/test_stations_verify.py, tests/test_work_cmd_scanners.py. Both flakes had a concrete cause. Neither is fixed by a longer timeout. (Ref: https://github.com/escoffier-labs/brigade/pull/2432)"
     },
     {
       "applies_to": "huggingface/transformers",
@@ -25514,6 +26410,20 @@
       "workaround": "Fix: fix(evals): block evaluators on a bare HTTP 403 like Topics does. Target files: packages/shared/src/server/evals/classifyEvaluatorLlmError.ts, packages/shared/src/server/llm/nativeErrors.test.ts, worker/src/features/topics/provider-error.ts. \ud83d\udfe1 **Live preview: [pr-19940 app preview](https://pr-19940.preview.langfuse.com)** (Ref: https://github.com/langfuse/langfuse/pull/19940)"
     },
     {
+      "applies_to": "volcengine/OpenViking",
+      "created_at": "2026-11-09T08:59:57Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9ae6c6047a8f36c937a6ff35f79e47a4ce60c2734cb1bb5a1ee9d478ea09530b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_volcengine_OpenViking_7219",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Markdown directory link rewriting changes literal links in code examples",
+      "target": "openviking",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(parse): preserve relative link examples in Markdown code. Target files: openviking/parse/parsers/markdown.py, tests/parse/test_markdown_link_rewrite.py. . Directory ingestion rewrites relative Markdown links to account for the document\u2019s new location. The same pass also rewrites link syntax shown as literal text in fenced code blocks and inline code spans. (Ref: https://github.com/volcengine/OpenViking/pull/7220)"
+    },
+    {
       "applies_to": "astral-sh/ruff",
       "created_at": "2026-11-09T08:33:28Z",
       "environment_json": "{}",
@@ -25582,6 +26492,20 @@
       "target": "gitlab-cli",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(issuable view): fetch all note pages when showing comments. Applied in GitLab MR !4330. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4330)"
+    },
+    {
+      "applies_to": "nesquena/hermes-webui",
+      "created_at": "2026-11-09T07:22:57Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:05357491af2ea994e9f334a99d022154de3e3e56f19c55d4a0566823e5a19f68",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_nesquena_hermes-webui_8938",
+      "submitted_by": "harvester-v1",
+      "symptom": "Context-length lookup: disabled records still count, api_key_env is never read, three rules unpinned (#8935 review follow-ups; settle before stable carries #8918)",
+      "target": "hermes-webui",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(context-length): a lookup key may also go where a config source holding the same value sends it (#8918). Target files: api/routes.py, tests/test_issue8428_native_custom_provider_read_view.py, tests/test_issue8918_context_lookup_value_owned_key.py. #8917 (shipped in exp-v0.52.655) made the context-length lookup send key K for provider P and URL U only if every host the installed Agent contacts for (P, U) is owned by K's own config source. That closed every cross-source pair v0.52.544 sent. It also dropped pairs v0.5... (Ref: https://github.com/nesquena/hermes-webui/pull/8935)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -25990,6 +26914,20 @@
       "workaround": "Fix: fix(caching): don't cache or replay a reply that has no output. Target files: litellm/caching/caching_handler.py, litellm/llms/anthropic/messages/native/response_cache.py, tests/unit/caching/test_caching_handler.py. With the response cache on, an empty streamed /v1/messages reply from a non-Anthropic model got cached, so every identical request replayed it and never reached the provider again. This skips caching a reply with no output, streamed or not, on Messages and chat, and treats an empty stored entry as a miss. A repl... (Ref: https://github.com/BerriAI/litellm/pull/50057)"
     },
     {
+      "applies_to": "pipeshub-ai/pipeshub-ai",
+      "created_at": "2026-11-07T05:02:13Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:12faa6802267fecb3de768edd9819079b0c35f7fa0ae5f6d52ba2e163f26ef73",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pipeshub-ai_pipeshub-ai_5476",
+      "submitted_by": "harvester-v1",
+      "symptom": "nul.ts filename causes checkout failures when cloning on Windows",
+      "target": "pipeshub",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(nodejs): rename nul.ts so native Windows clones can check out the tree. Target files: backend/nodejs/apps/src/libs/repositories/activity/pg.ts, backend/nodejs/apps/src/libs/repositories/connectors-config/pg.ts, backend/nodejs/apps/src/libs/repositories/conversation/pg.ts. `git clone https://github.com/pipeshub-ai/pipeshub-ai.git` fails to complete checkout on native Windows because `backend/nodejs/apps/src/libs/repositories/nul.ts` uses the reserved device name `NUL` (with extension). The clone downloads but the ... (Ref: https://github.com/pipeshub-ai/pipeshub-ai/pull/5500)"
+    },
+    {
       "applies_to": "langchain-ai/langchainjs",
       "created_at": "2026-11-07T04:00:13Z",
       "environment_json": "{}",
@@ -26352,6 +27290,20 @@
       "target": "vllm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Bugfix] Fix Gemma 4 vision crash with online FP8 quantization. Target files: vllm/model_executor/models/gemma4_mm.py, tests/models/multimodal/processing/test_gemma4.py. . With `--quantization fp8`, an image request to Gemma 4 returns HTTP 500 and kills the engine core. The transformers patch embedder casts the pixel values to `input_proj.weight.dtype`. Once vLLM quantizes that layer, this dtype is `float8_e4m3fn`, so the FP8 linear gets an FP8 input. This PR runs the patch embedder steps in `gemma4_mm.py` with the pixel ... (Ref: https://github.com/vllm-project/vllm/pull/64168)"
+    },
+    {
+      "applies_to": "pipeshub-ai/pipeshub-ai",
+      "created_at": "2026-11-06T10:24:06Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:de8ece3e5352559d549090fd7038f91be6285f671acf619db05a5dc93449babd",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pipeshub-ai_pipeshub-ai_5370",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] A non-owner editor can turn an agent into a service agent that searches with the owner's access",
+      "target": "pipeshub",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agents): only the owner or an administrator can turn an agent into a service agent. Target files: backend/python/app/api/routes/agent.py, frontend/app/(main)/agents/agent-builder/agent-builder-permissions.ts, backend/nodejs/apps/src/modules/api-docs/pipeshub-openapi.yaml. `PUT /api/v1/agent/{agent_id}` accepted `isServiceAccount: true` from anyone with `can_edit` on the agent. `check_agent_permission` grants `can_edit` to WRITER and ORGANIZER as well as OWNER, and the administrator check only ran when `serviceAcc... (Ref: https://github.com/pipeshub-ai/pipeshub-ai/pull/5395)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -26870,6 +27822,20 @@
       "target": "crewai",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(openai): call GPT-6 Astra and GPT-6.1 Sol tools through the Responses API. Target files: lib/cli/src/crewai_cli/constants.py, lib/cli/src/crewai_cli/create_crew.py, lib/cli/src/crewai_cli/create_json_crew.py. **Targets `main`. Merge first.** This branch also carries #9028 (model lists), which was merged into this branch while the PRs were stacked; it reaches `main` with this PR. Merge order for the rest: #9035 \u2192 #9029 \u2192 #9032 \u2192 #9033 \u2192 #9034. (Ref: https://github.com/crewAIInc/crewAI/pull/9035)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-05T03:21:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:54f399d5e20eab121ba78f54a455b213fbab3e543ec52f243607535cdf1b6b40",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_8030",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Host recovery I/O uses the locale codec, silently dropping non-ASCII Antigravity Stop events on cp936",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(runtime): pin UTF-8 on host recovery I/O. Target files: loopx/agy_goal_mode/host_runtime.py, loopx/hosts/managed_service_runtime.py, tests/test_antigravity_host_runtime.py. Latest `main` fails its two package-wide UTF-8 guards, so every pull request inherits a red Python test lane; the same omissions silently discard non-ASCII Antigravity Stop recovery on cp936 Windows and can block managed-runtime journal recovery. (Ref: https://github.com/loopx-project/loopx/pull/8031)"
     },
     {
       "applies_to": "mastra-ai/mastra",
@@ -27852,6 +28818,20 @@
       "workaround": "Fix: fix(azure_ai): keep azure_ad_token out of the request body. Target files: litellm/images/main.py, litellm/utils.py, tests/unit/llms/azure_ai/test_azure_ai_entra_auth.py. Calling an Azure AI Foundry model through `azure_ai/` with an Entra token (`azure_ad_token`) and no API key failed with a 400, because litellm sent the token in the JSON body as well as the `Authorization: Bearer` header. Foundry rejects unknown body params, so GPT, Claude and Cohere embedding deployments all answered 400 (Ref: https://github.com/BerriAI/litellm/pull/49769)"
     },
     {
+      "applies_to": "Sma1lboy/rove",
+      "created_at": "2026-11-03T06:55:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ca9b7a693ad650e1d783c9992e1a692f858ed3306eb115d1c1183d533240f091",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Sma1lboy_rove_1632",
+      "submitted_by": "harvester-v1",
+      "symptom": "status mismatch: dir task row draws dead while task activity says turn_complete",
+      "target": "rove",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: align task activity and row status priority. Target files: packages/rove-daemon/src/daemon/activity-rollup.ts, packages/rove-daemon/src/daemon/cwd-task.ts, packages/rove-daemon/src/daemon/row-status.ts. . Shared urgency keeps running and permission-needed sources above attention, preserving archive/rewind protection. Dead tabs outrank newer completions. Home cwd attribution requires an exact match. (Ref: https://github.com/Sma1lboy/rove/pull/1633)"
+    },
+    {
       "applies_to": "vllm-project/vllm",
       "created_at": "2026-11-03T06:35:49Z",
       "environment_json": "{}",
@@ -28174,6 +29154,20 @@
       "workaround": "Fix: fix: reject renaming or dropping embedding columns. Target files: nodejs/lancedb/table.ts, python/python/lancedb/table.py, rust/lancedb/src/table.rs. Renaming or dropping an embedding source or vector column leaves schema metadata pointing at missing fields, causing later `add()` calls to fail. (Ref: https://github.com/lancedb/lancedb/pull/4764)"
     },
     {
+      "applies_to": "Dodaios/Dodaios",
+      "created_at": "2026-11-02T21:27:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:22a381080c954b184f59bbfdaf5e6ce0dacd2502e06444eff32d7ad7b561012d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Dodaios_Dodaios_458",
+      "submitted_by": "harvester-v1",
+      "symptom": "Test suite is not hermetic in an installer-managed checkout: writes society DBs into <repo>/data and fails when .jarvis-managed-install exists (v2.9.0)",
+      "target": "dodaios",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: keep the test suite out of the checkout's data dir. Target files: dodaios/core/config.py, dodaios/core/paths.py, dodaios/core/review/audit.py. #1095 pointed the suite at a temp `JARVIS_DATA_DIR`. A full local run with an audit hook on every write under `<repo>/data` found the stores that still ignored it. Each one now takes its default from the runtime data dir instead of a cwd-relative or hard-coded `data/`: (Ref: https://github.com/Dodaios/Dodaios/pull/1119)"
+    },
+    {
       "applies_to": "lancedb/lancedb",
       "created_at": "2026-11-02T21:05:30Z",
       "environment_json": "{}",
@@ -28312,6 +29306,20 @@
       "target": "vllm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Bugfix][KV Offload] Drain unfetched P2P stores before cache reset. Target files: vllm/v1/kv_offload/tiering/p2p/manager.py, vllm/v1/kv_offload/tiering/p2p/session/server.py, vllm/v1/kv_offload/tiering/p2p/session/session.py. Fix cache reset on P2P prefill nodes when store jobs are waiting for a decoder to fetch their KV blocks. . (Ref: https://github.com/vllm-project/vllm/pull/63988)"
+    },
+    {
+      "applies_to": "Dodaios/Dodaios",
+      "created_at": "2026-11-02T17:42:17Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c898015fa2e039e616d6af30dea7a80c74e59fb611cf586686d7179930ce7d2f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Dodaios_Dodaios_1018",
+      "submitted_by": "harvester-v1",
+      "symptom": "[regression] Linux update to v4.1.x aborts at \"dependency consistency check\": pip check fails on system-site-packages otel exporters after opentelemetry floor bump (v4.1.2)",
+      "target": "dodaios",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(installer): isolate headless Linux venvs and tolerate host-only pip check conflicts. Target files: install/installer.py, install/install.sh, tests/unit/install/test_install_sh_venv_isolation.py. Headless Linux installs linked the host's site-packages and resolved the runtime from the open pyproject ranges (`pip install -e .`), so pip took host copies of fastapi, uvicorn, opentelemetry and friends as \"already satisfied\" and the server ran on host versions (#456). The same linked site-packages made `pip check` judge packag... (Ref: https://github.com/Dodaios/Dodaios/pull/1088)"
     },
     {
       "applies_to": "mastra-ai/mastra",
@@ -28538,6 +29546,20 @@
       "workaround": "Fix: API changes: requests sent while generation is paused return HTTP 503 (#51488); `kv_transfer_params` / `ec_transfer_params` moved to the top level of render output (#61241); LoRA on a model without LoRA support fails at validation (#61884); the RL weight-transfer API now uses `ParamMeta`, `iter_full()` and `iter_local()` (#63256); beam search scores are normalized by generated length (#62928).. Upstream PR #51488. (Ref: https://github.com/vllm-project/vllm/pull/51488)"
     },
     {
+      "applies_to": "jin-bo/agentao",
+      "created_at": "2026-11-02T10:03:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:eaf2a3cc51647804149f3b065b5d2ebe380100f995b3f0ec8d4a8e44c65144aa",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_jin-bo_agentao_613",
+      "submitted_by": "harvester-v1",
+      "symptom": "image_url: non-dict value raises, dropped detail not logged",
+      "target": "agentao",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: preserve explicit image detail in Responses requests. Target files: agentao/llm/_openai_responses.py, tests/test_openai_responses_adapter.py, CHANGELOG.md. The Responses adapter omitted explicit image detail preferences when translating Chat-shaped history. Preserve the supported `low`, `high`, `auto` and `original` values in outbound `input_image` items through a strict allowlist. Read the image payload once and leave stored history unchanged. Unsupported or absent values retain their previous omission behavior. (Ref: https://github.com/jin-bo/agentao/pull/608)"
+    },
+    {
       "applies_to": "pydantic/pydantic",
       "created_at": "2026-11-02T08:36:45Z",
       "environment_json": "{}",
@@ -28648,6 +29670,34 @@
       "target": "prefect",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Return 422 instead of 503/500 for invalid values in request bodies. Target files: src/prefect/server/api/server.py, src/prefect/server/utilities/server.py, tests/server/api/test_server.py. This PR makes the server return 422 for invalid values in request bodies. Before, some of these values gave 503 (which the client retries) or 500. (Ref: https://github.com/PrefectHQ/prefect/pull/23619)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-01T16:25:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ed46d2f43a35e72a6de004c33dfcb6a0988f076694654179b7d86d36fcd293e1",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_7808",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: native Windows Codex App settlement plans emit a POSIX-only Turn reference",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(quota): render host-native settlement Turn references. Target files: loopx/control_plane/quota/effect_program.py, tests/control_plane/test_quota_settlement.py. Native Windows Codex App admission can block every no-Turn settlement after the work succeeds because the returned plan contains a POSIX-only Turn placeholder that PowerShell forwards as an empty argument; this affects the supported native Windows App journey and the validation, writeback, spend, and closeout steps generated from it. (Ref: https://github.com/loopx-project/loopx/pull/7823)"
+    },
+    {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-11-01T14:38:16Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1d6e6850a10ab5c272c08af5083b086a8e615c36947d23f366cdf36d72e84a4f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_7805",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: native Windows --write-worktree scoped observation rejects every in-scope path",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(leases): accept scoped native Windows worktree paths. Target files: loopx/control_plane/work_items/task_lease_workspace.ts, .github/workflows/python-tests.yml, scripts/ci/test_windows_lane_coverage.py. Native Windows `--write-worktree` observation rejected existing in-scope entries because `realpath()` returns native separators while the containment test appended a literal slash. Use the existing Node path owner to compare the physical child's relative location, preserving rejection of the root, parent escapes and ab... (Ref: https://github.com/loopx-project/loopx/pull/7817)"
     },
     {
       "applies_to": "agno-agi/agno",
@@ -28844,6 +29894,20 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(proxy): price OpenAI pass-through /v1/decisions calls like native Decisions. Target files: litellm/proxy/_types.py, litellm/proxy/pass_through_endpoints/llm_provider_handlers/openai_passthrough_logging_handler.py, litellm/proxy/pass_through_endpoints/success_handler.py. Calls to OpenAI's Decisions API through the `/openai` pass-through route now show up in spend logs with real token counts and cost. Before this, they reached OpenAI and came back fine but were logged at $0 with no tokens, so key and team budgets never mo... (Ref: https://github.com/BerriAI/litellm/pull/49392)"
+    },
+    {
+      "applies_to": "pipeshub-ai/pipeshub-ai",
+      "created_at": "2026-10-31T14:26:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c8e84a3532a84603d1a33092948cfeeec1c216bcf81585dfa8a19d8bd8d4ea9a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_pipeshub-ai_pipeshub-ai_5126",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Empty Claude reply fails the run on the direct Anthropic transport (400)",
+      "target": "pipeshub",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agent-loop): skip empty assistant turn when replaying history to Anthropic. Target files: backend/python/app/agent_loop_lib/transport/anthropic.py, backend/python/tests/unit/agent_loop_lib/transport/test_anthropic_coverage.py. With `PIPESHUB_AGENT_TRANSPORT=direct` and an Anthropic model, an empty Claude reply (no text, no tool calls) is stored as an `AssistantMessage` and replayed by `AnthropicTransport` as `{\"type\": \"text\", \"text\": \"\"}`. Anthropic rejects that with `messages: text content blocks must be non-emp... (Ref: https://github.com/pipeshub-ai/pipeshub-ai/pull/5137)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -31030,6 +32094,20 @@
       "workaround": "Fix: Use AMD64 for x86-64 Windows platform markers. Target files: crates/uv-configuration/src/target_triple.rs, crates/uv/tests/pip_install/pip_install.rs. CPython reports `platform.machine()` as `AMD64` on x86-64 Windows. We now use that value for `--python-platform x86_64-pc-windows-msvc` and its `windows` alias. Previously, both used `x86_64`, so uv skipped dependencies guarded by `platform_machine == 'AMD64'` and rejected `pylock.toml` files that used the same marker in `environments`. (Ref: https://github.com/astral-sh/uv/pull/22935)"
     },
     {
+      "applies_to": "loopx-project/loopx",
+      "created_at": "2026-10-26T14:14:54Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4833df2e96da5f455459b37fc5b0047b9a1c35e6074bfa0cb29b4f28dfcb301d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_loopx-project_loopx_7378",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: the required chat-bundle-browser lane is red on main \u2014 the read-only source badge repeats the visible Goal title",
+      "target": "loopx",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(workspace): stop the read-only source badge from repeating the Goal title. Target files: apps/presentation/dashboard/smoke/chat-model-menu-smoke.mjs, apps/presentation/dashboard/src/features/personal-workspace/channel-header.tsx, apps/presentation/dashboard/src/features/personal-workspace/i18n.tsx. **Required merge gate:** since #7376, the required `chat-bundle-browser` job of `Python Tests` (one of the five jobs `checks` verifies; `checks` feeds `pytest` \u2192 `merge-gate`) fails deterministically for every PR whose cha... (Ref: https://github.com/loopx-project/loopx/pull/7380)"
+    },
+    {
       "applies_to": "agno-agi/agno",
       "created_at": "2026-10-26T13:39:50Z",
       "environment_json": "{}",
@@ -31756,6 +32834,20 @@
       "target": "crewAI",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix: Crew.test emits its start event before setup so a failed setup pairs. Target files: lib/crewai/src/crewai/crew.py, lib/crewai/tests/test_crew.py. `Crew.test` emits `CrewTestStartedEvent` before `create_llm` (`eval_llm` now carries the requested spec, which the field's `str | Any | None` type already allows) instead of after it, so a setup failure's `CrewTestFailedEvent` has its opener on the scope stack. (Ref: https://github.com/crewAIInc/crewAI/pull/8420)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-10-23T05:14:27Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f0254795615e49d31c5eaed679376c1406683c2ad5fb70753483318f261920af",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_58532",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Triton fused MoE incorrectly indexes per-channel weight scales with per-tensor activations",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix] Make online FP8 MoE experts batch-invariant under VLLM_BATCH_INVARIANT. Target files: vllm/model_executor/layers/fused_moe/experts/fused_batched_moe.py, vllm/model_executor/layers/fused_moe/fused_moe.py, vllm/model_executor/layers/quantization/fp8.py. With `VLLM_BATCH_INVARIANT=1`, a MoE model served with `--quantization fp8` (online per-tensor FP8, Triton experts) still produces output that depends on which other requests share its batch: greedy tokens flip within the first ~10 positions and prefix-cached K/V di... (Ref: https://github.com/vllm-project/vllm/pull/57092)"
     },
     {
       "applies_to": "crewAIInc/crewAI",
@@ -38114,6 +39206,20 @@
       "workaround": "Upgrade tornado to patched release >= 6.5.8: pip install --upgrade 'tornado>=6.5.8' (Advisory: GHSA-mpf4-983q-p7j4)"
     },
     {
+      "applies_to": "codeofaxel/Kiln",
+      "created_at": "2026-09-02T07:28:54Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:994ce981a1031bfdd7b910c485b8f6278a6cd3e27c915dae938542e7c38af119",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_codeofaxel_Kiln_146",
+      "submitted_by": "harvester-v1",
+      "symptom": "Windows: signal.SIGBUS AttributeError makes every CLI/MCP entrypoint unusable (1.4.1.1)",
+      "target": "kiln",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Windows: build the crash-signal sets from what the platform defines. Target files: kiln/src/kiln/openscad_runner.py, kiln/src/kiln/slicer.py, kiln/tests/test_openscad_runner.py. CPython's `signal` module on Windows has no `SIGBUS` and no `SIGTRAP`. `openscad_runner` read `SIGBUS` at import time, and `kiln.cli.main` reaches it through `kiln.generation`, so every entrypoint (`serve`, `doctor`, `--help`) died with `AttributeError` on 1.4.1.1. `kiln.slicer` carried the same fault twice over, one lazy import further down: the firs... (Ref: https://github.com/codeofaxel/Kiln/pull/147)"
+    },
+    {
       "applies_to": "sqlparse",
       "created_at": "2026-09-01T21:20:11Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-cfqr-cjx5-5jcm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.6.0\", \"aliases\": [\"CVE-2026-84305\", \"PYSEC-2026-3923\"]}",
@@ -38170,6 +39276,20 @@
       "workaround": "Upgrade nanoid to patched release >= 5.1.11: npm install 'nanoid@>=5.1.11' (Advisory: GHSA-xwg4-73v4-xw9w)"
     },
     {
+      "applies_to": "decocms/studio",
+      "created_at": "2026-09-01T19:14:01Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:cf753b16b622e022fbbd0e71713ca6f73adabef5b9f29073979ca4372d9efb13",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_decocms_studio_2265",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Workflow creation not working before MCP-Studio setup",
+      "target": "decocms",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(decopilot): surface a missing model credential as a clear permanent error. Target files: apps/api/src/api/routes/decopilot/dispatch-run.test.ts, apps/api/src/api/routes/decopilot/dispatch-run.ts, apps/api/src/core/dispatch-errors.ts. Follows #2265 (\"Workflow creation not working before MCP-Studio setup\") \u2014 the reported root cause there was a raw Postgres error (\"relation ... does not exist\") reaching the user because a required piece of org setup was incomplete. The same class of bug exists in the dispatch path: `resolveS... (Ref: https://github.com/decocms/studio/pull/6829)"
+    },
+    {
       "applies_to": "mlflow",
       "created_at": "2026-09-01T17:04:30Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-gqvg-gmmx-x4hm\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": []}",
@@ -38196,6 +39316,20 @@
       "target": "openai-node",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix: support Jest 28 CommonJS package imports. Target files: ecosystem-tests/cli.ts, ecosystem-tests/node-ts-cjs-auto/tests/import.test.ts, ecosystem-tests/node-ts-cjs-web/tests/import.test.ts. After #2507 fixes the CommonJS + browser-condition Jest failure, the main-only examples job still has two CommonJS fixtures that fail under Jest 28: (Ref: https://github.com/openai/openai-node/pull/2511)"
+    },
+    {
+      "applies_to": "decocms/studio",
+      "created_at": "2026-08-28T17:06:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ffb58d5e1926a1047901cdf4b0dfa0a27bf60c1e5189bc4a3441a5b5e98f16bd",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_decocms_studio_6673",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: orphaned pinned view renders a permanent agent tab that cannot be removed",
+      "target": "decocms",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(virtual-mcp): prune homeTile/homeTiles when their connection is removed. Target files: apps/api/src/storage/prune-orphaned-ui-refs.test.ts, apps/api/src/storage/prune-orphaned-ui-refs.ts, apps/api/src/storage/virtual.ts. Follow-up to #6674 (merged, 's orphaned pinned-view tab). That PR's own body flagged this exact gap under \"Not in scope\": (Ref: https://github.com/decocms/studio/pull/6704)"
     },
     {
       "applies_to": "567-labs/instructor",
@@ -38322,6 +39456,20 @@
       "target": "gitpython",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade gitpython to patched release >= 3.1.59: pip install --upgrade 'gitpython>=3.1.59' (Advisory: PYSEC-2026-3786)"
+    },
+    {
+      "applies_to": "infiniflow/ragflow",
+      "created_at": "2026-08-21T05:56:06Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2d8dc2260ff0dd5bba4a085dcafd57706dac8a4337122550db01ba27cfa06699",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_infiniflow_ragflow_17123",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: rag/utils/{es_conn,opensearch_conn}.py write/delete paths silently swallow transient errors",
+      "target": "ragflow",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(doc_store): retry transient connection errors in pool init. Target files: common/doc_store/es_conn_pool.py, common/doc_store/infinity_conn_base.py, common/doc_store/infinity_conn_pool.py. Fix the silent-failure health-check retry loops in `common/doc_store/{es_conn_pool, ob_conn_pool, infinity_conn_pool, infinity_conn_base}.py`. These pool initializers run at module import via `@singleton`; a brief blip during pod start currently crashes the whole worker process. The fix retries with exponential backoff, logs each at... (Ref: https://github.com/infiniflow/ragflow/pull/17196)"
     },
     {
       "applies_to": "InternLM/lmdeploy",
@@ -38870,6 +40018,20 @@
       "workaround": "Fix: **Fields with unresolved forward references now emit a warning** ([#901](https://github.com/pydantic/pydantic-settings/pull/901)). Settings sources can silently fail to resolve such fields; they now raise `IncompleteFieldDefinitionWarning` telling you to call `model_rebuild()`. If you have `filterwarnings = error` configured, this may surface as a new failure.. Upstream PR #901. (Ref: https://github.com/pydantic/pydantic-settings/pull/901)"
     },
     {
+      "applies_to": "raphaeltm/simple-agent-manager",
+      "created_at": "2026-08-06T05:28:36Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0edd94c81786e3002caa9b7c5a80c485f89af498c77ddeb599a1b351927b991e",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_raphaeltm_simple-agent-manager_1614",
+      "submitted_by": "harvester-v1",
+      "symptom": "Deployment fails on new Cloudflare accounts due to legacy Durable Object migrations",
+      "target": "simple-agent-manager",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: preserve Durable Object migration compatibility. Target files: package.json, scripts/deploy/durable-object-migrations.ts, scripts/deploy/sync-wrangler-config.ts. - Fixes fresh-install Cloudflare error 10099 without rewriting the immutable v1-v17 Durable Object history in `apps/api/wrangler.toml`. - Reads the target API Worker's deployed `migration_tag` before generating environment configuration. Applied migrations remain structurally unchanged; only pending `new_classes` creates become `new_sqlite_classe... (Ref: https://github.com/raphaeltm/simple-agent-manager/pull/1649)"
+    },
+    {
       "applies_to": "nuxt",
       "created_at": "2026-08-05T21:43:03Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-9pgf-384g-p7mv\", \"ecosystem\": \"npm\", \"fixed_version\": \"4.5.1\", \"aliases\": [\"CVE-2026-71321\"]}",
@@ -39372,6 +40534,20 @@
       "target": "gitpython",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade gitpython to patched release >= 3.1.51: pip install --upgrade 'gitpython>=3.1.51' (Advisory: PYSEC-2026-3947)"
+    },
+    {
+      "applies_to": "xuiltul/animaworks",
+      "created_at": "2026-08-01T09:45:37Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:62f29d8e7b4c396e8e7e5a3ba23934220e557cdac421937658433c6019b13767",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_xuiltul_animaworks_246",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix: _check_process_health STOPPING-stuck path writes failure state without a shutdown guard",
+      "target": "animaworks",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: guard remaining failure-tracking writers against mid-shutdown races. Target files: core/supervisor/_mgr_health.py, core/supervisor/_mgr_reconcile.py, core/supervisor/manager.py. `shutdown_all()` sets `self._shutdown = True` so the failure-tracking machinery (`_failure_reasons`, `_permanently_failed`, `_start_fail_counts`/`_start_failed_times`, `handle.state = FAILED`) becomes a no-op during teardown: state written after shutdown begins is never read again and only pollutes the next server start. Follow-up to #241/#242... (Ref: https://github.com/xuiltul/animaworks/pull/244)"
     },
     {
       "applies_to": "sentence-transformers",
@@ -46934,6 +48110,20 @@
       "workaround": "Fix: fix(core): prevent `KeyError` in `DocumentSummaryIndex.delete_nodes` when invalid node ID is provided ([#21067](https://github.com/run-llama/llama_index/pull/21067)). Upstream PR #21067. (Ref: https://github.com/run-llama/llama_index/pull/21067)"
     },
     {
+      "applies_to": "raphaeltm/simple-agent-manager",
+      "created_at": "2026-04-18T11:24:50Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:09c93c424a37aba9eff6cd5e6018260baa9b1383e19c64e47fb0da78da763120",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_raphaeltm_simple-agent-manager_1",
+      "submitted_by": "harvester-v1",
+      "symptom": "Security: Sign and verify VM Agent binaries",
+      "target": "simple-agent-manager",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(vm-agent): firewall INPUT-DROP removal + HTTP transport resilience. Target files: packages/cloud-init/src/template.ts, packages/vm-agent/internal/acp/session_host.go, packages/vm-agent/internal/bootlog/reporter.go. Fixes the ~6-minute \\\"Cloudflare API unreachable\\\" outage window during VM boot by eliminating two independent root causes: (Ref: https://github.com/raphaeltm/simple-agent-manager/pull/747)"
+    },
+    {
       "applies_to": "authlib",
       "created_at": "2026-04-16T22:38:03Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-jj8c-mmj3-mmgv\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.6.11\", \"aliases\": [\"CVE-2026-41425\", \"PYSEC-2026-25\"]}",
@@ -47030,6 +48220,20 @@
       "target": "keras",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade keras to patched release >= 3.13.2: pip install --upgrade 'keras>=3.13.2' (Advisory: GHSA-4f3f-g24h-fr8m)"
+    },
+    {
+      "applies_to": "agentic-research/mache",
+      "created_at": "2026-04-12T18:23:14Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:21698d2ebdd9d68f779e5d5fbae13a5042aeae7e739ae4c7545c4a2bc7d4c3c3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_agentic-research_mache_112",
+      "submitted_by": "harvester-v1",
+      "symptom": "Missing leyline binary",
+      "target": "mache",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: graceful error messages when ley-line not available. Target files: cmd/serve_handlers.go, cmd/serve_lsp.go, internal/graph/graph.go. Replace internal error dumps (`discover/start leyline: no ley-line socket found...`) with user-friendly messages when ley-line daemon isn't available: (Ref: https://github.com/agentic-research/mache/pull/153)"
     },
     {
       "applies_to": "axios",
@@ -48573,6 +49777,20 @@
     },
     {
       "applies_to": "tornado",
+      "created_at": "2026-03-11T22:17:00Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78cv-mqj4-43f7\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.5.5\", \"aliases\": [\"CVE-2026-35536\", \"GHSA-fqwm-6jpj-5wxc\", \"PYSEC-2026-2287\"]}",
+      "fingerprint": "sha256:a1083c8d8c799a74f6eb546c8c1143175bdd85f46ac4363ff0451b34bf8fc241",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_GHSA_78cv_mqj4_43f7",
+      "submitted_by": "osv-harvester",
+      "symptom": "[GHSA-78cv-mqj4-43f7] Tornado has incomplete validation of cookie attributes (Affects tornado < 6.5.5)",
+      "target": "tornado",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade tornado to patched release >= 6.5.5: pip install --upgrade 'tornado>=6.5.5' (Advisory: GHSA-78cv-mqj4-43f7)"
+    },
+    {
+      "applies_to": "tornado",
       "created_at": "2026-03-11T20:16:16.617Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-140\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"6.5.5\", \"aliases\": [\"CVE-2026-31958\", \"GHSA-qjxf-f2mg-c6mc\"]}",
       "fingerprint": "sha256:31664c8f3ec7eafdfc466bc2c01535b0919566f5144bf5afc48a0be7837cd74b",
@@ -49676,6 +50894,20 @@
       "target": "wheel",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade wheel to patched release >= 0.46.2: pip install --upgrade 'wheel>=0.46.2' (Advisory: GHSA-8rrh-rw8j-w5fx)"
+    },
+    {
+      "applies_to": "orjson",
+      "created_at": "2026-01-22T17:16:01.433Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-107\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.11.5\", \"aliases\": [\"CVE-2025-67221\", \"GHSA-hx9q-6w63-j58v\"]}",
+      "fingerprint": "sha256:d6586a42f9de6abf7dca069aa8ede53d12c9007b295cb742799cb7ba9b31d410",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_107",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-107] The orjson.dumps function in orjson thru 3.11.4 does not limit recursion for deeply nested JSON documents. (Affects orjson < 3.11.5)",
+      "target": "orjson",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade orjson to patched release >= 3.11.5: pip install --upgrade 'orjson>=3.11.5' (Advisory: PYSEC-2026-107)"
     },
     {
       "applies_to": "pytest",

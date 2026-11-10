@@ -1,5 +1,5 @@
 {
-  "count": 268,
+  "count": 272,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1332,7 +1332,27 @@
       "type": "crawler"
     },
     {
+      "entity": "afw-survey",
+      "first_seen": "2026-11-10",
+      "type": "agent"
+    },
+    {
+      "entity": "agent-registry-prober",
+      "first_seen": "2026-11-10",
+      "type": "security_probe"
+    },
+    {
       "entity": "mcp-ad-measurement",
+      "first_seen": "2026-11-10",
+      "type": "agent"
+    },
+    {
+      "entity": "mcp-stats-prober",
+      "first_seen": "2026-11-10",
+      "type": "security_probe"
+    },
+    {
+      "entity": "mcpyp-incremental",
       "first_seen": "2026-11-10",
       "type": "agent"
     },
@@ -1342,5 +1362,5 @@
       "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-10T09:47:09Z"
+  "generated_at": "2026-11-10T17:50:53Z"
 }
