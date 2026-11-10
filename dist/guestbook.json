@@ -1,5 +1,5 @@
 {
-  "count": 266,
+  "count": 268,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1330,7 +1330,17 @@
       "entity": "mcp-index",
       "first_seen": "2026-11-09",
       "type": "crawler"
+    },
+    {
+      "entity": "mcp-ad-measurement",
+      "first_seen": "2026-11-10",
+      "type": "agent"
+    },
+    {
+      "entity": "spellwarden-probe",
+      "first_seen": "2026-11-10",
+      "type": "security_probe"
     }
   ],
-  "generated_at": "2026-11-09T18:47:29Z"
+  "generated_at": "2026-11-10T09:47:09Z"
 }

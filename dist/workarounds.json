@@ -1,7 +1,91 @@
 {
-  "count": 1776,
-  "generated_at": "2026-11-10T02:06:09Z",
+  "count": 1789,
+  "generated_at": "2026-11-10T09:47:12Z",
   "grievances": [
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-10T09:43:17Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4b8245f139b42f80abeae1969dc7158c66d111be467c644b1bc9ade9e93955ee",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_66750",
+      "submitted_by": "harvester-v1",
+      "symptom": "[CI Failure]: pre-commit undefined _start_decoding in tests/v1/core/test_scheduler.py",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Tests] Fix iteration-details recomputation test setup. Target files: tests/v1/core/test_scheduler.py. Fix the undefined `_start_decoding` call in `test_iteration_details_count_recomputation_as_prefill`, which currently fails both Ruff and mypy on main. (Ref: https://github.com/vllm-project/vllm/pull/66744)"
+    },
+    {
+      "applies_to": "huggingface/trl",
+      "created_at": "2026-11-10T09:35:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:bc08b33b3ffc08904c338be0429a6f3624a3342c5c568b6f4bd87d17b5cafb6d",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_trl_7954",
+      "submitted_by": "harvester-v1",
+      "symptom": "CI fails with vLLM for GRPO structured outputs: AssertionError: Parameter model.layers.1.self_attn.k_proj.bias has not changed.",
+      "target": "trl",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Require top_k for GRPO structured outputs with the vLLM importance sampling correction. Target files: trl/trainer/grpo_config.py, trl/trainer/grpo_trainer.py, tests/test_grpo_trainer.py. This PR makes GRPO with vLLM structured outputs and the importance sampling correction require `top_k > 0`, so that the trainer normalizes its log-probs over the tokens the grammar allows. (Ref: https://github.com/huggingface/trl/pull/8145)"
+    },
+    {
+      "applies_to": "infiniflow/ragflow",
+      "created_at": "2026-11-10T08:20:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b72a067a72b694f17a92c7f17b757b48f71784fabfe3acde6978976bd64cee2d",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_infiniflow_ragflow_21965",
+      "submitted_by": "harvester-v1",
+      "symptom": "bug(parser): XLSParser rejects non-default parse_methods instead of continuing with local BIFF8 parser",
+      "target": "ragflow",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(parser): align XLSParser fallback and parse_method normalization with spreadsheet family. Target files: internal/parser/parser/xls_parser.go, internal/parser/parser/xlsx_parse_method_test.go, internal/parser/parser/xlsx_parser.go. In the spreadsheet parser family (`internal/parser/parser`), `XLSXParser` and `CSVParser` both treat un-routable / generic / PDF-specific parse methods (e.g., `General`, `PaddleOCR`, `MinerU`, `Docling`, `SoMark`) as the default local parsing path (`// PDF-specific methods like \"DeepDOC\" / ... (Ref: https://github.com/infiniflow/ragflow/pull/21967)"
+    },
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-10T05:39:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c2fdfd0c1a7b5d0f0b91901cd6a846df46df3a32c4242450e38714b67c1a4ea7",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_49460",
+      "submitted_by": "harvester-v1",
+      "symptom": "[CI] test_rust_server_crash_dump fails on main: ModelConfig missing required 'architectures'",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] rust-server: Pass architectures to ModelConfig in test_rust_server_crash_dump. Target files: test/registered/rust/test_rust_server_crash_dump.py. [by Claude Code] (Ref: https://github.com/sgl-project/sglang/pull/49461)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-10T05:01:16Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7056f38c71b510e324e9a78adba7bbbdcbf72b64353d9ecf3828dff27d4d4432",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_45395",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] FastAPI based deployment doesn't respect ASGI scope state.",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [serve] Copy the ASGI lifespan state into each request scope. Target files: python/ray/serve/_private/http_util.py, python/ray/serve/tests/test_fastapi.py, python/ray/serve/tests/unit/test_http_util.py. A FastAPI app or ASGI middleware that stores resources in its lifespan state can't read them from a request in Ray Serve. Under plain FastAPI plus uvicorn, each request's `scope[\"state\"]` holds a shallow copy of the lifespan state, as the [ASGI lifespan state spec](https://asgi.readthedocs.io/en/latest/specs/lifespan.html#li... (Ref: https://github.com/ray-project/ray/pull/67844)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-10T04:06:25Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e722c98a359146a1dd302504b939b427c70fd29d8eb04f3ce52ba4d63b1b554e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_45200",
+      "submitted_by": "harvester-v1",
+      "symptom": "ReAct agent crashes or picks the wrong tool on malformed action JSON",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agent): tolerate malformed ReAct action payloads. Target files: api/core/agent/output_parser/cot_output_parser.py, api/tests/unit_tests/core/agent/output_parser/test_cot_output_parser.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 1. Ensure there is an associated issue > 1. Use the correct syntax to link this PR: `Fixes #<issue number>`. (Ref: https://github.com/langgenius/dify/pull/45201)"
+    },
     {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-10T02:01:56Z",
@@ -71,6 +155,20 @@
       "target": "gitlab-cli",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(df): check and forward plain-HTTP requests through the proxy. Applied in GitLab MR !4326. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4326)"
+    },
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-09T21:52:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1931b32b3efadbf23701a357a45e10d552f579f1dc68a09e8295b42f40a0ec17",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_49385",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] dsv4: top-k v2 JIT module fails to build on Vera Rubin (CC 10.7, cu134 image): cluster kernels exceed 48 KB of static shared memory",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] [NVIDIA] mega_moe: Accept MXFP4 activations at DeepSeek-V4.1-Flash's 2304 intermediate size. Target files: python/sglang/srt/layers/moe/mega_moe.py, test/registered/unit/layers/moe/test_mega_moe_deepgemm_api.py. `--enable-w4a4-mxfp4-megamoe` (the `mxf4xmxf4` MegaMoE MMA type) does not start on DeepSeek-V4.1-Flash. `check_mega_moe_shapes` asks every MMA type other than `fp8xfp4` / `fp8xfp8` for `moe_intermediate_size % 512 == 0`, and V4.1-Flash's is 2304: (Ref: https://github.com/sgl-project/sglang/pull/49388)"
     },
     {
       "applies_to": "gitlab-org/cli",
@@ -645,6 +743,20 @@
       "target": "dify",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(rag): close downloaded temp file before reopening it in WordExtractor. Target files: api/core/rag/extractor/word_extractor.py, api/tests/unit_tests/core/rag/extractor/test_word_extractor.py. - Close the `NamedTemporaryFile` handle immediately after writing the remote response so the path can be reopened on Windows. - Keep only the temp path on the instance and unlink it in `close()`; `close()` stays idempotent and tolerates a missing file. - Update the extractor unit tests to cover path-based cleanup (unlink, idempotenc... (Ref: https://github.com/langgenius/dify/pull/39894)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-08T05:05:43Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7e3ec7c2a093bc1588d20134198c2713947321b16b0a3339f7b7cff8a6ab0df3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_66243",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug][Model] dots.ocr/dots.mocr: vision tower host syncs make the model untestable under VLLM_GPU_SYNC_CHECK",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Model] Fix dots_ocr vision tower QKV split for TP > 1. Target files: vllm/model_executor/models/dots_ocr.py, tests/models/multimodal/generation/test_common.py. `DotsVisionAttention` used a QKV-split helper meant for a differently sharded layer, scrambling q/k/v at TP > 1 so `dots.ocr` repeated one sentence for every image region. Split the local shard instead. . (Ref: https://github.com/vllm-project/vllm/pull/64543)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -7675,6 +7787,20 @@
       "workaround": "Fix: Fixed client tools failing with `ToolNotFoundError` after a tool approval. `approveToolCall`, `declineToolCall`, `approveToolCallGenerate` and `declineToolCallGenerate` now accept `clientTools` (and `clientToolsResolver`) and send them to the server, so the model can call a client tool after the approval decision. `approveToolCall` and `declineToolCall` also accept `memory`; pass the same thread and resource as the original call so client-tool results and the final answer are saved to that thread. (#27744). Upstream PR #27744. (Ref: https://github.com/mastra-ai/mastra/pull/27744)"
     },
     {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-21T06:59:33Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ce7042fbb82d7c04ed06f5767b27b7f6d7e7abfdeda52261547fb4bc05b12f9a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43828",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Gemini models can't be accessed through SDK",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(llms): join api_base and route with one shared helper. Target files: litellm/litellm_core_utils/url_utils.py, litellm/llms/aiml/image_generation/transformation.py, litellm/llms/aiohttp_openai/chat/transformation.py. An `api_base` that ends in `/` makes most provider URL builders put `//` in the request path, and a gateway that keeps `//` (a default-config Envoy, or Mistral's own API) answers 404. This adds `join_api_base` and `ensure_api_route` to `url_utils` and moves every builder that joins a caller-set `api_base` on... (Ref: https://github.com/BerriAI/litellm/pull/47535)"
+    },
+    {
       "applies_to": "skypilot-org/skypilot",
       "created_at": "2026-10-21T06:06:16Z",
       "environment_json": "{}",
@@ -12169,6 +12295,20 @@
       "workaround": "Fix: fix(client): interrupt retry backoff on abort. Target files: src/client.ts, src/internal/parse.ts, src/internal/utils/sleep.ts. Aborting any SDK request during `Retry-After` backoff still waited for the full delay. In the live 3-second case, both caller signals and signals installed by `prepareRequest` took about 2.9 seconds to stop. (Ref: https://github.com/openai/openai-node/pull/2581)"
     },
     {
+      "applies_to": "infiniflow/ragflow",
+      "created_at": "2026-09-14T02:04:12Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ccb2f9d97d84f5621c087a27a4c1906afd3cd04f3047ae6caf0c5d2f9ab37caa",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_infiniflow_ragflow_14931",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Question]: After re-building the ragflow image and running \"docker-compose up -d\", an error occurred.",
+      "target": "ragflow",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(beartype): remove package-wide import hooks. Target files: deepdoc/__init__.py, pyproject.toml, sdk/python/ragflow_sdk/__init__.py. Removed unnecessary beartype hooks from three package imports. This prevents unwanted import-time instrumentation and dependency coupling. based on #15258 (Ref: https://github.com/infiniflow/ragflow/pull/19531)"
+    },
+    {
       "applies_to": "vllm",
       "created_at": "2026-09-12T13:16:53.887Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3985\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.28.0\", \"aliases\": [\"CVE-2026-90553\", \"GHSA-3c86-2m5g-59q7\"]}",
@@ -13035,6 +13175,20 @@
       "target": "litellm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade litellm to patched release >= 1.83.7: pip install --upgrade 'litellm>=1.83.7' (Advisory: GHSA-6wvf-77m9-58rm)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-08-27T19:48:12Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f9957e0f56651aadaacb76030193e2d6ccd0d7652c4273b8038a62e53995e894",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_28775",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Team doesn't exist in db. Team=litellm-dashboard",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(auth): skip guaranteed-miss team lookup for the litellm-dashboard sentinel. Target files: litellm/proxy/auth/user_api_key_auth.py, tests/test_litellm/proxy/auth/test_user_api_key_auth.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/38471)"
     },
     {
       "applies_to": "jxnl/instructor",
@@ -22193,6 +22347,20 @@
       "workaround": "Upgrade transformers to patched release >= 5.0.0rc3: pip install --upgrade 'transformers>=5.0.0rc3' (Advisory: GHSA-69w3-r845-3855)"
     },
     {
+      "applies_to": "bentoml",
+      "created_at": "2026-04-06T18:16:41.990Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-159\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.4.38\", \"aliases\": [\"CVE-2026-35044\", \"GHSA-v959-cwq9-7hr6\"]}",
+      "fingerprint": "sha256:e94254db01e8b542f3ec37d58a397799f7061063abc8d057a9965f367c67a269",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_159",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-159] BentoML is a Python library for building online serving systems optimized for AI apps and model inference. Prior to 1.4.38, the Dockerfile generation functio... (Affects bentoml < 1.4.38)",
+      "target": "bentoml",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade bentoml to patched release >= 1.4.38: pip install --upgrade 'bentoml>=1.4.38' (Advisory: PYSEC-2026-159)"
+    },
+    {
       "applies_to": "strawberry-graphql",
       "created_at": "2026-04-06T18:00:29Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hv3w-m4g2-5x77\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.312.3\", \"aliases\": [\"CVE-2026-35526\", \"PYSEC-2026-134\"]}",
@@ -22625,6 +22793,20 @@
       "target": "onnx",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade onnx to patched release >= 1.21.0: pip install --upgrade 'onnx>=1.21.0' (Advisory: PYSEC-2026-104)"
+    },
+    {
+      "applies_to": "onnx",
+      "created_at": "2026-04-01T18:16:30.500Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2240\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.21.0\", \"aliases\": [\"CVE-2026-34445\", \"GHSA-538c-55jv-c5g9\"]}",
+      "fingerprint": "sha256:0a3a3bad9f69c06288f8bbe42a977561be69fd95d6f208fdbd7be4f58949c3be",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2240",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2240] Open Neural Network Exchange (ONNX) is an open standard for machine learning interoperability. Prior to version 1.21.0, the ExternalDataInfo class in ONNX wa... (Affects onnx < 1.21.0)",
+      "target": "onnx",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade onnx to patched release >= 1.21.0: pip install --upgrade 'onnx>=1.21.0' (Advisory: PYSEC-2026-2240)"
     },
     {
       "applies_to": "fastmcp",
@@ -24870,6 +25052,90 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-10T09:43:17Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4b8245f139b42f80abeae1969dc7158c66d111be467c644b1bc9ade9e93955ee",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_66750",
+      "submitted_by": "harvester-v1",
+      "symptom": "[CI Failure]: pre-commit undefined _start_decoding in tests/v1/core/test_scheduler.py",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Tests] Fix iteration-details recomputation test setup. Target files: tests/v1/core/test_scheduler.py. Fix the undefined `_start_decoding` call in `test_iteration_details_count_recomputation_as_prefill`, which currently fails both Ruff and mypy on main. (Ref: https://github.com/vllm-project/vllm/pull/66744)"
+    },
+    {
+      "applies_to": "huggingface/trl",
+      "created_at": "2026-11-10T09:35:38Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:bc08b33b3ffc08904c338be0429a6f3624a3342c5c568b6f4bd87d17b5cafb6d",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_trl_7954",
+      "submitted_by": "harvester-v1",
+      "symptom": "CI fails with vLLM for GRPO structured outputs: AssertionError: Parameter model.layers.1.self_attn.k_proj.bias has not changed.",
+      "target": "trl",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Require top_k for GRPO structured outputs with the vLLM importance sampling correction. Target files: trl/trainer/grpo_config.py, trl/trainer/grpo_trainer.py, tests/test_grpo_trainer.py. This PR makes GRPO with vLLM structured outputs and the importance sampling correction require `top_k > 0`, so that the trainer normalizes its log-probs over the tokens the grammar allows. (Ref: https://github.com/huggingface/trl/pull/8145)"
+    },
+    {
+      "applies_to": "infiniflow/ragflow",
+      "created_at": "2026-11-10T08:20:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:b72a067a72b694f17a92c7f17b757b48f71784fabfe3acde6978976bd64cee2d",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_infiniflow_ragflow_21965",
+      "submitted_by": "harvester-v1",
+      "symptom": "bug(parser): XLSParser rejects non-default parse_methods instead of continuing with local BIFF8 parser",
+      "target": "ragflow",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(parser): align XLSParser fallback and parse_method normalization with spreadsheet family. Target files: internal/parser/parser/xls_parser.go, internal/parser/parser/xlsx_parse_method_test.go, internal/parser/parser/xlsx_parser.go. In the spreadsheet parser family (`internal/parser/parser`), `XLSXParser` and `CSVParser` both treat un-routable / generic / PDF-specific parse methods (e.g., `General`, `PaddleOCR`, `MinerU`, `Docling`, `SoMark`) as the default local parsing path (`// PDF-specific methods like \"DeepDOC\" / ... (Ref: https://github.com/infiniflow/ragflow/pull/21967)"
+    },
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-10T05:39:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c2fdfd0c1a7b5d0f0b91901cd6a846df46df3a32c4242450e38714b67c1a4ea7",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_49460",
+      "submitted_by": "harvester-v1",
+      "symptom": "[CI] test_rust_server_crash_dump fails on main: ModelConfig missing required 'architectures'",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] rust-server: Pass architectures to ModelConfig in test_rust_server_crash_dump. Target files: test/registered/rust/test_rust_server_crash_dump.py. [by Claude Code] (Ref: https://github.com/sgl-project/sglang/pull/49461)"
+    },
+    {
+      "applies_to": "ray-project/ray",
+      "created_at": "2026-11-10T05:01:16Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7056f38c71b510e324e9a78adba7bbbdcbf72b64353d9ecf3828dff27d4d4432",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_ray-project_ray_45395",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Serve] FastAPI based deployment doesn't respect ASGI scope state.",
+      "target": "ray",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [serve] Copy the ASGI lifespan state into each request scope. Target files: python/ray/serve/_private/http_util.py, python/ray/serve/tests/test_fastapi.py, python/ray/serve/tests/unit/test_http_util.py. A FastAPI app or ASGI middleware that stores resources in its lifespan state can't read them from a request in Ray Serve. Under plain FastAPI plus uvicorn, each request's `scope[\"state\"]` holds a shallow copy of the lifespan state, as the [ASGI lifespan state spec](https://asgi.readthedocs.io/en/latest/specs/lifespan.html#li... (Ref: https://github.com/ray-project/ray/pull/67844)"
+    },
+    {
+      "applies_to": "langgenius/dify",
+      "created_at": "2026-11-10T04:06:25Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e722c98a359146a1dd302504b939b427c70fd29d8eb04f3ce52ba4d63b1b554e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_langgenius_dify_45200",
+      "submitted_by": "harvester-v1",
+      "symptom": "ReAct agent crashes or picks the wrong tool on malformed action JSON",
+      "target": "dify",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(agent): tolerate malformed ReAct action payloads. Target files: api/core/agent/output_parser/cot_output_parser.py, api/tests/unit_tests/core/agent/output_parser/test_cot_output_parser.py. > [!IMPORTANT] > > 1. Make sure you have read our [contribution guidelines](https://github.com/langgenius/dify/blob/main/CONTRIBUTING.md) > 1. Ensure there is an associated issue > 1. Use the correct syntax to link this PR: `Fixes #<issue number>`. (Ref: https://github.com/langgenius/dify/pull/45201)"
+    },
+    {
       "applies_to": "BerriAI/litellm",
       "created_at": "2026-11-10T02:01:56Z",
       "environment_json": "{}",
@@ -24938,6 +25204,20 @@
       "target": "gitlab-cli",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(df): check and forward plain-HTTP requests through the proxy. Applied in GitLab MR !4326. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4326)"
+    },
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-09T21:52:28Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:1931b32b3efadbf23701a357a45e10d552f579f1dc68a09e8295b42f40a0ec17",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_49385",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] dsv4: top-k v2 JIT module fails to build on Vera Rubin (CC 10.7, cu134 image): cluster kernels exceed 48 KB of static shared memory",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] [NVIDIA] mega_moe: Accept MXFP4 activations at DeepSeek-V4.1-Flash's 2304 intermediate size. Target files: python/sglang/srt/layers/moe/mega_moe.py, test/registered/unit/layers/moe/test_mega_moe_deepgemm_api.py. `--enable-w4a4-mxfp4-megamoe` (the `mxf4xmxf4` MegaMoE MMA type) does not start on DeepSeek-V4.1-Flash. `check_mega_moe_shapes` asks every MMA type other than `fp8xfp4` / `fp8xfp8` for `moe_intermediate_size % 512 == 0`, and V4.1-Flash's is 2304: (Ref: https://github.com/sgl-project/sglang/pull/49388)"
     },
     {
       "applies_to": "gitlab-org/cli",
@@ -25512,6 +25792,20 @@
       "target": "dify",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(rag): close downloaded temp file before reopening it in WordExtractor. Target files: api/core/rag/extractor/word_extractor.py, api/tests/unit_tests/core/rag/extractor/test_word_extractor.py. - Close the `NamedTemporaryFile` handle immediately after writing the remote response so the path can be reopened on Windows. - Keep only the temp path on the instance and unlink it in `close()`; `close()` stays idempotent and tolerates a missing file. - Update the extractor unit tests to cover path-based cleanup (unlink, idempotenc... (Ref: https://github.com/langgenius/dify/pull/39894)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-08T05:05:43Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7e3ec7c2a093bc1588d20134198c2713947321b16b0a3339f7b7cff8a6ab0df3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_66243",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug][Model] dots.ocr/dots.mocr: vision tower host syncs make the model untestable under VLLM_GPU_SYNC_CHECK",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Bugfix][Model] Fix dots_ocr vision tower QKV split for TP > 1. Target files: vllm/model_executor/models/dots_ocr.py, tests/models/multimodal/generation/test_common.py. `DotsVisionAttention` used a QKV-split helper meant for a differently sharded layer, scrambling q/k/v at TP > 1 so `dots.ocr` repeated one sentence for every image region. Split the local shard instead. . (Ref: https://github.com/vllm-project/vllm/pull/64543)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -32542,6 +32836,20 @@
       "workaround": "Fix: Fixed client tools failing with `ToolNotFoundError` after a tool approval. `approveToolCall`, `declineToolCall`, `approveToolCallGenerate` and `declineToolCallGenerate` now accept `clientTools` (and `clientToolsResolver`) and send them to the server, so the model can call a client tool after the approval decision. `approveToolCall` and `declineToolCall` also accept `memory`; pass the same thread and resource as the original call so client-tool results and the final answer are saved to that thread. (#27744). Upstream PR #27744. (Ref: https://github.com/mastra-ai/mastra/pull/27744)"
     },
     {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-10-21T06:59:33Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ce7042fbb82d7c04ed06f5767b27b7f6d7e7abfdeda52261547fb4bc05b12f9a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_43828",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Gemini models can't be accessed through SDK",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(llms): join api_base and route with one shared helper. Target files: litellm/litellm_core_utils/url_utils.py, litellm/llms/aiml/image_generation/transformation.py, litellm/llms/aiohttp_openai/chat/transformation.py. An `api_base` that ends in `/` makes most provider URL builders put `//` in the request path, and a gateway that keeps `//` (a default-config Envoy, or Mistral's own API) answers 404. This adds `join_api_base` and `ensure_api_route` to `url_utils` and moves every builder that joins a caller-set `api_base` on... (Ref: https://github.com/BerriAI/litellm/pull/47535)"
+    },
+    {
       "applies_to": "skypilot-org/skypilot",
       "created_at": "2026-10-21T06:06:16Z",
       "environment_json": "{}",
@@ -37036,6 +37344,20 @@
       "workaround": "Fix: fix(client): interrupt retry backoff on abort. Target files: src/client.ts, src/internal/parse.ts, src/internal/utils/sleep.ts. Aborting any SDK request during `Retry-After` backoff still waited for the full delay. In the live 3-second case, both caller signals and signals installed by `prepareRequest` took about 2.9 seconds to stop. (Ref: https://github.com/openai/openai-node/pull/2581)"
     },
     {
+      "applies_to": "infiniflow/ragflow",
+      "created_at": "2026-09-14T02:04:12Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ccb2f9d97d84f5621c087a27a4c1906afd3cd04f3047ae6caf0c5d2f9ab37caa",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_infiniflow_ragflow_14931",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Question]: After re-building the ragflow image and running \"docker-compose up -d\", an error occurred.",
+      "target": "ragflow",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(beartype): remove package-wide import hooks. Target files: deepdoc/__init__.py, pyproject.toml, sdk/python/ragflow_sdk/__init__.py. Removed unnecessary beartype hooks from three package imports. This prevents unwanted import-time instrumentation and dependency coupling. based on #15258 (Ref: https://github.com/infiniflow/ragflow/pull/19531)"
+    },
+    {
       "applies_to": "vllm",
       "created_at": "2026-09-12T13:16:53.887Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3985\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.28.0\", \"aliases\": [\"CVE-2026-90553\", \"GHSA-3c86-2m5g-59q7\"]}",
@@ -37902,6 +38224,20 @@
       "target": "litellm",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade litellm to patched release >= 1.83.7: pip install --upgrade 'litellm>=1.83.7' (Advisory: GHSA-6wvf-77m9-58rm)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-08-27T19:48:12Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f9957e0f56651aadaacb76030193e2d6ccd0d7652c4273b8038a62e53995e894",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_BerriAI_litellm_28775",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: Team doesn't exist in db. Team=litellm-dashboard",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(auth): skip guaranteed-miss team lookup for the litellm-dashboard sentinel. Target files: litellm/proxy/auth/user_api_key_auth.py, tests/test_litellm/proxy/auth/test_user_api_key_auth.py. Problem this solves: (Ref: https://github.com/BerriAI/litellm/pull/38471)"
     },
     {
       "applies_to": "jxnl/instructor",
@@ -47060,6 +47396,20 @@
       "workaround": "Upgrade transformers to patched release >= 5.0.0rc3: pip install --upgrade 'transformers>=5.0.0rc3' (Advisory: GHSA-69w3-r845-3855)"
     },
     {
+      "applies_to": "bentoml",
+      "created_at": "2026-04-06T18:16:41.990Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-159\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.4.38\", \"aliases\": [\"CVE-2026-35044\", \"GHSA-v959-cwq9-7hr6\"]}",
+      "fingerprint": "sha256:e94254db01e8b542f3ec37d58a397799f7061063abc8d057a9965f367c67a269",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_159",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-159] BentoML is a Python library for building online serving systems optimized for AI apps and model inference. Prior to 1.4.38, the Dockerfile generation functio... (Affects bentoml < 1.4.38)",
+      "target": "bentoml",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade bentoml to patched release >= 1.4.38: pip install --upgrade 'bentoml>=1.4.38' (Advisory: PYSEC-2026-159)"
+    },
+    {
       "applies_to": "strawberry-graphql",
       "created_at": "2026-04-06T18:00:29Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-hv3w-m4g2-5x77\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"0.312.3\", \"aliases\": [\"CVE-2026-35526\", \"PYSEC-2026-134\"]}",
@@ -47492,6 +47842,20 @@
       "target": "onnx",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade onnx to patched release >= 1.21.0: pip install --upgrade 'onnx>=1.21.0' (Advisory: PYSEC-2026-104)"
+    },
+    {
+      "applies_to": "onnx",
+      "created_at": "2026-04-01T18:16:30.500Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2240\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.21.0\", \"aliases\": [\"CVE-2026-34445\", \"GHSA-538c-55jv-c5g9\"]}",
+      "fingerprint": "sha256:0a3a3bad9f69c06288f8bbe42a977561be69fd95d6f208fdbd7be4f58949c3be",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2240",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2240] Open Neural Network Exchange (ONNX) is an open standard for machine learning interoperability. Prior to version 1.21.0, the ExternalDataInfo class in ONNX wa... (Affects onnx < 1.21.0)",
+      "target": "onnx",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade onnx to patched release >= 1.21.0: pip install --upgrade 'onnx>=1.21.0' (Advisory: PYSEC-2026-2240)"
     },
     {
       "applies_to": "fastmcp",
