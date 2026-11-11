@@ -38,6 +38,10 @@ CREATE TABLE IF NOT EXISTS grievances (
     submitted_by TEXT NOT NULL,
     verification_tier TEXT NOT NULL,
     applies_to TEXT,
+    simhash_b0 INTEGER,
+    simhash_b1 INTEGER,
+    simhash_b2 INTEGER,
+    simhash_b3 INTEGER,
     created_at TEXT NOT NULL,
     queue_status TEXT NOT NULL DEFAULT 'committed'
 );
@@ -46,6 +50,10 @@ CREATE INDEX IF NOT EXISTS idx_grievances_target ON grievances (target);
 CREATE INDEX IF NOT EXISTS idx_grievances_type ON grievances (grievance_type);
 CREATE INDEX IF NOT EXISTS idx_grievances_fingerprint ON grievances (fingerprint);
 CREATE INDEX IF NOT EXISTS idx_grievances_created ON grievances (created_at);
+CREATE INDEX IF NOT EXISTS idx_grievances_b0 ON grievances (simhash_b0);
+CREATE INDEX IF NOT EXISTS idx_grievances_b1 ON grievances (simhash_b1);
+CREATE INDEX IF NOT EXISTS idx_grievances_b2 ON grievances (simhash_b2);
+CREATE INDEX IF NOT EXISTS idx_grievances_b3 ON grievances (simhash_b3);
 
 CREATE TABLE IF NOT EXISTS disputes (
     id TEXT PRIMARY KEY,

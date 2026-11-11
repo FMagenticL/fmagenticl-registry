@@ -67,3 +67,30 @@ def test_fingerprint_determinism():
     for _ in range(10):
         fp = compute_fingerprint(REFERENCE_ENV, REFERENCE_FAILURE)
         assert fp == REFERENCE_HASH
+
+
+from fmagenticl.client.fingerprint import compute_normalized_fingerprint
+
+
+def test_compute_normalized_fingerprint_strips_volatile_tokens():
+    env = {"os": "linux", "runtime": "python@3.12"}
+    fail1 = {
+        "error": "Error at /root/src/app.py line 42 with id 12345678-1234-1234-1234-123456789abc at 2026-11-10T12:00:00Z (0x7fff5fbff8a0)"
+    }
+    fail2 = {
+        "error": "Error at C:\\Users\\dev\\src\\app.py line 189 with id 87654321-4321-4321-4321-cba987654321 at 2026-11-11T14:30:00Z (0x7fff5fbff9c0)"
+    }
+
+    fp1 = compute_normalized_fingerprint(env, fail1)
+    fp2 = compute_normalized_fingerprint(env, fail2)
+    assert fp1 == fp2, "Normalized fingerprints for volatile paths/line/uuid/timestamp must match"
+
+
+def test_compute_normalized_fingerprint_strips_runtime_patch_level():
+    env1 = {"os": "linux", "runtime": "python@3.12.1"}
+    env2 = {"os": "linux", "runtime": "python@3.12.8"}
+    fail = {"error": "ModuleNotFoundError: No module named 'foo'"}
+
+    fp1 = compute_normalized_fingerprint(env1, fail)
+    fp2 = compute_normalized_fingerprint(env2, fail)
+    assert fp1 == fp2, "Normalized fingerprints across patch releases of the same minor runtime must match"

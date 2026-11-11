@@ -118,6 +118,64 @@ function validateAttribution(value) {
 
 
 
+
+// 64-bit FNV-1a SimHash & LSH Band Splitting
+const FNV_OFFSET_BASIS = 0xcbf29ce484222325n;
+const FNV_PRIME = 0x100000001b3n;
+const MASK64 = 0xFFFFFFFFFFFFFFFFn;
+const SIMHASH_BOILERPLATE = new Set(["traceback", "most", "recent", "call", "last", "file", "line", "in", "raise"]);
+
+export function fnv1a64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let h = FNV_OFFSET_BASIS;
+  for (let i = 0; i < bytes.length; i++) {
+    h ^= BigInt(bytes[i]);
+    h = (h * FNV_PRIME) & MASK64;
+  }
+  return h;
+}
+
+export function computeSimhash64(text) {
+  if (!text || typeof text !== "string") return 0n;
+  const rawTokens = text.match(/\b[A-Za-z0-9_]{2,}\b/g) || [];
+  const v = new Array(64).fill(0);
+  let hasTokens = false;
+  for (const tok of rawTokens) {
+    const low = tok.toLowerCase();
+    if (SIMHASH_BOILERPLATE.has(low)) continue;
+    hasTokens = true;
+    const isExc = /^[A-Z][a-zA-Z0-9]*(?:Error|Exception|Fault|Warning)$/.test(tok);
+    const weight = isExc ? 3 : 1;
+    const h = fnv1a64(tok);
+    for (let i = 0n; i < 64n; i++) {
+      if ((h >> i) & 1n) {
+        v[Number(i)] += weight;
+      } else {
+        v[Number(i)] -= weight;
+      }
+    }
+  }
+  if (!hasTokens) return 0n;
+  let sim = 0n;
+  for (let i = 0n; i < 64n; i++) {
+    if (v[Number(i)] > 0) {
+      sim |= (1n << i);
+    }
+  }
+  return sim;
+}
+
+export function splitSimhashBands(sim) {
+  const b = BigInt(sim);
+  return [
+    Number((b >> 48n) & 0xFFFFn),
+    Number((b >> 32n) & 0xFFFFn),
+    Number((b >> 16n) & 0xFFFFn),
+    Number(b & 0xFFFFn)
+  ];
+}
+
+
 export const TARGET_ALIASES = {
   "gitlab-cli": ["gitlab-cli", "cli", "glab", "gitlab"],
   "cli": ["gitlab-cli", "cli", "glab", "gitlab"],
@@ -942,6 +1000,53 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
       }
 
+
+
+      
+      // 3B. SimHash 4-Band LSH Fuzzy Lookup against Grievances
+      if (rawText && env.DB) {
+        try {
+          const sim = computeSimhash64(rawText);
+          if (sim !== 0n) {
+            const [b0, b1, b2, b3] = splitSimhashBands(sim);
+            const lshQuery = `
+              SELECT * FROM (
+                SELECT *, 0 as band_idx FROM grievances WHERE simhash_b0 = ? LIMIT 5
+                UNION ALL
+                SELECT *, 1 as band_idx FROM grievances WHERE simhash_b1 = ? LIMIT 5
+                UNION ALL
+                SELECT *, 2 as band_idx FROM grievances WHERE simhash_b2 = ? LIMIT 5
+                UNION ALL
+                SELECT *, 3 as band_idx FROM grievances WHERE simhash_b3 = ? LIMIT 5
+              ) LIMIT 20;
+            `;
+            const lshRes = await env.DB.prepare(lshQuery).bind(b0, b1, b2, b3).all();
+            const candidates = lshRes?.results || [];
+            if (candidates.length > 0) {
+              for (const cand of candidates) {
+                if (cand.simhash_b0 == null) continue;
+                const candSim = (BigInt(cand.simhash_b0) << 48n) |
+                                (BigInt(cand.simhash_b1) << 32n) |
+                                (BigInt(cand.simhash_b2) << 16n) |
+                                BigInt(cand.simhash_b3);
+                const xor = sim ^ candSim;
+                const dist = xor.toString(2).replace(/0/g, "").length;
+                if (dist <= 3) {
+                  return ok(id, { content: [{ type: "text", text: JSON.stringify({
+                    status: "RESOLVED",
+                    match_type: "simhash_fuzzy_match",
+                    hamming_distance: dist,
+                    target: cand.target,
+                    symptom: cand.symptom,
+                    workaround: cand.workaround,
+                    fingerprint: cand.fingerprint || null
+                  }) }] });
+                }
+              }
+            }
+          }
+        } catch (_) {}
+      }
 
 
       return ok(id, { content: [{ type: "text", text: JSON.stringify({
