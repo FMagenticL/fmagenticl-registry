@@ -3,7 +3,10 @@ Tests for Client-Side Secret and PII Sanitizer Engine.
 Verifies that all API keys, JWTs, DB URIs, and user paths are scrubbed before transmission.
 """
 
+from unittest.mock import patch
+import json
 from fmagenticl.client.sanitizer import scrub_text, scrub_structure
+from fmagenticl.client.middleware import FMagenticLClient
 
 
 def test_scrub_aws_keys():
@@ -63,3 +66,51 @@ def test_scrub_nested_structure():
     assert "developer" not in clean["failure"]["stacktrace"][0]
     assert "<USER_HOME>" in clean["failure"]["stacktrace"][0]
     assert "[REDACTED_BEARER_TOKEN]" in clean["failure"]["stacktrace"][1]
+
+
+def test_report_failure_outbound_payload_redaction():
+    """Verify that report_failure scrubs raw JWTs, AWS keys, and DB URIs before network dispatch."""
+    client = FMagenticLClient()
+
+    jwt_token = "ey" + "JhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0." + "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    aws_key = "AKIA" + "IOSFODNN7EXAMPLE"
+    db_uri = "postgres://superadmin:TopSecretPassword123@db.prod.internal:5432/secrets_db"
+
+    env = {"runtime": "python@3.12", "aws_key": aws_key}
+    failure = {
+        "error": f"Failed connecting to {db_uri}",
+        "auth_header": "Bearer " + jwt_token,
+        "traceback": [
+            r"File C:\Users\developer\secrets\app.py, line 99",
+            f"database_url = '{db_uri}'"
+        ]
+    }
+    patch_dict = {"patch_type": "advisory", "text": "Fix credentials"}
+
+    with patch("httpx.post") as mock_post:
+        mock_post.return_value.status_code = 202
+        mock_post.return_value.json.return_value = {"status": "ACCEPTED"}
+
+        client.report_failure(
+            environment=env,
+            failure=failure,
+            resolution_patch=patch_dict,
+            technical_note=f"Secret was leaked with token {jwt_token}"
+        )
+
+        assert mock_post.called
+        sent_payload = mock_post.call_args[1]["json"]
+
+        payload_str = json.dumps(sent_payload)
+
+        assert aws_key not in payload_str
+        assert "[REDACTED_AWS_KEY]" in payload_str
+
+        assert "TopSecretPassword123" not in payload_str
+        assert "[REDACTED_DB_URI]" in payload_str
+
+        assert jwt_token not in payload_str
+        assert "[REDACTED_BEARER_TOKEN]" in payload_str or "[REDACTED_JWT]" in payload_str
+
+        assert "developer" not in payload_str
+        assert "<USER_HOME>" in payload_str

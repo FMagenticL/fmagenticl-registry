@@ -622,43 +622,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
 
   if (method === "initialize") {
-
-    if (params?.clientInfo?.name && env?.DB) {
-
-      try {
-
-        const clientName = String(params.clientInfo.name).trim().slice(0, 64);
-
-        if (clientName && clientName !== "anonymous" && clientName !== "healthcheck-probe" && clientName !== "waitUntil-test") {
-
-          const runtimeInfo = params.clientInfo.version ? `version@${params.clientInfo.version}` : "version@unknown";
-
-          const nowIso = new Date().toISOString();
-
-          const visitPromise = env.DB.prepare(
-
-            "INSERT OR IGNORE INTO visits (model, first_seen_utc, agent_runtime, created_at) VALUES (?, ?, ?, ?)"
-
-          ).bind(clientName, nowIso, runtimeInfo, nowIso).run().catch((e) => {
-
-            console.error("D1 visits insert failed:", e);
-
-          });
-
-          if (typeof waitUntil === "function") {
-
-            waitUntil(visitPromise);
-
-          }
-
-        }
-
-      } catch (_) {}
-
-    }
-
     return ok(id, {
-
       protocolVersion: PROTOCOL_VERSION,
 
       capabilities: { tools: { listChanged: false } },

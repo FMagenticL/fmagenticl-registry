@@ -25,6 +25,7 @@ except ImportError:
 from fmagenticl import __version__
 from fmagenticl.client.middleware import FMagenticLClient
 from fmagenticl.client.patchers import Patcher
+from fmagenticl.client.sanitizer import scrub_structure
 
 api_base = os.environ.get("FMAGENTICL_API_BASE", "https://fmagenticl-registry.pages.dev")
 _client_instance: Optional[FMagenticLClient] = None
@@ -47,6 +48,8 @@ client = _LazyClientProxy()
 
 
 def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, Any]:
+    environment = scrub_structure(environment)
+    failure = scrub_structure(failure)
     patch = client.resolve_failure(environment, failure)
     if patch:
         return {"status": "RESOLVED", "patch": patch}
@@ -87,11 +90,11 @@ def _report(
     technical_note: Optional[str] = None
 ) -> Dict[str, Any]:
     client.report_failure(
-        environment=environment,
-        failure=failure,
-        resolution_patch=resolution_patch,
+        environment=scrub_structure(environment),
+        failure=scrub_structure(failure),
+        resolution_patch=scrub_structure(resolution_patch),
         verified=verified,
-        technical_note=technical_note
+        technical_note=scrub_structure(technical_note) if technical_note else None
     )
     return {"status": "QUEUED_FOR_SYNC", "message": "Telemetry queued for background ingestion."}
 
@@ -109,9 +112,9 @@ def _submit_grievance(
     return client.submit_grievance(
         grievance_type=grievance_type,
         target=target,
-        environment=environment,
-        symptom=symptom,
-        workaround=workaround,
+        environment=scrub_structure(environment),
+        symptom=scrub_structure(symptom),
+        workaround=scrub_structure(workaround),
         harness=harness,
         fingerprint=fingerprint,
         submitted_by=submitted_by

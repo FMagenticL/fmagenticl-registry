@@ -8,14 +8,12 @@ import re
 from typing import Any, Dict, List, Union
 
 REDACTION_RULES = [
-    # Database Connection URIs (must be scrubbed BEFORE email regex catches user:pass@host)
-    (re.compile(r'(?i)[a-z]+://[^:\s]+:[^@\s]+@[a-z0-9.\-]+(?::\d+)?/[^\s]*'), "[REDACTED_DB_URI]"),
-    # Generic password assignments (e.g. password 'Hunter2!' or password="secret")
-    (re.compile(r'(?i)(?:password|passwd|secret|api_key|apikey|token)\s*[:=]?\s*["\']?[^\s,"\'}]{4,}["\']?'), "password=[REDACTED]"),
+    # Database Connection URIs (matches scheme://user:pass@host:port/db, handling symbols in password)
+    (re.compile(r'(?i)\b[a-z][a-z0-9+.\-]*://[^\s/]+@[a-z0-9.\-]+(?::\d+)?/[^\s]*'), "[REDACTED_DB_URI]"),
+    # AWS Secret Access Key assignment (must precede generic secret regex)
+    (re.compile(r'(?i)(?:aws_secret_access_key|aws_secret_key)\s*[:=]\s*["\']?[A-Za-z0-9/+=]{40}["\']?'), "aws_secret_access_key=[REDACTED]"),
     # AWS Access Key ID
     (re.compile(r'\b(?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}\b'), "[REDACTED_AWS_KEY]"),
-    # AWS Secret Access Key assignment
-    (re.compile(r'(?i)(?:aws_secret_access_key|aws_secret_key)\s*[:=]\s*["\']?[A-Za-z0-9/+=]{40}["\']?'), "aws_secret_access_key=[REDACTED]"),
     # GitHub Tokens (PAT, OAuth, App, Refresh)
     (re.compile(r'\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,255}\b'), "[REDACTED_GITHUB_TOKEN]"),
     (re.compile(r'\bgithub_pat_[A-Za-z0-9_]{40,255}\b'), "[REDACTED_GITHUB_PAT]"),
@@ -34,6 +32,8 @@ REDACTION_RULES = [
     (re.compile(r'(?i)bearer\s+[A-Za-z0-9\-._~+/]{15,}={0,2}'), "Bearer [REDACTED_BEARER_TOKEN]"),
     # Raw JSON Web Tokens (JWT)
     (re.compile(r'\bey[A-Za-z0-9\-_=]{20,}\.[A-Za-z0-9\-_=]{20,}\.?[A-Za-z0-9\-_=+/]*\b'), "[REDACTED_JWT]"),
+    # Generic password assignments (e.g. password 'Hunter2!' or password="secret")
+    (re.compile(r'(?i)\b(?:password|passwd)\s*[:=]?\s*["\']?[^\s,"\'}]{4,}["\']?'), "password=[REDACTED]"),
     # Private Keys (RSA, EC, OpenSSH)
     (re.compile(r'-----BEGIN\s+(?:RSA\s+|EC\s+)?PRIVATE\s+KEY-----[\s\S]+?-----END\s+(?:RSA\s+|EC\s+)?PRIVATE\s+KEY-----', re.IGNORECASE), "[REDACTED_PRIVATE_KEY]"),
     # Local Filesystem Home Paths
@@ -55,6 +55,11 @@ def scrub_text(text: str) -> str:
     for pattern, replacement in REDACTION_RULES:
         sanitized = pattern.sub(replacement, sanitized)
     return sanitized
+
+
+def redact_traceback(text: str) -> str:
+    """Alias for scrub_text for traceback and error string sanitization."""
+    return scrub_text(text)
 
 
 def scrub_structure(obj: Any) -> Any:

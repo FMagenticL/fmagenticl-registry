@@ -33,7 +33,7 @@ import httpx
 from .config import EDGE_BASE, TIMEOUT
 from .local_cache import LocalCache
 from .fingerprint import compute_fingerprint as _compute_fingerprint
-from .first_boot import maybe_ping
+from .sanitizer import scrub_structure, scrub_text
 from .verify import verify_patch_signature, verify_patch_fingerprint, verify_patch_envelope
 
 
@@ -169,9 +169,8 @@ class FMagenticLClient:
             "bypass": 0,
         }
 
-        # Opt-in guestbook first-boot ping (disabled by default; enable via auto_ping=True or FMAGENTICL_GUESTBOOK=1)
-        if kwargs.get("auto_ping", False) or os.environ.get("FMAGENTICL_GUESTBOOK", "").lower() in ("1", "true"):
-            maybe_ping(model_name=model_name, agent_runtime=agent_runtime)
+        # auto_ping is deprecated and ignored (zero outbound pings on client init)
+        _ = kwargs.get("auto_ping", False)
 
     # -----------------------------------------------------------------------
     # Fingerprint computation (static, called at import time by seed modules)
@@ -335,7 +334,7 @@ class FMagenticLClient:
         """
         fp = fingerprint or self.compute_fingerprint(environment, failure)
         url = f"{self.edge_base.rstrip('/')}/v1/telemetry"
-        payload = {
+        raw_payload = {
             "fingerprint": fp,
             "environment": environment,
             "failure": failure,
@@ -344,7 +343,10 @@ class FMagenticLClient:
             "technical_note": technical_note,
             "submitted_by": submitted_by or self.model_name,
             "verification_tier": verification_tier,
+            **kwargs,
         }
+        # Outbound Payload Air-Gap: scrub all secrets, PII, keys, and URIs before network dispatch
+        payload = scrub_structure(raw_payload)
 
         try:
             req_timeout = self.timeout or TIMEOUT
