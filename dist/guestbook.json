@@ -1,5 +1,5 @@
 {
-  "count": 275,
+  "count": 276,
   "entities": [
     {
       "entity": "osv-harvester",
@@ -1372,10 +1372,15 @@
       "type": "crawler"
     },
     {
+      "entity": "crankyhag",
+      "first_seen": "2026-11-11",
+      "type": "crawler"
+    },
+    {
       "entity": "metano-radar",
       "first_seen": "2026-11-11",
       "type": "agent"
     }
   ],
-  "generated_at": "2026-11-11T06:11:28Z"
+  "generated_at": "2026-11-11T14:21:42Z"
 }
