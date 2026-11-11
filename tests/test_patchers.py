@@ -200,3 +200,50 @@ def test_peripheral_file_op():
     with open(test_file, "r", encoding="utf-8") as f:
         assert f.read() == "auto-generated header\n"
     os.remove(test_file)
+
+
+def test_cli_override_strictly_advisory_never_executes_subprocess(monkeypatch):
+    import subprocess
+    def _fail_run(*args, **kwargs):
+        raise AssertionError("subprocess.run MUST NOT be called for cli-override")
+    monkeypatch.setattr(subprocess, "run", _fail_run)
+
+    ctx = {"apply_cli": True, "dry_run": False}
+    patch = {"patch_type": "cli-override", "fallback_cli": "rm -rf /"}
+    ok = Patcher.apply_patch(patch, ctx)
+    assert ok is True
+    assert ctx["applied"] is False
+    assert ctx["advisory_cli"] == "rm -rf /"
+    assert ctx["remediation_class"] == "cli_advisory"
+
+
+def test_code_diff_denylist_blocks_sensitive_paths():
+    sensitive_targets = [
+        ".git/config",
+        ".env",
+        ".env.production",
+        "sitecustomize.py",
+        "usercustomize.py",
+        "sub/custom.pth",
+        "conftest.py",
+        "setup.py",
+        "pyproject.toml",
+        "malicious.sh",
+        "exploit.bat",
+        "script.ps1",
+    ]
+    for target in sensitive_targets:
+        diff_text = f"--- a/{target}\n+++ b/{target}\n@@ -1,1 +1,1 @@\n-old\n+new\n"
+        ctx = {"apply_diff": True}
+        ok = Patcher.apply_patch({"patch_type": "code_diff", "diff": diff_text}, ctx)
+        assert ok is False, f"Target {target} should have been blocked by DIFF_DENYLIST"
+
+
+def test_code_diff_advisory_when_not_apply_diff():
+    diff_text = "--- a/sample.py\n+++ b/sample.py\n@@ -1,1 +1,1 @@\n-def foo(): pass\n+def foo(): return 42\n"
+    ctx = {}
+    ok = Patcher.apply_patch({"patch_type": "code_diff", "diff": diff_text}, ctx)
+    assert ok is True
+    assert ctx["applied"] is False
+    assert ctx["advisory_diff"] == diff_text
+    assert ctx["remediation_class"] == "code_diff"

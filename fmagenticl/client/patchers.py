@@ -5,6 +5,7 @@ Hardened against Arbitrary Code Execution (RCE), Symlink/Path Traversal,
 Tool Poisoning, and Unintended Dry-Run Disk Mutation.
 """
 import os
+import re
 import stat
 import subprocess
 import json
@@ -36,6 +37,20 @@ def _is_safe_path(target_path: Optional[str]) -> bool:
     except Exception:
         return False
 
+
+
+
+DIFF_DENYLIST = [
+    re.compile(r"(?:^|[\\/])\.git(?:[\\/]|$)", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.env", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])sitecustomize\.py$", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])usercustomize\.py$", re.IGNORECASE),
+    re.compile(r"\.pth$", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])conftest\.py$", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])setup\.py$", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])pyproject\.toml$", re.IGNORECASE),
+    re.compile(r"\.(?:sh|bat|ps1)$", re.IGNORECASE),
+]
 
 class Patcher:
     """Deterministic self-healing patch execution engine implementing RFC 6902 two-track model."""
@@ -82,14 +97,37 @@ class Patcher:
             diff_text = patch.get("diff") or patch.get("code_diff", "")
             if not diff_text:
                 return False
+
+            # Extract target files from unified diff headers
+            target_files = []
+            for line in diff_text.splitlines():
+                if line.startswith("--- ") or line.startswith("+++ "):
+                    path = line[4:].strip().split("\t")[0]
+                    if path.startswith("a/") or path.startswith("b/"):
+                        path = path[2:]
+                    if path and path != "/dev/null":
+                        target_files.append(path)
+            target_files = list(set(target_files))
+
+            # Security Containment: check safe path & hard-block security denylist
+            for tf in target_files:
+                if not _is_safe_path(tf):
+                    print(f"[FMagenticL Patcher] Diff target path outside working directory rejected: {tf}")
+                    return False
+                if any(pat.search(tf) for pat in DIFF_DENYLIST):
+                    print(f"[FMagenticL Patcher] Diff target matches security denylist: {tf}")
+                    return False
+
             if is_dry_run or not context.get("apply_diff", False):
                 if isinstance(context, dict):
                     context["advisory_diff"] = diff_text
                     context["remediation_class"] = "code_diff"
                     context["applied"] = False
                 return True
+
             try:
-                res = subprocess.run(
+                # 1. Dry-run check first
+                res_check = subprocess.run(
                     ["git", "apply", "--check", "-"],
                     input=diff_text.encode("utf-8"),
                     shell=False,
@@ -97,8 +135,11 @@ class Patcher:
                     stderr=subprocess.PIPE,
                     timeout=15,
                 )
-                if res.returncode != 0:
+                if res_check.returncode != 0:
+                    print(f"[FMagenticL Patcher] git apply --check dry-run failed: {res_check.stderr.decode('utf-8', errors='replace')}")
                     return False
+
+                # 2. Apply diff
                 res_apply = subprocess.run(
                     ["git", "apply", "-"],
                     input=diff_text.encode("utf-8"),
@@ -107,10 +148,25 @@ class Patcher:
                     stderr=subprocess.PIPE,
                     timeout=15,
                 )
+                if res_apply.returncode != 0:
+                    # Atomic rollback on failure
+                    if target_files:
+                        subprocess.run(["git", "checkout", "--"] + target_files, shell=False, timeout=15)
+                    if isinstance(context, dict):
+                        context["applied"] = False
+                    return False
+
                 if isinstance(context, dict):
-                    context["applied"] = (res_apply.returncode == 0)
-                return res_apply.returncode == 0
-            except Exception:
+                    context["applied"] = True
+                return True
+            except Exception as e:
+                # Atomic rollback
+                if target_files:
+                    try:
+                        subprocess.run(["git", "checkout", "--"] + target_files, shell=False, timeout=15)
+                    except Exception:
+                        pass
+                print(f"[FMagenticL Patcher] Code diff application failed: {e}")
                 return False
 
         # -------------------------------------------------------------
@@ -201,59 +257,20 @@ class Patcher:
         # Track 2: Peripheral Types & Legacy Actions
         # -------------------------------------------------------------
 
-        # 2a. CLI Override (Strict Dry-Run by default, zero shell=True)
+        # 2a. CLI Override (Zero-RCE Invariant: Zero Subprocess Execution)
         if patch_type == "cli-override" or action == "CLI_OVERRIDE" or ("fallback_cli" in patch and not patch_type):
             fallback_cli = patch.get("fallback_cli")
             if not fallback_cli:
                 return False
 
-            apply_cli = False if is_dry_run else bool(context.get("apply_cli", False))
-            if not apply_cli:
-                # Default behavior: Dry-run / Advisory Plan output
-                print(f"[FMagenticL Patcher] Advisory CLI plan (dry-run mode): {fallback_cli}")
-                if isinstance(context, dict):
-                    context["advisory_cli"] = fallback_cli
-                    context["applied"] = False
-                return True
-
-            # Explicit execution requested (apply_cli=True and dry_run=False)
-            # Hard-block dangerous shell metacharacters
-            DANGEROUS_SHELL_CHARS = [";", "&", "|", ">", "<", "$", "`", "(", ")", "\n", "\r"]
-            if any(ch in fallback_cli for ch in DANGEROUS_SHELL_CHARS):
-                print(f"[FMagenticL Patcher] Rejected CLI execution: shell metacharacters detected in '{fallback_cli}'")
-                return False
-
-            try:
-                tokens = shlex.split(fallback_cli)
-            except Exception as e:
-                print(f"[FMagenticL Patcher] Failed to parse CLI command: {e}")
-                return False
-
-            if not tokens:
-                return False
-
-            ALLOWLISTED_COMMANDS = {"pip", "npm", "uv", "pytest", "git"}
-            cmd_base = os.path.basename(tokens[0]).lower().rstrip(".exe")
-            if cmd_base not in ALLOWLISTED_COMMANDS:
-                print(f"[FMagenticL Patcher] Rejected CLI execution: '{cmd_base}' is not in allowlisted commands {ALLOWLISTED_COMMANDS}")
-                return False
-
-            try:
-                res = subprocess.run(
-                    tokens,
-                    shell=False,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    timeout=30
-                )
-                if isinstance(context, dict):
-                    context["applied"] = (res.returncode == 0)
-                    context["stdout"] = res.stdout.decode("utf-8", errors="replace")
-                    context["stderr"] = res.stderr.decode("utf-8", errors="replace")
-                return res.returncode == 0
-            except Exception as e:
-                print(f"[FMagenticL Patcher] Allowlisted CLI execution failed: {e}")
-                return False
+            # Zero-RCE Invariant: Arbitrary shell execution is completely excised.
+            # CLI overrides are strictly handled as advisory developer plans.
+            print(f"[FMagenticL Patcher] Advisory CLI plan (zero execution): {fallback_cli}")
+            if isinstance(context, dict):
+                context["advisory_cli"] = fallback_cli
+                context["remediation_class"] = "cli_advisory"
+                context["applied"] = False
+            return True
 
         # 2b. File Operations (file-op, FILE_PERMISSION_UNLOCK, FILE_DELETE, FILE_CREATE)
         if patch_type == "file-op" or action in ["FILE_PERMISSION_UNLOCK", "FILE_DELETE", "FILE_CREATE"]:

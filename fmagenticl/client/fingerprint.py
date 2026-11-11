@@ -7,7 +7,7 @@ import re
 _HEX_ADDR_RE = re.compile(r"0x[0-9a-fA-F]{6,16}")
 _UUID_RE = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
 _ISO_TS_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\b")
-_USER_PATH_RE = re.compile(r"(?:/Users/[^/\s\"']+|/home/[^/\s\"']+|/root/[^/\s\"']+|[A-Za-z]:[/\\]Users\\[^\\\s\"']+)")
+_USER_PATH_RE = re.compile(r"(?:/root\b|/(?:Users|home)/[^/\s\"']+|[A-Za-z]:/Users/[^/\s\"']+)", re.IGNORECASE)
 _LINE_NUM_RE = re.compile(r"(\bline\s+)\d+\b", re.IGNORECASE)
 _RUNTIME_PATCH_RE = re.compile(r"\b([a-zA-Z0-9_-]+@\d+\.\d+)\.\d+\b")
 
@@ -23,6 +23,7 @@ def normalize_error_signature(raw_str: str) -> str:
     s = _HEX_ADDR_RE.sub("0xADDR", raw_str)
     s = _UUID_RE.sub("<UUID>", s)
     s = _ISO_TS_RE.sub("<TIMESTAMP>", s)
+    s = s.replace("\\", "/")
     s = _USER_PATH_RE.sub("<USER_HOME>", s)
     s = _LINE_NUM_RE.sub(r"\1<LINE>", s)
     return s
