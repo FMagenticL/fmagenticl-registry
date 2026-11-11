@@ -206,7 +206,11 @@ class FMagenticLClient:
                     self._metrics["delta_hit"] += 1
             if isinstance(cached, dict):
                 snap_verified = bool(getattr(self.local_cache, "_snapshot_signature_verified", False))
-                sig_ok = (from_memory and snap_verified) or verify_patch_signature(cached)
+                pub_key = getattr(self.local_cache, "public_key_b64", None)
+                if "manifest" in cached:
+                    sig_ok = verify_patch_envelope(cached, expected_fingerprint=clean_hex, public_key_b64=pub_key)
+                else:
+                    sig_ok = (from_memory and snap_verified) or verify_patch_signature(cached, public_key_b64=pub_key)
                 if self.require_signature and not sig_ok:
                     return None
                 cached["signature_verified"] = sig_ok
@@ -281,10 +285,11 @@ class FMagenticLClient:
             self._metrics["edge_parse_error"] += 1
             return None
 
+        pub_key = getattr(self.local_cache, "public_key_b64", None) if hasattr(self, "local_cache") else None
         if "manifest" in patch:
-            sig_ok = verify_patch_envelope(patch, expected_fingerprint=clean_hex, require_signature=self.require_signature)
+            sig_ok = verify_patch_envelope(patch, expected_fingerprint=clean_hex, public_key_b64=pub_key)
         else:
-            sig_ok = verify_patch_signature(patch)
+            sig_ok = verify_patch_signature(patch, public_key_b64=pub_key)
         fp_ok = verify_patch_fingerprint(patch, expected_fp=clean_hex)
 
         if self.require_signature and not sig_ok:

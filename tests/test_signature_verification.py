@@ -6,6 +6,7 @@ TUF-compliant signed manifest envelopes.
 
 import base64
 import json
+import pytest
 from datetime import datetime, timezone, timedelta
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives import serialization
@@ -22,6 +23,7 @@ from fmagenticl.client.verify import (
     verify_snapshot_file,
 )
 from fmagenticl.client.local_cache import LocalCache
+from fmagenticl.client.middleware import FMagenticLClient
 
 
 def _generate_test_keypair():
@@ -135,6 +137,14 @@ def test_compute_payload_hash():
     assert hash_a == hash_b
     assert len(hash_a) == 64
     assert all(c in "0123456789abcdef" for c in hash_a)
+
+
+def test_compute_payload_hash_rejects_non_dict():
+    """compute_payload_hash strictly requires a dict to prevent empty-dict hash coercion."""
+    with pytest.raises(TypeError):
+        compute_payload_hash("not-a-dict")
+    with pytest.raises(TypeError):
+        compute_payload_hash(["item1", "item2"])
 
 
 def test_valid_signed_manifest_envelope_passes():
@@ -254,8 +264,33 @@ def test_expired_valid_until_timestamp_fails():
     assert verify_patch_envelope(patch, expected_fingerprint=target_fp, public_key_b64=pub_b64) is False
 
 
-def test_unsigned_manifest_fails_when_signature_is_required():
-    """An unsigned or missing signature envelope fails when require_signature=True."""
+def test_manifest_missing_valid_until_fails():
+    """A manifest omitting valid_until fails verification to prevent indefinite replay."""
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp = "f" * 64
+    remediation = {"patch_type": "dependency_pin", "pin": "requests>=2.31.0"}
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest_no_expiry = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "min_client_version": "2.0.0",
+    }
+    sig_b64 = base64.b64encode(priv.sign(canonical_json_bytes(manifest_no_expiry))).decode()
+
+    patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": manifest_no_expiry,
+        "signature": sig_b64,
+    }
+
+    assert verify_patch_envelope(patch, expected_fingerprint=target_fp, public_key_b64=pub_b64) is False
+
+
+def test_unsigned_manifest_fails_envelope_verification():
+    """verify_patch_envelope strictly requires an authentic Ed25519 signature."""
     target_fp = "f" * 64
     remediation = {"patch_type": "workaround_advisory", "text": "restart service"}
     payload_hash = compute_payload_hash(remediation)
@@ -274,10 +309,77 @@ def test_unsigned_manifest_fails_when_signature_is_required():
         "manifest": manifest,
     }
 
-    # require_signature=True MUST reject unsigned
-    assert verify_patch_envelope(patch_no_sig, expected_fingerprint=target_fp, require_signature=True) is False
-    # require_signature=False allows unsigned
-    assert verify_patch_envelope(patch_no_sig, expected_fingerprint=target_fp, require_signature=False) is True
+    assert verify_patch_envelope(patch_no_sig, expected_fingerprint=target_fp) is False
+
+
+def test_client_resolve_manifest_envelope_tier1_cache():
+    """FMagenticLClient.resolve correctly verifies and accepts signed manifest patches from Tier 1 cache."""
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp = "1" * 64
+    remediation = {"patch_type": "unified_diff", "unified_diff": "--- a\n+++ b\n"}
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+    sig_b64 = base64.b64encode(priv.sign(canonical_json_bytes(manifest))).decode()
+
+    signed_patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": manifest,
+        "signature": sig_b64,
+    }
+
+    cache = LocalCache(public_key_b64=pub_b64)
+    cache.put(target_fp, signed_patch)
+
+    client = FMagenticLClient(local_cache=cache, require_signature=True)
+    resolved = client.resolve(target_fp)
+
+    assert resolved is not None
+    assert resolved["signature_verified"] is True
+    assert resolved["fingerprint_verified"] is True
+
+
+def test_client_resolve_unsigned_manifest_truthful_attestation():
+    """When require_signature=False, unsigned manifest is accepted but signature_verified remains False."""
+    target_fp = "2" * 64
+    remediation = {"patch_type": "workaround_advisory", "text": "downgrade package"}
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+
+    unsigned_patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": manifest,
+    }
+
+    cache = LocalCache()
+    cache.put(target_fp, unsigned_patch)
+
+    # 1. require_signature=False: accepted, but signature_verified is FALSE
+    client_lenient = FMagenticLClient(local_cache=cache, require_signature=False)
+    resolved_lenient = client_lenient.resolve(target_fp)
+    assert resolved_lenient is not None
+    assert resolved_lenient["signature_verified"] is False
+    assert resolved_lenient["fingerprint_verified"] is True
+
+    # 2. require_signature=True: strictly rejected
+    client_strict = FMagenticLClient(local_cache=cache, require_signature=True)
+    resolved_strict = client_strict.resolve(target_fp)
+    assert resolved_strict is None
 
 
 def test_local_cache_signature_enforcement(tmp_path):
