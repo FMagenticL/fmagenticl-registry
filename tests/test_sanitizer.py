@@ -114,3 +114,88 @@ def test_report_failure_outbound_payload_redaction():
 
         assert "developer" not in payload_str
         assert "<USER_HOME>" in payload_str
+
+
+def test_scrub_dict_keys_with_bare_passwords():
+    obj = {
+        "password": "BareSecretWithoutPrefix123!",
+        "passwd": "AnotherPassword456",
+        "api_key": "987654321",
+        "token": "secret_token_val",
+        "auth_header": "CustomToken XYZ",
+        "safe_field": "Normal value"
+    }
+    scrubbed = scrub_structure(obj)
+    assert scrubbed["password"] == "[REDACTED]"
+    assert scrubbed["passwd"] == "[REDACTED]"
+    assert scrubbed["api_key"] == "[REDACTED]"
+    assert scrubbed["token"] == "[REDACTED]"
+    assert scrubbed["auth_header"] == "[REDACTED]"
+    assert scrubbed["safe_field"] == "Normal value"
+
+
+def test_scrub_root_posix_paths():
+    raw = "Error in /root/deployment/agent.py at line 42"
+    clean = scrub_text(raw)
+    assert "/root/deployment" not in clean
+    assert "<USER_HOME>/agent.py" in clean
+
+
+def test_submit_grievance_and_outcome_outbound_redaction():
+    client = FMagenticLClient()
+    jwt_token = "ey" + "JhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0." + "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    db_uri = "postgres://superadmin:TopSecretPassword123@db.prod.internal:5432/secrets_db"
+
+    with patch("httpx.post") as mock_post:
+        mock_post.return_value.status_code = 202
+        mock_post.return_value.json.return_value = {"status": "ACCEPTED"}
+
+        client.submit_grievance(
+            grievance_type="INFRASTRUCTURE_FRICTION",
+            target="docker",
+            environment={"root_path": "/root/agent/secrets"},
+            symptom=f"Failed connection {db_uri}",
+            workaround=f"Use token {jwt_token}",
+        )
+        assert mock_post.called
+        sent_grievance = mock_post.call_args[1]["json"]
+        grievance_str = json.dumps(sent_grievance)
+        assert "TopSecretPassword123" not in grievance_str
+        assert "[REDACTED_DB_URI]" in grievance_str
+        assert "/root/agent" not in grievance_str
+        assert "<USER_HOME>" in grievance_str
+
+    with patch("httpx.post") as mock_post:
+        mock_post.return_value.status_code = 202
+        mock_post.return_value.json.return_value = {"status": "ACCEPTED"}
+
+        client.report_patch_outcome(
+            fingerprint="sha256:abc123",
+            outcome="ACK",
+            submitted_by="engineer",
+            notes=f"Applied with secret db {db_uri}"
+        )
+        assert mock_post.called
+        sent_outcome = mock_post.call_args[1]["json"]
+        outcome_str = json.dumps(sent_outcome)
+        assert "TopSecretPassword123" not in outcome_str
+        assert "[REDACTED_DB_URI]" in outcome_str
+
+
+def test_fastmcp_auto_heal_scrubs_inbound():
+    from fmagenticl.client.fastmcp_server import _auto_heal, client
+    env = {"path": "/root/sensitive/path", "password": "supersecretpassword"}
+    failure = {"error": "Connection error to postgres://admin:pass123@host:5432/db"}
+    ctx = {"local_dir": r"C:\Users\admin\repo"}
+
+    with patch.object(client, "resolve_failure") as mock_resolve:
+        mock_resolve.return_value = None
+        res = _auto_heal(env, failure, ctx)
+        assert res is not None
+        assert mock_resolve.called
+        called_env, called_fail = mock_resolve.call_args[0][:2]
+        called_ctx = mock_resolve.call_args[1].get("context", {})
+        assert called_env["password"] == "[REDACTED]"
+        assert "<USER_HOME>" in called_env["path"]
+        assert "[REDACTED_DB_URI]" in called_fail["error"]
+        assert "<USER_HOME>" in called_ctx["local_dir"]

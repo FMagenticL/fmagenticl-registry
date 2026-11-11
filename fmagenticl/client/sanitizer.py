@@ -40,6 +40,7 @@ REDACTION_RULES = [
     (re.compile(r'[A-Za-z]:\\Users\\[^\\/,\s"\']+', re.IGNORECASE), "<USER_HOME>"),
     (re.compile(r'[A-Za-z]:/Users/[^/,\s"\']+', re.IGNORECASE), "<USER_HOME>"),
     (re.compile(r'/home/[^/,\s"\']+', re.IGNORECASE), "<USER_HOME>"),
+    (re.compile(r'/root/[^/,\s"\']+', re.IGNORECASE), "<USER_HOME>"),
     (re.compile(r'/Users/[^/,\s"\']+', re.IGNORECASE), "<USER_HOME>"),
     # Email Addresses & Phone Numbers
     (re.compile(r'\b[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\b'), "[REDACTED_EMAIL]"),
@@ -62,12 +63,25 @@ def redact_traceback(text: str) -> str:
     return scrub_text(text)
 
 
+_SENSITIVE_KEY_RE = re.compile(
+    r'(?i)(?:password|passwd|secret|api_key|token|auth_header|bearer|private_key)'
+)
+
+
 def scrub_structure(obj: Any) -> Any:
-    """Deeply scrub all dictionary values, list items, and string fields in a nested structure."""
+    """Deeply scrub all dictionary values, list items, and string fields in a nested structure.
+    Also redacts values directly if the parent dictionary key denotes credentials/secrets.
+    """
     if isinstance(obj, str):
         return scrub_text(obj)
     if isinstance(obj, dict):
-        return {k: scrub_structure(v) for k, v in obj.items()}
+        res = {}
+        for k, v in obj.items():
+            if isinstance(k, str) and _SENSITIVE_KEY_RE.search(k):
+                res[k] = "[REDACTED]"
+            else:
+                res[k] = scrub_structure(v)
+        return res
     if isinstance(obj, list):
         return [scrub_structure(item) for item in obj]
     return obj

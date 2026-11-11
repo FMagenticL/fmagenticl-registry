@@ -416,7 +416,7 @@ class FMagenticLClient:
             }
 
         url = f"{self.edge_base.rstrip('/')}/v1/grievance"
-        payload = {
+        payload = scrub_structure({
             "$schema": "https://fmagenticl.org/v1/grievance.json",
             "grievance_type": grievance_type,
             "target": target,
@@ -427,7 +427,7 @@ class FMagenticLClient:
             "fingerprint": fingerprint,
             "submitted_by": submitted_by or "anonymous",
             "verification_tier": verification_tier,
-        }
+        })
 
         try:
             req_timeout = self.timeout or TIMEOUT
@@ -488,12 +488,12 @@ class FMagenticLClient:
         Single-attempt POST to /v1/telemetry/outcome.
         """
         url = f"{self.edge_base.rstrip('/')}/v1/telemetry/outcome"
-        payload = {
+        payload = scrub_structure({
             "fingerprint": fingerprint,
             "outcome": outcome,
             "submitted_by": submitted_by,
             "notes": notes or ""
-        }
+        })
         try:
             req_timeout = self.timeout or TIMEOUT
             resp = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)

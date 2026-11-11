@@ -25,7 +25,7 @@ except ImportError:
 from fmagenticl import __version__
 from fmagenticl.client.middleware import FMagenticLClient
 from fmagenticl.client.patchers import Patcher
-from fmagenticl.client.sanitizer import scrub_structure
+from fmagenticl.client.sanitizer import scrub_structure, scrub_text
 
 api_base = os.environ.get("FMAGENTICL_API_BASE", "https://fmagenticl-registry.pages.dev")
 _client_instance: Optional[FMagenticLClient] = None
@@ -57,7 +57,9 @@ def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, 
 
 
 def _auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    ctx = dict(context or {})
+    environment = scrub_structure(environment)
+    failure = scrub_structure(failure)
+    ctx = scrub_structure(dict(context or {}))
     # Hard security invariant: MCP _auto_heal ALWAYS executes in read-only dry-run mode
     # (never overridden by caller-supplied context['apply_cli'] or context['dry_run']).
     ctx["dry_run"] = True
@@ -139,7 +141,7 @@ def _report_patch_outcome(
         fingerprint=fingerprint,
         outcome=outcome,
         submitted_by=submitted_by,
-        notes=notes
+        notes=scrub_text(notes) if notes else None
     )
 
 
