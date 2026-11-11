@@ -63,6 +63,10 @@ CREATE TABLE IF NOT EXISTS grievances_new (
     submitted_by TEXT NOT NULL,
     verification_tier TEXT NOT NULL,
     applies_to TEXT,
+    simhash_b0 INTEGER,
+    simhash_b1 INTEGER,
+    simhash_b2 INTEGER,
+    simhash_b3 INTEGER,
     created_at TEXT NOT NULL,
     queue_status TEXT NOT NULL DEFAULT 'committed'
 );
@@ -78,6 +82,10 @@ CREATE INDEX IF NOT EXISTS idx_grievances_target ON grievances (target);
 CREATE INDEX IF NOT EXISTS idx_grievances_type ON grievances (grievance_type);
 CREATE INDEX IF NOT EXISTS idx_grievances_fingerprint ON grievances (fingerprint);
 CREATE INDEX IF NOT EXISTS idx_grievances_created ON grievances (created_at);
+CREATE INDEX IF NOT EXISTS idx_grievances_b0 ON grievances (simhash_b0);
+CREATE INDEX IF NOT EXISTS idx_grievances_b1 ON grievances (simhash_b1);
+CREATE INDEX IF NOT EXISTS idx_grievances_b2 ON grievances (simhash_b2);
+CREATE INDEX IF NOT EXISTS idx_grievances_b3 ON grievances (simhash_b3);
 """
     tmp_path = "temp_migration_agent_friction.sql"
     try:
@@ -151,7 +159,22 @@ def purge_bleed_and_synthetic_rows() -> None:
             os.remove(tmp_path)
 
 
+def migrate_simhash_columns() -> None:
+    for col in ["simhash_b0", "simhash_b1", "simhash_b2", "simhash_b3"]:
+        cmd = [
+            "wrangler", "d1", "execute", DB_NAME,
+            "--remote",
+            "--command", f"ALTER TABLE grievances ADD COLUMN {col} INTEGER"
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        if res.returncode == 0:
+            print(f"Successfully added column {col} to grievances.")
+        else:
+            print(f"Notice adding {col}: {res.stderr.strip()}", file=sys.stderr)
+
+
 if __name__ == "__main__":
+    migrate_simhash_columns()
     migrate_if_needed()
     purge_bleed_and_synthetic_rows()
     normalize_model_attributions()

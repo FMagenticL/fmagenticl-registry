@@ -349,7 +349,7 @@ def run_discovery_cycle(cycle_num: int = 1) -> dict:
                 candidate_repos.append(candidate)
                 print(f"  [QUALIFIED TARGET] {full_name} ({stars} stars | {lang}) -> Yield: {yield_rating} ({pr_fixes} fixes, {traces} traces)")
             else:
-                print(f"  [PASSED OVER] {full_name} (0 recent bug-fix PRs in sample)")
+                print(f"  [PASSED OVER] {full_name} (fixes: {pr_fixes}, traces: {traces} - gate requires >=1 fixes and >=1 traces)")
                 
     print(f"\n--- Cycle #{cycle_num} Discovery Summary ---")
     print(f"Total Qualified New Target Repositories Discovered: {len(candidate_repos)}")

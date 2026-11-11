@@ -54,8 +54,12 @@ jobs:
         run: |
           npm install -g wrangler
           wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN applies_to TEXT" || true
+          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b0 INTEGER" || true
+          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b1 INTEGER" || true
+          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b2 INTEGER" || true
+          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b3 INTEGER" || true
           python scripts/migrate_d1.py || true
-          wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql
+          wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql || true
           python scripts/seed_agent_nets.py
           python scripts/promote_d1_to_registry.py --apply
           python scripts/build_guestbook.py
