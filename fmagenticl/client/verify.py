@@ -10,6 +10,7 @@ import base64
 import json
 import os
 import hashlib
+from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 
 try:
@@ -27,6 +28,17 @@ from fmagenticl.client.config import FMAGENTICL_PUBLIC_KEY
 def canonical_json_bytes(data: Any) -> bytes:
     """Deterministic UTF-8 JSON representation for cryptographic signing."""
     return json.dumps(data, sort_keys=True, separators=(',', ':')).encode('utf-8')
+
+
+def compute_payload_hash(remediation: Any) -> str:
+    """
+    Computes a deterministic SHA-256 hex digest over canonical UTF-8 JSON
+    representation of the actionable remediation payload.
+    """
+    if not isinstance(remediation, dict):
+        remediation = {}
+    payload_bytes = canonical_json_bytes(remediation)
+    return hashlib.sha256(payload_bytes).hexdigest()
 
 
 def verify_signature(
@@ -95,12 +107,101 @@ def verify_patch_signature(
     return verify_signature(payload_bytes, sig_b64, public_key_b64)
 
 
-def verify_patch_fingerprint(
+def verify_patch_envelope(
+    patch: Dict[str, Any],
+    expected_fingerprint: Optional[str] = None,
+    public_key_b64: Optional[str] = None,
+    require_signature: bool = True,
+) -> bool:
+    """
+    Verifies a TUF-compliant signed manifest envelope on a patch payload.
+    Cryptographically binds the target error query fingerprint to the
+    executable remediation payload hash.
+
+    Structure of manifest:
+        {
+            "manifest_version": 2,
+            "target_fingerprint": "sha256:...",
+            "payload_hash": "sha256:...",
+            "valid_until": "2027-01-01T00:00:00Z",
+            "min_client_version": "2.0.0"
+        }
+    """
+    if not isinstance(patch, dict):
+        return False
+
+    manifest = patch.get("manifest")
+    sig_b64 = patch.get("signature") or patch.get("ed25519_sig")
+    if isinstance(manifest, dict) and not sig_b64:
+        sig_b64 = manifest.get("signature") or manifest.get("ed25519_sig")
+
+    if not manifest or not sig_b64:
+        return not require_signature
+
+    if not isinstance(manifest, dict):
+        return False
+
+    # 1. Target fingerprint check
+    manifest_target_fp = str(manifest.get("target_fingerprint") or "").replace("sha256:", "").strip().lower()
+    if not manifest_target_fp or len(manifest_target_fp) != 64 or not all(c in "0123456789abcdef" for c in manifest_target_fp):
+        return False
+
+    if expected_fingerprint:
+        clean_expected = str(expected_fingerprint).replace("sha256:", "").strip().lower()
+        if manifest_target_fp != clean_expected:
+            return False
+
+    patch_fp = patch.get("fingerprint")
+    if patch_fp:
+        clean_patch_fp = str(patch_fp).replace("sha256:", "").strip().lower()
+        if clean_patch_fp != manifest_target_fp:
+            return False
+
+    # 2. Payload hash check
+    remediation = patch.get("remediation")
+    if remediation is None:
+        remediation = patch.get("resolution_patch")
+    if remediation is None:
+        remediation = {
+            k: v for k, v in patch.items()
+            if k not in (
+                "manifest", "signature", "ed25519_sig", "fingerprint",
+                "signature_verified", "fingerprint_verified", "environment", "failure"
+            )
+        }
+
+    computed_hash = compute_payload_hash(remediation)
+    manifest_payload_hash = str(manifest.get("payload_hash") or "").replace("sha256:", "").strip().lower()
+
+    if manifest_payload_hash != computed_hash:
+        return False
+
+    # 3. Validity timestamp check
+    valid_until_str = manifest.get("valid_until")
+    if valid_until_str:
+        try:
+            dt_str = str(valid_until_str).replace("Z", "+00:00")
+            expiry = datetime.fromisoformat(dt_str)
+            if expiry.tzinfo is None:
+                expiry = expiry.replace(tzinfo=timezone.utc)
+            if datetime.now(timezone.utc) > expiry:
+                return False
+        except Exception:
+            return False
+
+    # 4. Ed25519 signature verification over canonical manifest bytes
+    clean_manifest = {k: v for k, v in manifest.items() if k not in ("signature", "ed25519_sig")}
+    manifest_bytes = canonical_json_bytes(clean_manifest)
+
+    return verify_signature(manifest_bytes, sig_b64, public_key_b64=public_key_b64)
+
+
+def verify_query_fingerprint(
     patch: Dict[str, Any],
     expected_fp: Optional[str] = None,
 ) -> bool:
     """
-    Verify deterministic SHA-256 fingerprint integrity of a patch payload.
+    Verify deterministic SHA-256 fingerprint integrity of a patch query.
 
     1. Validates that the fingerprint is a well-formed 64-character hex digest
        and matches expected_fp (when supplied).
@@ -134,12 +235,22 @@ def verify_patch_fingerprint(
         if recomputed != target_fp:
             return False
 
-    patch_body = patch.get("resolution_patch") if isinstance(patch.get("resolution_patch"), dict) else patch
-    valid_fields = ("patch_type", "action", "json_patch", "fallback_cli", "file_ops", "mcp_uri", "strategy", "config_patch")
+    patch_body = patch.get("resolution_patch") if isinstance(patch.get("resolution_patch"), dict) else (
+        patch.get("remediation") if isinstance(patch.get("remediation"), dict) else patch
+    )
+    valid_fields = (
+        "patch_type", "action", "json_patch", "fallback_cli", "file_ops",
+        "mcp_uri", "strategy", "config_patch", "unified_diff", "dependency_pin",
+        "workaround_advisory"
+    )
     if not any(k in patch_body for k in valid_fields):
         return False
 
     return True
+
+
+# Backward-compatible alias
+verify_patch_fingerprint = verify_query_fingerprint
 
 
 def verify_snapshot_file(

@@ -34,7 +34,7 @@ from .config import EDGE_BASE, TIMEOUT
 from .local_cache import LocalCache
 from .fingerprint import compute_fingerprint as _compute_fingerprint
 from .first_boot import maybe_ping
-from .verify import verify_patch_signature, verify_patch_fingerprint
+from .verify import verify_patch_signature, verify_patch_fingerprint, verify_patch_envelope
 
 
 # ---------------------------------------------------------------------------
@@ -281,7 +281,10 @@ class FMagenticLClient:
             self._metrics["edge_parse_error"] += 1
             return None
 
-        sig_ok = verify_patch_signature(patch)
+        if "manifest" in patch:
+            sig_ok = verify_patch_envelope(patch, expected_fingerprint=clean_hex, require_signature=self.require_signature)
+        else:
+            sig_ok = verify_patch_signature(patch)
         fp_ok = verify_patch_fingerprint(patch, expected_fp=clean_hex)
 
         if self.require_signature and not sig_ok:

