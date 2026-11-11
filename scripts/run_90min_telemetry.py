@@ -219,21 +219,29 @@ def probe_mcp_protocol():
         if params is not None:
             body_dict["params"] = params
         payload = json.dumps(body_dict).encode("utf-8")
-        t0 = time.perf_counter()
-        req = urllib.request.Request(
-            url,
-            data=payload,
-            headers={
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/event-stream",
-                "User-Agent": "FMagenticL-Sentry/3.1",
-            },
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=12) as resp:
-            raw = resp.read()
-            latency_ms = (time.perf_counter() - t0) * 1000.0
-            return resp.getcode(), raw, json.loads(raw.decode("utf-8")), latency_ms
+        last_exc = None
+        for attempt in range(1, 3):
+            t0 = time.perf_counter()
+            req = urllib.request.Request(
+                url,
+                data=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/event-stream",
+                    "User-Agent": "FMagenticL-Sentry/3.1",
+                },
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    raw = resp.read()
+                    latency_ms = (time.perf_counter() - t0) * 1000.0
+                    return resp.getcode(), raw, json.loads(raw.decode("utf-8")), latency_ms
+            except (urllib.error.URLError, ConnectionResetError, TimeoutError, OSError) as e:
+                last_exc = e
+                if attempt < 2:
+                    time.sleep(1.0)
+        raise last_exc
 
     # 1. tools/list (must return 6 tools, each with valid inputSchema.properties)
     try:
