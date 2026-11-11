@@ -1,7 +1,231 @@
 {
-  "count": 1853,
-  "generated_at": "2026-11-10T23:20:38Z",
+  "count": 1896,
+  "generated_at": "2026-11-11T06:11:31Z",
   "grievances": [
+    {
+      "applies_to": "escoffier-labs/brigade",
+      "created_at": "2026-11-11T06:02:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:eaf9a5c410d186cd616ba5a39d302ecbe0ec18a3ebb900cd6bd5f0a503fe0fc5",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_escoffier-labs_brigade_2487",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(hub): a planned restart sometimes fails the unit when the managed upstream dies from SIGTERM",
+      "target": "brigade",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(hub): accept planned upstream SIGTERM stops. Target files: engines/hub/src/main.rs, changelog.d/2488.md. Planned restarts failed the hub unit on 2 of 3 production stops in #2487. The front reported a child terminated by SIGTERM as an error and exited 2. The replacement process started normally, with `NRestarts` remaining 0. (Ref: https://github.com/escoffier-labs/brigade/pull/2488)"
+    },
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-11T06:00:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:50930b7dd6280f5b66dd8f2cfadacde4f0acfe81e1a912b7a88a84a96b35bf6b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_48260",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] DSA models crash on first prefill with --cpu-offload-gb: breakable prefill CUDA graph replays the DSA indexer eager break with CPU-offloaded weights (mat2 is on cpu)",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] offload: Keep DSA indexer parameters resident on GPU under CPU offload. Target files: python/sglang/srt/layers/offloader.py, test/registered/model_loading/test_cpu_offloader.py. When serving DSA models (e.g. GLM-5.3, `GlmMoeDsaForCausalLM`) with V1 CPU weight offload (`--cpu-offload-gb > 0`) and the default breakable prefill CUDA graph backend, the server crashes on the first prefill: (Ref: https://github.com/sgl-project/sglang/pull/48316)"
+    },
+    {
+      "applies_to": "huggingface/peft",
+      "created_at": "2026-11-11T05:59:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e146072f83e3d49a810813179f2137571b204189a621666cb80a956aff70fe08",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_peft_3876",
+      "submitted_by": "harvester-v1",
+      "symptom": "`get_peft_model_state_dict` returns an empty dict for FSDP1-wrapped models since 0.21.0 (adapter checkpoints / weight syncs silently empty)",
+      "target": "peft",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: FIX Empty adapter state dict with nested FSDP or checkpoint_wrapper. Target files: src/peft/tuners/lora/conversion.py, src/peft/tuners/shira/model.py, src/peft/tuners/tuners_utils.py. Coordination and approval: https://github.com/huggingface/peft/issues/3876#issuecomment-[REDACTED] and https://github.com/huggingface/peft/issues/3876#issuecomment-[REDACTED] (Ref: https://github.com/huggingface/peft/pull/4108)"
+    },
+    {
+      "applies_to": "kirodotdev/KiroCrew",
+      "created_at": "2026-11-11T05:31:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:228d1977e3c0b175f7bb3902f9e7922fa90367dedd191a7bc43712ea970a7da0",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_kirodotdev_KiroCrew_33917",
+      "submitted_by": "harvester-v1",
+      "symptom": "Remote crew diagnosis, git divergence and the embeddings pip check kill their child only on timeout, so a cancel (instance edit, gateway shutdown) leaves the ssh or git child running",
+      "target": "kirocrew",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: kill a probe, git or pip child when its call is cancelled. Target files: src/kiro_crew/dashboard/handlers/memory_embeddings.py, src/kiro_crew/git_divergence.py, src/kiro_crew/instances/diagnostics.py. **Goal:** A cancelled remote crew diagnosis, update-check git count or embeddings pip run stops its child process instead of leaving it running with no owner. (Ref: https://github.com/kirodotdev/KiroCrew/pull/34496)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-11T04:32:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e51d44f5d2226adfa6181fc04f943daf91962acb87743ad5f12b60118273fb7b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29996",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] CloudflareDeployer fails to build and serve file-based agents",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(deployer): build and serve file-based agents with CloudflareDeployer. Target files: deployers/cloudflare/src/index.ts, deployers/cloudflare/src/workerd-file-based-agents.test.ts, e2e-tests/monorepo/monorepo-bundler.test.ts. With file-based agents, `mastra build` bundles a generated entry that imports `src/mastra/index.ts`. The bundler treated that generated entry as the Mastra config, so deployer removal, the config check, the `public` copy and the Cloudflare per-request factory transform all looked at the wrong file. ... (Ref: https://github.com/mastra-ai/mastra/pull/30003)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-11T04:08:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:8cf9a2e39ee99962e2362063d1a257d6a12343d49d3513e9ca7a54832bf522c9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29785",
+      "submitted_by": "harvester-v1",
+      "symptom": "`createInngestAgent`: `streamUntilIdle` ends at `background-task-completed`, and the follow-up answer runs as a separate wake",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(inngest): keep background-task follow-ups on the open streamUntilIdle stream. Target files: packages/core/src/agent/durable/index.ts, workflows/inngest/src/durable-agent/create-inngest-agent.ts, workflows/inngest/src/__tests__/create-inngest-agent.test.ts. > Opened by @roaminro (Ref: https://github.com/mastra-ai/mastra/pull/29877)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-11T04:06:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:778482ff3a191655ca03fa46d98a8a4aa1ae0925983cbbbb609142fa7d5e2d4a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29458",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Mastra Code ends the run as a \"persistent outage\" when a response stream is cut after HTTP 200",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(code-sdk): retry stream cuts after HTTP 200 instead of declaring an outage. Target files: mastracode/sdk/src/auth/account-rotation-processor.test.ts, mastracode/sdk/src/auth/account-rotation-processor.ts, mastracode/sdk/src/index.ts. A response stream that dies after the provider answered HTTP 200 now counts as a stream cut, not an outage. `AccountRotationProcessor` retries it on the same account up to twice, then surfaces the original error. It no longer marks the account pool unavailable or reports \"persistent outage\". (Ref: https://github.com/mastra-ai/mastra/pull/29462)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-11-11T03:50:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d66acd74fce992090aeb81954b3431c27046c7674554bbe4e5560354fc16e5dd",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_24124",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: 15 integration packages still pin llama-index-llms-openai(-like) <0.8 and conflict with the 0.8.x ecosystem (#23247/#23395/#23325 family)",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: deps: allow llama-index-llms-openai 0.8.x in the 15 integration packages still pinning <0.8. Target files: llama-index-integrations/embeddings/llama-index-embeddings-anyscale/pyproject.toml, llama-index-integrations/llms/llama-index-llms-anyscale/pyproject.toml, llama-index-integrations/llms/llama-index-llms-baseten/pyproject.toml. The dependency sweeps that moved the ecosystem to `llama-index-llms-openai` 0.8.x (#22907 \u2192 #23249 \u2192 #23353) were scoped by dependency name and left 15 packages pinned to `<0.8`, which now ... (Ref: https://github.com/run-llama/llama_index/pull/24125)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-11-11T03:24:39Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:63892a26d4670bfa9c3880fd1180366d125096d1a0e7adf74729ea3cb83f0377",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_50492",
+      "submitted_by": "harvester-v1",
+      "symptom": "[bug] Step3.7 vision RoPE reverses the original checkpoint's W/H axis order",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix Step3.7 vision RoPE spatial W/H axis order. Target files: src/transformers/models/step3p7/modeling_step3p7.py, src/transformers/models/step3p7/modular_step3p7.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50547) (Ref: https://github.com/huggingface/transformers/pull/50547)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-11-11T02:57:54Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:6a68c65aba4193715649642a4a4e0bcbaf94b1fc39f8e0bbdbe18c6f18802cc7",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_50458",
+      "submitted_by": "harvester-v1",
+      "symptom": "`convert_to_rgb` produces out-of-range values for 4-channel float32 images in `[0, 255]`",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Raise ValueError for out-of-range float images in convert_to_rgb. Target files: src/transformers/image_processing_backends.py, src/transformers/image_transforms.py, tests/test_image_transforms.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50487) (Ref: https://github.com/huggingface/transformers/pull/50487)"
+    },
+    {
+      "applies_to": "gitlab-org/cli",
+      "created_at": "2026-11-11T02:54:06.631Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4f591129c39b88858dceecd6565ee875bb9aad963efbd9fe9f23f544668a768a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "gitlab-merged-mr",
+      "id": "grv_gl_gitlab-org_cli_4378",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(minder): keep audit event requests under GitLab's 5 MB body limit",
+      "target": "gitlab-cli",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(minder): keep audit event requests under GitLab's 5 MB body limit. Applied in GitLab MR !4378. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4378)"
+    },
+    {
+      "applies_to": "Cotal-AI/Cotal",
+      "created_at": "2026-11-11T02:53:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9a24415978dd5276a9eb8bf8dfb353bf8c7b2474db00af5b2a9c16f42cde73ea",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Cotal-AI_Cotal_6288",
+      "submitted_by": "harvester-v1",
+      "symptom": "A managed enrollment whose answer times out strands the seat name: the retry mints a new request id and gets 'actor name in use'",
+      "target": "cotal",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(manager): recover unknown managed enrollment outcomes. Target files: implementations/auth/smoke/user-spawn.smoke.ts, implementations/manager/package.json, implementations/manager/smoke/pending-enrollment.smoke.ts. Preserve the request identity, actor-token custody and validated launch target when managed enrollment or bearer preflight has an unknown outcome. A same-authority retry reuses that enrollment rather than minting a conflicting token, while refreshing the served spawn authorization. Changed launch authority is re... (Ref: https://github.com/Cotal-AI/Cotal/pull/6318)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-11T01:38:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:5247ee6de2871dc60105596aedb8072542ffd29be8b270319d601bffd3449487",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_65106",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: [ROCm][Kimi-K3] DBO: MoE workspace locked smaller than the DP-gathered batch, first request fails",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [ROCm][Kimi-K3] Keep the AttnRes block bank in a persistent workspace. Target files: vllm/models/kimi_k3/amd/linear.py, tests/models/kimi_k3/test_amd_attn_res.py. Kimi-K3 on ROCm allocates two ~1.8 GB buffers on every prefill step, each sized by the step's token count. The caching allocator keeps the slightly-too-small leftovers, so its cache grows while serving until something fails. What fails depends on how vLLM sizes the KV cache: - **Extensible KV cache off** (the V1 model runner, which DBO uses, ROCm KV connectors s... (Ref: https://github.com/vllm-project/vllm/pull/63838)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-11T00:56:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:15f13f7127d049992afada02663e24c3fd8c686e798c35d6cfa28999a3acf90f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_BerriAI_litellm_48660",
+      "submitted_by": "harvester-v1",
+      "symptom": "litellm v1.109.0: fix(decisions): catch ValidationError from validate_json in transform_decisions_response (#48660) by @16niraj in https://github.com/BerriAI/litellm/pull/48662",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(decisions): catch ValidationError from validate_json in transform_decisions_response (#48660) by @16niraj in https://github.com/BerriAI/litellm/pull/48662. Upstream PR #48660. (Ref: https://github.com/BerriAI/litellm/pull/48660)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-11T00:56:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2ef559669956af5dee02fd3415cb37261b0b564afa99ad269ca3502a2ba067e0",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_BerriAI_litellm_47931",
+      "submitted_by": "harvester-v1",
+      "symptom": "litellm v1.109.0: fix(groq): replay streamed reasoning replies without HTTP 400 (#47931) by @ishaan-j-berri in https://github.com/BerriAI/litellm/pull/48268",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(groq): replay streamed reasoning replies without HTTP 400 (#47931) by @ishaan-j-berri in https://github.com/BerriAI/litellm/pull/48268. Upstream PR #47931. (Ref: https://github.com/BerriAI/litellm/pull/47931)"
+    },
+    {
+      "applies_to": "KochC/opencode-llm-proxy",
+      "created_at": "2026-11-10T23:51:56Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:62ccb5e1135a7102b46854707e6d33e74f747de0e2e156d89e9ab289bb18b5de",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_KochC_opencode-llm-proxy_112",
+      "submitted_by": "harvester-v1",
+      "symptom": "Getting `invalid_request_error`",
+      "target": "opencode-llm-proxy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: accept no-op generation controls and explain upstream failures. Target files: dist/llm-proxy.js, index.js, index.test.js. The unsupported-control guard rejected any non-`undefined` value, so VS Code's `n: 1` returned `400 Unsupported generation controls: n.` and every request failed. Several SDKs also send `null` for each unset optional field and hit the same wall (I verified `n: null`, `stop: null` and `frequency_penalty: null` all failed the same way). (Ref: https://github.com/KochC/opencode-llm-proxy/pull/118)"
+    },
     {
       "applies_to": "mastra-ai/mastra",
       "created_at": "2026-11-10T23:16:47Z",
@@ -127,6 +351,62 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(router): sync responses() applies the Router's num_retries and fallbacks. Target files: litellm/router_rust/invoke/endpoints.py, litellm/utils.py, tests/unit/test_router/core/test_endpoints_characterization_generic.py. Previously we were not applying retries and fallbacks appropriately for sync responses endpoint <details> <summary>Details</summary> (Ref: https://github.com/BerriAI/litellm/pull/51011)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:26:09Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f02957732a3813e72d4bd742b60506f2c11483d2f2e37e103b9ddfc8d4811570",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_858",
+      "submitted_by": "harvester-v1",
+      "symptom": "AssertionError: Unexpected message while using middleware",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Stop the SSE endpoint sending a second response after its stream. Target files: fastmcp_slim/fastmcp/server/http.py, tests/server/http/test_http_middleware.py. an SSE app behind any `BaseHTTPMiddleware` logged `AssertionError: Unexpected message: {'type': 'http.response.start', ...}` every time a client disconnected. the unauthenticated `/sse` route was a request/response endpoint, so once `connect_sse` had streamed the whole response, Starlette sent the trailing empty `Response()` as a second `http.response.start`. the au... (Ref: https://github.com/PrefectHQ/fastmcp/pull/6431)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:25:39Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:390d76e268c8f81da32ad2a6aba5f5c0a5ffbad7691873a702b7f73b81aa14ef",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_4471",
+      "submitted_by": "harvester-v1",
+      "symptom": "`StdioTransport(keep_alive=True)` can't be reused across concurrently-alive event loops \u2014 `initialize` handshake hangs for the full `init_timeout`",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Reconnect StdioTransport when reused on a different event loop. Target files: fastmcp_slim/fastmcp/client/transports/stdio.py, tests/client/test_stdio.py, docs/clients/transports.mdx. a kept-alive stdio session belongs to the event loop that created it. reusing the same `Client` from a second loop handed that loop the first loop's session. its responses never arrived, so `async with client` hung forever, and `init_timeout` didn't bound it. (Ref: https://github.com/PrefectHQ/fastmcp/pull/6425)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:25:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ef7782133b26d055b08174cdb397ab0a2f09f198521126afcd0ec41fae8fdb27",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_6299",
+      "submitted_by": "harvester-v1",
+      "symptom": "`logging/setLevel` is ignored for `ctx.log()` calls from tools of a mounted server",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Apply logging/setLevel to mounted servers over HTTP sessions. Target files: fastmcp_slim/fastmcp/server/context.py, fastmcp_slim/fastmcp/server/mixins/mcp_operations.py, fastmcp_slim/fastmcp/server/server.py. A handshake-era client that sent `logging/setLevel` over a stateful HTTP session still got sub-threshold `ctx.log()` messages from tools on mounted servers. The parent handled the request and saved the level in its own `_client_log_levels` dict, keyed by session id. The mounted tool's `Context` checked the child serve... (Ref: https://github.com/PrefectHQ/fastmcp/pull/6421)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:25:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2a506a8466b5a3b0e3d182d6665eaf821177763bc2c2f65669630309813a0df9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_6357",
+      "submitted_by": "harvester-v1",
+      "symptom": "A tool re-versioned with ToolTransformConfig(version=...) can't be called by its new version",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Call a re-versioned tool by its transformed version. Target files: fastmcp_slim/fastmcp/server/transforms/tool_transform.py, tests/server/test_tool_transformation.py. `ToolTransformConfig(version=\"2.0\")` lists a tool under 2.0, but `call_tool(..., version=\"2.0\")` failed with `Unknown tool`. The original version, which is no longer listed, still worked. `ToolTransform.get_tool` sent the caller's version spec unchanged to the source lookup, so the spec was checked against the source version and not the one the tool is listed... (Ref: https://github.com/PrefectHQ/fastmcp/pull/6419)"
     },
     {
       "applies_to": "Cotal-AI/Cotal",
@@ -1081,6 +1361,34 @@
       "workaround": "Fix: [Bugfix][LoRA] Use 3D MoE LoRA wrapper for Gemma4. Target files: vllm/model_executor/models/gemma4.py, vllm/model_executor/models/gemma4_mm.py, tests/lora/test_gemma4_moe_lora.py. . Gemma4 MoE expert LoRA adapters produced by PEFT use the fused 3D layout, but Gemma4 does not declare `is_3d_moe_weight`, so loading them with the default configuration raises a `ValueError` inside EngineCore and kills the engine. This PR declares `is_3d_moe_weight` on both Gemma4 model classes and fills in the text config `architectures` that... (Ref: https://github.com/vllm-project/vllm/pull/64437)"
     },
     {
+      "applies_to": "openai/openai-agents-python",
+      "created_at": "2026-11-09T06:56:11Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c9f6f02605b6ba3993e7f010e3768729661198c4af5b43d6eed10184dd0cecdf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_openai_openai-agents-python_5469",
+      "submitted_by": "harvester-v1",
+      "symptom": "Runner.run_streamed sends a model request after a parallel input guardrail has already tripped",
+      "target": "openai-agents-python",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: skip streamed model attempts after an input guardrail trips. Target files: src/agents/run_internal/model_retry.py, src/agents/run_internal/run_loop.py, tests/test_stream_input_guardrail_timing.py. This pull request fixes a case where `Runner.run_streamed` could send a model request after a parallel input guardrail had already rejected the input. The runner now checks the recorded verdict immediately before opening each model stream, including retries. Pending guardrails still allow parallel execution, and er... (Ref: https://github.com/openai/openai-agents-python/pull/5644)"
+    },
+    {
+      "applies_to": "openai/openai-agents-python",
+      "created_at": "2026-11-09T06:56:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:251a069ee9bc64bd1093715e78c014e28ff37f7fcef5236c983396ce65c37a6d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_openai_openai-agents-python_5470",
+      "submitted_by": "harvester-v1",
+      "symptom": "An approved tool's guardrail results are dropped when the resumed run continues to the next turn",
+      "target": "openai-agents-python",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: retain tool guardrail results after approval and resume. Target files: src/agents/run.py, src/agents/run_internal/run_loop.py, tests/test_agent_runner.py. This pull request fixes the loss of tool guardrail results when an approved tool finishes and the runner calls the model again. (Ref: https://github.com/openai/openai-agents-python/pull/5643)"
+    },
+    {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-09T05:53:32Z",
       "environment_json": "{}",
@@ -1093,6 +1401,20 @@
       "target": "sglang",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Fix] qwen3.5: Keep CPU-offloaded GDN input projections separate. Target files: python/sglang/srt/models/qwen3_5.py, test/registered/amd/test_qwen35_gdn_packed_in_proj.py, test/registered/model_loading/test_cpu_offloader.py. With V1 CPU offload, `finalize_fused_in_proj()` can concatenate host-resident GatedDeltaNet projection weights into a plain tensor attribute. The offloader stages registered parameters for each forward, but this fused cache stays on the CPU. The first fused GEMM then fails with `mat2 is on cpu`. (Ref: https://github.com/sgl-project/sglang/pull/47899)"
+    },
+    {
+      "applies_to": "openai/openai-agents-python",
+      "created_at": "2026-11-09T05:48:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2924f5e252eeea53fa1e13ccb7b1e3daeb4a3cde4600e2061cec44ecf6e054cb",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_openai_openai-agents-python_5573",
+      "submitted_by": "harvester-v1",
+      "symptom": "Default tool error text tells the model to \"try again\" after a call that may already have taken effect",
+      "target": "openai-agents-python",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: remove retry advice from the default tool error message. Target files: src/agents/tool.py, tests/mcp/test_mcp_util.py, tests/sandbox/capabilities/test_tool_input_errors.py. This pull request removes \"Please try again.\" from the default tool error message. A tool can raise after a write succeeds, and the SDK cannot determine whether repeating the call is safe. (Ref: https://github.com/openai/openai-agents-python/pull/5632)"
     },
     {
       "applies_to": "huggingface/peft",
@@ -2537,6 +2859,20 @@
       "workaround": "Fix: perf(core): stop `parse_partial_json` from retrying one character at a time. Target files: libs/core/langchain_core/utils/json.py, libs/core/tests/unit_tests/output_parsers/test_json.py. Related: #40826 (Ref: https://github.com/langchain-ai/langchain/pull/41467)"
     },
     {
+      "applies_to": "DeusData/codebase-memory-mcp",
+      "created_at": "2026-11-04T23:21:36Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a6926d398675f452c0c6a19766035071039ee3fcc97c35e9e65af75d046a2e80",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_DeusData_codebase-memory-mcp_2646",
+      "submitted_by": "harvester-v1",
+      "symptom": "Windows: a file named `nul` in the repo makes every index_repository abort with aborted_previous_preserved (0.11.0)",
+      "target": "codebase-memory-mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(pipeline): skip a file named nul in the control-file walk instead of aborting the index (#2646). Target files: src/pipeline/pipeline_incremental.c, tests/test_pipeline.c. On Windows, one file named `nul` in a repository makes every `index_repository` run return `aborted_previous_preserved`, so a project without an index never gets one. Git Bash leaves such a file behind after `cmd > nul` or `2>nul`, and listing it in `.gitignore` does not help. (Ref: https://github.com/DeusData/codebase-memory-mcp/pull/2903)"
+    },
+    {
       "applies_to": "mastra-ai/mastra",
       "created_at": "2026-11-04T23:19:51Z",
       "environment_json": "{}",
@@ -3125,6 +3461,20 @@
       "workaround": "Fix: [Bugfix] Size the extensible KV cache from UMA-corrected free memory. Target files: vllm/platforms/cuda.py, vllm/platforms/interface.py, vllm/utils/mem_utils.py. . On integrated (UMA) GPUs the extensible KV cache (#56492) sized itself from raw `cudaMemGetInfo`, which does not count reclaimable page cache as free, so it undersized the KV cache by up to 84% on a DGX Spark (GB10) and to zero blocks in disaggregated serving. This reads free memory through one helper with the same `psutil` correction the classic sizing path al... (Ref: https://github.com/vllm-project/vllm/pull/65413)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-11-03T23:34:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0a6a67839be8e2ed3abcb12db141af04f9c818c0f0711a533e848f4d60cc43a9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_131",
+      "submitted_by": "harvester-v1",
+      "symptom": "reboot tool fails on RouterOS 7.25: HTTP 400 unknown parameter delay",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(reboot): stop sending an unknown delay parameter to /system/reboot. Target files: src/domain/tools/system-ops-tools.ts, test/unit/domain/system-ops-tools.test.ts, CHANGELOG.md. `reboot` sent `{\"delay\": \"<n>\"}` to `/system/reboot`, which takes no arguments. RouterOS rejected every call with `HTTP 400: unknown parameter delay`, including `delay: 0`. Reproduced on RouterOS 7.23.2 as well as the reporter's 7.25. (Ref: https://github.com/AliKarami/MikroMCP/pull/132)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-11-03T21:48:22Z",
       "environment_json": "{}",
@@ -3417,6 +3767,20 @@
       "target": "vllm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Bugfix] Validate global model seed range. Target files: vllm/config/model.py, tests/entrypoints/llm/test_prompt_validation.py. . Validate the global model seed at configuration time so unsupported values fail before EngineCore startup. (Ref: https://github.com/vllm-project/vllm/pull/65127)"
+    },
+    {
+      "applies_to": "DeusData/codebase-memory-mcp",
+      "created_at": "2026-11-03T06:01:30Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0ca91f1c1c7e2bd13cff8ff97167016a6fae46704a37f3313dd35acd062bb295",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_DeusData_codebase-memory-mcp_2000",
+      "submitted_by": "harvester-v1",
+      "symptom": "PHP: symbols declared after an inline-HTML block never reach the graph, and the whole tail of a valid file is reported parse_partial (0.10.8)",
+      "target": "codebase-memory-mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(extract): parse PHP past inline HTML so symbols after ?> reach the graph (#2000). Target files: Makefile.cbm, internal/cbm/cbm.c, internal/cbm/cbm.h. The vendored PHP grammar is the `php_only` variant, which has no rule for `?>` or the markup after it. In a file that leaves PHP mode (`?> <div>...</div> <?php`), everything after the first close tag became an ERROR region, so the declarations and calls there never reached the graph and the file was reported `parse_partial`. (Ref: https://github.com/DeusData/codebase-memory-mcp/pull/2389)"
     },
     {
       "applies_to": "gitlab-org/cli",
@@ -7549,6 +7913,20 @@
       "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4355)"
     },
     {
+      "applies_to": "oaslananka/kicad-mcp-pro",
+      "created_at": "2026-10-22T20:19:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7590a19f830cfea297e24f5763a97801b96ff7a6c58fe7c2469818ef1cb42c5a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_oaslananka_kicad-mcp-pro_1371",
+      "submitted_by": "harvester-v1",
+      "symptom": "Schematic writer turns `(wire \u2026)` text inside quoted strings into real wires (writes through `_transactional_write_to_schematic_file`, and `sch_build_circuit`'s pre-write normalization); the count guard cannot see it",
+      "target": "kicad-mcp-pro",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(schematic): keep quoted wire literals from becoming electrical connections. Target files: src/kicad_mcp/tools/schematic.py, tests/unit/test_schematic_wire_literal_safety.py. . KiCad schematic wire normalization previously scanned for `(wire` at **every character**, including inside quoted `text` nodes and symbol properties. A routine successful write could erase that user-authored value and turn its apparent wire S-expression into a real electrical net segment. The structural loss guard might not detect this sin... (Ref: https://github.com/oaslananka/kicad-mcp-pro/pull/1408)"
+    },
+    {
       "applies_to": "pillow",
       "created_at": "2026-10-22T17:01:08Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78g4-xqwv-q3g8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"13.0.0\", \"aliases\": []}",
@@ -9929,6 +10307,20 @@
       "workaround": "Fix: [Fix] dsa: Make the fused top-k exact on an overflowing threshold bin. Target files: python/sglang/kernels/jit/csrc/deepseek_v4/topk_v2.cuh, python/sglang/kernels/jit/include/sgl_kernel/deepseek_v4/topk_impl.cuh, test/registered/kernels/ops/attention/test_topk_v2.py. The coarse histogram bin comes from the top bits of the fp16 cast, so one bin spans a quarter-binade. The collect pass stores at most 2048 threshold-bin candidates; when the bin is larger, `handle_tie` ranks whichever arrived first and silently returns a wro... (Ref: https://github.com/sgl-project/sglang/pull/37941)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-14T21:51:01Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4084a5ec7498869bf4a758450418cf2f84d0c8aa2fcbb6bbdd574e229f7a0a85",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_106",
+      "submitted_by": "harvester-v1",
+      "symptom": "SwOS on a CSS318 (full SwOS 2.19): wrong speeds, 100x uptime, empty VLAN members; factory login refused",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(swos): full SwOS reads on the CSS318 - dialect keys, speed and uptime, VLAN members, empty factory password. Target files: src/adapter/swos-client.ts, src/adapter/swos-protocol.ts, src/cli/doctor.ts. Part one of #106, split out of #107 as asked: the read fixes for full SwOS (CSS318 on 2.19), rebased on `main` (1.13.2), without the new tools. (Ref: https://github.com/AliKarami/MikroMCP/pull/111)"
+    },
+    {
       "applies_to": "pydantic/pydantic-settings",
       "created_at": "2026-10-14T12:47:46Z",
       "environment_json": "{}",
@@ -10503,6 +10895,20 @@
       "workaround": "Fix: deps(llama-index): update OpenAI dependency version constraints. Target files: pyproject.toml, uv.lock. This PR updates the OpenAI dependency version constraints to allow newer major versions of the OpenAI package. No new dependencies are introduced. . (Ref: https://github.com/run-llama/llama_index/pull/23353)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-06T19:02:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:063921e35342ca56f16d93115b07aa6f1a0e8851d7a6b6135c7604c97869059e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_103",
+      "submitted_by": "harvester-v1",
+      "symptom": "SSH host key mismatch (sshFingerprint) is reported as INTERNAL \"Host denied (verification failed)\"",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(ssh): report a host key mismatch as SSH_HOST_KEY_MISMATCH with both fingerprints. Target files: src/adapter/sftp-client.ts, src/adapter/ssh-client.ts, src/adapter/ssh-host-key.ts. (reported by @akuzin87). (Ref: https://github.com/AliKarami/MikroMCP/pull/104)"
+    },
+    {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-06T18:46:21Z",
       "environment_json": "{}",
@@ -10545,6 +10951,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: PYSEC-2026-4319)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-06T14:40:31Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:bc5b5c8c7f098995fb8ae8d07f8f3edcf8cd89e0cb0a1c129557bb77bc6ae4da",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_90",
+      "submitted_by": "harvester-v1",
+      "symptom": "Error results keep `confirmationToken` and other `details` out of the text, so text-only clients can't confirm",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(dns)!: compare the value when add finds an entry by name and type. Target files: src/adapter/response-parser.ts, src/domain/tools/dns-tools.ts, test/integration/dns.test.ts. `manage_dns_entry` with `action: add` looked up `ip/dns/static` by `name` + `type` and returned `already_exists` for any hit, without comparing the record. With `router.lan A [REDACTED]` on the router, `add router.lan A [REDACTED]` answered `already_exists` / `No changes made.`, dry run included. The server instructions define `already_exists` as ... (Ref: https://github.com/AliKarami/MikroMCP/pull/91)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-06T13:52:52Z",
       "environment_json": "{}",
@@ -10571,6 +10991,20 @@
       "target": "sharp",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade sharp to patched release >= 0.35.5: npm install 'sharp@>=0.35.5' (Advisory: GHSA-wq5f-xc86-pv6w)"
+    },
+    {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-06T09:17:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:31643b3f40b01722a0165a3c330763f24a35cb278b651d7be0f5545ba8ee1e26",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_83",
+      "submitted_by": "harvester-v1",
+      "symptom": "torch always times out and traceroute repeats hops on RouterOS 7",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(diagnostics)!: run traceroute and torch over the REST API. Target files: site/src/data/content.ts, src/adapter/circuit-breaker.ts, src/adapter/response-parser.ts. - **`torch`** failed on every call with `ROUTER_UNREACHABLE: SSH command timed out \u2026`. It ran `/tool torch` over SSH without a `duration` and relied on the SSH timeout, which discards the collected output. Its parser expected columns RouterOS 7 does not print, and over SSH RouterOS drops the columns that do not fit 80 characters. - **`traceroute`** collected r... (Ref: https://github.com/AliKarami/MikroMCP/pull/84)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -11259,6 +11693,20 @@
       "workaround": "Upgrade pyjwt to patched release >= 2.14.0: pip install --upgrade 'pyjwt>=2.14.0' (Advisory: PYSEC-2026-4145)"
     },
     {
+      "applies_to": "pyjwt",
+      "created_at": "2026-10-01T16:38:40.082432Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4152\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.14.0\", \"aliases\": [\"CVE-2026-102274\", \"GHSA-w6j9-cwv2-h6wq\"]}",
+      "fingerprint": "sha256:4c94fdb0be741e1765a74d4bfe0009263fb2cb9f295f7d921ce58b164d327fb1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4152",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4152] PyJWT: Malformed RSA JWK aborts parsing of an entire JWK Set (Affects pyjwt < 2.14.0)",
+      "target": "pyjwt",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyjwt to patched release >= 2.14.0: pip install --upgrade 'pyjwt>=2.14.0' (Advisory: PYSEC-2026-4152)"
+    },
+    {
       "applies_to": "anyio",
       "created_at": "2026-10-01T16:38:33.613922Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4025\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.14.2\", \"aliases\": [\"CVE-2026-63374\", \"GHSA-82r6-8w77-94w6\"]}",
@@ -11397,6 +11845,20 @@
       "target": "accelerate",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix wait_for_everyone() crashing on MULTI_CPU when the machine has an accelerator. Target files: src/accelerate/state.py. `PartialState.wait_for_everyone()` passes `device_ids=[local_process_index]` to `torch.distributed.barrier()` for every distributed type, including `MULTI_CPU`. When `device_ids` is given, torch runs the barrier on the machine's accelerator (`torch._C._get_accelerator()`) instead of on the gloo/CPU process group. On a machine with a non-CUDA accelerator (e.g. Apple Silicon / MPS) this raises `NotIm... (Ref: https://github.com/huggingface/accelerate/pull/4354)"
+    },
+    {
+      "applies_to": "oaslananka/kicad-mcp-pro",
+      "created_at": "2026-10-01T07:01:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2a6c795d31006dbf5603040396ab6123cb0983d37502a3ae6e39158758c6ca0f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_oaslananka_kicad-mcp-pro_1016",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix: Windows \u2013 sim_run_* result files are not written (ngspice strips \"\\\" from output paths)",
+      "target": "kicad-mcp-pro",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(simulation): make ngspice output paths portable. Target files: src/kicad_mcp/utils/ngspice.py, tests/unit/test_ngspice.py. by making the shared ngspice CLI deck builder emit portable output paths for `write` and `wrdata`. (Ref: https://github.com/oaslananka/kicad-mcp-pro/pull/1024)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -12435,6 +12897,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4184)"
     },
     {
+      "applies_to": "vivekchand/clawmetry",
+      "created_at": "2026-09-26T09:37:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d10a01556647ba87b3cef709c7fd85b4689690874d4d799b9e421f2377111d97",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vivekchand_clawmetry_6173",
+      "submitted_by": "harvester-v1",
+      "symptom": "OpenClaw adapter reads nothing on 2026.9.x: transcripts migrated to SQLite, and gateway WS tap gets scopes=[]",
+      "target": "clawmetry",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openclaw): detect SQLite session store and warn on 2026.9.x migration (#6173). Target files: clawmetry/adapters/openclaw.py, clawmetry/sync.py. OpenClaw 2026.9.x migrated live session transcripts from `.jsonl` files to `state/openclaw.sqlite`. ClawMetry's filesystem adapter only scanned for `.jsonl` files, so every sync cycle silently found nothing and activity timestamps froze \u2014 with no explanation in `sync.log`. This PR makes both the detection and the silence diagnosable. (Ref: https://github.com/vivekchand/clawmetry/pull/6174)"
+    },
+    {
       "applies_to": "run-llama/llama_index",
       "created_at": "2026-09-25T23:11:28Z",
       "environment_json": "{}",
@@ -12757,6 +13233,20 @@
       "workaround": "Fix: Support unhashable workflows in serializer caching. Target files: packages/llama-index-workflows/src/workflows/runtime/types/plugin.py, packages/llama-agents-integration-tests/tests/test_context_store.py, packages/llama-index-workflows/tests/context/test_workflow_serializer.py. `Runtime._serializer_cache` uses `WeakKeyDictionary`, which still hashes workflow instances and rejects subclasses that set `__hash__ = None`. (Ref: https://github.com/run-llama/llama-agents/pull/762)"
     },
     {
+      "applies_to": "lobu-ai/lobu",
+      "created_at": "2026-09-20T21:41:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:538bfaaf45fa32b77625b5b4fe3da90c05170728b737ed86a0c91bf6fd0865f8",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lobu-ai_lobu_3680",
+      "submitted_by": "harvester-v1",
+      "symptom": "Gmail threads feed: one undecodable message poisons the whole sync (no quarantine, checkpoint never advances)",
+      "target": "lobu",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(gmail): quarantine undecodable threads (#3680). Target files: packages/connectors/src/google_gmail.ts, packages/connectors/src/__tests__/google_gmail.test.ts. One permanently undecodable message poisoned the whole Gmail threads feed sync: the run rejected, zero threads synced, the checkpoint never advanced, and the feed re-failed identically on every retry with no quarantine and no offending-message identity. Production feed 445 was dead since 2026-09-11. . (Ref: https://github.com/lobu-ai/lobu/pull/3682)"
+    },
+    {
       "applies_to": "moonlight-lupin/agent-skills",
       "created_at": "2026-09-20T13:14:44Z",
       "environment_json": "{}",
@@ -12769,6 +13259,20 @@
       "target": "hermes-agent-skills",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(skill-retrieval): support 3-arg _skill_should_show on Hermes \u22640.20.x (#14). Target files: plugins/skill-retrieval/scripts/bm25_retriever.py, plugins/skill-retrieval/tests/test_issue14_should_show_arity.py. - BM25 index build crashed on Hermes v0.20.5 with \\`_skill_should_show() takes 3 positional arguments but 4 were given\\` (issue #14). The plugin calls the host function with a 4th \\`platform_hint\\` argument; v0.20.x ships a 3-arg signature. \\`plugin.yaml\\` declares \\`hermes_compatibility: >=0.20.0\\`, so both... (Ref: https://github.com/moonlight-lupin/agent-skills/pull/17)"
+    },
+    {
+      "applies_to": "lobu-ai/lobu",
+      "created_at": "2026-09-20T00:47:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:962332f61d2c96050bcdf0a03480e6bdf491c2d7ae10734d7d0f66dc3d1cb4c8",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lobu-ai_lobu_3634",
+      "submitted_by": "harvester-v1",
+      "symptom": "bug(review): make review fails on macOS because review-cache requires sha256sum",
+      "target": "lobu",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(review): support macOS sha256 hashing. Target files: scripts/lib/__tests__/review-cache.test.sh, scripts/lib/review-cache.sh. Review-cache hashing uses `sha256sum` when available and otherwise `shasum -a 256`. The native shasum test now runs only when that executable is installed. Controlled executable fixtures always check primary-only, fallback-only, and both-backend selection, including primary preference when the fallback directory comes first in PATH. (Ref: https://github.com/lobu-ai/lobu/pull/3675)"
     },
     {
       "applies_to": "vllm",
@@ -13035,6 +13539,20 @@
       "target": "ragflow",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(beartype): remove package-wide import hooks. Target files: deepdoc/__init__.py, pyproject.toml, sdk/python/ragflow_sdk/__init__.py. Removed unnecessary beartype hooks from three package imports. This prevents unwanted import-time instrumentation and dependency coupling. based on #15258 (Ref: https://github.com/infiniflow/ragflow/pull/19531)"
+    },
+    {
+      "applies_to": "oaslananka/kicad-mcp-pro",
+      "created_at": "2026-09-13T12:23:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ef583cf5494c67bd164a9eb38fcaf22390173565da6821b86dcc86b7816a830a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_oaslananka_kicad-mcp-pro_888",
+      "submitted_by": "harvester-v1",
+      "symptom": "Writer-generated hexadecimal #PWR references are rejected by validation and block schematic writes",
+      "target": "kicad-mcp-pro",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(schematic): generate validator-safe power references. Target files: src/kicad_mcp/schematic/basic_authoring.py, src/kicad_mcp/schematic/connectivity_authoring.py, src/kicad_mcp/schematic/references.py. - Generate KiCad power references with decimal digits instead of raw hexadecimal UUID fragments. - Share one `power_reference_from_uuid()` helper between basic power-symbol authoring and connectivity power-terminal authoring. - Add regressions covering UUID prefixes containing `a-f`, including both writer paths. (Ref: https://github.com/oaslananka/kicad-mcp-pro/pull/890)"
     },
     {
       "applies_to": "vllm",
@@ -14017,6 +14535,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.27.0: pip install --upgrade 'vllm>=0.27.0' (Advisory: PYSEC-2026-4003)"
     },
     {
+      "applies_to": "KochC/opencode-llm-proxy",
+      "created_at": "2026-08-25T07:08:14Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:db914418c657d205c4718dfcc40d9c7cd080deaf86c9efd6e9890526759d46f3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_KochC_opencode-llm-proxy_86",
+      "submitted_by": "harvester-v1",
+      "symptom": "Spurious 'failed to load plugin' error on opencode 1.18.x (cosmetic \u2014 proxy still works); one-line V1 default export silences it",
+      "target": "opencode-llm-proxy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(plugin): add V1 default export descriptor to stop legacy loader probing every helper. Target files: dist/llm-proxy.js, index.js, index.test.js. Adds a V1 plugin descriptor as the default export of `index.js` (and the rebuilt `dist/llm-proxy.js`): (Ref: https://github.com/KochC/opencode-llm-proxy/pull/89)"
+    },
+    {
       "applies_to": "gitpython",
       "created_at": "2026-08-25T02:16:52.313Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3788\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.59\", \"aliases\": [\"CVE-2026-78678\", \"GHSA-5xxx-qhh7-9287\"]}",
@@ -14085,6 +14617,20 @@
       "target": "llama-index",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(ag-ui): raise ValueError instead of fabricating tool_call_id ([#22103](https://github.com/run-llama/llama_index/pull/22103)). Upstream PR #22103. (Ref: https://github.com/run-llama/llama_index/pull/22103)"
+    },
+    {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-19T14:17:48.603Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3784\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.58\", \"aliases\": [\"CVE-2026-76222\", \"GHSA-hmq2-w58f-27jc\"]}",
+      "fingerprint": "sha256:5d3c8b0fe9ad37c67f774baa4f54cf845bdf2604b6ef934e2258dc94fb75579f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3784",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3784] GitPython before 3.1.58 fails to validate submodule names from .gitmodules files, allowing attackers to create Git repositories at arbitrary filesystem paths... (Affects gitpython < 3.1.58)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.58: pip install --upgrade 'gitpython>=3.1.58' (Advisory: PYSEC-2026-3784)"
     },
     {
       "applies_to": "sqlparse",
@@ -15191,6 +15737,20 @@
       "target": "lmdeploy",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(serve): auto-generate batch completion sessions to avoid id collision (#4773). Target files: lmdeploy/serve/openai/api_server.py. The legacy `/v1/completions` endpoint assigns one session per prompt. When `request.prompt` is a list, `completions_v1` created sessions with hardcoded user ids `1, 2, 3...`: (Ref: https://github.com/InternLM/lmdeploy/pull/4774)"
+    },
+    {
+      "applies_to": "IvanMurzak/Godot-MCP",
+      "created_at": "2026-07-26T00:26:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:31eb2e793636bb651cbb5450bd8b3d17459f86a13366306800fd206a66da0dae",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_IvanMurzak_Godot-MCP_310",
+      "submitted_by": "harvester-v1",
+      "symptom": "`filesystem-reimport` reports success for native `.tscn` scenes despite Godot import errors",
+      "target": "godot-mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(tools): stop reporting success for no-op reimports and Variant/Node reflection calls. Target files: .github/assetlib/edit.hbs, Godot-MCP.Tests/Godot-MCP.Tests.csproj, Godot-MCP.Tests/ReflectionArgumentGuardTests.cs. Two silent-failure bugs (the \"reports success while doing nothing\" class), the node-ordering feature, and a documented deferral. (Ref: https://github.com/IvanMurzak/Godot-MCP/pull/321)"
     },
     {
       "applies_to": "gitpython",
@@ -18903,6 +19463,20 @@
       "workaround": "Upgrade django to patched release >= 1.4.4: pip install --upgrade 'django>=1.4.4' (Advisory: PYSEC-2026-802)"
     },
     {
+      "applies_to": "KochC/opencode-llm-proxy",
+      "created_at": "2026-07-05T11:41:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f98d2af58b4f722d37d15ebf97432365b87ef5cdfe62c9ec4be0f56dd8d207dd",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_KochC_opencode-llm-proxy_55",
+      "submitted_by": "harvester-v1",
+      "symptom": "Tool/function calling (v1.7.0) doesn't trigger against a real OpenCode server \u2014 bridge MCP server never registers",
+      "target": "opencode-llm-proxy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: disable stale bridge tool IDs from other pool slots. Target files: index.js, index.test.js. . Fixes a bug where tool/function calling (#52/v1.7.0) can return the *wrong* tool call \u2014 a stale one from a previously-reused bridge pool slot \u2014 instead of the current turn's own tool. (Ref: https://github.com/KochC/opencode-llm-proxy/pull/56)"
+    },
+    {
       "applies_to": "keras",
       "created_at": "2026-07-03T21:31:36Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5gwj-m78q-7pq3\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": [\"CVE-2026-12481\", \"PYSEC-2026-3631\"]}",
@@ -20511,6 +21085,20 @@
       "target": "tornado",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade tornado to patched release >= 6.5.6: pip install --upgrade 'tornado>=6.5.6' (Advisory: GHSA-cx3h-4qpv-8hc9)"
+    },
+    {
+      "applies_to": "lobu-ai/lobu",
+      "created_at": "2026-06-11T17:06:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9eebc2ac8199f971cfa083a0dfa0c996d31084511a54905ad896b4b6f06d5f9c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lobu-ai_lobu_1179",
+      "submitted_by": "harvester-v1",
+      "symptom": "AGENTS.md documents a \"rest\" platform that apply rejects (\"Unsupported platform: rest\")",
+      "target": "lobu",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(server): accept rest as a first-class adapterless platform. Target files: packages/server/src/gateway/connections/chat-instance-manager.ts, packages/server/src/gateway/connections/types.ts, packages/server/src/lobu/__tests__/agent-routes-rest-platform.test.ts. The scaffolded AGENTS.md documents a `rest` platform binding (`{ type: \"rest\", config: {} }` \u2014 \"HTTP API \u2014 always config: {}\") and `lobu validate` accepts it, but apply fails server-side (confirmed e2e on published CLI 11.0.0): (Ref: https://github.com/lobu-ai/lobu/pull/1212)"
     },
     {
       "applies_to": "keras",
@@ -24123,6 +24711,20 @@
       "target": "authlib",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade authlib to patched release >= 1.6.9: pip install --upgrade 'authlib>=1.6.9' (Advisory: PYSEC-2026-2117)"
+    },
+    {
+      "applies_to": "authlib",
+      "created_at": "2026-03-16T18:16:07.557Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2116\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.6.9\", \"aliases\": [\"CVE-2026-28490\", \"GHSA-7432-952r-cw78\"]}",
+      "fingerprint": "sha256:5b7d80c0806b9513757b9abc7affa542dad16d83f660a07d3526235d971c9e74",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2116",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2116] Authlib is a Python library which builds OAuth and OpenID Connect servers. Prior to version 1.6.9, a cryptographic padding oracle vulnerability was identifie... (Affects authlib < 1.6.9)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.6.9: pip install --upgrade 'authlib>=1.6.9' (Advisory: PYSEC-2026-2116)"
     },
     {
       "applies_to": "onnx",
@@ -25948,6 +26550,230 @@
   "version": "1.0.0",
   "workarounds": [
     {
+      "applies_to": "escoffier-labs/brigade",
+      "created_at": "2026-11-11T06:02:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:eaf9a5c410d186cd616ba5a39d302ecbe0ec18a3ebb900cd6bd5f0a503fe0fc5",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_escoffier-labs_brigade_2487",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(hub): a planned restart sometimes fails the unit when the managed upstream dies from SIGTERM",
+      "target": "brigade",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(hub): accept planned upstream SIGTERM stops. Target files: engines/hub/src/main.rs, changelog.d/2488.md. Planned restarts failed the hub unit on 2 of 3 production stops in #2487. The front reported a child terminated by SIGTERM as an error and exited 2. The replacement process started normally, with `NRestarts` remaining 0. (Ref: https://github.com/escoffier-labs/brigade/pull/2488)"
+    },
+    {
+      "applies_to": "sgl-project/sglang",
+      "created_at": "2026-11-11T06:00:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:50930b7dd6280f5b66dd8f2cfadacde4f0acfe81e1a912b7a88a84a96b35bf6b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_sgl-project_sglang_48260",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug] DSA models crash on first prefill with --cpu-offload-gb: breakable prefill CUDA graph replays the DSA indexer eager break with CPU-offloaded weights (mat2 is on cpu)",
+      "target": "sglang",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [Fix] offload: Keep DSA indexer parameters resident on GPU under CPU offload. Target files: python/sglang/srt/layers/offloader.py, test/registered/model_loading/test_cpu_offloader.py. When serving DSA models (e.g. GLM-5.3, `GlmMoeDsaForCausalLM`) with V1 CPU weight offload (`--cpu-offload-gb > 0`) and the default breakable prefill CUDA graph backend, the server crashes on the first prefill: (Ref: https://github.com/sgl-project/sglang/pull/48316)"
+    },
+    {
+      "applies_to": "huggingface/peft",
+      "created_at": "2026-11-11T05:59:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e146072f83e3d49a810813179f2137571b204189a621666cb80a956aff70fe08",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_peft_3876",
+      "submitted_by": "harvester-v1",
+      "symptom": "`get_peft_model_state_dict` returns an empty dict for FSDP1-wrapped models since 0.21.0 (adapter checkpoints / weight syncs silently empty)",
+      "target": "peft",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: FIX Empty adapter state dict with nested FSDP or checkpoint_wrapper. Target files: src/peft/tuners/lora/conversion.py, src/peft/tuners/shira/model.py, src/peft/tuners/tuners_utils.py. Coordination and approval: https://github.com/huggingface/peft/issues/3876#issuecomment-[REDACTED] and https://github.com/huggingface/peft/issues/3876#issuecomment-[REDACTED] (Ref: https://github.com/huggingface/peft/pull/4108)"
+    },
+    {
+      "applies_to": "kirodotdev/KiroCrew",
+      "created_at": "2026-11-11T05:31:34Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:228d1977e3c0b175f7bb3902f9e7922fa90367dedd191a7bc43712ea970a7da0",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_kirodotdev_KiroCrew_33917",
+      "submitted_by": "harvester-v1",
+      "symptom": "Remote crew diagnosis, git divergence and the embeddings pip check kill their child only on timeout, so a cancel (instance edit, gateway shutdown) leaves the ssh or git child running",
+      "target": "kirocrew",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: kill a probe, git or pip child when its call is cancelled. Target files: src/kiro_crew/dashboard/handlers/memory_embeddings.py, src/kiro_crew/git_divergence.py, src/kiro_crew/instances/diagnostics.py. **Goal:** A cancelled remote crew diagnosis, update-check git count or embeddings pip run stops its child process instead of leaving it running with no owner. (Ref: https://github.com/kirodotdev/KiroCrew/pull/34496)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-11T04:32:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:e51d44f5d2226adfa6181fc04f943daf91962acb87743ad5f12b60118273fb7b",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29996",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] CloudflareDeployer fails to build and serve file-based agents",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(deployer): build and serve file-based agents with CloudflareDeployer. Target files: deployers/cloudflare/src/index.ts, deployers/cloudflare/src/workerd-file-based-agents.test.ts, e2e-tests/monorepo/monorepo-bundler.test.ts. With file-based agents, `mastra build` bundles a generated entry that imports `src/mastra/index.ts`. The bundler treated that generated entry as the Mastra config, so deployer removal, the config check, the `public` copy and the Cloudflare per-request factory transform all looked at the wrong file. ... (Ref: https://github.com/mastra-ai/mastra/pull/30003)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-11T04:08:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:8cf9a2e39ee99962e2362063d1a257d6a12343d49d3513e9ca7a54832bf522c9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29785",
+      "submitted_by": "harvester-v1",
+      "symptom": "`createInngestAgent`: `streamUntilIdle` ends at `background-task-completed`, and the follow-up answer runs as a separate wake",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(inngest): keep background-task follow-ups on the open streamUntilIdle stream. Target files: packages/core/src/agent/durable/index.ts, workflows/inngest/src/durable-agent/create-inngest-agent.ts, workflows/inngest/src/__tests__/create-inngest-agent.test.ts. > Opened by @roaminro (Ref: https://github.com/mastra-ai/mastra/pull/29877)"
+    },
+    {
+      "applies_to": "mastra-ai/mastra",
+      "created_at": "2026-11-11T04:06:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:778482ff3a191655ca03fa46d98a8a4aa1ae0925983cbbbb609142fa7d5e2d4a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_mastra-ai_mastra_29458",
+      "submitted_by": "harvester-v1",
+      "symptom": "[BUG] Mastra Code ends the run as a \"persistent outage\" when a response stream is cut after HTTP 200",
+      "target": "mastra",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(code-sdk): retry stream cuts after HTTP 200 instead of declaring an outage. Target files: mastracode/sdk/src/auth/account-rotation-processor.test.ts, mastracode/sdk/src/auth/account-rotation-processor.ts, mastracode/sdk/src/index.ts. A response stream that dies after the provider answered HTTP 200 now counts as a stream cut, not an outage. `AccountRotationProcessor` retries it on the same account up to twice, then surfaces the original error. It no longer marks the account pool unavailable or reports \"persistent outage\". (Ref: https://github.com/mastra-ai/mastra/pull/29462)"
+    },
+    {
+      "applies_to": "run-llama/llama_index",
+      "created_at": "2026-11-11T03:50:46Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d66acd74fce992090aeb81954b3431c27046c7674554bbe4e5560354fc16e5dd",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_run-llama_llama_index_24124",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: 15 integration packages still pin llama-index-llms-openai(-like) <0.8 and conflict with the 0.8.x ecosystem (#23247/#23395/#23325 family)",
+      "target": "llama-index",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: deps: allow llama-index-llms-openai 0.8.x in the 15 integration packages still pinning <0.8. Target files: llama-index-integrations/embeddings/llama-index-embeddings-anyscale/pyproject.toml, llama-index-integrations/llms/llama-index-llms-anyscale/pyproject.toml, llama-index-integrations/llms/llama-index-llms-baseten/pyproject.toml. The dependency sweeps that moved the ecosystem to `llama-index-llms-openai` 0.8.x (#22907 \u2192 #23249 \u2192 #23353) were scoped by dependency name and left 15 packages pinned to `<0.8`, which now ... (Ref: https://github.com/run-llama/llama_index/pull/24125)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-11-11T03:24:39Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:63892a26d4670bfa9c3880fd1180366d125096d1a0e7adf74729ea3cb83f0377",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_50492",
+      "submitted_by": "harvester-v1",
+      "symptom": "[bug] Step3.7 vision RoPE reverses the original checkpoint's W/H axis order",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Fix Step3.7 vision RoPE spatial W/H axis order. Target files: src/transformers/models/step3p7/modeling_step3p7.py, src/transformers/models/step3p7/modular_step3p7.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50547) (Ref: https://github.com/huggingface/transformers/pull/50547)"
+    },
+    {
+      "applies_to": "huggingface/transformers",
+      "created_at": "2026-11-11T02:57:54Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:6a68c65aba4193715649642a4a4e0bcbaf94b1fc39f8e0bbdbe18c6f18802cc7",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_huggingface_transformers_50458",
+      "submitted_by": "harvester-v1",
+      "symptom": "`convert_to_rgb` produces out-of-range values for 4-channel float32 images in `[0, 255]`",
+      "target": "transformers",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Raise ValueError for out-of-range float images in convert_to_rgb. Target files: src/transformers/image_processing_backends.py, src/transformers/image_transforms.py, tests/test_image_transforms.py. [![\ud83e\udd17 Transformers CI](https://img.shields.io/badge/%F0%9F%A4%97%20Transformers%20CI-333333?style=flat)](https://transformers-ci.huggingface.cool/d/pytest-observability-by-pr/pytest-observability-branch?var-pr=50487) (Ref: https://github.com/huggingface/transformers/pull/50487)"
+    },
+    {
+      "applies_to": "gitlab-org/cli",
+      "created_at": "2026-11-11T02:54:06.631Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4f591129c39b88858dceecd6565ee875bb9aad963efbd9fe9f23f544668a768a",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "gitlab-merged-mr",
+      "id": "grv_gl_gitlab-org_cli_4378",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix(minder): keep audit event requests under GitLab's 5 MB body limit",
+      "target": "gitlab-cli",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(minder): keep audit event requests under GitLab's 5 MB body limit. Applied in GitLab MR !4378. (Ref: https://gitlab.com/gitlab-org/cli/-/merge_requests/4378)"
+    },
+    {
+      "applies_to": "Cotal-AI/Cotal",
+      "created_at": "2026-11-11T02:53:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9a24415978dd5276a9eb8bf8dfb353bf8c7b2474db00af5b2a9c16f42cde73ea",
+      "grievance_type": "AGENT_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_Cotal-AI_Cotal_6288",
+      "submitted_by": "harvester-v1",
+      "symptom": "A managed enrollment whose answer times out strands the seat name: the retry mints a new request id and gets 'actor name in use'",
+      "target": "cotal",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(manager): recover unknown managed enrollment outcomes. Target files: implementations/auth/smoke/user-spawn.smoke.ts, implementations/manager/package.json, implementations/manager/smoke/pending-enrollment.smoke.ts. Preserve the request identity, actor-token custody and validated launch target when managed enrollment or bearer preflight has an unknown outcome. A same-authority retry reuses that enrollment rather than minting a conflicting token, while refreshing the served spawn authorization. Changed launch authority is re... (Ref: https://github.com/Cotal-AI/Cotal/pull/6318)"
+    },
+    {
+      "applies_to": "vllm-project/vllm",
+      "created_at": "2026-11-11T01:38:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:5247ee6de2871dc60105596aedb8072542ffd29be8b270319d601bffd3449487",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vllm-project_vllm_65106",
+      "submitted_by": "harvester-v1",
+      "symptom": "[Bug]: [ROCm][Kimi-K3] DBO: MoE workspace locked smaller than the DP-gathered batch, first request fails",
+      "target": "vllm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: [ROCm][Kimi-K3] Keep the AttnRes block bank in a persistent workspace. Target files: vllm/models/kimi_k3/amd/linear.py, tests/models/kimi_k3/test_amd_attn_res.py. Kimi-K3 on ROCm allocates two ~1.8 GB buffers on every prefill step, each sized by the step's token count. The caching allocator keeps the slightly-too-small leftovers, so its cache grows while serving until something fails. What fails depends on how vLLM sizes the KV cache: - **Extensible KV cache off** (the V1 model runner, which DBO uses, ROCm KV connectors s... (Ref: https://github.com/vllm-project/vllm/pull/63838)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-11T00:56:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:15f13f7127d049992afada02663e24c3fd8c686e798c35d6cfa28999a3acf90f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_BerriAI_litellm_48660",
+      "submitted_by": "harvester-v1",
+      "symptom": "litellm v1.109.0: fix(decisions): catch ValidationError from validate_json in transform_decisions_response (#48660) by @16niraj in https://github.com/BerriAI/litellm/pull/48662",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(decisions): catch ValidationError from validate_json in transform_decisions_response (#48660) by @16niraj in https://github.com/BerriAI/litellm/pull/48662. Upstream PR #48660. (Ref: https://github.com/BerriAI/litellm/pull/48660)"
+    },
+    {
+      "applies_to": "BerriAI/litellm",
+      "created_at": "2026-11-11T00:56:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2ef559669956af5dee02fd3415cb37261b0b564afa99ad269ca3502a2ba067e0",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-release-advisory",
+      "id": "grv_ghrel_BerriAI_litellm_47931",
+      "submitted_by": "harvester-v1",
+      "symptom": "litellm v1.109.0: fix(groq): replay streamed reasoning replies without HTTP 400 (#47931) by @ishaan-j-berri in https://github.com/BerriAI/litellm/pull/48268",
+      "target": "litellm",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(groq): replay streamed reasoning replies without HTTP 400 (#47931) by @ishaan-j-berri in https://github.com/BerriAI/litellm/pull/48268. Upstream PR #47931. (Ref: https://github.com/BerriAI/litellm/pull/47931)"
+    },
+    {
+      "applies_to": "KochC/opencode-llm-proxy",
+      "created_at": "2026-11-10T23:51:56Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:62ccb5e1135a7102b46854707e6d33e74f747de0e2e156d89e9ab289bb18b5de",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_KochC_opencode-llm-proxy_112",
+      "submitted_by": "harvester-v1",
+      "symptom": "Getting `invalid_request_error`",
+      "target": "opencode-llm-proxy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: accept no-op generation controls and explain upstream failures. Target files: dist/llm-proxy.js, index.js, index.test.js. The unsupported-control guard rejected any non-`undefined` value, so VS Code's `n: 1` returned `400 Unsupported generation controls: n.` and every request failed. Several SDKs also send `null` for each unset optional field and hit the same wall (I verified `n: null`, `stop: null` and `frequency_penalty: null` all failed the same way). (Ref: https://github.com/KochC/opencode-llm-proxy/pull/118)"
+    },
+    {
       "applies_to": "mastra-ai/mastra",
       "created_at": "2026-11-10T23:16:47Z",
       "environment_json": "{}",
@@ -26072,6 +26898,62 @@
       "target": "litellm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(router): sync responses() applies the Router's num_retries and fallbacks. Target files: litellm/router_rust/invoke/endpoints.py, litellm/utils.py, tests/unit/test_router/core/test_endpoints_characterization_generic.py. Previously we were not applying retries and fallbacks appropriately for sync responses endpoint <details> <summary>Details</summary> (Ref: https://github.com/BerriAI/litellm/pull/51011)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:26:09Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f02957732a3813e72d4bd742b60506f2c11483d2f2e37e103b9ddfc8d4811570",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_858",
+      "submitted_by": "harvester-v1",
+      "symptom": "AssertionError: Unexpected message while using middleware",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Stop the SSE endpoint sending a second response after its stream. Target files: fastmcp_slim/fastmcp/server/http.py, tests/server/http/test_http_middleware.py. an SSE app behind any `BaseHTTPMiddleware` logged `AssertionError: Unexpected message: {'type': 'http.response.start', ...}` every time a client disconnected. the unauthenticated `/sse` route was a request/response endpoint, so once `connect_sse` had streamed the whole response, Starlette sent the trailing empty `Response()` as a second `http.response.start`. the au... (Ref: https://github.com/PrefectHQ/fastmcp/pull/6431)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:25:39Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:390d76e268c8f81da32ad2a6aba5f5c0a5ffbad7691873a702b7f73b81aa14ef",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_4471",
+      "submitted_by": "harvester-v1",
+      "symptom": "`StdioTransport(keep_alive=True)` can't be reused across concurrently-alive event loops \u2014 `initialize` handshake hangs for the full `init_timeout`",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Reconnect StdioTransport when reused on a different event loop. Target files: fastmcp_slim/fastmcp/client/transports/stdio.py, tests/client/test_stdio.py, docs/clients/transports.mdx. a kept-alive stdio session belongs to the event loop that created it. reusing the same `Client` from a second loop handed that loop the first loop's session. its responses never arrived, so `async with client` hung forever, and `init_timeout` didn't bound it. (Ref: https://github.com/PrefectHQ/fastmcp/pull/6425)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:25:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ef7782133b26d055b08174cdb397ab0a2f09f198521126afcd0ec41fae8fdb27",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_6299",
+      "submitted_by": "harvester-v1",
+      "symptom": "`logging/setLevel` is ignored for `ctx.log()` calls from tools of a mounted server",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Apply logging/setLevel to mounted servers over HTTP sessions. Target files: fastmcp_slim/fastmcp/server/context.py, fastmcp_slim/fastmcp/server/mixins/mcp_operations.py, fastmcp_slim/fastmcp/server/server.py. A handshake-era client that sent `logging/setLevel` over a stateful HTTP session still got sub-threshold `ctx.log()` messages from tools on mounted servers. The parent handled the request and saved the level in its own `_client_log_levels` dict, keyed by session id. The mounted tool's `Context` checked the child serve... (Ref: https://github.com/PrefectHQ/fastmcp/pull/6421)"
+    },
+    {
+      "applies_to": "PrefectHQ/fastmcp",
+      "created_at": "2026-11-10T20:25:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2a506a8466b5a3b0e3d182d6665eaf821177763bc2c2f65669630309813a0df9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_PrefectHQ_fastmcp_6357",
+      "submitted_by": "harvester-v1",
+      "symptom": "A tool re-versioned with ToolTransformConfig(version=...) can't be called by its new version",
+      "target": "fastmcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: Call a re-versioned tool by its transformed version. Target files: fastmcp_slim/fastmcp/server/transforms/tool_transform.py, tests/server/test_tool_transformation.py. `ToolTransformConfig(version=\"2.0\")` lists a tool under 2.0, but `call_tool(..., version=\"2.0\")` failed with `Unknown tool`. The original version, which is no longer listed, still worked. `ToolTransform.get_tool` sent the caller's version spec unchanged to the source lookup, so the spec was checked against the source version and not the one the tool is listed... (Ref: https://github.com/PrefectHQ/fastmcp/pull/6419)"
     },
     {
       "applies_to": "Cotal-AI/Cotal",
@@ -27026,6 +27908,34 @@
       "workaround": "Fix: [Bugfix][LoRA] Use 3D MoE LoRA wrapper for Gemma4. Target files: vllm/model_executor/models/gemma4.py, vllm/model_executor/models/gemma4_mm.py, tests/lora/test_gemma4_moe_lora.py. . Gemma4 MoE expert LoRA adapters produced by PEFT use the fused 3D layout, but Gemma4 does not declare `is_3d_moe_weight`, so loading them with the default configuration raises a `ValueError` inside EngineCore and kills the engine. This PR declares `is_3d_moe_weight` on both Gemma4 model classes and fills in the text config `architectures` that... (Ref: https://github.com/vllm-project/vllm/pull/64437)"
     },
     {
+      "applies_to": "openai/openai-agents-python",
+      "created_at": "2026-11-09T06:56:11Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:c9f6f02605b6ba3993e7f010e3768729661198c4af5b43d6eed10184dd0cecdf",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_openai_openai-agents-python_5469",
+      "submitted_by": "harvester-v1",
+      "symptom": "Runner.run_streamed sends a model request after a parallel input guardrail has already tripped",
+      "target": "openai-agents-python",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: skip streamed model attempts after an input guardrail trips. Target files: src/agents/run_internal/model_retry.py, src/agents/run_internal/run_loop.py, tests/test_stream_input_guardrail_timing.py. This pull request fixes a case where `Runner.run_streamed` could send a model request after a parallel input guardrail had already rejected the input. The runner now checks the recorded verdict immediately before opening each model stream, including retries. Pending guardrails still allow parallel execution, and er... (Ref: https://github.com/openai/openai-agents-python/pull/5644)"
+    },
+    {
+      "applies_to": "openai/openai-agents-python",
+      "created_at": "2026-11-09T06:56:10Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:251a069ee9bc64bd1093715e78c014e28ff37f7fcef5236c983396ce65c37a6d",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_openai_openai-agents-python_5470",
+      "submitted_by": "harvester-v1",
+      "symptom": "An approved tool's guardrail results are dropped when the resumed run continues to the next turn",
+      "target": "openai-agents-python",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: retain tool guardrail results after approval and resume. Target files: src/agents/run.py, src/agents/run_internal/run_loop.py, tests/test_agent_runner.py. This pull request fixes the loss of tool guardrail results when an approved tool finishes and the runner calls the model again. (Ref: https://github.com/openai/openai-agents-python/pull/5643)"
+    },
+    {
       "applies_to": "sgl-project/sglang",
       "created_at": "2026-11-09T05:53:32Z",
       "environment_json": "{}",
@@ -27038,6 +27948,20 @@
       "target": "sglang",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Fix] qwen3.5: Keep CPU-offloaded GDN input projections separate. Target files: python/sglang/srt/models/qwen3_5.py, test/registered/amd/test_qwen35_gdn_packed_in_proj.py, test/registered/model_loading/test_cpu_offloader.py. With V1 CPU offload, `finalize_fused_in_proj()` can concatenate host-resident GatedDeltaNet projection weights into a plain tensor attribute. The offloader stages registered parameters for each forward, but this fused cache stays on the CPU. The first fused GEMM then fails with `mat2 is on cpu`. (Ref: https://github.com/sgl-project/sglang/pull/47899)"
+    },
+    {
+      "applies_to": "openai/openai-agents-python",
+      "created_at": "2026-11-09T05:48:24Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2924f5e252eeea53fa1e13ccb7b1e3daeb4a3cde4600e2061cec44ecf6e054cb",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_openai_openai-agents-python_5573",
+      "submitted_by": "harvester-v1",
+      "symptom": "Default tool error text tells the model to \"try again\" after a call that may already have taken effect",
+      "target": "openai-agents-python",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: remove retry advice from the default tool error message. Target files: src/agents/tool.py, tests/mcp/test_mcp_util.py, tests/sandbox/capabilities/test_tool_input_errors.py. This pull request removes \"Please try again.\" from the default tool error message. A tool can raise after a write succeeds, and the SDK cannot determine whether repeating the call is safe. (Ref: https://github.com/openai/openai-agents-python/pull/5632)"
     },
     {
       "applies_to": "huggingface/peft",
@@ -28482,6 +29406,20 @@
       "workaround": "Fix: perf(core): stop `parse_partial_json` from retrying one character at a time. Target files: libs/core/langchain_core/utils/json.py, libs/core/tests/unit_tests/output_parsers/test_json.py. Related: #40826 (Ref: https://github.com/langchain-ai/langchain/pull/41467)"
     },
     {
+      "applies_to": "DeusData/codebase-memory-mcp",
+      "created_at": "2026-11-04T23:21:36Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:a6926d398675f452c0c6a19766035071039ee3fcc97c35e9e65af75d046a2e80",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_DeusData_codebase-memory-mcp_2646",
+      "submitted_by": "harvester-v1",
+      "symptom": "Windows: a file named `nul` in the repo makes every index_repository abort with aborted_previous_preserved (0.11.0)",
+      "target": "codebase-memory-mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(pipeline): skip a file named nul in the control-file walk instead of aborting the index (#2646). Target files: src/pipeline/pipeline_incremental.c, tests/test_pipeline.c. On Windows, one file named `nul` in a repository makes every `index_repository` run return `aborted_previous_preserved`, so a project without an index never gets one. Git Bash leaves such a file behind after `cmd > nul` or `2>nul`, and listing it in `.gitignore` does not help. (Ref: https://github.com/DeusData/codebase-memory-mcp/pull/2903)"
+    },
+    {
       "applies_to": "mastra-ai/mastra",
       "created_at": "2026-11-04T23:19:51Z",
       "environment_json": "{}",
@@ -29070,6 +30008,20 @@
       "workaround": "Fix: [Bugfix] Size the extensible KV cache from UMA-corrected free memory. Target files: vllm/platforms/cuda.py, vllm/platforms/interface.py, vllm/utils/mem_utils.py. . On integrated (UMA) GPUs the extensible KV cache (#56492) sized itself from raw `cudaMemGetInfo`, which does not count reclaimable page cache as free, so it undersized the KV cache by up to 84% on a DGX Spark (GB10) and to zero blocks in disaggregated serving. This reads free memory through one helper with the same `psutil` correction the classic sizing path al... (Ref: https://github.com/vllm-project/vllm/pull/65413)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-11-03T23:34:26Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0a6a67839be8e2ed3abcb12db141af04f9c818c0f0711a533e848f4d60cc43a9",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_131",
+      "submitted_by": "harvester-v1",
+      "symptom": "reboot tool fails on RouterOS 7.25: HTTP 400 unknown parameter delay",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(reboot): stop sending an unknown delay parameter to /system/reboot. Target files: src/domain/tools/system-ops-tools.ts, test/unit/domain/system-ops-tools.test.ts, CHANGELOG.md. `reboot` sent `{\"delay\": \"<n>\"}` to `/system/reboot`, which takes no arguments. RouterOS rejected every call with `HTTP 400: unknown parameter delay`, including `delay: 0`. Reproduced on RouterOS 7.23.2 as well as the reporter's 7.25. (Ref: https://github.com/AliKarami/MikroMCP/pull/132)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-11-03T21:48:22Z",
       "environment_json": "{}",
@@ -29362,6 +30314,20 @@
       "target": "vllm",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: [Bugfix] Validate global model seed range. Target files: vllm/config/model.py, tests/entrypoints/llm/test_prompt_validation.py. . Validate the global model seed at configuration time so unsupported values fail before EngineCore startup. (Ref: https://github.com/vllm-project/vllm/pull/65127)"
+    },
+    {
+      "applies_to": "DeusData/codebase-memory-mcp",
+      "created_at": "2026-11-03T06:01:30Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:0ca91f1c1c7e2bd13cff8ff97167016a6fae46704a37f3313dd35acd062bb295",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_DeusData_codebase-memory-mcp_2000",
+      "submitted_by": "harvester-v1",
+      "symptom": "PHP: symbols declared after an inline-HTML block never reach the graph, and the whole tail of a valid file is reported parse_partial (0.10.8)",
+      "target": "codebase-memory-mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(extract): parse PHP past inline HTML so symbols after ?> reach the graph (#2000). Target files: Makefile.cbm, internal/cbm/cbm.c, internal/cbm/cbm.h. The vendored PHP grammar is the `php_only` variant, which has no rule for `?>` or the markup after it. In a file that leaves PHP mode (`?> <div>...</div> <?php`), everything after the first close tag became an ERROR region, so the declarations and calls there never reached the graph and the file was reported `parse_partial`. (Ref: https://github.com/DeusData/codebase-memory-mcp/pull/2389)"
     },
     {
       "applies_to": "gitlab-org/cli",
@@ -33494,6 +34460,20 @@
       "workaround": "Upgrade authlib to patched release >= 1.9.0: pip install --upgrade 'authlib>=1.9.0' (Advisory: PYSEC-2026-4355)"
     },
     {
+      "applies_to": "oaslananka/kicad-mcp-pro",
+      "created_at": "2026-10-22T20:19:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:7590a19f830cfea297e24f5763a97801b96ff7a6c58fe7c2469818ef1cb42c5a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_oaslananka_kicad-mcp-pro_1371",
+      "submitted_by": "harvester-v1",
+      "symptom": "Schematic writer turns `(wire \u2026)` text inside quoted strings into real wires (writes through `_transactional_write_to_schematic_file`, and `sch_build_circuit`'s pre-write normalization); the count guard cannot see it",
+      "target": "kicad-mcp-pro",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(schematic): keep quoted wire literals from becoming electrical connections. Target files: src/kicad_mcp/tools/schematic.py, tests/unit/test_schematic_wire_literal_safety.py. . KiCad schematic wire normalization previously scanned for `(wire` at **every character**, including inside quoted `text` nodes and symbol properties. A routine successful write could erase that user-authored value and turn its apparent wire S-expression into a real electrical net segment. The structural loss guard might not detect this sin... (Ref: https://github.com/oaslananka/kicad-mcp-pro/pull/1408)"
+    },
+    {
       "applies_to": "pillow",
       "created_at": "2026-10-22T17:01:08Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-78g4-xqwv-q3g8\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"13.0.0\", \"aliases\": []}",
@@ -35874,6 +36854,20 @@
       "workaround": "Fix: [Fix] dsa: Make the fused top-k exact on an overflowing threshold bin. Target files: python/sglang/kernels/jit/csrc/deepseek_v4/topk_v2.cuh, python/sglang/kernels/jit/include/sgl_kernel/deepseek_v4/topk_impl.cuh, test/registered/kernels/ops/attention/test_topk_v2.py. The coarse histogram bin comes from the top bits of the fp16 cast, so one bin spans a quarter-binade. The collect pass stores at most 2048 threshold-bin candidates; when the bin is larger, `handle_tie` ranks whichever arrived first and silently returns a wro... (Ref: https://github.com/sgl-project/sglang/pull/37941)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-14T21:51:01Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:4084a5ec7498869bf4a758450418cf2f84d0c8aa2fcbb6bbdd574e229f7a0a85",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_106",
+      "submitted_by": "harvester-v1",
+      "symptom": "SwOS on a CSS318 (full SwOS 2.19): wrong speeds, 100x uptime, empty VLAN members; factory login refused",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(swos): full SwOS reads on the CSS318 - dialect keys, speed and uptime, VLAN members, empty factory password. Target files: src/adapter/swos-client.ts, src/adapter/swos-protocol.ts, src/cli/doctor.ts. Part one of #106, split out of #107 as asked: the read fixes for full SwOS (CSS318 on 2.19), rebased on `main` (1.13.2), without the new tools. (Ref: https://github.com/AliKarami/MikroMCP/pull/111)"
+    },
+    {
       "applies_to": "pydantic/pydantic-settings",
       "created_at": "2026-10-14T12:47:46Z",
       "environment_json": "{}",
@@ -36448,6 +37442,20 @@
       "workaround": "Fix: deps(llama-index): update OpenAI dependency version constraints. Target files: pyproject.toml, uv.lock. This PR updates the OpenAI dependency version constraints to allow newer major versions of the OpenAI package. No new dependencies are introduced. . (Ref: https://github.com/run-llama/llama_index/pull/23353)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-06T19:02:03Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:063921e35342ca56f16d93115b07aa6f1a0e8851d7a6b6135c7604c97869059e",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_103",
+      "submitted_by": "harvester-v1",
+      "symptom": "SSH host key mismatch (sshFingerprint) is reported as INTERNAL \"Host denied (verification failed)\"",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(ssh): report a host key mismatch as SSH_HOST_KEY_MISMATCH with both fingerprints. Target files: src/adapter/sftp-client.ts, src/adapter/ssh-client.ts, src/adapter/ssh-host-key.ts. (reported by @akuzin87). (Ref: https://github.com/AliKarami/MikroMCP/pull/104)"
+    },
+    {
       "applies_to": "crewAIInc/crewAI",
       "created_at": "2026-10-06T18:46:21Z",
       "environment_json": "{}",
@@ -36490,6 +37498,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.32.0: pip install --upgrade 'vllm>=0.32.0' (Advisory: PYSEC-2026-4319)"
     },
     {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-06T14:40:31Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:bc5b5c8c7f098995fb8ae8d07f8f3edcf8cd89e0cb0a1c129557bb77bc6ae4da",
+      "grievance_type": "PROTOCOL_FRICTION",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_90",
+      "submitted_by": "harvester-v1",
+      "symptom": "Error results keep `confirmationToken` and other `details` out of the text, so text-only clients can't confirm",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(dns)!: compare the value when add finds an entry by name and type. Target files: src/adapter/response-parser.ts, src/domain/tools/dns-tools.ts, test/integration/dns.test.ts. `manage_dns_entry` with `action: add` looked up `ip/dns/static` by `name` + `type` and returned `already_exists` for any hit, without comparing the record. With `router.lan A [REDACTED]` on the router, `add router.lan A [REDACTED]` answered `already_exists` / `No changes made.`, dry run included. The server instructions define `already_exists` as ... (Ref: https://github.com/AliKarami/MikroMCP/pull/91)"
+    },
+    {
       "applies_to": "cloudflare/workers-sdk",
       "created_at": "2026-10-06T13:52:52Z",
       "environment_json": "{}",
@@ -36516,6 +37538,20 @@
       "target": "sharp",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade sharp to patched release >= 0.35.5: npm install 'sharp@>=0.35.5' (Advisory: GHSA-wq5f-xc86-pv6w)"
+    },
+    {
+      "applies_to": "AliKarami/MikroMCP",
+      "created_at": "2026-10-06T09:17:35Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:31643b3f40b01722a0165a3c330763f24a35cb278b651d7be0f5545ba8ee1e26",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_AliKarami_MikroMCP_83",
+      "submitted_by": "harvester-v1",
+      "symptom": "torch always times out and traceroute repeats hops on RouterOS 7",
+      "target": "mikromcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(diagnostics)!: run traceroute and torch over the REST API. Target files: site/src/data/content.ts, src/adapter/circuit-breaker.ts, src/adapter/response-parser.ts. - **`torch`** failed on every call with `ROUTER_UNREACHABLE: SSH command timed out \u2026`. It ran `/tool torch` over SSH without a `duration` and relied on the SSH timeout, which discards the collected output. Its parser expected columns RouterOS 7 does not print, and over SSH RouterOS drops the columns that do not fit 80 characters. - **`traceroute`** collected r... (Ref: https://github.com/AliKarami/MikroMCP/pull/84)"
     },
     {
       "applies_to": "BerriAI/litellm",
@@ -37204,6 +38240,20 @@
       "workaround": "Upgrade pyjwt to patched release >= 2.14.0: pip install --upgrade 'pyjwt>=2.14.0' (Advisory: PYSEC-2026-4145)"
     },
     {
+      "applies_to": "pyjwt",
+      "created_at": "2026-10-01T16:38:40.082432Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4152\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"2.14.0\", \"aliases\": [\"CVE-2026-102274\", \"GHSA-w6j9-cwv2-h6wq\"]}",
+      "fingerprint": "sha256:4c94fdb0be741e1765a74d4bfe0009263fb2cb9f295f7d921ce58b164d327fb1",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_4152",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-4152] PyJWT: Malformed RSA JWK aborts parsing of an entire JWK Set (Affects pyjwt < 2.14.0)",
+      "target": "pyjwt",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade pyjwt to patched release >= 2.14.0: pip install --upgrade 'pyjwt>=2.14.0' (Advisory: PYSEC-2026-4152)"
+    },
+    {
       "applies_to": "anyio",
       "created_at": "2026-10-01T16:38:33.613922Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-4025\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"4.14.2\", \"aliases\": [\"CVE-2026-63374\", \"GHSA-82r6-8w77-94w6\"]}",
@@ -37342,6 +38392,20 @@
       "target": "accelerate",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: Fix wait_for_everyone() crashing on MULTI_CPU when the machine has an accelerator. Target files: src/accelerate/state.py. `PartialState.wait_for_everyone()` passes `device_ids=[local_process_index]` to `torch.distributed.barrier()` for every distributed type, including `MULTI_CPU`. When `device_ids` is given, torch runs the barrier on the machine's accelerator (`torch._C._get_accelerator()`) instead of on the gloo/CPU process group. On a machine with a non-CUDA accelerator (e.g. Apple Silicon / MPS) this raises `NotIm... (Ref: https://github.com/huggingface/accelerate/pull/4354)"
+    },
+    {
+      "applies_to": "oaslananka/kicad-mcp-pro",
+      "created_at": "2026-10-01T07:01:51Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:2a6c795d31006dbf5603040396ab6123cb0983d37502a3ae6e39158758c6ca0f",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_oaslananka_kicad-mcp-pro_1016",
+      "submitted_by": "harvester-v1",
+      "symptom": "fix: Windows \u2013 sim_run_* result files are not written (ngspice strips \"\\\" from output paths)",
+      "target": "kicad-mcp-pro",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(simulation): make ngspice output paths portable. Target files: src/kicad_mcp/utils/ngspice.py, tests/unit/test_ngspice.py. by making the shared ngspice CLI deck builder emit portable output paths for `write` and `wrdata`. (Ref: https://github.com/oaslananka/kicad-mcp-pro/pull/1024)"
     },
     {
       "applies_to": "vllm-project/vllm",
@@ -38380,6 +39444,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.30.0: pip install --upgrade 'vllm>=0.30.0' (Advisory: PYSEC-2026-4184)"
     },
     {
+      "applies_to": "vivekchand/clawmetry",
+      "created_at": "2026-09-26T09:37:18Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:d10a01556647ba87b3cef709c7fd85b4689690874d4d799b9e421f2377111d97",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_vivekchand_clawmetry_6173",
+      "submitted_by": "harvester-v1",
+      "symptom": "OpenClaw adapter reads nothing on 2026.9.x: transcripts migrated to SQLite, and gateway WS tap gets scopes=[]",
+      "target": "clawmetry",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(openclaw): detect SQLite session store and warn on 2026.9.x migration (#6173). Target files: clawmetry/adapters/openclaw.py, clawmetry/sync.py. OpenClaw 2026.9.x migrated live session transcripts from `.jsonl` files to `state/openclaw.sqlite`. ClawMetry's filesystem adapter only scanned for `.jsonl` files, so every sync cycle silently found nothing and activity timestamps froze \u2014 with no explanation in `sync.log`. This PR makes both the detection and the silence diagnosable. (Ref: https://github.com/vivekchand/clawmetry/pull/6174)"
+    },
+    {
       "applies_to": "run-llama/llama_index",
       "created_at": "2026-09-25T23:11:28Z",
       "environment_json": "{}",
@@ -38702,6 +39780,20 @@
       "workaround": "Fix: Support unhashable workflows in serializer caching. Target files: packages/llama-index-workflows/src/workflows/runtime/types/plugin.py, packages/llama-agents-integration-tests/tests/test_context_store.py, packages/llama-index-workflows/tests/context/test_workflow_serializer.py. `Runtime._serializer_cache` uses `WeakKeyDictionary`, which still hashes workflow instances and rejects subclasses that set `__hash__ = None`. (Ref: https://github.com/run-llama/llama-agents/pull/762)"
     },
     {
+      "applies_to": "lobu-ai/lobu",
+      "created_at": "2026-09-20T21:41:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:538bfaaf45fa32b77625b5b4fe3da90c05170728b737ed86a0c91bf6fd0865f8",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lobu-ai_lobu_3680",
+      "submitted_by": "harvester-v1",
+      "symptom": "Gmail threads feed: one undecodable message poisons the whole sync (no quarantine, checkpoint never advances)",
+      "target": "lobu",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(gmail): quarantine undecodable threads (#3680). Target files: packages/connectors/src/google_gmail.ts, packages/connectors/src/__tests__/google_gmail.test.ts. One permanently undecodable message poisoned the whole Gmail threads feed sync: the run rejected, zero threads synced, the checkpoint never advanced, and the feed re-failed identically on every retry with no quarantine and no offending-message identity. Production feed 445 was dead since 2026-09-11. . (Ref: https://github.com/lobu-ai/lobu/pull/3682)"
+    },
+    {
       "applies_to": "moonlight-lupin/agent-skills",
       "created_at": "2026-09-20T13:14:44Z",
       "environment_json": "{}",
@@ -38714,6 +39806,20 @@
       "target": "hermes-agent-skills",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(skill-retrieval): support 3-arg _skill_should_show on Hermes \u22640.20.x (#14). Target files: plugins/skill-retrieval/scripts/bm25_retriever.py, plugins/skill-retrieval/tests/test_issue14_should_show_arity.py. - BM25 index build crashed on Hermes v0.20.5 with \\`_skill_should_show() takes 3 positional arguments but 4 were given\\` (issue #14). The plugin calls the host function with a 4th \\`platform_hint\\` argument; v0.20.x ships a 3-arg signature. \\`plugin.yaml\\` declares \\`hermes_compatibility: >=0.20.0\\`, so both... (Ref: https://github.com/moonlight-lupin/agent-skills/pull/17)"
+    },
+    {
+      "applies_to": "lobu-ai/lobu",
+      "created_at": "2026-09-20T00:47:19Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:962332f61d2c96050bcdf0a03480e6bdf491c2d7ae10734d7d0f66dc3d1cb4c8",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lobu-ai_lobu_3634",
+      "submitted_by": "harvester-v1",
+      "symptom": "bug(review): make review fails on macOS because review-cache requires sha256sum",
+      "target": "lobu",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(review): support macOS sha256 hashing. Target files: scripts/lib/__tests__/review-cache.test.sh, scripts/lib/review-cache.sh. Review-cache hashing uses `sha256sum` when available and otherwise `shasum -a 256`. The native shasum test now runs only when that executable is installed. Controlled executable fixtures always check primary-only, fallback-only, and both-backend selection, including primary preference when the fallback directory comes first in PATH. (Ref: https://github.com/lobu-ai/lobu/pull/3675)"
     },
     {
       "applies_to": "vllm",
@@ -38980,6 +40086,20 @@
       "target": "ragflow",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(beartype): remove package-wide import hooks. Target files: deepdoc/__init__.py, pyproject.toml, sdk/python/ragflow_sdk/__init__.py. Removed unnecessary beartype hooks from three package imports. This prevents unwanted import-time instrumentation and dependency coupling. based on #15258 (Ref: https://github.com/infiniflow/ragflow/pull/19531)"
+    },
+    {
+      "applies_to": "oaslananka/kicad-mcp-pro",
+      "created_at": "2026-09-13T12:23:22Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:ef583cf5494c67bd164a9eb38fcaf22390173565da6821b86dcc86b7816a830a",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_oaslananka_kicad-mcp-pro_888",
+      "submitted_by": "harvester-v1",
+      "symptom": "Writer-generated hexadecimal #PWR references are rejected by validation and block schematic writes",
+      "target": "kicad-mcp-pro",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(schematic): generate validator-safe power references. Target files: src/kicad_mcp/schematic/basic_authoring.py, src/kicad_mcp/schematic/connectivity_authoring.py, src/kicad_mcp/schematic/references.py. - Generate KiCad power references with decimal digits instead of raw hexadecimal UUID fragments. - Share one `power_reference_from_uuid()` helper between basic power-symbol authoring and connectivity power-terminal authoring. - Add regressions covering UUID prefixes containing `a-f`, including both writer paths. (Ref: https://github.com/oaslananka/kicad-mcp-pro/pull/890)"
     },
     {
       "applies_to": "vllm",
@@ -39962,6 +41082,20 @@
       "workaround": "Upgrade vllm to patched release >= 0.27.0: pip install --upgrade 'vllm>=0.27.0' (Advisory: PYSEC-2026-4003)"
     },
     {
+      "applies_to": "KochC/opencode-llm-proxy",
+      "created_at": "2026-08-25T07:08:14Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:db914418c657d205c4718dfcc40d9c7cd080deaf86c9efd6e9890526759d46f3",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_KochC_opencode-llm-proxy_86",
+      "submitted_by": "harvester-v1",
+      "symptom": "Spurious 'failed to load plugin' error on opencode 1.18.x (cosmetic \u2014 proxy still works); one-line V1 default export silences it",
+      "target": "opencode-llm-proxy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(plugin): add V1 default export descriptor to stop legacy loader probing every helper. Target files: dist/llm-proxy.js, index.js, index.test.js. Adds a V1 plugin descriptor as the default export of `index.js` (and the rebuilt `dist/llm-proxy.js`): (Ref: https://github.com/KochC/opencode-llm-proxy/pull/89)"
+    },
+    {
       "applies_to": "gitpython",
       "created_at": "2026-08-25T02:16:52.313Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3788\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.59\", \"aliases\": [\"CVE-2026-78678\", \"GHSA-5xxx-qhh7-9287\"]}",
@@ -40030,6 +41164,20 @@
       "target": "llama-index",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(ag-ui): raise ValueError instead of fabricating tool_call_id ([#22103](https://github.com/run-llama/llama_index/pull/22103)). Upstream PR #22103. (Ref: https://github.com/run-llama/llama_index/pull/22103)"
+    },
+    {
+      "applies_to": "gitpython",
+      "created_at": "2026-08-19T14:17:48.603Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-3784\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.1.58\", \"aliases\": [\"CVE-2026-76222\", \"GHSA-hmq2-w58f-27jc\"]}",
+      "fingerprint": "sha256:5d3c8b0fe9ad37c67f774baa4f54cf845bdf2604b6ef934e2258dc94fb75579f",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_3784",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-3784] GitPython before 3.1.58 fails to validate submodule names from .gitmodules files, allowing attackers to create Git repositories at arbitrary filesystem paths... (Affects gitpython < 3.1.58)",
+      "target": "gitpython",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade gitpython to patched release >= 3.1.58: pip install --upgrade 'gitpython>=3.1.58' (Advisory: PYSEC-2026-3784)"
     },
     {
       "applies_to": "sqlparse",
@@ -41136,6 +42284,20 @@
       "target": "lmdeploy",
       "verification_tier": "verified_merged_pr",
       "workaround": "Fix: fix(serve): auto-generate batch completion sessions to avoid id collision (#4773). Target files: lmdeploy/serve/openai/api_server.py. The legacy `/v1/completions` endpoint assigns one session per prompt. When `request.prompt` is a list, `completions_v1` created sessions with hardcoded user ids `1, 2, 3...`: (Ref: https://github.com/InternLM/lmdeploy/pull/4774)"
+    },
+    {
+      "applies_to": "IvanMurzak/Godot-MCP",
+      "created_at": "2026-07-26T00:26:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:31eb2e793636bb651cbb5450bd8b3d17459f86a13366306800fd206a66da0dae",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_IvanMurzak_Godot-MCP_310",
+      "submitted_by": "harvester-v1",
+      "symptom": "`filesystem-reimport` reports success for native `.tscn` scenes despite Godot import errors",
+      "target": "godot-mcp",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(tools): stop reporting success for no-op reimports and Variant/Node reflection calls. Target files: .github/assetlib/edit.hbs, Godot-MCP.Tests/Godot-MCP.Tests.csproj, Godot-MCP.Tests/ReflectionArgumentGuardTests.cs. Two silent-failure bugs (the \"reports success while doing nothing\" class), the node-ordering feature, and a documented deferral. (Ref: https://github.com/IvanMurzak/Godot-MCP/pull/321)"
     },
     {
       "applies_to": "gitpython",
@@ -44848,6 +46010,20 @@
       "workaround": "Upgrade django to patched release >= 1.4.4: pip install --upgrade 'django>=1.4.4' (Advisory: PYSEC-2026-802)"
     },
     {
+      "applies_to": "KochC/opencode-llm-proxy",
+      "created_at": "2026-07-05T11:41:59Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:f98d2af58b4f722d37d15ebf97432365b87ef5cdfe62c9ec4be0f56dd8d207dd",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_KochC_opencode-llm-proxy_55",
+      "submitted_by": "harvester-v1",
+      "symptom": "Tool/function calling (v1.7.0) doesn't trigger against a real OpenCode server \u2014 bridge MCP server never registers",
+      "target": "opencode-llm-proxy",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix: disable stale bridge tool IDs from other pool slots. Target files: index.js, index.test.js. . Fixes a bug where tool/function calling (#52/v1.7.0) can return the *wrong* tool call \u2014 a stale one from a previously-reused bridge pool slot \u2014 instead of the current turn's own tool. (Ref: https://github.com/KochC/opencode-llm-proxy/pull/56)"
+    },
+    {
       "applies_to": "keras",
       "created_at": "2026-07-03T21:31:36Z",
       "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"GHSA-5gwj-m78q-7pq3\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"3.15.0\", \"aliases\": [\"CVE-2026-12481\", \"PYSEC-2026-3631\"]}",
@@ -46456,6 +47632,20 @@
       "target": "tornado",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade tornado to patched release >= 6.5.6: pip install --upgrade 'tornado>=6.5.6' (Advisory: GHSA-cx3h-4qpv-8hc9)"
+    },
+    {
+      "applies_to": "lobu-ai/lobu",
+      "created_at": "2026-06-11T17:06:45Z",
+      "environment_json": "{}",
+      "fingerprint": "sha256:9eebc2ac8199f971cfa083a0dfa0c996d31084511a54905ad896b4b6f06d5f9c",
+      "grievance_type": "ENVIRONMENT_MISMATCH",
+      "harness": "github-merged-pr",
+      "id": "grv_gh_lobu-ai_lobu_1179",
+      "submitted_by": "harvester-v1",
+      "symptom": "AGENTS.md documents a \"rest\" platform that apply rejects (\"Unsupported platform: rest\")",
+      "target": "lobu",
+      "verification_tier": "verified_merged_pr",
+      "workaround": "Fix: fix(server): accept rest as a first-class adapterless platform. Target files: packages/server/src/gateway/connections/chat-instance-manager.ts, packages/server/src/gateway/connections/types.ts, packages/server/src/lobu/__tests__/agent-routes-rest-platform.test.ts. The scaffolded AGENTS.md documents a `rest` platform binding (`{ type: \"rest\", config: {} }` \u2014 \"HTTP API \u2014 always config: {}\") and `lobu validate` accepts it, but apply fails server-side (confirmed e2e on published CLI 11.0.0): (Ref: https://github.com/lobu-ai/lobu/pull/1212)"
     },
     {
       "applies_to": "keras",
@@ -50068,6 +51258,20 @@
       "target": "authlib",
       "verification_tier": "osv_verified",
       "workaround": "Upgrade authlib to patched release >= 1.6.9: pip install --upgrade 'authlib>=1.6.9' (Advisory: PYSEC-2026-2117)"
+    },
+    {
+      "applies_to": "authlib",
+      "created_at": "2026-03-16T18:16:07.557Z",
+      "environment_json": "{\"source\": \"osv_advisory\", \"advisory_id\": \"PYSEC-2026-2116\", \"ecosystem\": \"PyPI\", \"fixed_version\": \"1.6.9\", \"aliases\": [\"CVE-2026-28490\", \"GHSA-7432-952r-cw78\"]}",
+      "fingerprint": "sha256:5b7d80c0806b9513757b9abc7affa542dad16d83f660a07d3526235d971c9e74",
+      "grievance_type": "INFRASTRUCTURE_FRICTION",
+      "harness": "osv-advisory",
+      "id": "grv_osv_PYSEC_2026_2116",
+      "submitted_by": "osv-harvester",
+      "symptom": "[PYSEC-2026-2116] Authlib is a Python library which builds OAuth and OpenID Connect servers. Prior to version 1.6.9, a cryptographic padding oracle vulnerability was identifie... (Affects authlib < 1.6.9)",
+      "target": "authlib",
+      "verification_tier": "osv_verified",
+      "workaround": "Upgrade authlib to patched release >= 1.6.9: pip install --upgrade 'authlib>=1.6.9' (Advisory: PYSEC-2026-2116)"
     },
     {
       "applies_to": "onnx",
