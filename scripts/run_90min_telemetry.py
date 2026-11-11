@@ -77,6 +77,13 @@ def sync_upstream_bot_commits() -> str:
     env = os.environ.copy()
     env["GIT_TERMINAL_PROMPT"] = "0"
     try:
+        branch_proc = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=10, env=env
+        )
+        curr_branch = (branch_proc.stdout or "").strip()
+        if curr_branch != "main":
+            return f"Skipping auto-pull on non-main branch ({curr_branch})." 
         subprocess.run(
             ["git", "fetch", "origin", "main", "--quiet"],
             cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=60, env=env
