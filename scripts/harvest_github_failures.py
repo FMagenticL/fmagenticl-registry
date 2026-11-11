@@ -191,6 +191,21 @@ TARGET_REPOS = [
     "whiteguo233/OpenBiliClaw",
     "superdesigndev/treg",
     "langbot-app/LangBot",
+    # Recon Discovery Cycle 9 Promoted Targets: 8 Verified Agent & MCP Repositories
+    "stickerdaniel/linkedin-mcp-server",
+    "scenario-labs/skills",
+    "cordum-io/cordum",
+    "OthmanAdi/planning-with-files",
+    "ayuayue/PiDeck",
+    "zenstory-ai/video-recap-skills",
+    "e2b-dev/E2B",
+    "EvoScientist/EvoScientist",
+    # Recon Discovery Cycle 10 Promoted Targets: 5 Verified Agent & MCP Repositories
+    "Cognitohazard/ltspice-mcp",
+    "houtini-ai/seo-audit",
+    "omnigent-ai/omnigent",
+    "TracecatHQ/tracecat",
+    "NVIDIA-NeMo/Gym",
 ]
 
 REPO_TARGET_MAP = {
