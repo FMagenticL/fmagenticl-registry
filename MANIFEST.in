@@ -1,2 +1,4 @@
 recursive-include fmagenticl/schema *.json
 recursive-include fmagenticl/data *.json
+
+recursive-include fmagenticl/data *.sig

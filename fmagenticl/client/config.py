@@ -25,7 +25,7 @@ DELTA_CACHE_PATH = os.environ.get(
 # Base64-encoded Ed25519 public key for verifying signed snapshots and deltas.
 FMAGENTICL_PUBLIC_KEY = os.environ.get(
     "FMAGENTICL_PUBLIC_KEY",
-    "guknKNLrBRrjQ83nSrj3V5+fysNYf99X9w7MdOdqB5w=",
+    "M2dabGN0rtRYvldmtfgBiGhpIkyMR72g7DhPuaMZezo=",
 )
 
 # HTTP timeout profile. Total worst-case latency for a single request is

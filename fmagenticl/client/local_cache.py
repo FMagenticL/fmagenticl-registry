@@ -33,6 +33,14 @@ class LocalCache:
         public_key_b64: Optional[str] = None,
     ):
         self.snapshot_path = snapshot_path
+        if (snapshot_path is None or snapshot_path == "snapshot.json") and (self.snapshot_path is None or not os.path.exists(self.snapshot_path)):
+            bundled = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                "data",
+                "snapshot.json",
+            )
+            if os.path.exists(bundled):
+                self.snapshot_path = bundled
         self.delta_path = delta_path or cache_path or os.environ.get(
             "FMAGENTICL_DELTA_CACHE_PATH",
             os.path.join(os.path.expanduser("~"), ".fmagenticl", "delta_cache.json"),
@@ -43,6 +51,10 @@ class LocalCache:
             else False
         )
         self.sig_path = sig_path
+        if not self.sig_path and self.snapshot_path:
+            cand = self.snapshot_path.rsplit(".json", 1)[0] + ".sig" if self.snapshot_path.endswith(".json") else self.snapshot_path + ".sig"
+            if os.path.exists(cand):
+                self.sig_path = cand
         self.public_key_b64 = public_key_b64
         self._lock = threading.Lock()
         self._memory: dict = {}
@@ -52,7 +64,7 @@ class LocalCache:
         self._load_delta()
 
     def _load_snapshot(self) -> None:
-        if not os.path.exists(self.snapshot_path):
+        if not self.snapshot_path or not os.path.exists(self.snapshot_path):
             return
 
         snap_sig_ok = False

@@ -28,7 +28,7 @@ def test_build_distribution_execution():
 
     with open("dist/v1/snapshot.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        assert data["version"] in ("1.3.1", "1.4.0", __version__)
+        assert data["version"] in ("1.3.1", "1.4.0", "1.4.1", __version__)
         assert data["total_patches"] >= 47
         assert len(data["patches"]) >= 47
 

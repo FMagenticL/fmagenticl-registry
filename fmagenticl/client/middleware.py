@@ -133,7 +133,7 @@ class FMagenticLClient:
         timeout: Optional[float] = None,
         model_name: str = "unknown",
         agent_runtime: Optional[str] = None,
-        require_signature: bool = False,
+        require_signature: bool = True,
         **kwargs,
     ):
         if local_cache is not None:
@@ -155,8 +155,10 @@ class FMagenticLClient:
         self.timeout = timeout
         self.model_name = model_name
         self.agent_runtime = agent_runtime
-        self.require_signature = require_signature or (
-            os.environ.get("FMAGENTICL_REQUIRE_SIGNATURE", "").lower() in ("true", "1")
+        self.require_signature = (
+            require_signature
+            if os.environ.get("FMAGENTICL_REQUIRE_SIGNATURE", "1").lower() not in ("false", "0")
+            else False
         )
         self._metrics = {
             "memory_hit": 0,

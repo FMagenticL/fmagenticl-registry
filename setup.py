@@ -9,7 +9,7 @@ if os.path.exists(readme_path):
 
 setup(
     name="fmagenticl",
-    version="1.4.1",
+    version="2.0.0",
     packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=[

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fmagenticl"
-version = "1.4.1"
+version = "2.0.0"
 description = "FMagenticL Self-Healing Registry Daemon, Client, and Remote Streamable MCP"
 readme = "README.md"
 authors = [{ name = "FMagenticL Collective", email = "maintainers@fmagenticl.org" }]
