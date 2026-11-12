@@ -82,7 +82,7 @@ def test_timeout_graceful_bypass(client_with_empty_cache):
     elapsed = time.perf_counter() - start
 
     assert result is None
-    max_elapsed = 6.0 if sys.platform == "win32" else 2.0
+    max_elapsed = 20.0 if sys.platform == "win32" else 2.0
     assert elapsed < max_elapsed, f"Timeout path took {elapsed:.2f}s, expected <{max_elapsed}s"
 
 

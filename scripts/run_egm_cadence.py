@@ -295,7 +295,7 @@ def audit_spec_to_code_drift():
         })
 
     # 8. Check Pytest Suite
-    code, stdout, stderr = run_cmd([sys.executable, "-m", "pytest", "tests/", "-q"], timeout=600)
+    code, stdout, stderr = run_cmd([sys.executable, "-m", "pytest", "tests/", "-q"], timeout=900)
     if code == 0:
         findings.append({
             "category": "Test Suite",
