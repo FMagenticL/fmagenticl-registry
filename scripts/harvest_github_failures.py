@@ -206,6 +206,16 @@ TARGET_REPOS = [
     "omnigent-ai/omnigent",
     "TracecatHQ/tracecat",
     "NVIDIA-NeMo/Gym",
+    # Recon Discovery Cycle 11 & 12 Promoted Targets: 9 Verified Agent & MCP Repositories
+    "dimetron/pi-go",
+    "electricsheephq/lcm-x",
+    "Servosity/msp-skills",
+    "INSANE0777/Awwwards-mcp",
+    "ccch1mneyyy/dsh-TUI",
+    "desplega-ai/agent-swarm",
+    "zhayujie/CowAgent",
+    "converge-ai-labs/agent-foundation",
+    "ThinkFlowLab/agentdescent",
 ]
 
 REPO_TARGET_MAP = {
@@ -314,7 +324,17 @@ REPO_TARGET_MAP = {
     "vivekchand/clawmetry": "clawmetry",
     "oaslananka/kicad-mcp-pro": "kicad-mcp-pro",
     "ai4protein/VenusFactory2": "venusfactory2",
-    "openai/openai-agents-python": "openai-agents-python"
+    "openai/openai-agents-python": "openai-agents-python",
+    # Recon Cycle 11 & 12 Target Slugs
+    "dimetron/pi-go": "pi-go",
+    "electricsheephq/lcm-x": "lcm-x",
+    "Servosity/msp-skills": "msp-skills",
+    "INSANE0777/Awwwards-mcp": "awwwards-mcp",
+    "ccch1mneyyy/dsh-TUI": "dsh-tui",
+    "desplega-ai/agent-swarm": "agent-swarm",
+    "zhayujie/CowAgent": "cowagent",
+    "converge-ai-labs/agent-foundation": "agent-foundation",
+    "ThinkFlowLab/agentdescent": "agentdescent",
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"
