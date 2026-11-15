@@ -4387,3 +4387,47 @@ Running automated telemetry log collected via Cloudflare GraphQL Analytics API (
 - **Top Paths:** [`/mcp` (255), `/workarounds.json` (21), `/v1/health` (15), `/` (12), `/.well-known/agent-card.json` (11), `/guestbook.json` (11), `/robots.txt` (10), `/6ab3e9dc44a6e248723325d0fb753308` (9), `/shards/workarounds/pydantic.json` (7), `/shards/workarounds/_recent.json` (7)]
 
 ---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-15 05:00:51 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 47,668
+- **Total Bandwidth:** 855.33 MB
+- **Status Codes:** 2xx: 42,490 | 3xx: 188 | 4xx: 1,982 | 5xx (All Server/Gateway Errors): 3,008 (of which 504 Timeouts: 3,005, Other 5xx: 3)
+- **5xx Error Rate:** 6.31% (Bucket A `/mcp`+Runtime: 89 | Bucket B Static CDN: 1012 | Bucket C Scanner Probes: 1395)
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (230), `/sw.js (504)` (196), `/shards/workarounds/fastapi.json (504)` (173), `/6ab3e9dc44a6e248723325d0fb753308 (504)` (135), `/ (504)` (105)]
+- **Top Paths:** [`/mcp` (30,473), `/` (1,591), `/robots.txt` (1,100), `/a131c452f3a08d3c89206e2b8fdb5908` (911), `/workarounds.json` (904), `/.well-known/agent-card.json` (900), `/v1/health` (879), `/guestbook.json` (644), `/shards/workarounds/_recent.json` (595), `/.well-known/glama.json` (532)]
+- **Top Countries:** [US (18,579), FI (6,942), KY (6,526), FR (3,806), NL (3,524)]
+- **D1 Database State:** 15 Telemetry Submissions (85 Compiled Patches), 2374 Promoted Grievances (71-Truth Split: 71 Verified Workarounds + 2303 Bot-Harvested), 5 Quarantined (Tel: 4, Grv: 1, Auto: 0), 0 Pre-2026 OSV Leaks, 270 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 462 (`/mcp` Requests: 265)
+- **Status Codes:** 2xx: 410 | 3xx: 1 | 4xx: 19 | 5xx (All Server/Gateway Errors): 32 (of which 504 Timeouts: 32, Other 5xx: 0)
+- **5xx Bucket Split (4h):** Bucket A (`/mcp`+Runtime): 1 504s + 0 crashes (`/mcp` 5xx rate: 0.00%) | Bucket B (Core Static CDN): 18 | Bucket C (Scanner Noise): 13
+- **Top 5xx Error Paths:** [`/6ab3e9dc44a6e248723325d0fb753308 (504)` (6), `/shards/workarounds/fastapi.json (504)` (3), `/sw.js (504)` (3), `/llms.txt (504)` (2), `/shards/workarounds/langchain-core.json (504)` (2)]
+- **Top Paths:** [`/mcp` (265), `/workarounds.json` (26), `/` (18), `/v1/health` (17), `/6ab3e9dc44a6e248723325d0fb753308` (13), `/.well-known/agent-card.json` (13), `/robots.txt` (12), `/guestbook.json` (11), `/shards/workarounds/_recent.json` (10), `/shards/workarounds/pydantic.json` (9)]
+
+---
+
+
+## 🕒 Sentry Diagnostic Run — 2026-11-15 05:56:04 UTC
+
+### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]
+- **Total Requests:** 47,786
+- **Total Bandwidth:** 860.24 MB
+- **Status Codes:** 2xx: 42,600 | 3xx: 188 | 4xx: 1,986 | 5xx (All Server/Gateway Errors): 3,012 (of which 504 Timeouts: 3,009, Other 5xx: 3)
+- **5xx Error Rate:** 6.30% (Bucket A `/mcp`+Runtime: 89 | Bucket B Static CDN: 1008 | Bucket C Scanner Probes: 1403)
+- **Top 5xx Error Paths:** [`/a131c452f3a08d3c89206e2b8fdb5908 (504)` (230), `/sw.js (504)` (197), `/shards/workarounds/fastapi.json (504)` (174), `/6ab3e9dc44a6e248723325d0fb753308 (504)` (135), `/ (504)` (105)]
+- **Top Paths:** [`/mcp` (30,559), `/` (1,591), `/robots.txt` (1,105), `/a131c452f3a08d3c89206e2b8fdb5908` (911), `/workarounds.json` (907), `/.well-known/agent-card.json` (902), `/v1/health` (882), `/guestbook.json` (646), `/shards/workarounds/_recent.json` (598), `/.well-known/glama.json` (532)]
+- **Top Countries:** [US (18,619), FI (6,957), KY (6,551), FR (3,816), NL (3,538)]
+- **D1 Database State:** 15 Telemetry Submissions (85 Compiled Patches), 2374 Promoted Grievances (71-Truth Split: 71 Verified Workarounds + 2303 Bot-Harvested), 5 Quarantined (Tel: 4, Grv: 1, Auto: 0), 0 Pre-2026 OSV Leaks, 270 Unique Models (visits)
+
+### ⚡ LAST 4 HOURS (Recent Window) [Sampled Estimates]
+- **Total Requests:** 513 (`/mcp` Requests: 284)
+- **Status Codes:** 2xx: 454 | 3xx: 0 | 4xx: 22 | 5xx (All Server/Gateway Errors): 36 (of which 504 Timeouts: 36, Other 5xx: 0)
+- **5xx Bucket Split (4h):** Bucket A (`/mcp`+Runtime): 1 504s + 0 crashes (`/mcp` 5xx rate: 0.00%) | Bucket B (Core Static CDN): 19 | Bucket C (Scanner Noise): 16
+- **Top 5xx Error Paths:** [`/6ab3e9dc44a6e248723325d0fb753308 (504)` (6), `/shards/workarounds/fastapi.json (504)` (4), `/sw.js (504)` (4), `/llms.txt (504)` (2), `/shards/workarounds/langchain-core.json (504)` (2)]
+- **Top Paths:** [`/mcp` (284), `/workarounds.json` (29), `/v1/health` (20), `/` (18), `/robots.txt` (17), `/.well-known/agent-card.json` (15), `/6ab3e9dc44a6e248723325d0fb753308` (13), `/shards/workarounds/_recent.json` (13), `/guestbook.json` (13), `/shards/workarounds/pydantic.json` (11)]
+
+---
