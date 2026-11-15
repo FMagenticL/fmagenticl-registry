@@ -230,6 +230,14 @@ TARGET_REPOS = [
     "rocketride-org/rocketride-server",
     "The-PR-Agent/pr-agent",
     "AstrBotDevs/AstrBot",
+    # Recon Discovery Cycle 16 Promoted Targets: 7 Verified Agent & MCP Repositories
+    "Cairn-ink/cairn-memory",
+    "kajisho5/ffmpeg-skill",
+    "shibing624/agentica",
+    "shareAI-lab/learn-claude-code",
+    "OpenHands/software-agent-sdk",
+    "NVIDIA/SkillEvaluator",
+    "amirfish1/claude-command-center",
 ]
 
 REPO_TARGET_MAP = {
@@ -426,6 +434,14 @@ REPO_TARGET_MAP = {
     "rocketride-org/rocketride-server": "rocketride-server",
     "The-PR-Agent/pr-agent": "pr-agent",
     "AstrBotDevs/AstrBot": "astrbot",
+    # Recon Cycle 16 Target Slugs
+    "Cairn-ink/cairn-memory": "cairn-memory",
+    "kajisho5/ffmpeg-skill": "ffmpeg-skill",
+    "shibing624/agentica": "agentica",
+    "shareAI-lab/learn-claude-code": "learn-claude-code",
+    "OpenHands/software-agent-sdk": "software-agent-sdk",
+    "NVIDIA/SkillEvaluator": "skillevaluator",
+    "amirfish1/claude-command-center": "claude-command-center",
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"
