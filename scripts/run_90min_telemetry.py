@@ -21,6 +21,7 @@ Implements:
 import sys
 import os
 import re
+import gzip
 import json
 import time
 import hashlib
@@ -128,17 +129,29 @@ def sync_upstream_bot_commits() -> str:
 def _single_http_probe(url: str, expected: int, timeout: int = 12) -> dict:
     t0 = time.perf_counter()
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "FMagenticL-Sentry/3.1"})
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "FMagenticL-Sentry/3.1",
+                "Accept-Encoding": "gzip",
+            },
+        )
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            body = resp.read() if expected == 200 else b""
-            latency_ms = (time.perf_counter() - t0) * 1000.0
+            ttfb_ms = (time.perf_counter() - t0) * 1000.0
+            raw = resp.read() if expected == 200 else b""
+            download_ms = (time.perf_counter() - t0) * 1000.0
+            if expected == 200 and raw and "gzip" in (resp.headers.get("Content-Encoding") or "").lower():
+                body = gzip.decompress(raw)
+            else:
+                body = raw
             code = resp.getcode()
             ok = (code == expected) and (len(body) > 0 if expected == 200 else True)
             return {
                 "status": code,
                 "expected": expected,
                 "bytes": len(body),
-                "latency_ms": latency_ms,
+                "latency_ms": ttfb_ms,
+                "download_ms": download_ms,
                 "body": body,
                 "ok": ok,
             }

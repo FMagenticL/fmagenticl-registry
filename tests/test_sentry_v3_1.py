@@ -193,3 +193,36 @@ def test_middleware_mcp_oauth_200_and_fast404():
     assert out["mcpStatus"] == 200
     # Only /mcp should invoke context.next() (1 time); oauth-*, server-card, and /mcp/random-scanner-probe NEVER hit context.next()!
     assert out["nextCalled"] == 1
+
+
+def test_single_http_probe_measures_ttfb_and_handles_gzip(monkeypatch):
+    import gzip
+    import time
+
+    payload = b'{"workarounds":[{"id":"1"}]}'
+    gz_payload = gzip.compress(payload)
+
+    class FakeResp:
+        headers = {"Content-Encoding": "gzip"}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def getcode(self):
+            return 200
+
+        def read(self):
+            time.sleep(0.06)
+            return gz_payload
+
+    monkeypatch.setattr(sentry.urllib.request, "urlopen", lambda req, timeout=12: FakeResp())
+    res = sentry._single_http_probe("https://example.test/workarounds.json", expected=200)
+    assert res["ok"] is True
+    assert res["status"] == 200
+    assert res["body"] == payload
+    assert res["bytes"] == len(payload)
+    assert res["latency_ms"] < 50.0
+    assert res["download_ms"] >= 50.0
