@@ -216,6 +216,20 @@ TARGET_REPOS = [
     "zhayujie/CowAgent",
     "converge-ai-labs/agent-foundation",
     "ThinkFlowLab/agentdescent",
+    # Recon Discovery Cycles 12 & 13 Promoted Targets: 13 Verified Agent & MCP Repositories
+    "alookai/alook",
+    "NanmiCoder/cc-haha",
+    "LING71671/open-reverselab",
+    "dimensionalOS/dimos",
+    "headroomlabs-ai/headroom",
+    "slow-stack/mneme",
+    "ChromeDevTools/chrome-devtools-mcp",
+    "abacusai/abacusai-bot",
+    "HKUDS/nanobot",
+    "NJohansen/handle-mcp",
+    "rocketride-org/rocketride-server",
+    "The-PR-Agent/pr-agent",
+    "AstrBotDevs/AstrBot",
 ]
 
 REPO_TARGET_MAP = {
@@ -335,6 +349,20 @@ REPO_TARGET_MAP = {
     "zhayujie/CowAgent": "cowagent",
     "converge-ai-labs/agent-foundation": "agent-foundation",
     "ThinkFlowLab/agentdescent": "agentdescent",
+    # Recon Cycles 12 & 13 Target Slugs
+    "alookai/alook": "alook",
+    "NanmiCoder/cc-haha": "cc-haha",
+    "LING71671/open-reverselab": "open-reverselab",
+    "dimensionalOS/dimos": "dimos",
+    "headroomlabs-ai/headroom": "headroom",
+    "slow-stack/mneme": "mneme",
+    "ChromeDevTools/chrome-devtools-mcp": "chrome-devtools-mcp",
+    "abacusai/abacusai-bot": "abacusai-bot",
+    "HKUDS/nanobot": "nanobot",
+    "NJohansen/handle-mcp": "handle-mcp",
+    "rocketride-org/rocketride-server": "rocketride-server",
+    "The-PR-Agent/pr-agent": "pr-agent",
+    "AstrBotDevs/AstrBot": "astrbot",
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"
