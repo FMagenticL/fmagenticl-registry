@@ -378,7 +378,7 @@ def run_discovery_cycle(cycle_num: int = 1) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="FMagenticL Recon Target Discovery Daemon")
-    parser.add_argument("--loop", type=int, default=0, help="Cadence loop in seconds (e.g. 21600 for 6h). Default 0 (single run).")
+    parser.add_argument("--loop", type=int, default=0, help="Cadence loop in seconds (e.g. 82800 for 23h). Default 0 (single run).")
     args = parser.parse_args()
     
     existing_proposals = list(DIST_PROPOSALS.glob("discovered_targets_*.json"))

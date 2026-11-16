@@ -107,10 +107,10 @@ def test_probation_state_machine_full_lifecycle(tmp_path, monkeypatch):
 
     base_summary = {"hist": {"mcp_504": 5, "bucket_a_5xx_crash": 0}}
 
-    # Step 0: Normal green run -> 5400s
+    # Step 0: Normal green run -> 43200s
     sec, mode, dossier = sentry.evaluate_probation_and_next_schedule([], set(), [], base_summary)
-    assert sec == 5400
-    assert mode == "STANDARD_90M_HIBERNATION"
+    assert sec == 43200
+    assert mode == "STANDARD_12H_HIBERNATION"
     assert dossier is None
 
     # Step 1: Autonomous fix occurs -> enters Stage 1 (180s / T+3m)
@@ -133,10 +133,10 @@ def test_probation_state_machine_full_lifecycle(tmp_path, monkeypatch):
     assert "PROBATION_STAGE_3" in mode
     assert sentry.load_probation_state()["probation_stage"] == 3
 
-    # Step 4: Stage 3 passes -> graduates back to 5400s (Stage 0)
+    # Step 4: Stage 3 passes -> graduates back to 43200s (Stage 0)
     sec, mode, dossier = sentry.evaluate_probation_and_next_schedule([], set(), [], base_summary)
-    assert sec == 5400
-    assert mode == "PROBATION_GRADUATED_STANDARD_90M_HIBERNATION"
+    assert sec == 43200
+    assert mode == "PROBATION_GRADUATED_STANDARD_12H_HIBERNATION"
     assert sentry.load_probation_state()["probation_stage"] == 0
 
 

@@ -143,7 +143,7 @@ def upload_or_update_telemetry() -> dict | None:
         token,
         "daily_telemetry.md",
         content_bytes,
-        "FMagenticL Sentry v3.1 90-Minute Autonomous Diagnostic and Telemetry Logs",
+        "FMagenticL Sentry v3.1 12-Hour Autonomous Diagnostic and Telemetry Logs",
     )
     digest = build_escalations_digest_bytes()
     if digest:

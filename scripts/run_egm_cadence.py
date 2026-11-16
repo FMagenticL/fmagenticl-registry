@@ -453,7 +453,7 @@ def generate_egm_report(findings, remediated, unfixable, tool_discrepancies):
         "---",
         "",
         "## 5. Next EGM Cadence",
-        "- **Cadence**: Every 3 Sentry 90-minute crons (4.5 hours).",
+        "- **Cadence**: Every 3 Sentry 12-hour crons (36 hours).",
         "- **Autonomy Limit**: Remediations strictly constrained to zero-LLM hot path, deterministic code, and mathematical conservation.",
     ])
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-FMagenticL - 90-Minute Standing Diagnostics, Analytics, Adaptive Probation & Escalation Engine (Sentry v3.1)
+FMagenticL - 12-Hour Standing Diagnostics, Analytics, Adaptive Probation & Escalation Engine (Sentry v3.1)
 Implements:
-  0. Sentry Cycle Liveness / Missed-Cycle Detection (gap > 100 min) & Upstream Bot Git Sync
+  0. Sentry Cycle Liveness / Missed-Cycle Detection (gap > 780 min) & Upstream Bot Git Sync
   1. Live HTTP Edge Probing with Two-Strike Warm-Isolate TTFB Verification (/v1/health, /guestbook.json,
      /workarounds.json, /.well-known/agent-card.json, /shards/workarounds/_recent.json,
      /shards/workarounds/pydantic.json) + Fast-404 Edge Shielding (/api/query, /sw.js, /shards/workarounds/fastapi.json)
@@ -14,7 +14,7 @@ Implements:
   5. GitHub Actions CI/CD & Harvester Workflow Health Check (deploy.yml & harvest.yml)
   6. Daily Cloudflare Analytics Archive Verification (data/analytics_archive/)
   7. Cloudflare GraphQL Analytics with Bucket A/B/C Path-Segregated 5xx Split & Dual-Table Airlock Census
-  8. 3-Stage Post-Fix Probationary Cron State Machine (180s -> 720s -> 1800s -> 5400s) + Auto-Rollback +
+  8. 3-Stage Post-Fix Probationary Cron State Machine (180s -> 720s -> 1800s -> 43200s) + Auto-Rollback +
      Tiered Escalation Dossier Generator (Gemini 4 Argon vs. DeepSeek)
 """
 
@@ -544,7 +544,7 @@ def check_liveness_gap() -> tuple[float | None, bool]:
             last_ts = timestamps[-1]
             now = datetime.now(timezone.utc)
             gap_min = (now - last_ts).total_seconds() / 60.0
-            return gap_min, gap_min > 100.0
+            return gap_min, gap_min > 780.0
     except Exception:
         pass
     return None, False
@@ -609,7 +609,7 @@ def evaluate_probation_and_next_schedule(
       Stage 0 (Normal) -> if auto_healed_actions > 0: enter Stage 1 (180s / 3m)
       Stage 1 (T+3m)   -> if green: advance to Stage 2 (720s / 12m, i.e. T+15m)
       Stage 2 (T+15m)  -> if green: advance to Stage 3 (1800s / 30m, i.e. T+45m)
-      Stage 3 (T+45m)  -> if green: graduate to Stage 0 (5400s / 90m)
+      Stage 3 (T+45m)  -> if green: graduate to Stage 0 (43200s / 12h)
       If any stage fails during probation -> trip circuit breaker & escalate!
     """
     state = load_probation_state()
@@ -694,11 +694,11 @@ def evaluate_probation_and_next_schedule(
             save_probation_state(state)
             return 1800, "PROBATION_STAGE_3_HARVESTER_SOAK_VERIFY (T+45m)", None
         else:
-            # Stage 3 passed -> Graduate back to 90m hibernation!
+            # Stage 3 passed -> Graduate back to 12h hibernation!
             state["probation_stage"] = 0
             state["fix_actions"] = []
             save_probation_state(state)
-            return 5400, "PROBATION_GRADUATED_STANDARD_90M_HIBERNATION", None
+            return 43200, "PROBATION_GRADUATED_STANDARD_12H_HIBERNATION", None
 
     # Stage 0 (Normal cycle)
     if degraded_reasons:
@@ -721,7 +721,7 @@ def evaluate_probation_and_next_schedule(
         save_probation_state(state)
         return 180, "PROBATION_STAGE_1_POST_FIX_VERIFY (T+3m)", None
 
-    return 5400, "STANDARD_90M_HIBERNATION", None
+    return 43200, "STANDARD_12H_HIBERNATION", None
 
 
 def main():
@@ -746,7 +746,7 @@ def main():
     if gap_min is not None:
         gap_str = f"Last cycle was {gap_min:.1f} minutes ago."
         if gap_missed:
-            gap_str += " (Note: gap > 100m; cadence resumed)"
+            gap_str += " (Note: gap > 13h; cadence resumed)"
         print(f"[0/8] Sentry Cadence Check: {gap_str}")
 
     sync_msg = sync_upstream_bot_commits()
@@ -1013,7 +1013,7 @@ def main():
             escalation_targets.add("ARGON")
     else:
         cycles_left = 3 - (current_cycle % 3)
-        print(f"  Next EGM audit scheduled in {cycles_left} Sentry cycle(s) ({cycles_left * 90} minutes).")
+        print(f"  Next EGM audit scheduled in {cycles_left} Sentry cycle(s) ({cycles_left * 12} hours).")
 
     try:
         egm_counter_file.write_text(json.dumps(egm_cycle_data, indent=2), encoding="utf-8")
