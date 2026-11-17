@@ -275,6 +275,14 @@ TARGET_REPOS = [
     "Q00/ouroboros",
     "Fzkuji/OpenProgram",
     "blogminhquy/javis-os",
+    # Recon Discovery Cycle 23 Promoted Targets: 7 Verified Agent & MCP Repositories
+    "wenlan-app/wenlan",
+    "amafjarkasi/electron-mcp-server",
+    "andrewbartels1/SolidworksMCP-python",
+    "zb-ss/servonaut",
+    "andrefetch/postal",
+    "makushingu/harness-maxxing",
+    "comet-ml/opik",
 ]
 
 REPO_TARGET_MAP = {
@@ -516,6 +524,14 @@ REPO_TARGET_MAP = {
     "Q00/ouroboros": "ouroboros",
     "Fzkuji/OpenProgram": "openprogram",
     "blogminhquy/javis-os": "javis-os",
+    # Recon Discovery Cycle 23 Slugs
+    "wenlan-app/wenlan": "wenlan",
+    "amafjarkasi/electron-mcp-server": "electron-mcp-server",
+    "andrewbartels1/SolidworksMCP-python": "solidworksmcp-python",
+    "zb-ss/servonaut": "servonaut",
+    "andrefetch/postal": "postal",
+    "makushingu/harness-maxxing": "harness-maxxing",
+    "comet-ml/opik": "opik",
 }
 
 FRESHNESS_CUTOFF = "2026-04-01"
