@@ -26,11 +26,24 @@ def test_build_distribution_execution():
         assert "/mcp" in routes_data.get("include", [])
         assert "/v1/health" in routes_data.get("exclude", [])
 
+    from fmagenticl.client.verify import verify_patch_envelope
+
     with open("dist/v1/snapshot.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        assert data["version"] in ("1.3.1", "1.4.0", "1.4.1", __version__)
+        assert data["version"] == __version__
         assert data["total_patches"] >= 47
         assert len(data["patches"]) >= 47
+        assert isinstance(data.get("aliases"), dict) and len(data["aliases"]) >= 40
+        for fp_hex, patch_obj in data["patches"].items():
+            assert verify_patch_envelope(patch_obj, expected_fingerprint=fp_hex, enforce_expiry=True)
+
+    with open("dist/v1/health", "r", encoding="utf-8") as f:
+        health = json.load(f)
+        assert health["protocol_version"] == __version__
+        assert health["compiled_patches"] == 85
+        assert health["executable_patches"] == 54
+        assert health["advisory_patches"] == 31
+        assert health["executable_patches"] + health["advisory_patches"] == health["compiled_patches"]
 
     with open("dist/registry.json", "r", encoding="utf-8") as f:
         reg = json.load(f)

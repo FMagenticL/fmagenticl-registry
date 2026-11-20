@@ -490,7 +490,7 @@ def test_edge_handlers_in_memory_d1():
 
 
 
-      function makeEnv() {{
+      function makeEnv(rateLimitCount = 0) {{
 
         const calls = [];
 
@@ -510,7 +510,17 @@ def test_edge_handlers_in_memory_d1():
 
                     async run() {{ calls.push({{ sql, args }}); return {{ success: true }}; }},
 
-                    async first() {{ return null; }},
+                    async first() {{
+
+                      if (/FROM rate_limits/i.test(sql) && rateLimitCount > 0) {{
+
+                        return {{ count: rateLimitCount }};
+
+                      }}
+
+                      return null;
+
+                    }},
 
                     async all() {{ return {{ results: [] }}; }}
 
@@ -742,19 +752,67 @@ def test_edge_handlers_in_memory_d1():
 
 
 
+      const bySql = (env, re) => env.calls.find(c => re.test(c.sql));
+
+      // 7-9. Over-limit checks (>= 20 daily submissions) return 429 / RATE_LIMITED without DB writes
+      const env7 = makeEnv(20);
+      const res7 = await routeMod.onRequest({{
+        request: new Request('https://fmagenticl-registry.pages.dev/v1/telemetry', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json', 'cf-connecting-ip': '203.0.113.7' }},
+          body: JSON.stringify({{ fingerprint: 'sha256:' + '4'.repeat(64), patch_type: 'cli-override', submitted_by: 'rl-tester' }})
+        }}),
+        env: env7
+      }});
+
+      const env8 = makeEnv(20);
+      const res8 = await workerMod.default.fetch(
+        new Request('https://fmagenticl-registry.pages.dev/v1/grievance', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json', 'cf-connecting-ip': '203.0.113.8' }},
+          body: JSON.stringify({{ grievance_type: 'AGENT_FRICTION', target: 'pydantic', symptom: 'ZoneInfo error', workaround: 'Upgrade to pydantic >= 2.11' }})
+        }}),
+        env8
+      );
+
+      const env9 = makeEnv(20);
+      const res9 = await mcpMod.onRequestPost({{
+        request: new Request('https://fmagenticl-registry.pages.dev/mcp', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json', 'cf-connecting-ip': '203.0.113.9' }},
+          body: JSON.stringify({{
+            jsonrpc: '2.0',
+            id: 9,
+            method: 'tools/call',
+            params: {{
+              name: 'fmagenticl_submit_grievance',
+              arguments: {{ grievance_type: 'AGENT_FRICTION', target: 'langchain', symptom: 'ImportError', workaround: 'Use langchain-community instead', applies_to: 'both' }}
+            }}
+          }})
+        }}),
+        env: env9
+      }});
+      const rpc9 = await res9.json();
+
       process.stdout.write(JSON.stringify({{
 
-        r1: {{ status: res1.status, args: env1.calls[0].args }},
+        r1: {{ status: res1.status, args: bySql(env1, /INSERT\\s+(?:OR\\s+REPLACE\\s+)?INTO\\s+telemetry/i)?.args || [], rl: Boolean(bySql(env1, /INSERT INTO rate_limits/i)) }},
 
-        r2: {{ status: res2.status, args: env2.calls[0].args }},
+        r2: {{ status: res2.status, args: bySql(env2, /INSERT INTO grievances/i)?.args || [], rl: Boolean(bySql(env2, /INSERT INTO rate_limits/i)) }},
 
-        r3: {{ status: res3.status, args: env3.calls[0].args }},
+        r3: {{ status: res3.status, args: bySql(env3, /INSERT\\s+(?:OR\\s+REPLACE\\s+)?INTO\\s+telemetry/i)?.args || [], rl: Boolean(bySql(env3, /INSERT INTO rate_limits/i)) }},
 
-        r4: {{ status: res4.status, rpc: JSON.parse(rpc4.result.content[0].text), args: env4.calls[0].args }},
+        r4: {{ status: res4.status, rpc: JSON.parse(rpc4.result.content[0].text), args: bySql(env4, /INSERT\\s+(?:OR\\s+REPLACE\\s+)?INTO\\s+telemetry/i)?.args || [], rl: Boolean(bySql(env4, /INSERT INTO rate_limits/i)) }},
 
-        r5: {{ status: res5.status, args: env5.calls[0].args }},
+        r5: {{ status: res5.status, args: bySql(env5, /INSERT INTO grievances/i)?.args || [], rl: Boolean(bySql(env5, /INSERT INTO rate_limits/i)) }},
 
-        r6: {{ status: res6.status, rpc: JSON.parse(rpc6.result.content[0].text), args: env6.calls[0].args }}
+        r6: {{ status: res6.status, rpc: JSON.parse(rpc6.result.content[0].text), args: bySql(env6, /INSERT INTO grievances/i)?.args || [], rl: Boolean(bySql(env6, /INSERT INTO rate_limits/i)) }},
+
+        r7: {{ status: res7.status, inserts: env7.calls.filter(c => /INSERT\\s+(?:OR\\s+REPLACE\\s+)?INTO\\s+telemetry/i.test(c.sql)).length }},
+
+        r8: {{ status: res8.status, inserts: env8.calls.filter(c => /INSERT INTO grievances/i.test(c.sql)).length }},
+
+        r9: {{ status: res9.status, rpc: JSON.parse(rpc9.result.content[0].text), inserts: env9.calls.filter(c => /INSERT INTO grievances/i.test(c.sql)).length }}
 
       }}));
 
@@ -777,6 +835,7 @@ def test_edge_handlers_in_memory_d1():
     # /v1/telemetry (Pages): args = [id, fp, patch_type, submitted_by, verification_tier, env, payload, now, queue_status]
 
     assert data["r1"]["status"] == 202
+    assert data["r1"]["rl"] is True
 
     assert data["r1"]["args"][3] == "openai-gpt-4o"
 
@@ -789,6 +848,7 @@ def test_edge_handlers_in_memory_d1():
     # /v1/grievance (Pages): args = [id, type, target, harness, fp, symptom, workaround, env, submitted_by, tier, applies_to, now, queue_status]
 
     assert data["r2"]["status"] == 202
+    assert data["r2"]["rl"] is True
 
     assert data["r2"]["args"][8] == "anthropic-claude"
 
@@ -801,6 +861,7 @@ def test_edge_handlers_in_memory_d1():
     # /v1/telemetry (Worker): args = [id, fp, patch_type, submitted_by, verification_tier, env, payload, now, queue_status]
 
     assert data["r3"]["status"] == 202
+    assert data["r3"]["rl"] is True
 
     assert data["r3"]["args"][3] == "google-gemini"
 
@@ -813,6 +874,7 @@ def test_edge_handlers_in_memory_d1():
     # /mcp fmagenticl_report_telemetry: args = [id, fp, patch_type, submitted_by, verification_tier, env, payload, now, queue_status]
 
     assert data["r4"]["status"] == 200
+    assert data["r4"]["rl"] is True
 
     assert data["r4"]["rpc"]["status"] == "RECEIVED"
 
@@ -829,6 +891,7 @@ def test_edge_handlers_in_memory_d1():
     # /v1/grievance (Worker): args = [id, type, target, harness, fp, symptom, workaround, env, submitted_by, tier, applies_to, now, queue_status]
 
     assert data["r5"]["status"] == 202
+    assert data["r5"]["rl"] is True
 
     assert len(data["r5"]["args"]) == 13
 
@@ -853,6 +916,7 @@ def test_edge_handlers_in_memory_d1():
     # /mcp fmagenticl_submit_grievance: args = [id, type, target, harness, fp, symptom, workaround, env, submitted_by, tier, applies_to, now, queue_status]
 
     assert data["r6"]["status"] == 200
+    assert data["r6"]["rl"] is True
 
     assert data["r6"]["rpc"]["status"] == "RECEIVED"
 
@@ -877,6 +941,11 @@ def test_edge_handlers_in_memory_d1():
     assert data["r6"]["args"][10] == "both"
 
     assert data["r6"]["args"][12] == "DEAD_LETTER_QUARANTINE"
+
+    # Over-limit probes (count >= 20)
+    assert data["r7"]["status"] == 429 and data["r7"]["inserts"] == 0
+    assert data["r8"]["status"] == 429 and data["r8"]["inserts"] == 0
+    assert data["r9"]["status"] == 200 and data["r9"]["rpc"]["status"] == "RATE_LIMITED" and data["r9"]["inserts"] == 0
 
 
 
@@ -1111,111 +1180,57 @@ def test_static_json_dual_key_parity():
 
 
 def test_advertised_surface_served_surface():
-
-    """Rule P5: Every package advertised in tools/list must return count > 0.
-
-    Empty targets (e.g. openai, anthropic, httpx, instructor, playwright) must never be advertised.
-
+    """Rule P5: Every package in SUPPORTED_TARGETS must return count > 0.
+    Empty targets must never be advertised.
     """
-
     mcp_js_path = REPO_ROOT / "functions" / "mcp.js"
-
-    mcp_content = mcp_js_path.read_text(encoding="utf-8")
-
     wrk_path = REPO_ROOT / "dist" / "workarounds.json"
-
-
-
-    # Extract advertised targets
-
-    matches = re.findall(r"Top supported targets:\s*([^\.]+)\.", mcp_content)
-
-    assert len(matches) >= 2, "Failed to find advertised targets in tools/list descriptions"
-
-    targets_resolve = [t.strip() for t in matches[0].split(",")]
-
-    targets_workarounds = [t.strip() for t in matches[1].split(",")]
-
-    assert targets_resolve == targets_workarounds, "Advertised targets in resolve and get_workarounds must match"
-
-
-
-    # Rule P5: Prohibit advertising empty targets
 
     wrk_data_check = json.loads(wrk_path.read_text(encoding="utf-8")) if wrk_path.exists() else {}
     present_targets = {item.get("target", "").lower() for item in wrk_data_check.get("workarounds", [])}
     forbidden_empty = {"openai", "httpx", "instructor", "playwright"} - present_targets
 
-    for t in targets_resolve:
-
-        assert t not in forbidden_empty, f"Target '{t}' has 0 entries and must not be advertised"
-
-
-
-    # Exercise getUnifiedWorkarounds in Node.js ESM to verify each advertised target returns count > 0
-
     mcp_uri = mcp_js_path.as_uri()
-
     wrk_file_str = str(wrk_path).replace("\\", "/")
 
     test_node_script = f"""
-
       import fs from 'node:fs';
-
       const mcpMod = await import({json.dumps(mcp_uri)});
-
       const wrkRaw = fs.readFileSync({json.dumps(wrk_file_str)}, 'utf-8');
-
       const env = {{
-
         ASSETS: {{
-
           async fetch(req) {{
-
             const url = typeof req === 'string' ? req : (req?.url || '');
             if (url.includes('/shards/')) {{
               return new Response(JSON.stringify({{ error: 'not found' }}), {{ status: 404, headers: {{ 'Content-Type': 'application/json' }} }});
             }}
             return new Response(wrkRaw, {{ status: 200, headers: {{ 'Content-Type': 'application/json' }} }});
-
           }}
-
         }}
-
       }};
-
-      const targets = {json.dumps(targets_resolve)};
-
+      const targets = Array.from(mcpMod.SUPPORTED_TARGETS || []);
       const results = {{}};
-
       for (const t of targets) {{
-
         const items = await mcpMod.getUnifiedWorkarounds(env, 'https://fmagenticl-registry.pages.dev', t);
-
         results[t] = items.length;
-
       }}
-
-      process.stdout.write(JSON.stringify(results));
-
+      process.stdout.write(JSON.stringify({{ targets, results }}));
     """
 
     res = subprocess.run(
-
         [NODE, "--input-type=module", "-e", test_node_script],
-
         capture_output=True, text=True, encoding="utf-8", cwd=str(REPO_ROOT), timeout=180,
-
     )
-
     assert res.returncode == 0, f"Node script failed: {res.stderr}"
+    payload = json.loads(res.stdout)
+    targets = payload["targets"]
+    results = payload["results"]
 
-    results = json.loads(res.stdout)
-
-
+    assert len(targets) >= 15
+    for t in targets:
+        assert t not in forbidden_empty, f"Target '{t}' has 0 entries and must not be advertised"
 
     for target, count in results.items():
-
         assert count > 0, f"Advertised target '{target}' returned count 0 from getUnifiedWorkarounds"
 
 

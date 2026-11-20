@@ -33,6 +33,9 @@ PatchType = Literal[
     'file-op',
     'retry-strategy',
     'mcp-substitution',
+    'workaround_advisory',
+    'dependency_pin',
+    'code_diff',
     'AST_DELETE_KEY',
     'CLI_OVERRIDE',
     'MCP_SUBSTITUTION',
@@ -52,6 +55,10 @@ class ResolutionPatch(BaseModel):
     strategy: Optional[str] = Field(None, max_length=256, description="Retry strategy or backoff mode (Track 2: retry-strategy).")
     mcp_uri: Optional[str] = Field(None, max_length=512, description="MCP server URI to mount (Track 2: mcp-substitution).")
     config_patch: Optional[Dict[str, Any]] = Field(None, description="Peripheral config dictionary (Track 2: mcp-substitution).")
+    workaround: Optional[str] = Field(None, max_length=4096, description="Advisory workaround explanation (workaround_advisory).")
+    reference_url: Optional[str] = Field(None, max_length=512, description="Upstream issue or merged PR reference URL.")
+    package_spec: Optional[str] = Field(None, max_length=256, description="Package version constraint (dependency_pin).")
+    diff: Optional[str] = Field(None, max_length=16384, description="Unified diff payload (code_diff).")
     
     # Backward compatibility fields
     action: Optional[str] = None
@@ -92,7 +99,8 @@ GrievanceType = Literal[
     'PATCH_DISPUTE',
     'ENVIRONMENT_MISMATCH',
     'PROTOCOL_FRICTION',
-    'HUMAN_OPERATOR_FRICTION'
+    'HUMAN_OPERATOR_FRICTION',
+    'AGENT_FRICTION'
 ]
 
 class GrievanceSubmission(BaseModel):
@@ -150,6 +158,10 @@ class ResolveResponse(BaseModel):
     strategy: Optional[str] = None
     mcp_uri: Optional[str] = None
     config_patch: Optional[Dict[str, Any]] = None
+    workaround: Optional[str] = None
+    reference_url: Optional[str] = None
+    package_spec: Optional[str] = None
+    diff: Optional[str] = None
     
     # Legacy compatibility fields
     action: Optional[str] = None

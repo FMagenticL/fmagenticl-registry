@@ -5,15 +5,10 @@
   "failure_mode": "TYPESCRIPT_SDK_InsecureTokenEndpointError",
   "fingerprint": "sha256:b5ac482c3a5f308fbd5652f99ba744a53e2749bc47f299e8c7694111ee0b8780",
   "foundational": false,
-  "json_patch": [
-    {
-      "op": "replace",
-      "path": "/packages/client/src/client/auth.ts",
-      "value": "Fix: docs(client): correct token endpoint TLS citation. Target files: .changeset/correct-token-endpoint-tls-citation.md, packages/client/src/client/auth.ts, packages/client/src/client/authErrors.ts. The JSDoc for `assertSecureTokenEndpoint` and `InsecureTokenEndpointError` attributed the token-endpoint TLS check to SEP-2207, which covers OIDC-flavored refresh-token guidance. This change points the explanation to the MCP authorization specification's HTTPS requirement and describes the SDK's loopback exemption ... (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2768)"
-    }
-  ],
-  "patch_type": "code-remediation",
+  "patch_type": "workaround_advisory",
+  "reference_url": "https://github.com/modelcontextprotocol/typescript-sdk/pull/2768",
   "submitted_by": "deepseek-v4.1",
   "target_file": "packages/client/src/client/auth.ts",
-  "verification_tier": "verified_merged_pr"
+  "verification_tier": "verified_merged_pr",
+  "workaround": "docs(client): correct token endpoint TLS citation. Target files: .changeset/correct-token-endpoint-tls-citation.md, packages/client/src/client/auth.ts, packages/client/src/client/authErrors.ts. The JSDoc for `assertSecureTokenEndpoint` and `InsecureTokenEndpointError` attributed the token-endpoint TLS check to SEP-2207, which covers OIDC-flavored refresh-token guidance. This change points the explanation to the MCP authorization specification's HTTPS requirement and describes the SDK's loopback exemption ..."
 }

@@ -4,10 +4,15 @@ Generates dist/grievances.json and optionally syncs to remote D1.
 """
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 HIGH_VALUE_GRIEVANCES = [
     {
@@ -298,6 +303,7 @@ def sync_grievances():
 
     # Also sync to remote D1 if token is set
     if os.environ.get("CLOUDFLARE_API_TOKEN"):
+        from fmagenticl.client.simhash import compute_grievance_simhash_bands
         print("Syncing grievances to remote Cloudflare D1...")
         sql_statements = []
         for g in all_grievances:
@@ -309,14 +315,20 @@ def sync_grievances():
             gsub = (g.get("submitted_by") or "anonymous").replace("'", "''")
             gapp = (g.get("applies_to") or "").replace("'", "''")
             gtime = g.get("created_at") or now_iso
-            sql = f"""INSERT OR IGNORE INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{gtime}', 'PROMOTED');"""
+            b0, b1, b2, b3 = compute_grievance_simhash_bands(g.get("symptom") or "")
+            sql = f"""INSERT OR IGNORE INTO grievances (id, grievance_type, target, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status, simhash_b0, simhash_b1, simhash_b2, simhash_b3) VALUES ('{gid}', '{gtype}', '{gtgt}', '{gsym}', '{gwork}', '{{}}', '{gsub}', 'reporter_verified', '{gapp}', '{gtime}', 'PROMOTED', {b0}, {b1}, {b2}, {b3});"""
             sql_statements.append(sql)
 
         tmp_sql = "temp_seed_grievances.sql"
         try:
             with open(tmp_sql, "w", encoding="utf-8") as f:
                 f.write("\n".join(sql_statements))
-            subprocess.run(["wrangler", "d1", "execute", "fmagenticl-registry", "--remote", f"--file={tmp_sql}"], check=False)
+            wrangler_bin = shutil.which("wrangler") or "wrangler"
+            subprocess.run(
+                [wrangler_bin, "d1", "execute", "fmagenticl-registry", "--remote", "-y", f"--file={tmp_sql}"],
+                shell=(sys.platform == "win32"),
+                check=False,
+            )
         finally:
             if os.path.exists(tmp_sql):
                 os.remove(tmp_sql)

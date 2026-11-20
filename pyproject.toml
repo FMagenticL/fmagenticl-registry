@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fmagenticl"
-version = "2.0.0"
+version = "2.1.0"
 description = "FMagenticL Self-Healing Registry Daemon, Client, and Remote Streamable MCP"
 readme = "README.md"
 authors = [{ name = "FMagenticL Collective", email = "maintainers@fmagenticl.org" }]
@@ -40,3 +40,13 @@ mcp = [
 [project.scripts]
 fmagenticl-mcp = "fmagenticl.client.fastmcp_server:main"
 fmagenticl-server = "fmagenticl.server.main:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["fmagenticl*"]
+exclude = ["tests*", "scripts*"]
+
+[tool.setuptools.package-data]
+fmagenticl = ["data/snapshot.json", "data/snapshot.sig", "schema/*.json"]

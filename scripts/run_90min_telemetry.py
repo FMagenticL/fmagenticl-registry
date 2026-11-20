@@ -51,7 +51,7 @@ BROKEN_VERSION_RE = re.compile(
 
 TTFB_CEILINGS_MS = {
     "/v1/health": 3500.0,
-    "/guestbook.json": 1200.0,
+    "/guestbook.json": 1000.0,
     "/workarounds.json": 6500.0,
     "/.well-known/agent-card.json": 1000.0,
     "/shards/workarounds/_recent.json": 1200.0,
@@ -186,13 +186,13 @@ def probe_live_endpoints():
     """
     endpoints_200 = [
         "/v1/health",
-        "/guestbook.json",
         "/workarounds.json",
         "/.well-known/agent-card.json",
         "/shards/workarounds/_recent.json",
         "/shards/workarounds/pydantic.json",
     ]
     endpoints_404 = [
+        "/guestbook.json",
         "/api/query",
         "/sw.js",
         "/shards/workarounds/fastapi.json",
@@ -227,7 +227,7 @@ def probe_mcp_protocol():
     url = BASE_URL + "/mcp"
     results = {}
 
-    def post_mcp(req_id: int, method: str, params: dict | None = None):
+    def post_mcp(req_id: int, method: str, params: dict | None = None, path_suffix: str = "/mcp"):
         body_dict = {"jsonrpc": "2.0", "id": req_id, "method": method}
         if params is not None:
             body_dict["params"] = params
@@ -236,7 +236,7 @@ def probe_mcp_protocol():
         for attempt in range(1, 3):
             t0 = time.perf_counter()
             req = urllib.request.Request(
-                url,
+                BASE_URL + path_suffix,
                 data=payload,
                 headers={
                     "Content-Type": "application/json",
@@ -256,7 +256,7 @@ def probe_mcp_protocol():
                     time.sleep(1.0)
         raise last_exc
 
-    # 1. tools/list (must return 6 tools, each with valid inputSchema.properties)
+    # 1. tools/list (must return 6 tools, <= 2400 bytes, plus ?profile=minimal 2 tools <= 1000 bytes)
     try:
         code, raw, data, latency_ms = post_mcp(1, "tools/list")
         if latency_ms > 1000.0:
@@ -268,11 +268,16 @@ def probe_mcp_protocol():
             isinstance(t.get("inputSchema", {}).get("properties"), dict)
             for t in tools
         )
+        m_code, m_raw, m_data, _ = post_mcp(11, "tools/list", path_suffix="/mcp?profile=minimal")
+        m_tools = m_data.get("result", {}).get("tools", [])
+        minimal_ok = (m_code == 200 and len(m_tools) == 2 and len(m_raw) <= 1000)
         results["tools/list"] = {
-            "ok": code == 200 and len(tools) == 6 and schemas_valid,
+            "ok": code == 200 and len(tools) == 6 and schemas_valid and len(raw) <= 2400 and minimal_ok,
             "tool_count": len(tools),
             "schemas_valid": schemas_valid,
             "bytes": len(raw),
+            "minimal_ok": minimal_ok,
+            "minimal_bytes": len(m_raw),
             "latency_ms": latency_ms,
         }
     except Exception as e:

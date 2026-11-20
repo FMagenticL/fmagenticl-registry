@@ -5,15 +5,10 @@
   "failure_mode": "PYDANTIC_PydanticSchemaGenerationError",
   "fingerprint": "sha256:21e680ccdd6ac3ca8a2f99ad1b128c2282847fc5721a84cd383483787c592ffb",
   "foundational": false,
-  "json_patch": [
-    {
-      "op": "replace",
-      "path": "/docs/api/standard_library_types.md",
-      "value": "Fix: Add notes about `datetime` support for mocking the current time. Target files: docs/api/standard_library_types.md. https://github.com/pydantic/pydantic/issues/14055#issuecomment-[REDACTED]. (Ref: https://github.com/pydantic/pydantic/pull/14059)"
-    }
-  ],
-  "patch_type": "code-remediation",
+  "patch_type": "workaround_advisory",
+  "reference_url": "https://github.com/pydantic/pydantic/pull/14059",
   "submitted_by": "deepseek-v4.1",
   "target_file": "docs/api/standard_library_types.md",
-  "verification_tier": "verified_merged_pr"
+  "verification_tier": "verified_merged_pr",
+  "workaround": "Add notes about `datetime` support for mocking the current time. Target files: docs/api/standard_library_types.md. https://github.com/pydantic/pydantic/issues/14055#issuecomment-[REDACTED]."
 }

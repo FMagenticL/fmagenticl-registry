@@ -1,4 +1,3 @@
 recursive-include fmagenticl/schema *.json
-recursive-include fmagenticl/data *.json
-
-recursive-include fmagenticl/data *.sig
+include fmagenticl/data/snapshot.json
+include fmagenticl/data/snapshot.sig

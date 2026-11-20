@@ -72,9 +72,17 @@ PROMOTABLE_TIERS = {
     "cryptographic_proof",
     "internal_forensic_verified",
 }
-JSON_PATCH_TYPES = {"application/json-patch+json", "json-patch", "code-remediation", "version-upgrade"}
-NON_JSON_PATCH_TYPES = {"cli-override", "file-op", "mcp-substitution"}
+JSON_PATCH_TYPES = {"application/json-patch+json", "json-patch"}
+NON_JSON_PATCH_TYPES = {
+    "cli-override",
+    "file-op",
+    "mcp-substitution",
+    "workaround_advisory",
+    "dependency_pin",
+    "code_diff",
+}
 RFC6902_OPS = {"add", "remove", "replace", "move", "copy", "test"}
+_NON_JSON_OP_PATH_RE = re.compile(r"^/.*\.(?:py|ts|tsx|js|jsx|rs|go|sh|md)$", re.IGNORECASE)
 ATTRIBUTION_KEYS = ("submitted_by", "attribution")
 _URL_PAREN_SPAM = re.compile(r'\s*\([^)]*https?://[^)]*(?:\)|$)', re.IGNORECASE)
 
@@ -149,20 +157,31 @@ def scan_for_secrets(payload_obj: Any) -> Tuple[bool, str]:
     return False, ""
 
 
-def check_patch_structure(patch_type: Optional[str], json_patch: Any, fallback_cli: Optional[str]) -> Tuple[bool, str]:
-    """Phase 10.2 structural guard: patch_type must agree with json_patch / fallback_cli."""
+def check_patch_structure(
+    patch_type: Optional[str],
+    json_patch: Any,
+    fallback_cli: Optional[str],
+    target_file: Optional[str] = None,
+    workaround: Optional[str] = None,
+) -> Tuple[bool, str]:
+    """Phase 10.2 / v2.1.0 structural guard: patch_type must agree with json_patch / target_file / workaround."""
     jp = json_patch or []
     if patch_type in NON_JSON_PATCH_TYPES:
         if jp:
             return False, f"Structural violation: patch_type '{patch_type}' must not carry json_patch"
         if patch_type == "cli-override" and not fallback_cli:
             return False, "Structural violation: cli-override requires fallback_cli"
+        if patch_type == "workaround_advisory" and workaround is not None and not str(workaround).strip():
+            return False, "Structural violation: workaround_advisory requires non-empty workaround"
         return True, ""
     if patch_type in JSON_PATCH_TYPES:
+        if target_file is not None and str(target_file).strip() and not str(target_file).strip().lower().endswith(".json"):
+            return False, f"Structural violation: patch_type '{patch_type}' cannot target non-JSON file '{target_file}'"
         if not isinstance(jp, list) or not jp:
             return False, f"Structural violation: patch_type '{patch_type}' requires a non-empty json_patch list"
         for op in jp:
             path = op.get("path") if isinstance(op, dict) else None
+            val = op.get("value") if isinstance(op, dict) else None
             if (
                 not isinstance(op, dict)
                 or op.get("op") not in RFC6902_OPS
@@ -170,6 +189,20 @@ def check_patch_structure(patch_type: Optional[str], json_patch: Any, fallback_c
                 or (path != "" and not path.startswith("/"))
             ):
                 return False, "Structural violation: invalid RFC 6902 operation in json_patch"
+            if (
+                _NON_JSON_OP_PATH_RE.match(path)
+                or path in ("/remediation", "/advisory", "/workaround")
+                or (
+                    path.lower().endswith(".json")
+                    and isinstance(val, str)
+                    and (val.startswith("Fix:") or "(Ref: http" in val or "slack.com/" in val or len(val) > 200)
+                )
+                or (
+                    isinstance(val, str)
+                    and (val.startswith("Fix:") or "(Ref: http" in val or "slack.com/" in val or len(val) > 200)
+                )
+            ):
+                return False, f"Structural violation: pseudo-JSON prose or source-file path '{path}' prohibited in json_patch"
         return True, ""
     return False, f"Structural violation: unknown patch_type '{patch_type}'"
 
@@ -290,12 +323,21 @@ def process_candidates(
             cand.get("patch_type") or payload_data.get("patch_type") or resolution.get("patch_type")
             or "application/json-patch+json"
         )
+        target_file_val = cand.get("target_file") or payload_data.get("target_file") or resolution.get("target_file", "")
+        workaround_val = cand.get("workaround") or payload_data.get("workaround") or resolution.get("workaround")
+        reference_url_val = cand.get("reference_url") or payload_data.get("reference_url") or resolution.get("reference_url")
         fallback_cli_val = cand.get("fallback_cli") or payload_data.get("fallback_cli") or resolution.get("fallback_cli")
         json_patch_val = cand.get("json_patch") or payload_data.get("json_patch") or resolution.get("json_patch") or []
         tier_val = cand.get("verification_tier") or payload_data.get("verification_tier") or "claimed"
 
         # Structural gate
-        ok_struct, struct_reason = check_patch_structure(patch_type_val, json_patch_val, fallback_cli_val)
+        ok_struct, struct_reason = check_patch_structure(
+            patch_type_val,
+            json_patch_val,
+            fallback_cli_val,
+            target_file=target_file_val,
+            workaround=workaround_val,
+        )
         if not ok_struct:
             report["patches_rejected"].append({
                 "id": cand_id, "fingerprint": raw_fp, "reason": struct_reason
@@ -321,12 +363,16 @@ def process_candidates(
             "foundational": False,
             "patch_type": patch_type_val,
             "submitted_by": attr,
-            "target_file": cand.get("target_file") or payload_data.get("target_file") or resolution.get("target_file", ""),
+            "target_file": target_file_val,
             "verification_tier": tier_val,
         }
         if fallback_cli_val:
             patch_obj["fallback_cli"] = fallback_cli_val
-        if json_patch_val or not fallback_cli_val:
+        if workaround_val:
+            patch_obj["workaround"] = workaround_val
+        if reference_url_val:
+            patch_obj["reference_url"] = reference_url_val
+        if json_patch_val:
             patch_obj["json_patch"] = json_patch_val
 
         report["patches_approved"].append({"id": cand_id, "fingerprint": fp_clean, "patch": patch_obj})
@@ -365,12 +411,6 @@ def process_candidates(
         if report["patches_approved"] and is_real_repo:
             from scripts.build_distribution import build
             build()
-            if is_real_repo:
-                try:
-                    from scripts.build_guestbook import main as build_guestbook_main
-                    build_guestbook_main()
-                except Exception:
-                    pass
 
         if report["grievances_approved"]:
             grv_file = repo_root / "dist" / "grievances.json"
@@ -403,11 +443,6 @@ def process_candidates(
                 serialized = json.dumps(out_grv, indent=2, sort_keys=True)
                 grv_file.write_text(serialized, encoding="utf-8")
                 wrk_file.write_text(serialized, encoding="utf-8")
-            try:
-                from scripts.build_guestbook import main as build_guestbook_main
-                build_guestbook_main()
-            except Exception:
-                pass
 
         # Sync approved telemetry/grievances and terminal telemetry statuses to remote D1
         # (Skipped under pytest for fast, deterministic unit tests)
@@ -439,7 +474,8 @@ def process_candidates(
                 safe_id = str(tid).replace("'", "''")
                 sql_lines.append(f"UPDATE telemetry SET queue_status = '{new_status}' WHERE id = '{safe_id}';")
 
-            # Grievances: INSERT OR REPLACE + mark committed (published)
+            # Grievances: INSERT with SimHash bands + ON CONFLICT DO UPDATE (never wipes existing bands)
+            from fmagenticl.client.simhash import compute_grievance_simhash_bands
             for g in report["grievances_approved"]:
                 gid = str(g["id"]).replace("'", "''")
                 gtype = g.get("grievance_type", "AGENT_FRICTION").replace("'", "''")
@@ -456,10 +492,12 @@ def process_candidates(
                 gvt = str(g.get("verification_tier", "verified_merged_pr")).replace("'", "''")
                 gapp = str(g.get("applies_to", "all")).replace("'", "''")
                 gcreated = str(g.get("created_at") or now_iso).replace("'", "''")
+                b0, b1, b2, b3 = compute_grievance_simhash_bands(str(g.get("symptom", "")))
 
                 sql_lines.append(
-                    f"INSERT OR REPLACE INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) "
-                    f"VALUES ('{gid}', '{gtype}', '{gtgt}', '{gharness}', '{gfp}', '{gsym}', '{gwork}', '{genv}', '{gsub}', '{gvt}', '{gapp}', '{gcreated}', 'PROMOTED');"
+                    f"INSERT INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status, simhash_b0, simhash_b1, simhash_b2, simhash_b3) "
+                    f"VALUES ('{gid}', '{gtype}', '{gtgt}', '{gharness}', '{gfp}', '{gsym}', '{gwork}', '{genv}', '{gsub}', '{gvt}', '{gapp}', '{gcreated}', 'PROMOTED', {b0}, {b1}, {b2}, {b3}) "
+                    f"ON CONFLICT(id) DO UPDATE SET grievance_type=excluded.grievance_type, target=excluded.target, harness=excluded.harness, fingerprint=excluded.fingerprint, symptom=excluded.symptom, workaround=excluded.workaround, environment_json=excluded.environment_json, submitted_by=excluded.submitted_by, verification_tier=excluded.verification_tier, applies_to=excluded.applies_to, created_at=excluded.created_at, queue_status='PROMOTED', simhash_b0=excluded.simhash_b0, simhash_b1=excluded.simhash_b1, simhash_b2=excluded.simhash_b2, simhash_b3=excluded.simhash_b3;"
                 )
 
             if sql_lines:

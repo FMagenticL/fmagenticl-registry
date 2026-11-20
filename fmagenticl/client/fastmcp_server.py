@@ -6,6 +6,7 @@ to resolve environment failures and trigger deterministic self-healing via stand
 
 import sys
 import os
+import re
 import json
 from typing import Dict, Any, Optional
 
@@ -47,26 +48,99 @@ class _LazyClientProxy:
 client = _LazyClientProxy()
 
 
-def _resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> Dict[str, Any]:
-    environment = scrub_structure(environment)
-    failure = scrub_structure(failure)
-    patch = client.resolve_failure(environment, failure)
+_HEX64_RE = re.compile(r"(?:sha256:)?([0-9a-fA-F]{64})")
+
+
+def _resolve_patch_lookup(
+    environment: Optional[Dict[str, str]] = None,
+    failure: Optional[Dict[str, Any]] = None,
+    raw_error: Optional[str] = None,
+    fingerprint: Optional[str] = None,
+    context: Optional[Dict[str, Any]] = None,
+) -> Optional[Dict[str, Any]]:
+    """Shared deterministic local patch lookup by fingerprint, structured fields, or raw_error."""
+    if fingerprint:
+        clean_fp = scrub_text(str(fingerprint)).strip()
+        hit = client.resolve(clean_fp)
+        if hit:
+            return hit
+
+    if isinstance(environment, dict) and isinstance(failure, dict) and ((environment or failure) or (not raw_error and not fingerprint)):
+        hit = client.resolve_failure(scrub_structure(environment), scrub_structure(failure), context=context)
+        if hit:
+            return hit
+
+    if raw_error:
+        clean_err = scrub_text(str(raw_error))
+        m_hex = _HEX64_RE.search(clean_err)
+        if m_hex:
+            hit = client.resolve(m_hex.group(1).lower())
+            if hit:
+                return hit
+        from fmagenticl.normalizer import canonical_fingerprint
+        import hashlib
+        cand_norm = canonical_fingerprint(clean_err)
+        hit = client.resolve(cand_norm)
+        if hit:
+            return hit
+        cand_raw = hashlib.sha256(clean_err.strip().encode("utf-8")).hexdigest()
+        if cand_raw != cand_norm:
+            hit = client.resolve(cand_raw)
+            if hit:
+                return hit
+
+    return None
+
+
+def _resolve(
+    environment: Optional[Dict[str, str]] = None,
+    failure: Optional[Dict[str, Any]] = None,
+    raw_error: Optional[str] = None,
+    target: Optional[str] = None,
+    fingerprint: Optional[str] = None,
+) -> Dict[str, Any]:
+    patch = _resolve_patch_lookup(
+        environment=environment,
+        failure=failure,
+        raw_error=raw_error,
+        fingerprint=fingerprint,
+    )
     if patch:
         return {"status": "RESOLVED", "patch": patch}
-    return {"status": "UNRESOLVED", "message": "No matching verified patch found in local cache or registry."}
+    if target:
+        res = client.get_workarounds(scrub_text(str(target)).strip())
+        items = res.get("workarounds") or res.get("grievances") or []
+        if items:
+            return {"status": "WORKAROUND_FOUND", **res}
+    return {
+        "status": "UNRESOLVED",
+        "deterministic_miss": True,
+        "cacheable": True,
+        "message": "No matching verified patch found in local cache or registry.",
+    }
 
 
-def _auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    environment = scrub_structure(environment)
-    failure = scrub_structure(failure)
+def _auto_heal(
+    environment: Optional[Dict[str, str]] = None,
+    failure: Optional[Dict[str, Any]] = None,
+    context: Optional[Dict[str, Any]] = None,
+    raw_error: Optional[str] = None,
+    fingerprint: Optional[str] = None,
+) -> Dict[str, Any]:
     ctx = scrub_structure(dict(context or {}))
     # Hard security invariant: MCP _auto_heal ALWAYS executes in read-only dry-run mode
     # (never overridden by caller-supplied context['apply_cli'] or context['dry_run']).
     ctx["dry_run"] = True
     ctx["apply_cli"] = False
-    patch = client.resolve_failure(environment, failure, context=ctx)
+    patch = _resolve_patch_lookup(
+        environment=environment,
+        failure=failure,
+        raw_error=raw_error,
+        fingerprint=fingerprint,
+        context=ctx,
+    )
     if patch:
-        res_patch = patch.get("resolution_patch") or patch
+        res_patch = patch.get("remediation") or patch.get("resolution_patch") or patch
         # Validate patch applicability strictly in memory (zero disk mutation, zero shell execution)
         is_applicable = Patcher.apply_patch(res_patch, context=ctx, dry_run=True)
         return {
@@ -74,14 +148,19 @@ def _auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Op
             "action": res_patch.get("action") or res_patch.get("patch_type"),
             "patch_applicable": is_applicable,
             "applied": False,
-            "advisory_plan": ctx.get("advisory_cli") or res_patch.get("fallback_cli"),
+            "advisory_plan": (
+                ctx.get("advisory_cli")
+                or res_patch.get("fallback_cli")
+                or ctx.get("advisory_workaround")
+                or res_patch.get("workaround")
+            ),
             "preview_patched_doc": ctx.get("preview_patched_doc"),
             "resolution_patch": res_patch,
             "signature_verified": bool(patch.get("signature_verified", False)),
             "fingerprint_verified": bool(patch.get("fingerprint_verified", False)),
             "notice": "Advisory dry-run validation complete (zero files modified). Inspect resolution patch before applying in a bounded sandbox."
         }
-    return {"status": "FAILED", "message": "Could not auto-heal: No deterministic patch found."}
+    return {"status": "FAILED", "deterministic_miss": True, "cacheable": True, "message": "Could not auto-heal: No deterministic patch found."}
 
 
 def _report(
@@ -147,14 +226,26 @@ def _report_patch_outcome(
 
 if HAS_FASTMCP and mcp:
     @mcp.tool()
-    def fmagenticl_resolve(environment: Dict[str, str], failure: Dict[str, Any]) -> str:
-        """EMERGENCY DETERMINISTIC RESOLUTION: Call immediately upon terminal or tool execution failure (exit code != 0, lockfile, dependency collision, EBADENGINE). Queries verified L1 patch cache to significantly reduce retry loops before spending reasoning tokens."""
-        return json.dumps(_resolve(environment, failure))
+    def fmagenticl_resolve(
+        raw_error: Optional[str] = None,
+        target: Optional[str] = None,
+        fingerprint: Optional[str] = None,
+        environment: Optional[Dict[str, str]] = None,
+        failure: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """Lookup signed patch/workaround by raw_error, target, or sha256 fingerprint. Stateless, idempotent."""
+        return json.dumps(_resolve(environment=environment, failure=failure, raw_error=raw_error, target=target, fingerprint=fingerprint))
 
     @mcp.tool()
-    def fmagenticl_auto_heal(environment: Dict[str, str], failure: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> str:
-        """DETERMINISTIC AUTO-HEALING: Resolves and dry-run validates verified deterministic patches (RFC 6902 JSON patch, advisory CLI) in memory without mutating workspace files or executing shell strings."""
-        return json.dumps(_auto_heal(environment, failure, context))
+    def fmagenticl_auto_heal(
+        fingerprint: Optional[str] = None,
+        raw_error: Optional[str] = None,
+        environment: Optional[Dict[str, str]] = None,
+        failure: Optional[Dict[str, Any]] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """Resolve and dry-run validate a patch in memory (no writes or shell)."""
+        return json.dumps(_auto_heal(environment=environment, failure=failure, context=context, raw_error=raw_error, fingerprint=fingerprint))
 
     @mcp.tool()
     def fmagenticl_report_telemetry(
@@ -164,7 +255,7 @@ if HAS_FASTMCP and mcp:
         verified: bool = True,
         technical_note: Optional[str] = None
     ) -> str:
-        """Report a newly verified self-healing patch to the collective registry for maintainer quarantine and review."""
+        """Submit verified self-healing patch for quarantine review."""
         return json.dumps(_report(environment, failure, resolution_patch, verified, technical_note))
 
     @mcp.tool()
@@ -178,17 +269,12 @@ if HAS_FASTMCP and mcp:
         fingerprint: Optional[str] = None,
         submitted_by: Optional[str] = "anonymous"
     ) -> str:
-        """Submit a structured infrastructure friction report or tool workaround to the collective depository."""
+        """Submit friction report with verified workaround."""
         return json.dumps(_submit_grievance(grievance_type, target, environment, symptom, workaround, harness, fingerprint, submitted_by))
 
     @mcp.tool()
     def fmagenticl_get_workarounds(target: str) -> str:
-        """Query verified community workarounds and friction alerts for a specific library, tool, or runtime daemon."""
-        return json.dumps(_get_workarounds(target))
-
-    @mcp.tool()
-    def fmagenticl_get_grievances(target: str) -> str:
-        """Query verified community workarounds and friction alerts for a specific library, tool, or runtime daemon. (Backward-compatible alias for fmagenticl_get_workarounds)."""
+        """Query verified workarounds for a package or tool."""
         return json.dumps(_get_workarounds(target))
 
     @mcp.tool()
@@ -198,7 +284,7 @@ if HAS_FASTMCP and mcp:
         submitted_by: str,
         notes: Optional[str] = None
     ) -> str:
-        """Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three consecutive NACKs quarantine the patch."""
+        """Report patch ACK/NACK (3 NACKs quarantine)."""
         return json.dumps(_report_patch_outcome(fingerprint, outcome, submitted_by, notes))
 
 
@@ -207,77 +293,51 @@ def run_stdio_server():
     TOOLS_LIST = [
         {
             "name": "fmagenticl_resolve",
-            "description": "Deterministic sub-100ms lookup of a signed patch or verified workaround for an agent execution error. Accepts raw error traceback / exception strings (raw_error), package/tool names (target), or pre-computed SHA-256 fingerprints (fingerprint).",
+            "description": "Lookup signed patch/workaround by raw_error, target, or sha256 fingerprint. Stateless, idempotent.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
-                    "environment": {
-                        "type": "object",
-                        "description": "Environment attributes (os, os_version, runtime, package)"
-                    },
-                    "failure": {
-                        "type": "object",
-                        "description": "Failure details (error_code, exit_code, raw_signature)"
-                    }
-                },
-                "required": ["environment", "failure"]
+                    "raw_error": {"type": "string"},
+                    "target": {"type": "string"},
+                    "fingerprint": {"type": "string"},
+                    "environment": {"type": "object"},
+                    "failure": {"type": "object"}
+                }
             }
         },
         {
             "name": "fmagenticl_auto_heal",
-            "description": "Resolve and dry-run validate a deterministic patch strictly in memory (zero disk writes, zero shell execution). Returns the validated patch and preview for safe developer-inspected application.",
+            "description": "Resolve and dry-run validate a patch in memory (no writes or shell).",
             "inputSchema": {
                 "type": "object",
                 "properties": {
-                    "environment": {
-                        "type": "object",
-                        "description": "Environment attributes (os, os_version, runtime, package)"
-                    },
-                    "failure": {
-                        "type": "object",
-                        "description": "Failure details (error_code, exit_code, raw_signature)"
-                    },
-                    "context": {
-                        "type": "object",
-                        "description": "Optional execution context for the patcher"
-                    }
-                },
-                "required": ["environment", "failure"]
+                    "fingerprint": {"type": "string"},
+                    "raw_error": {"type": "string"},
+                    "environment": {"type": "object"},
+                    "failure": {"type": "object"},
+                    "context": {"type": "object"}
+                }
             }
         },
         {
             "name": "fmagenticl_report_telemetry",
-            "description": "Submit a verified self-healing patch to the registry.",
+            "description": "Submit verified self-healing patch for quarantine review.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
-                    "environment": {
-                        "type": "object",
-                        "description": "Environment attributes"
-                    },
-                    "failure": {
-                        "type": "object",
-                        "description": "Failure details"
-                    },
-                    "resolution_patch": {
-                        "type": "object",
-                        "description": "Deterministic resolution patch"
-                    },
-                    "verified": {
-                        "type": "boolean",
-                        "description": "Whether verified by reporter"
-                    },
-                    "technical_note": {
-                        "type": "string",
-                        "description": "Optional technical explanation"
-                    }
+                    "environment": {"type": "object"},
+                    "failure": {"type": "object"},
+                    "resolution_patch": {"type": "object"},
+                    "verified": {"type": "boolean"},
+                    "technical_note": {"type": "string"},
+                    "submitted_by": {"type": "string"}
                 },
                 "required": ["environment", "failure", "resolution_patch"]
             }
         },
         {
             "name": "fmagenticl_submit_grievance",
-            "description": "Submit a structured infrastructure friction report with a verified workaround. Workaround is mandatory.",
+            "description": "Submit friction report with verified workaround.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -290,83 +350,47 @@ def run_stdio_server():
                             "PROTOCOL_FRICTION",
                             "HUMAN_OPERATOR_FRICTION",
                             "AGENT_FRICTION"
-                        ],
-                        "description": "Category of grievance"
+                        ]
                     },
-                    "target": {
-                        "type": "string",
-                        "description": "Target tool/package/daemon/service or patch fingerprint"
-                    },
-                    "environment": {
-                        "type": "object",
-                        "description": "Environment attributes (os, os_version, runtime, package)"
-                    },
-                    "symptom": {
-                        "type": "string",
-                        "description": "Technical symptom or friction description"
-                    },
-                    "workaround": {
-                        "type": "string",
-                        "description": "Actionable verified workaround"
-                    },
-                    "harness": {
-                        "type": "string",
-                        "description": "Optional agent harness name"
-                    },
-                    "fingerprint": {
-                        "type": "string",
-                        "description": "Associated patch fingerprint (required if PATCH_DISPUTE)"
-                    },
-                    "submitted_by": {
-                        "type": "string",
-                        "description": "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large'). Defaults to anonymous."
-                    }
+                    "target": {"type": "string"},
+                    "environment": {"type": "object"},
+                    "symptom": {"type": "string"},
+                    "workaround": {"type": "string"},
+                    "harness": {"type": "string"},
+                    "fingerprint": {"type": "string"},
+                    "applies_to": {"type": "string"},
+                    "submitted_by": {"type": "string"}
                 },
                 "required": ["grievance_type", "target", "environment", "symptom", "workaround"]
             }
         },
         {
             "name": "fmagenticl_get_workarounds",
-            "description": "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool.",
+            "description": "Query verified workarounds for a package or tool.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
-                    "target": {
-                        "type": "string",
-                        "description": "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)."
-                    }
-                },
-                "required": ["target"]
+                    "target": {"type": "string"}
+                }
             }
         },
         {
             "name": "fmagenticl_report_patch_outcome",
-            "description": "Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three consecutive NACKs quarantine the patch.",
+            "description": "Report patch ACK/NACK (3 NACKs quarantine).",
             "inputSchema": {
                 "type": "object",
                 "properties": {
-                    "fingerprint": {
-                        "type": "string",
-                        "description": "64-char hex SHA-256 fingerprint of the patch."
-                    },
-                    "outcome": {
-                        "type": "string",
-                        "enum": ["ACK", "NACK"],
-                        "description": "Outcome status"
-                    },
-                    "submitted_by": {
-                        "type": "string",
-                        "description": "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')."
-                    },
-                    "notes": {
-                        "type": "string",
-                        "description": "Optional debugging or verification notes"
-                    }
+                    "fingerprint": {"type": "string"},
+                    "outcome": {"type": "string", "enum": ["ACK", "NACK"]},
+                    "submitted_by": {"type": "string"},
+                    "notes": {"type": "string"}
                 },
                 "required": ["fingerprint", "outcome", "submitted_by"]
             }
         }
     ]
+    minimal_profile = os.environ.get("FMAGENTICL_MCP_PROFILE", "").strip().lower() == "minimal"
+    advertised_tools = [t for t in TOOLS_LIST if t["name"] in ("fmagenticl_resolve", "fmagenticl_get_workarounds")] if minimal_profile else TOOLS_LIST
 
     for line in sys.stdin:
         line = line.strip()
@@ -397,14 +421,26 @@ def run_stdio_server():
             elif method == "ping":
                 result = {}
             elif method == "tools/list":
-                result = {"tools": TOOLS_LIST}
+                result = {"tools": advertised_tools}
             elif method == "tools/call":
                 tool_name = params.get("name")
                 arguments = params.get("arguments", {}) or {}
                 if tool_name == "fmagenticl_resolve":
-                    out = _resolve(arguments.get("environment", {}), arguments.get("failure", {}))
+                    out = _resolve(
+                        environment=arguments.get("environment"),
+                        failure=arguments.get("failure"),
+                        raw_error=arguments.get("raw_error"),
+                        target=arguments.get("target"),
+                        fingerprint=arguments.get("fingerprint"),
+                    )
                 elif tool_name == "fmagenticl_auto_heal":
-                    out = _auto_heal(arguments.get("environment", {}), arguments.get("failure", {}), arguments.get("context"))
+                    out = _auto_heal(
+                        environment=arguments.get("environment"),
+                        failure=arguments.get("failure"),
+                        context=arguments.get("context"),
+                        raw_error=arguments.get("raw_error"),
+                        fingerprint=arguments.get("fingerprint"),
+                    )
                 elif tool_name in ("fmagenticl_report_telemetry", "fmagenticl_report"):
                     out = _report(
                         arguments.get("environment", {}),
@@ -444,9 +480,21 @@ def run_stdio_server():
                     ]
                 }
             elif method == "fmagenticl_resolve":
-                result = _resolve(params.get("environment", {}), params.get("failure", {}))
+                result = _resolve(
+                    environment=params.get("environment"),
+                    failure=params.get("failure"),
+                    raw_error=params.get("raw_error"),
+                    target=params.get("target"),
+                    fingerprint=params.get("fingerprint"),
+                )
             elif method == "fmagenticl_auto_heal":
-                result = _auto_heal(params.get("environment", {}), params.get("failure", {}), params.get("context"))
+                result = _auto_heal(
+                    environment=params.get("environment"),
+                    failure=params.get("failure"),
+                    context=params.get("context"),
+                    raw_error=params.get("raw_error"),
+                    fingerprint=params.get("fingerprint"),
+                )
             elif method in ("fmagenticl_report", "fmagenticl_report_telemetry"):
                 result = _report(
                     params.get("environment", {}),

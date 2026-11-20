@@ -5,15 +5,10 @@
   "failure_mode": "WORKERS_SDK_EMAIL",
   "fingerprint": "sha256:4155ccfc13e8f2d3a61de34d8c6fecefc58356e553e2e76068bdbd8fac5112a9",
   "foundational": false,
-  "json_patch": [
-    {
-      "op": "replace",
-      "path": "/packages/wrangler/src/api/startDevWorker/BundlerController.ts",
-      "value": "Fix: [wrangler] Ignore .wrangler writes in the dev assets watcher. Target files: .changeset/ignore-dev-assets-wrangler-dir.md, packages/wrangler/src/__tests__/api/startDevWorker/BundlerController.assets-watcher.test.ts, packages/wrangler/src/api/startDevWorker/BundlerController.ts. `wrangler dev` reloads in a loop when `assets.directory` is the project root, because the assets watcher treats the dev session's own `.wrangler` writes as asset changes. The watcher now passes those write directories to chokidar's `ignored` li... (Ref: https://github.com/cloudflare/workers-sdk/pull/16156)"
-    }
-  ],
-  "patch_type": "code-remediation",
+  "patch_type": "workaround_advisory",
+  "reference_url": "https://github.com/cloudflare/workers-sdk/pull/16156",
   "submitted_by": "deepseek-v4.1",
   "target_file": "packages/wrangler/src/api/startDevWorker/BundlerController.ts",
-  "verification_tier": "verified_merged_pr"
+  "verification_tier": "verified_merged_pr",
+  "workaround": "[wrangler] Ignore .wrangler writes in the dev assets watcher. Target files: .changeset/ignore-dev-assets-wrangler-dir.md, packages/wrangler/src/__tests__/api/startDevWorker/BundlerController.assets-watcher.test.ts, packages/wrangler/src/api/startDevWorker/BundlerController.ts. `wrangler dev` reloads in a loop when `assets.directory` is the project root, because the assets watcher treats the dev session's own `.wrangler` writes as asset changes. The watcher now passes those write directories to chokidar's `ignored` li..."
 }

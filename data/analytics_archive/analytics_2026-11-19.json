@@ -1,6 +1,6 @@
 {
   "date": "2026-11-19",
-  "archived_at_utc": "2026-11-20T03:16:16.656828+00:00",
+  "archived_at_utc": "2026-11-20T02:29:44.112632+00:00",
   "account_id": "f83dbbaa261d9ceac1f9f666fa9bd07b",
   "data": {
     "countries": [
@@ -858,13 +858,13 @@
       {
         "count": 3,
         "dimensions": {
-          "clientRequestPath": "/dist/health"
+          "clientRequestPath": "/v1/resolve/c80fcb0c4fe2169f09daf9707beeb23993ce2621b4fb2c3e02c1d588883bffeb.json"
         }
       },
       {
         "count": 3,
         "dimensions": {
-          "clientRequestPath": "/v1/resolve/c80fcb0c4fe2169f09daf9707beeb23993ce2621b4fb2c3e02c1d588883bffeb.json"
+          "clientRequestPath": "/dist/health"
         }
       },
       {
@@ -906,13 +906,13 @@
       {
         "count": 2,
         "dimensions": {
-          "clientRequestPath": "/.well-known/oauth-authorization-server"
+          "clientRequestPath": "/.well-known/mcp/server-card.json"
         }
       },
       {
         "count": 2,
         "dimensions": {
-          "clientRequestPath": "/.well-known/mcp/server-card.json"
+          "clientRequestPath": "/.well-known/oauth-authorization-server"
         }
       },
       {

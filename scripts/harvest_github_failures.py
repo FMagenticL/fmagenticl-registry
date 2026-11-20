@@ -577,8 +577,13 @@ def load_known_fingerprints_and_urls(repo_root: Path) -> Tuple[Set[str], Set[str
             known_fps.add(f"sha256:{p.stem}")
             try:
                 pdata = json.loads(p.read_text(encoding="utf-8"))
-                for op in pdata.get("json_patch", []):
-                    u = extract_pr_url(str(op.get("value", "")))
+                for op in (pdata.get("json_patch") or []):
+                    if isinstance(op, dict):
+                        u = extract_pr_url(str(op.get("value", "")))
+                        if u:
+                            known_urls.add(u)
+                for field in ("reference_url", "workaround", "fallback_cli"):
+                    u = extract_pr_url(str(pdata.get(field) or ""))
                     if u:
                         known_urls.add(u)
             except Exception:

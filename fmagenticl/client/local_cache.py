@@ -12,12 +12,13 @@ Writes to the delta cache are atomic (temp file + os.replace) with
 retry backoff to handle Windows file-lock contention.
 """
 
+import copy
 import json
 import os
 import tempfile
 import threading
 import time
-from typing import Optional
+from typing import Optional, Tuple
 
 from fmagenticl.client.verify import verify_snapshot_file
 
@@ -32,15 +33,15 @@ class LocalCache:
         sig_path: Optional[str] = None,
         public_key_b64: Optional[str] = None,
     ):
-        self.snapshot_path = snapshot_path
-        if (snapshot_path is None or snapshot_path == "snapshot.json") and (self.snapshot_path is None or not os.path.exists(self.snapshot_path)):
+        if snapshot_path is None or snapshot_path == "snapshot.json":
             bundled = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                 "data",
                 "snapshot.json",
             )
-            if os.path.exists(bundled):
-                self.snapshot_path = bundled
+            self.snapshot_path = bundled if os.path.exists(bundled) else "snapshot.json"
+        else:
+            self.snapshot_path = snapshot_path
         self.delta_path = delta_path or cache_path or os.environ.get(
             "FMAGENTICL_DELTA_CACHE_PATH",
             os.path.join(os.path.expanduser("~"), ".fmagenticl", "delta_cache.json"),
@@ -58,6 +59,7 @@ class LocalCache:
         self.public_key_b64 = public_key_b64
         self._lock = threading.Lock()
         self._memory: dict = {}
+        self._aliases: dict = {}
         self._delta: dict = {}
         self._snapshot_signature_verified: bool = False
         self._load_snapshot()
@@ -81,8 +83,14 @@ class LocalCache:
             with open(self.snapshot_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             patches = data.get("patches", {}) if isinstance(data, dict) else {}
+            raw_aliases = data.get("aliases", {}) if isinstance(data, dict) else {}
+            clean_aliases = {
+                str(k).replace("sha256:", "").strip().lower(): str(v).replace("sha256:", "").strip().lower()
+                for k, v in raw_aliases.items()
+            } if isinstance(raw_aliases, dict) else {}
             with self._lock:
                 self._memory = patches
+                self._aliases = clean_aliases
                 self._snapshot_signature_verified = snap_sig_ok
         except (OSError, ValueError):
             # Snapshot unreadable. Operate in edge-only mode.
@@ -120,20 +128,36 @@ class LocalCache:
         except OSError:
             pass
 
-    def get(self, fp_hex: str) -> Optional[dict]:
-        clean_hex = fp_hex.replace("sha256:", "")
+    def resolve_alias(self, fp_hex: str) -> str:
+        clean_hex = fp_hex.replace("sha256:", "").strip().lower()
+        with self._lock:
+            return self._aliases.get(clean_hex, clean_hex)
+
+    def get_with_source(self, fp_hex: str) -> Tuple[Optional[dict], bool, str]:
+        """Return (deepcopy(patch), from_memory, canonical_fp_hex)."""
+        clean_hex = fp_hex.replace("sha256:", "").strip().lower()
         with self._lock:
             for k in (clean_hex, fp_hex, f"sha256:{clean_hex}"):
                 if k in self._memory:
-                    return self._memory[k]
+                    return copy.deepcopy(self._memory[k]), True, clean_hex
+            alias_target = self._aliases.get(clean_hex)
+            if alias_target:
+                for k in (alias_target, f"sha256:{alias_target}"):
+                    if k in self._memory:
+                        return copy.deepcopy(self._memory[k]), True, alias_target
+            for k in (clean_hex, fp_hex, f"sha256:{clean_hex}"):
                 if k in self._delta:
-                    return self._delta[k]
-        return None
+                    return copy.deepcopy(self._delta[k]), False, clean_hex
+        return None, False, clean_hex
+
+    def get(self, fp_hex: str) -> Optional[dict]:
+        patch, _, _ = self.get_with_source(fp_hex)
+        return patch
 
     def put(self, fp_hex: str, patch: dict) -> None:
-        clean_hex = fp_hex.replace("sha256:", "")
+        clean_hex = fp_hex.replace("sha256:", "").strip().lower()
         with self._lock:
-            self._delta[clean_hex] = patch
+            self._delta[clean_hex] = copy.deepcopy(patch)
         self._save_delta()
 
     def resolve(self, fp_hex: str) -> Optional[dict]:

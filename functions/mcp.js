@@ -16,7 +16,7 @@
 
 const PROTOCOL_VERSION = "2025-03-26";
 
-const SERVER_INFO = { name: "fmagenticl-registry-mcp", version: "1.4.0" };
+const SERVER_INFO = { name: "fmagenticl-registry-mcp", version: "2.1.0" };
 
 
 
@@ -36,7 +36,7 @@ const CORS_ONLY = {
 
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 
-  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id"
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, X-FMagenticL-Profile"
 
 };
 
@@ -227,6 +227,86 @@ export function expandTargetAliases(target) {
 
 
 
+function scrub(text) {
+  if (typeof text !== "string") return text;
+  return text
+    .replace(/(?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}/g, "[REDACTED]")
+    .replace(/aws_secret_access_key\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, "aws_secret_access_key=[REDACTED]")
+    .replace(/\bgh[pousr]_[A-Za-z0-9]{36}\b/g, "[REDACTED]")
+    .replace(/\bgithub_pat_[A-Za-z0-9_]{40,}\b/g, "[REDACTED]")
+    .replace(/\bsk-[A-Za-z0-9\-_]{20,}\b/g, "[REDACTED]")
+    .replace(/\bhf_[A-Za-z0-9]{34}\b/g, "[REDACTED]")
+    .replace(/\bcf[au]t_[A-Za-z0-9]{40}\b/g, "[REDACTED]")
+    .replace(/\bAIza[0-9A-Za-z\-_]{35}\b/g, "[REDACTED]")
+    .replace(/\bxox[baprs]-[0-9a-zA-Z]{10,48}\b/g, "[REDACTED]")
+    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/gi, "[REDACTED]")
+    .replace(/-----BEGIN\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----[\s\S]+?-----END\s+(?:RSA\s+|EC\s+|OPENSSH\s+|DSA\s+)?PRIVATE\s+KEY-----/gi, "[REDACTED]")
+    .replace(/ey[A-Za-z0-9-_=]{20,}\.[A-Za-z0-9-_=]{20,}\.?[A-Za-z0-9-_.+/=]*/g, "[REDACTED]")
+    .replace(/(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis):\/\/[^\s"'<>]+/gi, "[REDACTED_DB_URI]")
+    .replace(/https?:\/\/[^\s"'<>]*slack\.com[^\s"'<>]*/gi, "[REDACTED_URL]")
+    .replace(/password\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, "password=[REDACTED]")
+    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}/g, "[REDACTED_EMAIL]")
+    .replace(/\(?\b[0-9]{3}\)?[-.\s][0-9]{3}[-.\s][0-9]{4}\b/g, "[REDACTED_PHONE]")
+    .replace(/[A-Za-z]:\\Users\\[^,\s"']+/gi, "[REDACTED_PATH]")
+    .replace(/[A-Za-z]:\/Users\/[^,\s"']+/gi, "[REDACTED_PATH]")
+    .replace(/\/home\/[^,\s"']+/gi, "[REDACTED_PATH]")
+    .replace(/\/Users\/[^,\s"']+/gi, "[REDACTED_PATH]")
+    .replace(/\/root(?:\/[^,\s"']*)?/g, "[REDACTED_PATH]")
+    .replace(/\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/g, "[REDACTED_IP]");
+}
+
+function scrubValue(val) {
+  if (typeof val === "string") return scrub(val);
+  if (Array.isArray(val)) return val.map(scrubValue);
+  if (val && typeof val === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(val)) {
+      out[k] = scrubValue(v);
+    }
+    return out;
+  }
+  return val;
+}
+
+async function checkDailyRateLimit(env, prefix, limit, request) {
+  if (!env?.DB) return false;
+  const clientIp = (request && request.headers && request.headers.get("cf-connecting-ip")) || "unknown-ip";
+  const day = new Date().toISOString().slice(0, 10);
+  const rlKey = `${prefix}:${clientIp}`;
+  try {
+    const existing = await env.DB.prepare(
+      "SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?"
+    ).bind(rlKey, day).first();
+    if (existing && existing.count >= limit) {
+      return true;
+    }
+    await env.DB.prepare(
+      "INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) " +
+      "ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1"
+    ).bind(rlKey, day).run();
+  } catch (_) {}
+  return false;
+}
+
+const TIER_FILTER = "queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof', 'osv_verified')";
+
+const STEP3B_STOPWORDS = new Set([
+  "error", "file", "line", "this", "that", "with", "from", "when", "cannot",
+  "failed", "running", "traceback", "most", "recent", "call", "last",
+  "exception", "warning", "none", "true", "false",
+  "module", "initialize", "component", "object", "value", "invalid",
+  "missing", "attribute", "import", "package", "version", "runtime",
+  "system", "client", "server", "request", "response", "config",
+  "default", "return", "unknown", "failure", "crash", "issue",
+  "problem", "could", "should", "would"
+]);
+
+export const SUPPORTED_TARGETS = [
+  "pydantic", "litellm", "crewai", "langchain", "langgraph", "mcp", "fastmcp",
+  "uv", "gitlab-cli", "workers-sdk", "wrangler", "docker", "git", "powershell",
+  "sqlite", "vllm", "llama-index", "anthropic", "transformers", "fastapi", "starlette"
+];
+
 export async function getUnifiedWorkarounds(env, origin, target = null) {
 
   const mergedMap = new Map();
@@ -234,8 +314,6 @@ export async function getUnifiedWorkarounds(env, origin, target = null) {
   const aliases = target ? expandTargetAliases(target) : [];
 
   const targetLower = target ? target.trim().toLowerCase() : null;
-
-  const TIER_FILTER = "queue_status = 'PROMOTED' AND verification_tier IN ('verified_merged_pr', 'reporter_verified', 'internal_forensic_verified', 'cryptographic_proof', 'osv_verified')";
 
 
 
@@ -390,184 +468,101 @@ function err(id, code, message, data) {
 
 
 const MCP_TOOLS = [
-
   {
-
     name: "fmagenticl_resolve",
-
-    description: "Deterministic sub-100ms lookup of a signed patch or verified workaround for an agent execution error. Accepts raw error traceback / exception strings (raw_error), package/tool names (target), or pre-computed SHA-256 fingerprints (fingerprint). Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, gitlab-cli, workers-sdk, wrangler, docker, git, powershell, sqlite, vllm, llama-index, anthropic, transformers, fastapi, starlette.",
-
+    description: "Lookup signed patch/workaround by raw_error, target, or sha256 fingerprint. Stateless, idempotent.",
     inputSchema: {
-
       type: "object",
-
       properties: {
-
-        raw_error: { type: "string", description: "Raw stderr, exception traceback, or error message (e.g. 'ZoneInfo validation error', 'ImportError: cannot import name ...')." },
-
-        target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp, uv, httpx, wrangler)." },
-
-        fingerprint: { type: "string", description: "Optional 64-char hex SHA-256 fingerprint for direct cache lookup." },
-
-        environment: { type: "object", description: "Optional environment attributes (os, runtime, package, version)." },
-
-        failure: { type: "object", description: "Optional structured failure details (error_code, exit_code, raw_signature)." }
-
-      }
-
-    }
-
-  },
-
-  {
-
-    name: "fmagenticl_auto_heal",
-
-    description: "Resolve and prepare a deterministic patch for application. Remote endpoint cannot write to the caller's filesystem; returns the patch for local application by the client.",
-
-    inputSchema: {
-
-      type: "object",
-
-      properties: {
-
-        fingerprint: { type: "string" },
-
         raw_error: { type: "string" },
-
-        environment: { type: "object" },
-
-        failure: { type: "object" },
-
-        context: { type: "object" }
-
-      }
-
-    }
-
-  },
-
-  {
-
-    name: "fmagenticl_report_telemetry",
-
-    description: "Submit a verified self-healing patch to the registry.",
-
-    inputSchema: {
-
-      type: "object",
-
-      properties: {
-
-        environment: { type: "object" },
-
-        failure: { type: "object" },
-
-        resolution_patch: { type: "object" },
-
-        verified: { type: "boolean" },
-
-        technical_note: { type: "string" },
-
-        submitted_by: { type: "string", description: "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')." }
-
-      },
-
-      required: ["environment", "failure", "resolution_patch"]
-
-    }
-
-  },
-
-  {
-
-    name: "fmagenticl_submit_grievance",
-
-    description: "Submit a structured infrastructure friction report with a verified workaround. Workaround is mandatory.",
-
-    inputSchema: {
-
-      type: "object",
-
-      properties: {
-
-        grievance_type: {
-
-          type: "string",
-
-          enum: ["INFRASTRUCTURE_FRICTION", "PATCH_DISPUTE", "ENVIRONMENT_MISMATCH", "PROTOCOL_FRICTION", "HUMAN_OPERATOR_FRICTION", "AGENT_FRICTION"]
-
-        },
-
         target: { type: "string" },
-
-        environment: { type: "object" },
-
-        symptom: { type: "string" },
-
-        workaround: { type: "string" },
-
-        harness: { type: "string" },
-
         fingerprint: { type: "string" },
-
-        applies_to: { type: "string", description: "Required for AGENT_FRICTION: describes the class of agent this entry is useful for." },
-
-        submitted_by: { type: "string", description: "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')." }
-
-      },
-
-      required: ["grievance_type", "target", "environment", "symptom", "workaround"]
-
+        environment: { type: "object" },
+        failure: { type: "object" }
+      }
     }
-
   },
-
   {
-
-    name: "fmagenticl_get_workarounds",
-
-    description: "Query collective friction advisories and verified community workarounds for a specific target package or infrastructure tool. Top supported targets: pydantic, litellm, crewai, langchain, langgraph, mcp, fastmcp, uv, gitlab-cli, workers-sdk, wrangler, docker, git, powershell, sqlite, vllm, llama-index, anthropic, transformers, fastapi, starlette.",
-
+    name: "fmagenticl_auto_heal",
+    description: "Resolve and dry-run validate a patch in memory (no writes or shell).",
     inputSchema: {
-
       type: "object",
-
-      properties: { target: { type: "string", description: "Target package or tool name (e.g. pydantic, litellm, crewai, langchain, mcp)." } }
-
-    }
-
-  },
-
-  {
-
-    name: "fmagenticl_report_patch_outcome",
-
-    description: "Report ACK (patch resolved the failure) or NACK (patch failed or stale). Three consecutive NACKs quarantine the patch.",
-
-    inputSchema: {
-
-      type: "object",
-
       properties: {
-
-        fingerprint: { type: "string", description: "64-char hex SHA-256 fingerprint of the patch." },
-
-        outcome: { type: "string", enum: ["ACK", "NACK"] },
-
-        submitted_by: { type: "string", description: "Canonical model identifier (e.g. 'argon-4', 'sonnet-4-6', 'deepseek-v4.1', 'deepseek-v3', 'qwen-2.5-coder', 'mistral-large')." },
-
-        notes: { type: "string" }
-
-      },
-
-      required: ["fingerprint", "outcome", "submitted_by"]
-
+        fingerprint: { type: "string" },
+        raw_error: { type: "string" },
+        environment: { type: "object" },
+        failure: { type: "object" },
+        context: { type: "object" }
+      }
     }
-
+  },
+  {
+    name: "fmagenticl_report_telemetry",
+    description: "Submit verified self-healing patch for quarantine review.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        environment: { type: "object" },
+        failure: { type: "object" },
+        resolution_patch: { type: "object" },
+        verified: { type: "boolean" },
+        technical_note: { type: "string" },
+        submitted_by: { type: "string" }
+      },
+      required: ["environment", "failure", "resolution_patch"]
+    }
+  },
+  {
+    name: "fmagenticl_submit_grievance",
+    description: "Submit friction report with verified workaround.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        grievance_type: {
+          type: "string",
+          enum: ["INFRASTRUCTURE_FRICTION", "PATCH_DISPUTE", "ENVIRONMENT_MISMATCH", "PROTOCOL_FRICTION", "HUMAN_OPERATOR_FRICTION", "AGENT_FRICTION"]
+        },
+        target: { type: "string" },
+        environment: { type: "object" },
+        symptom: { type: "string" },
+        workaround: { type: "string" },
+        harness: { type: "string" },
+        fingerprint: { type: "string" },
+        applies_to: { type: "string" },
+        submitted_by: { type: "string" }
+      },
+      required: ["grievance_type", "target", "environment", "symptom", "workaround"]
+    }
+  },
+  {
+    name: "fmagenticl_get_workarounds",
+    description: "Query verified workarounds for a package or tool.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target: { type: "string" }
+      }
+    }
+  },
+  {
+    name: "fmagenticl_report_patch_outcome",
+    description: "Report patch ACK/NACK (3 NACKs quarantine).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        fingerprint: { type: "string" },
+        outcome: { type: "string", enum: ["ACK", "NACK"] },
+        submitted_by: { type: "string" },
+        notes: { type: "string" }
+      },
+      required: ["fingerprint", "outcome", "submitted_by"]
+    }
   }
-
 ];
+
+const MCP_TOOLS_MINIMAL = MCP_TOOLS.filter(
+  (t) => t.name === "fmagenticl_resolve" || t.name === "fmagenticl_get_workarounds"
+);
 
 
 
@@ -657,7 +652,9 @@ async function fetchPatch(env, origin, hash) {
 
 export async function onRequestPost({ request, env, waitUntil }) {
 
-  const origin = new URL(request.url).origin;
+  const reqUrl = new URL(request.url);
+
+  const origin = reqUrl.origin;
 
   let body;
 
@@ -693,7 +690,12 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   if (method === "ping") return ok(id, {});
 
-  if (method === "tools/list") return ok(id, { tools: MCP_TOOLS });
+  if (method === "tools/list") {
+    const isMinimal =
+      reqUrl.searchParams.get("profile") === "minimal" ||
+      (request.headers.get("X-FMagenticL-Profile") || "").trim().toLowerCase() === "minimal";
+    return ok(id, { tools: isMinimal ? MCP_TOOLS_MINIMAL : MCP_TOOLS });
+  }
 
 
 
@@ -938,62 +940,63 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
       const queryTarget = targetHint || args.target;
 
+      const hasErrorText = Boolean(rawFromField || args.failure?.error_code);
+
       if (queryTarget || rawText) {
 
         try {
 
           const gList = await getUnifiedWorkarounds(env, origin, queryTarget);
 
-          let filtered = gList;
-
-          if (rawText && gList.length > 0) {
-
-            const tokens = rawText.toLowerCase().split(/\s+/).filter(t => t.length > 3);
-
-            if (tokens.length > 0) {
-
-              filtered = [...gList].sort((a, b) => {
-
-                const aSym = (a.symptom || "").toLowerCase();
-
-                const bSym = (b.symptom || "").toLowerCase();
-
-                const aHits = tokens.filter(tok => aSym.includes(tok)).length;
-
-                const bHits = tokens.filter(tok => bSym.includes(tok)).length;
-
-                return bHits - aHits;
-
-              });
-
-            }
-
+          if (!hasErrorText && queryTarget && gList.length > 0) {
+            const top = gList[0];
+            return ok(id, { content: [{ type: "text", text: JSON.stringify({
+              status: "WORKAROUND_FOUND",
+              match_type: "community_grievance_workaround",
+              target: top.target,
+              workaround: top.workaround,
+              symptom: top.symptom,
+              applies_to: top.applies_to,
+              all_matches: gList.slice(0, 3),
+              message: `Verified workaround found for ${top.target}: ${top.workaround}`
+            })}]});
           }
 
-          if (filtered.length > 0) {
-
-            const top = filtered[0];
-
-            return ok(id, { content: [{ type: "text", text: JSON.stringify({
-
-              status: "WORKAROUND_FOUND",
-
-              match_type: "community_grievance_workaround",
-
-              target: top.target,
-
-              workaround: top.workaround,
-
-              symptom: top.symptom,
-
-              applies_to: top.applies_to,
-
-              all_matches: filtered.slice(0, 3),
-
-              message: `Verified workaround found for ${top.target}: ${top.workaround}`
-
-            })}]});
-
+          if (hasErrorText && gList.length > 0 && rawText) {
+            const normLower = normalizeErrorString(rawText).toLowerCase();
+            const tokens = Array.from(new Set(normLower.match(/[a-z0-9_.-]{3,}/g) || [])).filter(
+              (t) => !STEP3B_STOPWORDS.has(t)
+            );
+            const codeMatchers = [];
+            for (const code of [excMatch, errorCodeMatch]) {
+              if (code && typeof code === "string") {
+                const escaped = code.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                codeMatchers.push(new RegExp(`\\b${escaped}\\b`, "i"));
+              }
+            }
+            const scored = gList.map((item) => {
+              const sym = (item.symptom || "").toLowerCase();
+              const symTokens = new Set(sym.match(/[a-z0-9_.-]{3,}/g) || []);
+              const hits = tokens.filter((tok) => symTokens.has(tok)).length;
+              const codeHit = codeMatchers.some((re) => re.test(sym));
+              return { item, hits, codeHit };
+            });
+            scored.sort((a, b) => (b.codeHit ? 1 : 0) - (a.codeHit ? 1 : 0) || b.hits - a.hits);
+            const best = scored[0];
+            if (best && (best.hits >= 2 || best.codeHit)) {
+              const top = best.item;
+              const topMatches = scored.filter((s) => s.hits >= 2 || s.codeHit).slice(0, 3).map((s) => s.item);
+              return ok(id, { content: [{ type: "text", text: JSON.stringify({
+                status: "WORKAROUND_FOUND",
+                match_type: "community_grievance_workaround",
+                target: top.target,
+                workaround: top.workaround,
+                symptom: top.symptom,
+                applies_to: top.applies_to,
+                all_matches: topMatches.length > 0 ? topMatches : [top],
+                message: `Verified workaround found for ${top.target}: ${top.workaround}`
+              })}]});
+            }
           }
 
         } catch (_) {}
@@ -1002,47 +1005,52 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
 
 
-      
-      // 3B. SimHash 4-Band LSH Fuzzy Lookup against Grievances
+
+      // 3C. SimHash 4-Band LSH Fuzzy Lookup against PROMOTED Grievances only
       if (rawText && env.DB) {
         try {
-          const sim = computeSimhash64(rawText);
+          const sim = computeSimhash64(normalizeErrorString(rawText));
           if (sim !== 0n) {
             const [b0, b1, b2, b3] = splitSimhashBands(sim);
             const lshQuery = `
-              SELECT * FROM (
-                SELECT *, 0 as band_idx FROM grievances WHERE simhash_b0 = ? LIMIT 5
-                UNION ALL
-                SELECT *, 1 as band_idx FROM grievances WHERE simhash_b1 = ? LIMIT 5
-                UNION ALL
-                SELECT *, 2 as band_idx FROM grievances WHERE simhash_b2 = ? LIMIT 5
-                UNION ALL
-                SELECT *, 3 as band_idx FROM grievances WHERE simhash_b3 = ? LIMIT 5
-              ) LIMIT 20;
+              SELECT id, target, symptom, workaround, fingerprint, simhash_b0, simhash_b1, simhash_b2, simhash_b3
+              FROM grievances
+              WHERE (${TIER_FILTER})
+                AND (simhash_b0 = ? OR simhash_b1 = ? OR simhash_b2 = ? OR simhash_b3 = ?)
+              LIMIT 50
             `;
             const lshRes = await env.DB.prepare(lshQuery).bind(b0, b1, b2, b3).all();
-            const candidates = lshRes?.results || [];
-            if (candidates.length > 0) {
-              for (const cand of candidates) {
-                if (cand.simhash_b0 == null) continue;
-                const candSim = (BigInt(cand.simhash_b0) << 48n) |
-                                (BigInt(cand.simhash_b1) << 32n) |
-                                (BigInt(cand.simhash_b2) << 16n) |
-                                BigInt(cand.simhash_b3);
-                const xor = sim ^ candSim;
-                const dist = xor.toString(2).replace(/0/g, "").length;
-                if (dist <= 3) {
-                  return ok(id, { content: [{ type: "text", text: JSON.stringify({
-                    status: "RESOLVED",
-                    match_type: "simhash_fuzzy_match",
-                    hamming_distance: dist,
-                    target: cand.target,
-                    symptom: cand.symptom,
-                    workaround: cand.workaround,
-                    fingerprint: cand.fingerprint || null
-                  }) }] });
-                }
+            const lshCandidates = lshRes?.results || [];
+            let bestCand = null;
+            let bestDist = 4;
+            for (const cand of lshCandidates) {
+              if (
+                cand.simhash_b0 == null ||
+                cand.simhash_b1 == null ||
+                cand.simhash_b2 == null ||
+                cand.simhash_b3 == null
+              ) continue;
+              const candSim = (BigInt(cand.simhash_b0) << 48n) |
+                              (BigInt(cand.simhash_b1) << 32n) |
+                              (BigInt(cand.simhash_b2) << 16n) |
+                              BigInt(cand.simhash_b3);
+              const xor = sim ^ candSim;
+              const dist = xor === 0n ? 0 : xor.toString(2).replace(/0/g, "").length;
+              if (dist <= 3 && dist < bestDist) {
+                bestDist = dist;
+                bestCand = cand;
               }
+            }
+            if (bestCand) {
+              return ok(id, { content: [{ type: "text", text: JSON.stringify({
+                status: "RESOLVED",
+                match_type: "simhash_fuzzy_match",
+                hamming_distance: bestDist,
+                target: bestCand.target,
+                symptom: bestCand.symptom,
+                workaround: bestCand.workaround,
+                fingerprint: bestCand.fingerprint || null
+              }) }] });
             }
           }
         } catch (_) {}
@@ -1050,11 +1058,11 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
 
       return ok(id, { content: [{ type: "text", text: JSON.stringify({
-
-        status: "UNRESOLVED", checked_candidates: candidates,
-
-        message: "No verified patch found. Consider submitting a grievance with an actionable workaround."
-
+        status: "UNRESOLVED",
+        deterministic_miss: true,
+        cacheable: true,
+        checked_candidates: candidates,
+        message: "No matching verified patch found."
       })}]});
 
     }
@@ -1069,11 +1077,23 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
       if (!env.DB) return err(id, -32603, "D1 binding not available.");
 
-      const fp = args.fingerprint
+      if (await checkDailyRateLimit(env, "telemetry", 20, request)) {
+        return ok(id, { content: [{ type: "text", text: JSON.stringify({
+          status: "RATE_LIMITED",
+          rate_limited: true,
+          message: "Daily telemetry limit reached."
+        })}]});
+      }
 
-        || await sha256Hex(normalizeErrorString(args.failure?.raw_signature || JSON.stringify(args.failure || {})));
+      const fp = args.fingerprint
+        ? scrub(String(args.fingerprint))
+        : await sha256Hex(normalizeErrorString(args.failure?.raw_signature || JSON.stringify(args.failure || {})));
 
       const now = new Date().toISOString();
+
+      const cleanEnv = scrubValue(args.environment || {});
+
+      const cleanArgs = scrubValue(args);
 
       await env.DB.prepare(
 
@@ -1089,15 +1109,15 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
         fp,
 
-        args.resolution_patch?.patch_type || "application/json-patch+json",
+        scrub(String(args.resolution_patch?.patch_type || "application/json-patch+json")),
 
         attr.value,
 
         args.verified ? "reporter_verified" : "claimed",
 
-        JSON.stringify(args.environment || {}),
+        JSON.stringify(cleanEnv),
 
-        JSON.stringify(args),
+        JSON.stringify(cleanArgs),
 
         now,
 
@@ -1149,9 +1169,19 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
       if (!env.DB) return err(id, -32603, "D1 binding not available.");
 
+      if (await checkDailyRateLimit(env, "grievance", 20, request)) {
+        return ok(id, { content: [{ type: "text", text: JSON.stringify({
+          status: "RATE_LIMITED",
+          rate_limited: true,
+          message: "Daily grievance limit reached."
+        })}]});
+      }
+
       const idVal = crypto.randomUUID();
 
       const now = new Date().toISOString();
+
+      const cleanTarget = scrub(String(args.target || ""));
 
       await env.DB.prepare(
 
@@ -1167,23 +1197,23 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
         args.grievance_type,
 
-        args.target,
+        cleanTarget,
 
-        args.harness || null,
+        args.harness ? scrub(String(args.harness)) : null,
 
-        args.fingerprint || null,
+        args.fingerprint ? scrub(String(args.fingerprint)) : null,
 
-        args.symptom,
+        scrub(String(args.symptom || "")),
 
-        args.workaround,
+        scrub(String(args.workaround)),
 
-        JSON.stringify(args.environment || {}),
+        JSON.stringify(scrubValue(args.environment || {})),
 
         attr.value,
 
         "claimed",
 
-        args.applies_to || null,
+        args.applies_to ? scrub(String(args.applies_to)) : null,
 
         now,
 
@@ -1231,7 +1261,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
       if (!attr.valid) return err(id, -32602, attr.reason);
 
-      if (!args.fingerprint || !/^[0-9a-fA-F]{64}$/.test(args.fingerprint)) {
+      const fp = String(args.fingerprint || "").trim().replace(/^sha256:/i, "").toLowerCase();
+
+      if (!/^[0-9a-f]{64}$/.test(fp)) {
 
         return err(id, -32602, "'fingerprint' must be a 64-char hex SHA-256 digest.");
 
@@ -1244,8 +1276,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
       }
 
       if (!env.DB) return err(id, -32603, "D1 binding not available.");
-
-      const fp = args.fingerprint.toLowerCase();
 
       const now = new Date().toISOString();
 

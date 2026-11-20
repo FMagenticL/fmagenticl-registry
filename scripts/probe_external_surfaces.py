@@ -29,7 +29,6 @@ ENDPOINTS = [
     ("GET", "/", None),
     ("GET", "/registry.json", None),
     ("GET", "/grievances.json", None),
-    ("GET", "/guestbook.json", None),
     ("GET", "/v1/snapshot.json", None),
     ("GET", "/v1/deltas/latest.json", None),
     ("GET", "/llms.txt", None),
@@ -100,7 +99,7 @@ def main():
         crit_body = [f for f in body_findings if not f[1].startswith("CONTACT/NETWORK:Email")]
         crit_header = [f for f in header_findings if not f[1].startswith("CONTACT/NETWORK:Email")]
 
-        status_flag = "OK" if status in (200, 202, 400, 404, 405) else "UNEXPECTED"
+        status_flag = "OK" if status in (200, 202, 400, 404, 405, 410) else "UNEXPECTED"
         print(f"[{status}] {method:<4} {path:<60} (Size: {len(body):>6} bytes) [{status_flag}]")
 
         if crit_body or crit_header:

@@ -32,7 +32,10 @@ import httpx
 
 from .config import EDGE_BASE, TIMEOUT
 from .local_cache import LocalCache
-from .fingerprint import compute_fingerprint as _compute_fingerprint
+from .fingerprint import (
+    compute_fingerprint as _compute_fingerprint,
+    compute_normalized_fingerprint as _compute_normalized_fingerprint,
+)
 from .sanitizer import scrub_structure, scrub_text
 from .verify import verify_patch_signature, verify_patch_fingerprint, verify_patch_envelope
 
@@ -192,46 +195,84 @@ class FMagenticLClient:
     # Resolution
     # -----------------------------------------------------------------------
 
-    def resolve(self, fp_hex: str) -> Optional[dict]:
-        clean_hex = fp_hex.replace("sha256:", "")
-
-        # Tier 1: local cache (memory then delta).
-        cached = self.local_cache.get(clean_hex) or self.local_cache.get(fp_hex)
-        if cached is not None:
+    def _resolve_tier1(self, fp_hex: str) -> Optional[dict]:
+        clean_hex = fp_hex.replace("sha256:", "").strip().lower()
+        if hasattr(self.local_cache, "get_with_source"):
+            cached, from_memory, canonical_hex = self.local_cache.get_with_source(clean_hex)
+        else:
+            cached = self.local_cache.get(clean_hex) or self.local_cache.get(fp_hex)
             from_memory = False
-            with self.local_cache._lock:
-                if clean_hex in self.local_cache._memory or fp_hex in self.local_cache._memory:
-                    self._metrics["memory_hit"] += 1
-                    from_memory = True
-                else:
-                    self._metrics["delta_hit"] += 1
-            if isinstance(cached, dict):
-                snap_verified = bool(getattr(self.local_cache, "_snapshot_signature_verified", False))
-                pub_key = getattr(self.local_cache, "public_key_b64", None)
-                if "manifest" in cached:
-                    sig_ok = verify_patch_envelope(cached, expected_fingerprint=clean_hex, public_key_b64=pub_key)
-                else:
-                    sig_ok = (from_memory and snap_verified) or verify_patch_signature(cached, public_key_b64=pub_key)
-                if self.require_signature and not sig_ok:
-                    return None
-                cached["signature_verified"] = sig_ok
-                cached["fingerprint_verified"] = verify_patch_fingerprint(cached, expected_fp=clean_hex)
-            return cached
+            canonical_hex = clean_hex
+            if cached is not None and hasattr(self.local_cache, "_lock") and hasattr(self.local_cache, "_memory"):
+                with self.local_cache._lock:
+                    if clean_hex in self.local_cache._memory or fp_hex in self.local_cache._memory:
+                        from_memory = True
+        if cached is None:
+            return None
 
-        # Circuit breaker gate.
+        if from_memory:
+            self._metrics["memory_hit"] += 1
+        else:
+            self._metrics["delta_hit"] += 1
+
+        if isinstance(cached, dict):
+            snap_verified = bool(getattr(self.local_cache, "_snapshot_signature_verified", False))
+            pub_key = getattr(self.local_cache, "public_key_b64", None)
+            if "manifest" in cached:
+                sig_ok = verify_patch_envelope(
+                    cached,
+                    expected_fingerprint=canonical_hex,
+                    public_key_b64=pub_key,
+                    enforce_expiry=True,
+                )
+                if not sig_ok and from_memory and snap_verified:
+                    sig_ok = verify_patch_envelope(
+                        cached,
+                        expected_fingerprint=canonical_hex,
+                        public_key_b64=pub_key,
+                        enforce_expiry=False,
+                    )
+                    if sig_ok:
+                        cached["staleness_warning"] = True
+            else:
+                sig_ok = (from_memory and snap_verified) or verify_patch_signature(cached, public_key_b64=pub_key)
+            if self.require_signature and not sig_ok:
+                return None
+            cached["signature_verified"] = sig_ok
+            cached["fingerprint_verified"] = verify_patch_fingerprint(cached, expected_fp=canonical_hex)
+        return cached
+
+    def _resolve_tier2(self, fp_hex: str) -> Optional[dict]:
+        clean_hex = fp_hex.replace("sha256:", "").strip().lower()
         if not self.circuit_breaker.can_request():
             self._metrics["breaker_open"] += 1
             self._metrics["bypass"] += 1
             return None
 
-        # Tier 2: edge CDN fetch.
+        patch = self._query_remote(clean_hex)
+        if patch is not None:
+            self.circuit_breaker.record_success()
+            self.local_cache.put(clean_hex, patch)
+            return patch
+        return None
+
+    def resolve(self, fp_hex: str) -> Optional[dict]:
+        tier1 = self._resolve_tier1(fp_hex)
+        if tier1 is not None:
+            return tier1
+
+        clean_hex = fp_hex.replace("sha256:", "").strip().lower()
+        if not self.circuit_breaker.can_request():
+            self._metrics["breaker_open"] += 1
+            self._metrics["bypass"] += 1
+            return None
+
         patch = self._query_remote(clean_hex)
         if patch is not None:
             self.circuit_breaker.record_success()
             self.local_cache.put(clean_hex, patch)
             return patch
 
-        # Tier 3: graceful bypass.
         self._metrics["bypass"] += 1
         return None
 
@@ -241,12 +282,46 @@ class FMagenticLClient:
         failure: dict,
         context: Optional[dict] = None
     ) -> Optional[dict]:
-        """Attempt to resolve a failure via 3 tiers, returning patch if found."""
+        """Attempt to resolve a failure via 3 tiers (offline L1 raw+norm before remote breaker)."""
+        fp_raw = self.compute_fingerprint(environment, failure)
+        fp_norm = _compute_normalized_fingerprint(environment, failure)
+
+        # Tier 1 probes always execute regardless of remote circuit-breaker state
+        for fp in ([fp_raw, fp_norm] if fp_norm != fp_raw else [fp_raw]):
+            hit = self._resolve_tier1(fp)
+            if hit is not None:
+                return hit
+
         if not self.circuit_breaker.can_request():
+            self._metrics["breaker_open"] += 1
+            self._metrics["bypass"] += 1
             return None
-        fp = self.compute_fingerprint(environment, failure)
-        res = self.resolve(fp)
-        return res
+
+        failures_before = self.circuit_breaker.failure_count
+        timeouts_before = self._metrics["edge_timeout"]
+
+        clean_raw = fp_raw.replace("sha256:", "").strip().lower()
+        patch = self._query_remote(clean_raw)
+        if patch is not None:
+            self.circuit_breaker.record_success()
+            self.local_cache.put(clean_raw, patch)
+            return patch
+
+        # Only probe normalized alias remotely on clean HTTP 404 miss (not timeout/5xx)
+        clean_norm = fp_norm.replace("sha256:", "").strip().lower()
+        no_net_fault = (
+            self.circuit_breaker.failure_count == failures_before
+            and self._metrics["edge_timeout"] == timeouts_before
+        )
+        if clean_norm != clean_raw and no_net_fault and self.circuit_breaker.can_request():
+            patch_norm = self._query_remote(clean_norm)
+            if patch_norm is not None:
+                self.circuit_breaker.record_success()
+                self.local_cache.put(clean_norm, patch_norm)
+                return patch_norm
+
+        self._metrics["bypass"] += 1
+        return None
 
     def _query_remote(self, fp_hex: str) -> Optional[dict]:
         """

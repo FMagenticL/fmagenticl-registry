@@ -305,7 +305,7 @@ def evaluate_osv_gates(vuln: dict, pkg_name: str, ecosystem: str) -> Optional[Di
         {"error_code": vuln_id, "symptom": symptom}
     )
 
-    created_iso = pub or mod or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    created_iso = pub or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     env_json = json.dumps({
         "source": "osv_advisory",
         "advisory_id": vuln_id,
@@ -416,6 +416,7 @@ def insert_records_to_d1(records: List[Dict[str, Any]]) -> int:
         print("ERROR: Cannot insert to D1: CLOUDFLARE_API_TOKEN not resolved.", file=sys.stderr)
         return 0
 
+    from fmagenticl.client.simhash import compute_grievance_simhash_bands
     sql_statements = []
     for r in records:
         rid = r["id"].replace("'", "''")
@@ -431,11 +432,12 @@ def insert_records_to_d1(records: List[Dict[str, Any]]) -> int:
         rapp = r["applies_to"].replace("'", "''")
         rcreated = r["created_at"].replace("'", "''")
         rqueue = r["queue_status"].replace("'", "''")
+        b0, b1, b2, b3 = compute_grievance_simhash_bands(r.get("symptom", ""))
 
         sql = (
             f"INSERT OR IGNORE INTO grievances "
-            f"(id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) "
-            f"VALUES ('{rid}', '{rtype}', '{rtgt}', '{rharn}', '{rfp}', '{rsym}', '{rwork}', '{renv}', '{rsub}', '{rtier}', '{rapp}', '{rcreated}', '{rqueue}');"
+            f"(id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status, simhash_b0, simhash_b1, simhash_b2, simhash_b3) "
+            f"VALUES ('{rid}', '{rtype}', '{rtgt}', '{rharn}', '{rfp}', '{rsym}', '{rwork}', '{renv}', '{rsub}', '{rtier}', '{rapp}', '{rcreated}', '{rqueue}', {b0}, {b1}, {b2}, {b3});"
         )
         sql_statements.append(sql)
 

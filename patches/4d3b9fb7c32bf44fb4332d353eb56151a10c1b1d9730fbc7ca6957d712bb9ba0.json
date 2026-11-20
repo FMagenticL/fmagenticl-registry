@@ -5,15 +5,10 @@
   "failure_mode": "PYDANTIC_TypeError",
   "fingerprint": "sha256:4d3b9fb7c32bf44fb4332d353eb56151a10c1b1d9730fbc7ca6957d712bb9ba0",
   "foundational": false,
-  "json_patch": [
-    {
-      "op": "replace",
-      "path": "/pydantic/_internal/_validators.py",
-      "value": "Fix: Support named tuples in `Sequence` validation. Target files: pydantic/_internal/_validators.py, tests/types/test_sequence.py. Fixes https://github.com/pydantic/pydantic/issues/13976. (Ref: https://github.com/pydantic/pydantic/pull/13978)"
-    }
-  ],
-  "patch_type": "code-remediation",
+  "patch_type": "workaround_advisory",
+  "reference_url": "https://github.com/pydantic/pydantic/pull/13978",
   "submitted_by": "deepseek-v4.1",
   "target_file": "pydantic/_internal/_validators.py",
-  "verification_tier": "verified_merged_pr"
+  "verification_tier": "verified_merged_pr",
+  "workaround": "Support named tuples in `Sequence` validation. Target files: pydantic/_internal/_validators.py, tests/types/test_sequence.py. Fixes https://github.com/pydantic/pydantic/issues/13976."
 }

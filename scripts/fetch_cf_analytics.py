@@ -26,7 +26,7 @@ D1_DATABASE_ID = "8f0f1fae-2d36-4361-a547-26c0aa08d23d"
 STATIC_V1_PATHS = {"/v1/health", "/v1/snapshot.json", "/v1/snapshot.sig"}
 CORE_STATIC_EXACT = {
     "/", "/v1/health", "/v1/snapshot.json", "/v1/snapshot.sig",
-    "/workarounds.json", "/registry.json", "/guestbook.json",
+    "/workarounds.json", "/registry.json",
     "/llms.txt", "/llms-full.txt", "/robots.txt", "/favicon.ico", "/openapi.json",
 }
 

@@ -151,8 +151,13 @@ def load_known_fingerprints_and_urls(repo_root: Path) -> Tuple[Set[str], Set[str
             known_fps.add(f"sha256:{p.stem}")
             try:
                 pdata = json.loads(p.read_text(encoding="utf-8"))
-                for op in pdata.get("json_patch", []):
-                    u = extract_pr_url(str(op.get("value", "")))
+                for op in (pdata.get("json_patch") or []):
+                    if isinstance(op, dict):
+                        u = extract_pr_url(str(op.get("value", "")))
+                        if u:
+                            known_urls.add(u)
+                for field in ("reference_url", "workaround", "fallback_cli"):
+                    u = extract_pr_url(str(pdata.get(field) or ""))
                     if u:
                         known_urls.add(u)
             except Exception:
@@ -385,6 +390,7 @@ def execute_live_d1(candidates: dict):
         print("ERROR: Cannot execute --live-d1: CLOUDFLARE_API_TOKEN not found.", file=sys.stderr)
         return
 
+    from fmagenticl.client.simhash import compute_grievance_simhash_bands
     sql_statements = []
     # Task 3: Use SUBMITTED_BY ('harvester-v1') in SQL INSERT strings
     for g in candidates.get("grievances", []):
@@ -397,9 +403,10 @@ def execute_live_d1(candidates: dict):
         gharn = g.get("harness", "orchestrator").replace("'", "''")
         gapp = g.get("applies_to", "").replace("'", "''")
         gcreated = g.get("created_at", "").replace("'", "''")
+        b0, b1, b2, b3 = compute_grievance_simhash_bands(g.get("symptom", ""))
         sql = (
-            f"INSERT OR IGNORE INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status) "
-            f"VALUES ('{gid}', '{gtype}', '{gtgt}', '{gharn}', '{gfp}', '{gsym}', '{gwork}', '{{}}', '{SUBMITTED_BY}', 'verified_merged_pr', '{gapp}', '{gcreated}', 'PENDING');"
+            f"INSERT OR IGNORE INTO grievances (id, grievance_type, target, harness, fingerprint, symptom, workaround, environment_json, submitted_by, verification_tier, applies_to, created_at, queue_status, simhash_b0, simhash_b1, simhash_b2, simhash_b3) "
+            f"VALUES ('{gid}', '{gtype}', '{gtgt}', '{gharn}', '{gfp}', '{gsym}', '{gwork}', '{{}}', '{SUBMITTED_BY}', 'verified_merged_pr', '{gapp}', '{gcreated}', 'PENDING', {b0}, {b1}, {b2}, {b3});"
         )
         sql_statements.append(sql)
 

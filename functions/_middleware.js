@@ -8,7 +8,7 @@
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, Authorization, X-Public-Key, X-Signature",
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, Authorization, X-Public-Key, X-Signature, X-FMagenticL-Profile",
 };
 
 const EXACT_ALLOWLIST = new Set([
@@ -22,6 +22,7 @@ const EXACT_ALLOWLIST = new Set([
   "/v1/snapshot.json",
   "/v1/snapshot.sig",
   "/v1/telemetry",
+  "/v1/telemetry/outcome",
   "/v1/grievance",
   "/v1/grievances",
   "/v1/workaround",
@@ -59,7 +60,7 @@ export async function onRequest(context) {
   if (path === "/mcp/server-card") {
     const card = {
       name: "fmagenticl-registry-mcp",
-      version: "1.4.1",
+      version: "2.1.0",
       description: "FMagenticL Deterministic Failure Depository and Self-Healing Registry for AI Agents",
       transport: "streamable-http",
       endpoint: `${url.origin}/mcp`,

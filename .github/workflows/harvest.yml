@@ -55,12 +55,6 @@ jobs:
           # Harvests up to 10 issues per repo to avoid rate limits
           python scripts/harvest_github_failures.py --limit 10 --output harvested_candidates.json
 
-      - name: Run Agent-Native Harvester
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python scripts/harvest_agent_native.py --limit 10 --output harvested_agent_native.json || true
-
       - name: Run OSV Advisory Harvester
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -83,15 +77,15 @@ jobs:
         run: |
           # Promotes candidates to patches/ and updates D1
           python scripts/promote_d1_to_registry.py --source-json harvested_candidates.json --apply
+          python scripts/migrate_d1.py --backfill-simhash --max-batches 5 || true
 
-      - name: Rebuild Guestbook & Distribution
+      - name: Rebuild Distribution & Static Exports
         env:
           FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           python scripts/export_db_to_static.py
-          python scripts/build_guestbook.py
           python scripts/build_distribution.py
 
       - name: Archive Daily Cloudflare Analytics
@@ -105,7 +99,7 @@ jobs:
         id: seatbelt-step
         run: |
           [ -f data/osv_seen_cache.json ] || echo "{}" > data/osv_seen_cache.json
-            git add -A patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
+            git add -A patches/ dist/ fmagenticl/data/snapshot.json fmagenticl/data/snapshot.sig fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
           if git diff --staged --quiet; then
             echo "No changes staged. Skipping test gates."
             echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -118,7 +112,7 @@ jobs:
             python -m pytest tests/test_pr_title_filter.py tests/test_release_harvester.py tests/test_gatekeeper.py -v
             python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
             [ -f data/osv_seen_cache.json ] || echo "{}" > data/osv_seen_cache.json
-            git add -A patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
+            git add -A patches/ dist/ fmagenticl/data/snapshot.json fmagenticl/data/snapshot.sig fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
 
@@ -130,7 +124,7 @@ jobs:
           git config --global user.name "FMagenticL Harvester Bot"
           git config --global user.email "harvester@fmagenticl-registry.pages.dev"
           [ -f data/osv_seen_cache.json ] || echo "{}" > data/osv_seen_cache.json
-            git add -A patches/ dist/ fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
+            git add -A patches/ dist/ fmagenticl/data/snapshot.json fmagenticl/data/snapshot.sig fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
           git commit -m "[BOT] chore(harvest): automated hourly harvesting and patch promotion" || echo "No changes to commit"
           git pull --rebase --autostash origin main || (git rebase --abort 2>/dev/null || true; git pull --no-rebase origin main)
           git push origin main || git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main

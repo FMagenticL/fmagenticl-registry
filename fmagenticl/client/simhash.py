@@ -102,3 +102,11 @@ def split_simhash_bands(sim: int) -> Tuple[int, int, int, int]:
     b2 = (sim >> 16) & 0xFFFF
     b3 = sim & 0xFFFF
     return b0, b1, b2, b3
+
+
+def compute_grievance_simhash_bands(symptom: str) -> Tuple[int, int, int, int]:
+    """Compute normalized 4x16-bit SimHash bands matching functions/mcp.js normalizeErrorString()."""
+    from fmagenticl.normalizer import normalize_error_string
+
+    normalized = normalize_error_string(symptom or "")
+    return split_simhash_bands(compute_simhash(normalized))

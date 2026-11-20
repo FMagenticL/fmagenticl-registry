@@ -86,7 +86,60 @@ def test_check_patch_structure():
     assert check_patch_structure("cli-override", [{"op": "replace", "path": "/a", "value": 1}], "echo ok")[0] is False
     assert check_patch_structure("cli-override", None, None)[0] is False
     assert check_patch_structure("file-op", [], None)[0] is True
-    assert check_patch_structure("application/json-patch+json", [{"op": "replace", "path": "/a", "value": 1}], None)[0] is True
+    assert check_patch_structure("workaround_advisory", None, None, workaround="Upgrade pydantic >= 2.11")[0] is True
+    assert check_patch_structure("workaround_advisory", [{"op": "replace", "path": "/a", "value": 1}], None, workaround="Upgrade")[0] is False
+    assert check_patch_structure("workaround_advisory", None, None, workaround="   ")[0] is False
+    assert check_patch_structure("dependency_pin", None, None)[0] is True
+    assert check_patch_structure("dependency_pin", [{"op": "replace", "path": "/a", "value": 1}], None)[0] is False
+    assert check_patch_structure("code_diff", None, None)[0] is True
+    assert check_patch_structure("code_diff", [{"op": "replace", "path": "/a", "value": 1}], None)[0] is False
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/a", "value": 1}],
+        None,
+        target_file="package.json",
+    )[0] is True
+    # Non-.json target_file rejected
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/a", "value": 1}],
+        None,
+        target_file="app.py",
+    )[0] is False
+    # Non-JSON / reserved op paths rejected
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/src/main.py", "value": "x"}],
+        None,
+    )[0] is False
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/remediation", "value": "upgrade"}],
+        None,
+    )[0] is False
+    # Prose disguised inside a .json op path rejected
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/config.json", "value": "Fix: upgrade foo"}],
+        None,
+    )[0] is False
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/config.json", "value": "See (Ref: https://example.com)"}],
+        None,
+    )[0] is False
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/config.json", "value": "https://slack.com/archives/C123/p456"}],
+        None,
+    )[0] is False
+    assert check_patch_structure(
+        "application/json-patch+json",
+        [{"op": "replace", "path": "/config.json", "value": "x" * 201}],
+        None,
+    )[0] is False
+    # code-remediation unconditionally rejected even with valid RFC 6902 ops
+    assert check_patch_structure("code-remediation", [{"op": "replace", "path": "/a", "value": 1}], None)[0] is False
     assert check_patch_structure("code-remediation", [], None)[0] is False
     assert check_patch_structure("code-remediation", [{"op": "explode", "path": "/a"}], None)[0] is False
     assert check_patch_structure("code-remediation", [{"op": "add", "path": "no-slash", "value": 1}], None)[0] is False

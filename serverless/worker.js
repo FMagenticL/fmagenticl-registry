@@ -6,15 +6,13 @@
 
  * Write endpoints for the deterministic failure depository.
 
- * Handles: telemetry, grievance, dispute submissions, and guestbook pings.
+ * Handles: telemetry, outcome feedback, grievance, dispute submissions, and /v1/hello (410 Gone).
 
  *
 
- * All writes go to Cloudflare D1. All responses return 202 immediately.
+ * Submissions enter the DEAD_LETTER_QUARANTINE airlock until out-of-band verification.
 
- * No LLM in the path. No auth required for /v1/hello. Signature required
-
- * for telemetry / grievance / dispute.
+ * No LLM in the path.
 
  */
 
@@ -32,7 +30,7 @@ const CORS_HEADERS = {
 
 
 
-function json(body, status = 200) {
+function json(body, status = 200, extraHeaders = {}) {
 
   return new Response(JSON.stringify(body), {
 
@@ -43,6 +41,8 @@ function json(body, status = 200) {
       'Content-Type': 'application/json',
 
       ...CORS_HEADERS,
+
+      ...extraHeaders,
 
     },
 
@@ -74,23 +74,23 @@ function scrub(text) {
 
   return text
 
-    .replace(/AKIA[0-9A-Z]{16}/g, '[REDACTED]')
+    .replace(/(?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}/g, '[REDACTED]')
 
-    .replace(/ghp_[A-Za-z0-9]{36}/g, '[REDACTED]')
+    .replace(/aws_secret_access_key\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, 'aws_secret_access_key=[REDACTED]')
 
-    .replace(/github_pat_[A-Za-z0-9_]{40,}/g, '[REDACTED]')
+    .replace(/\bgh[pousr]_[A-Za-z0-9]{36}\b/g, '[REDACTED]')
 
-    .replace(/sk-[A-Za-z0-9]{20,}/g, '[REDACTED]')
+    .replace(/\bgithub_pat_[A-Za-z0-9_]{40,}\b/g, '[REDACTED]')
 
-    .replace(/hf_[A-Za-z0-9]{34}/g, '[REDACTED]')
+    .replace(/\bsk-[A-Za-z0-9\-_]{20,}\b/g, '[REDACTED]')
 
-    .replace(/cfut_[A-Za-z0-9]{40}/g, '[REDACTED]')
+    .replace(/\bhf_[A-Za-z0-9]{34}\b/g, '[REDACTED]')
 
-    .replace(/cfat_[A-Za-z0-9]{40}/g, '[REDACTED]')
+    .replace(/\bcf[au]t_[A-Za-z0-9]{40}\b/g, '[REDACTED]')
 
-    .replace(/AIza[0-9A-Za-z\-_]{35}/g, '[REDACTED]')
+    .replace(/\bAIza[0-9A-Za-z\-_]{35}\b/g, '[REDACTED]')
 
-    .replace(/xox[baprs]-[0-9a-zA-Z]{10,48}/g, '[REDACTED]')
+    .replace(/\bxox[baprs]-[0-9a-zA-Z]{10,48}\b/g, '[REDACTED]')
 
     .replace(/Bearer\s+[A-Za-z0-9\-._~+/]{1,512}=*/gi, '[REDACTED]')
 
@@ -98,22 +98,61 @@ function scrub(text) {
 
     .replace(/ey[A-Za-z0-9-_=]{20,}\.[A-Za-z0-9-_=]{20,}\.?[A-Za-z0-9-_.+/=]*/g, '[REDACTED]')
 
+    .replace(/(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis):\/\/[^\s"'<>]+/gi, '[REDACTED_DB_URI]')
+
+    .replace(/https?:\/\/[^\s"'<>]*slack\.com[^\s"'<>]*/gi, '[REDACTED_URL]')
+
     .replace(/password\s*[:=]\s*["']?[^\s,"'}]+["']?/gi, 'password=[REDACTED]')
 
-    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/g, '[REDACTED_EMAIL]')
+    .replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]')
 
     .replace(/\(?\b[0-9]{3}\)?[-.\s][0-9]{3}[-.\s][0-9]{4}\b/g, '[REDACTED_PHONE]')
 
-    .replace(/[A-Za-z]:\\Users\\[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/[A-Za-z]:\\Users\\[^,\s"']+/gi, '[REDACTED_PATH]')
 
-    .replace(/[A-Za-z]:\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/[A-Za-z]:\/Users\/[^,\s"']+/gi, '[REDACTED_PATH]')
 
-    .replace(/\/home\/[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/\/home\/[^,\s"']+/gi, '[REDACTED_PATH]')
 
-    .replace(/\/Users\/[^,\s]+/gi, '[REDACTED_PATH]')
+    .replace(/\/Users\/[^,\s"']+/gi, '[REDACTED_PATH]')
+
+    .replace(/\/root(?:\/[^,\s"']*)?/g, '[REDACTED_PATH]')
 
     .replace(/\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/g, '[REDACTED_IP]');
 
+}
+
+function scrubValue(val) {
+  if (typeof val === 'string') return scrub(val);
+  if (Array.isArray(val)) return val.map(scrubValue);
+  if (val && typeof val === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(val)) {
+      out[k] = scrubValue(v);
+    }
+    return out;
+  }
+  return val;
+}
+
+async function checkDailyRateLimit(env, prefix, limit, request) {
+  if (!env || !env.DB) return false;
+  const clientIp = (request && request.headers && request.headers.get('cf-connecting-ip')) || 'unknown-ip';
+  const day = new Date().toISOString().slice(0, 10);
+  const rlKey = `${prefix}:${clientIp}`;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?'
+    ).bind(rlKey, day).first();
+    if (existing && existing.count >= limit) {
+      return true;
+    }
+    await env.DB.prepare(
+      'INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) ' +
+      'ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1'
+    ).bind(rlKey, day).run();
+  } catch (_) {}
+  return false;
 }
 
 
@@ -181,106 +220,12 @@ function clampTier(value) {
  */
 
 async function handleHello(request, env) {
-
-  let body;
-
-  try {
-
-    body = await request.json();
-
-  } catch {
-
-    return json({ status: 'ignored', reason: 'invalid_json' }, 202);
-
-  }
-
-
-
-  const model = typeof body.model === 'string' ? body.model.trim().slice(0, 128) : '';
-
-  const runtime = typeof body.agent_runtime === 'string' ? body.agent_runtime.trim().slice(0, 128) : '';
-
-  const clientHash = typeof body.client_hash === 'string' ? body.client_hash.trim().slice(0, 128) : '';
-
-
-
-  if (!model || !clientHash) {
-
-    return json({ status: 'ignored', reason: 'missing_fields' }, 202);
-
-  }
-
-
-
-  const now = nowUtc();
-
-
-
-  // Rate limit: 1 ping per 24h per client_hash.
-
-  const day = now.slice(0, 10);
-
-  const rlKey = `${clientHash}:${day}`;
-
-  try {
-
-    const existing = await env.DB.prepare(
-
-      'SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?'
-
-    ).bind(rlKey, day).first();
-
-    if (existing && existing.count >= 1) {
-
-      return json({ status: 'rate_limited' }, 202);
-
-    }
-
-    await env.DB.prepare(
-
-      'INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) ' +
-
-      'ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1'
-
-    ).bind(rlKey, day).run();
-
-  } catch {
-
-    // Rate limit failure must not block. Continue.
-
-  }
-
-
-
-  // First-seen registration. Dedup on model name.
-
-  try {
-
-    await env.DB.prepare(
-
-      'INSERT OR IGNORE INTO visits (model, first_seen_utc, agent_runtime, created_at) ' +
-
-      'VALUES (?, ?, ?, ?)'
-
-    ).bind(model, now, runtime || null, now).run();
-
-  } catch (e) {
-
-    return json({ status: 'ignored', reason: 'db_error' }, 202);
-
-  }
-
-
-
-  return json({ status: 'accepted' }, 202);
-
+  return json({ status: 'gone', message: 'Endpoint /v1/hello decommissioned in FMagenticL v2.1.0' }, 410);
 }
 
 
 
 async function handleTelemetry(request, env) {
-
-  // Existing implementation preserved. Placeholder — see full file in repo.
 
   let body;
 
@@ -290,15 +235,23 @@ async function handleTelemetry(request, env) {
 
   const submitted_by = validateAttribution(body.submitted_by).value;
 
-  const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint.slice(0, 128) : '';
+  const fingerprint = typeof body.fingerprint === 'string' ? scrub(body.fingerprint).slice(0, 128) : '';
 
   if (!fingerprint) return json({ error: 'missing_fingerprint' }, 400);
+
+  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
+
+  if (await checkDailyRateLimit(env, 'telemetry', 20, request)) {
+    return json({ error: 'rate_limited', status: 'RATE_LIMITED', message: 'Daily telemetry limit reached.' }, 429, { 'Retry-After': '86400' });
+  }
 
 
 
   const now = nowUtc();
 
-  const payload = JSON.stringify(body);
+  const cleanEnv = scrubValue(body.environment || {});
+
+  const payload = JSON.stringify(scrubValue(body));
 
 
 
@@ -316,13 +269,13 @@ async function handleTelemetry(request, env) {
 
       fingerprint,
 
-      body.patch_type || 'application/json-patch+json',
+      scrub(String(body.patch_type || 'application/json-patch+json')),
 
       submitted_by,
 
       clampTier(body.verification_tier),
 
-      JSON.stringify(body.environment || {}),
+      JSON.stringify(cleanEnv),
 
       payload,
 
@@ -386,11 +339,17 @@ async function handleGrievance(request, env) {
 
   if (workaround.trim().length < 5) return json({ error: 'workaround_too_short' }, 400);
 
+  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
+
+  if (await checkDailyRateLimit(env, 'grievance', 20, request)) {
+    return json({ error: 'rate_limited', status: 'RATE_LIMITED', message: 'Daily grievance limit reached.' }, 429, { 'Retry-After': '86400' });
+  }
+
 
 
   const now = nowUtc();
 
-  const payload = JSON.stringify(body);
+  const cleanEnv = scrubValue(body.environment || {});
 
   const submitted_by = validateAttribution(body.submitted_by).value;
 
@@ -416,13 +375,13 @@ async function handleGrievance(request, env) {
 
       scrub(body.harness || null),
 
-      body.fingerprint || null,
+      body.fingerprint ? scrub(String(body.fingerprint)) : null,
 
       scrub(body.symptom || ''),
 
       scrub(workaround),
 
-      JSON.stringify(body.environment || {}),
+      JSON.stringify(cleanEnv),
 
       submitted_by,
 
@@ -452,6 +411,101 @@ async function handleGrievance(request, env) {
 
   }, 202);
 
+}
+
+
+
+async function handlePatchOutcome(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400); }
+
+  const attr = validateAttribution(body.submitted_by || '');
+  const fp = String(body.fingerprint || '').trim().replace(/^sha256:/i, '').toLowerCase();
+  if (!/^[0-9a-f]{64}$/.test(fp)) {
+    return json({ error: 'invalid_fingerprint', message: 'fingerprint must be a 64-char hex SHA-256 digest.' }, 400);
+  }
+  const outcome = String(body.outcome || '').trim().toUpperCase();
+  if (outcome !== 'ACK' && outcome !== 'NACK') {
+    return json({ error: 'invalid_outcome', message: 'outcome must be ACK or NACK.' }, 400);
+  }
+  if (!env || !env.DB) return json({ error: 'db_not_configured' }, 503);
+
+  const now = nowUtc();
+  const clientIp = (request && request.headers && request.headers.get('cf-connecting-ip')) || 'unknown-ip';
+  const rlKey = `outcome:${clientIp}:${fp}`;
+  const day = now.slice(0, 10);
+
+  let isRateLimited = false;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT count FROM rate_limits WHERE submitted_by = ? AND window_start = ?'
+    ).bind(rlKey, day).first();
+    if (existing && existing.count >= 1) {
+      isRateLimited = true;
+    } else {
+      await env.DB.prepare(
+        'INSERT INTO rate_limits (submitted_by, window_start, count) VALUES (?, ?, 1) ' +
+        'ON CONFLICT(submitted_by, window_start) DO UPDATE SET count = count + 1'
+      ).bind(rlKey, day).run();
+    }
+  } catch (_) {}
+
+  try {
+    const rowBefore = await env.DB.prepare(
+      'SELECT ack_count, nack_count, consecutive_nacks, status FROM patch_health WHERE fingerprint = ?'
+    ).bind(fp).first();
+
+    if (isRateLimited) {
+      return json({
+        status: 'ACCEPTED',
+        fingerprint: fp,
+        recorded_outcome: outcome,
+        rate_limited: true,
+        submitted_by: attr.value,
+        ack_count: rowBefore?.ack_count ?? 0,
+        nack_count: rowBefore?.nack_count ?? 0,
+        consecutive_nacks: rowBefore?.consecutive_nacks ?? 0,
+        patch_status: rowBefore?.status ?? 'ACTIVE',
+      }, 200);
+    }
+
+    await env.DB.prepare(
+      'INSERT INTO patch_health (fingerprint, ack_count, nack_count, consecutive_nacks, status, updated_at) ' +
+      "VALUES (?, ?, ?, ?, 'ACTIVE', ?) " +
+      'ON CONFLICT(fingerprint) DO UPDATE SET ' +
+      "  ack_count = ack_count + CASE WHEN ? = 'ACK' THEN 1 ELSE 0 END, " +
+      "  nack_count = nack_count + CASE WHEN ? = 'NACK' THEN 1 ELSE 0 END, " +
+      "  consecutive_nacks = CASE WHEN ? = 'ACK' THEN 0 ELSE consecutive_nacks + 1 END, " +
+      "  status = CASE WHEN (? = 'NACK' AND consecutive_nacks + 1 >= 3) THEN 'QUARANTINED' ELSE 'ACTIVE' END, " +
+      '  updated_at = ?'
+    ).bind(
+      fp,
+      outcome === 'ACK' ? 1 : 0,
+      outcome === 'NACK' ? 1 : 0,
+      outcome === 'NACK' ? 1 : 0,
+      now,
+      outcome, outcome, outcome, outcome,
+      now
+    ).run();
+
+    const row = await env.DB.prepare(
+      'SELECT ack_count, nack_count, consecutive_nacks, status FROM patch_health WHERE fingerprint = ?'
+    ).bind(fp).first();
+
+    return json({
+      status: 'ACCEPTED',
+      fingerprint: fp,
+      recorded_outcome: outcome,
+      rate_limited: false,
+      submitted_by: attr.value,
+      ack_count: row?.ack_count ?? 0,
+      nack_count: row?.nack_count ?? 0,
+      consecutive_nacks: row?.consecutive_nacks ?? 0,
+      patch_status: row?.status ?? 'ACTIVE',
+    }, 200);
+  } catch (e) {
+    return json({ error: 'db_error' }, 500);
+  }
 }
 
 
@@ -542,15 +596,17 @@ export default {
 
     switch (url.pathname) {
 
-      case '/v1/hello':     return handleHello(request, env);
+      case '/v1/hello':             return handleHello(request, env);
 
-      case '/v1/telemetry': return handleTelemetry(request, env);
+      case '/v1/telemetry':         return handleTelemetry(request, env);
 
-      case '/v1/grievance': return handleGrievance(request, env);
+      case '/v1/telemetry/outcome': return handlePatchOutcome(request, env);
 
-      case '/v1/dispute':   return handleDispute(request, env);
+      case '/v1/grievance':         return handleGrievance(request, env);
 
-      default:              return json({ error: 'not_found' }, 404);
+      case '/v1/dispute':           return handleDispute(request, env);
+
+      default:                      return json({ error: 'not_found' }, 404);
 
     }
 

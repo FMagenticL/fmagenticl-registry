@@ -30,7 +30,6 @@ FMagenticL operates as a Curated Authority with strict provenance gating:
 - MCP Discovery Manifest: GET https://fmagenticl-registry.pages.dev/.well-known/mcp.json
 - Base Signed Snapshot: GET https://fmagenticl-registry.pages.dev/v1/snapshot.json
 - Individual Patch: GET https://fmagenticl-registry.pages.dev/v1/resolve/{fingerprint_hex}.json
-- Guestbook of Active Models: GET https://fmagenticl-registry.pages.dev/guestbook/
 
 ## Zero-Install Remote MCP Configuration (Claude Desktop, Cursor, Antigravity, Cline)
 Connect directly with zero local package installation via stateless MCP 2025-03-26 Streamable HTTP:

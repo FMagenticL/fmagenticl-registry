@@ -118,3 +118,74 @@ def test_empty_and_non_string_input_safe():
     assert compute_simhash(12345) == 0
     b0, b1, b2, b3 = split_simhash_bands(0)
     assert (b0, b1, b2, b3) == (0, 0, 0, 0)
+
+
+def test_python_node_esm_simhash_parity_50_real_symptoms():
+    """Verify exact Python <-> Node ESM compute_grievance_simhash_bands parity across 50 real symptoms."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+    from fmagenticl.client.simhash import compute_grievance_simhash_bands
+
+    repo_root = Path(__file__).resolve().parent.parent
+    wrk_data = json.loads((repo_root / "dist" / "workarounds.json").read_text(encoding="utf-8"))
+    symptoms = [item.get("symptom", "") for item in wrk_data.get("workarounds", []) if item.get("symptom")][:50]
+    assert len(symptoms) == 50
+
+    py_bands = [list(compute_grievance_simhash_bands(s)) for s in symptoms]
+    mcp_uri = (repo_root / "functions" / "mcp.js").as_uri()
+    node = shutil.which("node") or "node"
+    script = f"""
+      const mcp = await import({json.dumps(mcp_uri)});
+      const out = {json.dumps(symptoms)}.map(s => {{
+        const norm = mcp.normalizeErrorString(s);
+        const h = mcp.computeSimhash64(norm);
+        return mcp.splitSimhashBands(h);
+      }});
+      process.stdout.write(JSON.stringify(out));
+    """
+    res = subprocess.run([node, "--input-type=module", "-e", script], capture_output=True, text=True, encoding="utf-8", check=True, timeout=30)
+    js_bands = json.loads(res.stdout)
+    assert py_bands == js_bands
+
+
+def test_held_out_mutated_symptom_lsh_recall():
+    """Verify >= 90% LSH recall (band match & Hamming <= 3) across volatile env/line/hex/path/semver variations."""
+    import json
+    import re
+    from pathlib import Path
+    from fmagenticl.client.simhash import compute_grievance_simhash_bands
+
+    repo_root = Path(__file__).resolve().parent.parent
+    wrk_data = json.loads((repo_root / "dist" / "workarounds.json").read_text(encoding="utf-8"))
+    symptoms = [
+        item["symptom"] for item in wrk_data.get("workarounds", [])
+        if isinstance(item.get("symptom"), str)
+        and re.fullmatch(r"[\x20-\x7e]{50,}", item["symptom"])
+        and len(item["symptom"].split()) >= 8
+    ][:30]
+    assert len(symptoms) >= 20
+
+    def _bands_to_u64(bands):
+        return (bands[0] << 48) | (bands[1] << 32) | (bands[2] << 16) | bands[3]
+
+    hits = 0
+    for idx, sym in enumerate(symptoms):
+        # Simulate two runs of the same real failure under different CI runners / timestamps / offsets / patch versions
+        trace_a = (
+            f"2026-09-01T01:02:03Z C:\\Users\\alice\\app.py:{10 + idx}:4 "
+            f"0x7f112233 v2.4.1 {sym}"
+        )
+        trace_b = (
+            f"2026-11-19T14:22:33Z /home/runner/app.py:{900 + idx}:12 "
+            f"0x99aabbcc v2.4.9 {sym}"
+        )
+        b_orig = compute_grievance_simhash_bands(trace_a)
+        b_mut = compute_grievance_simhash_bands(trace_b)
+        dist = hamming_distance(_bands_to_u64(b_orig), _bands_to_u64(b_mut))
+        band_hit = any(b_orig[k] == b_mut[k] for k in range(4))
+        if band_hit and dist <= 3:
+            hits += 1
+
+    assert (hits / len(symptoms)) >= 0.90, f"SimHash LSH recall too low: {hits}/{len(symptoms)}"

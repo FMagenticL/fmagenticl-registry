@@ -102,7 +102,7 @@ def verify_patch_signature(
     clean_patch = {
         k: v
         for k, v in patch.items()
-        if k not in ("signature", "ed25519_sig", "signature_verified", "fingerprint_verified")
+        if k not in ("signature", "ed25519_sig", "signature_verified", "fingerprint_verified", "staleness_warning")
     }
     payload_bytes = canonical_json_bytes(clean_patch)
     return verify_signature(payload_bytes, sig_b64, public_key_b64)
@@ -112,6 +112,7 @@ def verify_patch_envelope(
     patch: Dict[str, Any],
     expected_fingerprint: Optional[str] = None,
     public_key_b64: Optional[str] = None,
+    enforce_expiry: bool = True,
 ) -> bool:
     """
     Verifies a TUF-compliant signed manifest envelope on a patch payload.
@@ -130,9 +131,10 @@ def verify_patch_envelope(
     if not isinstance(manifest, dict):
         return False
 
-    sig_b64 = patch.get("signature") or patch.get("ed25519_sig")
+    # Prefer manifest-scoped signature (allows dual-signed v1+v2 patches); fall back to top-level for legacy test envelopes
+    sig_b64 = manifest.get("ed25519_sig") or manifest.get("signature")
     if not sig_b64:
-        sig_b64 = manifest.get("signature") or manifest.get("ed25519_sig")
+        sig_b64 = patch.get("signature") or patch.get("ed25519_sig")
     if not sig_b64:
         return False
 
@@ -164,7 +166,8 @@ def verify_patch_envelope(
             k: v for k, v in patch.items()
             if k not in (
                 "manifest", "signature", "ed25519_sig", "fingerprint",
-                "signature_verified", "fingerprint_verified", "environment", "failure"
+                "signature_verified", "fingerprint_verified", "staleness_warning",
+                "environment", "failure"
             )
         }
 
@@ -186,7 +189,7 @@ def verify_patch_envelope(
         expiry = datetime.fromisoformat(dt_str)
         if expiry.tzinfo is None:
             expiry = expiry.replace(tzinfo=timezone.utc)
-        if datetime.now(timezone.utc) > expiry:
+        if enforce_expiry and datetime.now(timezone.utc) > expiry:
             return False
     except Exception:
         return False
@@ -233,8 +236,9 @@ def verify_query_fingerprint(
     fail = patch.get("failure")
     if isinstance(env, dict) and isinstance(fail, dict):
         from fmagenticl.client.fingerprint import compute_fingerprint
-        recomputed = compute_fingerprint(env, fail).replace("sha256:", "").strip().lower()
-        if not hmac.compare_digest(recomputed, target_fp):
+        recomputed_raw = compute_fingerprint(env, fail, normalize=False).replace("sha256:", "").strip().lower()
+        recomputed_norm = compute_fingerprint(env, fail, normalize=True).replace("sha256:", "").strip().lower()
+        if not (hmac.compare_digest(recomputed_raw, target_fp) or hmac.compare_digest(recomputed_norm, target_fp)):
             return False
 
     remediation = patch.get("remediation")
@@ -246,7 +250,7 @@ def verify_query_fingerprint(
     valid_fields = (
         "patch_type", "action", "json_patch", "fallback_cli", "file_ops",
         "mcp_uri", "strategy", "config_patch", "unified_diff", "dependency_pin",
-        "workaround_advisory"
+        "workaround_advisory", "workaround"
     )
     if not any(k in remediation for k in valid_fields):
         return False

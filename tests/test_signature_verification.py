@@ -312,7 +312,7 @@ def test_unsigned_manifest_fails_envelope_verification():
     assert verify_patch_envelope(patch_no_sig, expected_fingerprint=target_fp) is False
 
 
-def test_client_resolve_manifest_envelope_tier1_cache():
+def test_client_resolve_manifest_envelope_tier1_cache(tmp_path):
     """FMagenticLClient.resolve correctly verifies and accepts signed manifest patches from Tier 1 cache."""
     priv, pub_b64 = _generate_test_keypair()
     target_fp = "1" * 64
@@ -335,7 +335,7 @@ def test_client_resolve_manifest_envelope_tier1_cache():
         "signature": sig_b64,
     }
 
-    cache = LocalCache(public_key_b64=pub_b64)
+    cache = LocalCache(public_key_b64=pub_b64, delta_path=str(tmp_path / "delta.json"))
     cache.put(target_fp, signed_patch)
 
     client = FMagenticLClient(local_cache=cache, require_signature=True)
@@ -346,8 +346,10 @@ def test_client_resolve_manifest_envelope_tier1_cache():
     assert resolved["fingerprint_verified"] is True
 
 
-def test_client_resolve_unsigned_manifest_truthful_attestation():
+def test_client_resolve_unsigned_manifest_truthful_attestation(tmp_path, monkeypatch):
     """When require_signature=False, unsigned manifest is accepted but signature_verified remains False."""
+    import httpx
+
     target_fp = "2" * 64
     remediation = {"patch_type": "workaround_advisory", "text": "downgrade package"}
     payload_hash = compute_payload_hash(remediation)
@@ -366,7 +368,9 @@ def test_client_resolve_unsigned_manifest_truthful_attestation():
         "manifest": manifest,
     }
 
-    cache = LocalCache()
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: type("_Resp404", (), {"status_code": 404, "text": ""})())
+
+    cache = LocalCache(delta_path=str(tmp_path / "delta.json"))
     cache.put(target_fp, unsigned_patch)
 
     # 1. require_signature=False: accepted, but signature_verified is FALSE
@@ -376,10 +380,68 @@ def test_client_resolve_unsigned_manifest_truthful_attestation():
     assert resolved_lenient["signature_verified"] is False
     assert resolved_lenient["fingerprint_verified"] is True
 
-    # 2. require_signature=True: strictly rejected
+    # 2. require_signature=True: strictly rejected at Tier-1 and falls through cleanly on 404
     client_strict = FMagenticLClient(local_cache=cache, require_signature=True)
     resolved_strict = client_strict.resolve(target_fp)
     assert resolved_strict is None
+
+
+def test_expired_delta_falls_through_to_tier2_refresh(tmp_path, monkeypatch):
+    """Expired local_delta entries must fail Tier-1 verification and fall through to Tier-2 refresh."""
+    import httpx
+
+    priv, pub_b64 = _generate_test_keypair()
+    target_fp = "3" * 64
+    remediation = {"patch_type": "workaround_advisory", "workaround": "pin version"}
+    payload_hash = compute_payload_hash(remediation)
+
+    expired_manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2020-01-01T00:00:00Z",
+        "min_client_version": "2.1.0",
+    }
+    expired_patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": expired_manifest,
+        "signature": base64.b64encode(priv.sign(canonical_json_bytes(expired_manifest))).decode(),
+    }
+
+    fresh_manifest = {
+        "manifest_version": 2,
+        "target_fingerprint": f"sha256:{target_fp}",
+        "payload_hash": f"sha256:{payload_hash}",
+        "valid_until": "2030-01-01T00:00:00Z",
+        "min_client_version": "2.1.0",
+    }
+    fresh_patch = {
+        "fingerprint": f"sha256:{target_fp}",
+        "remediation": remediation,
+        "manifest": fresh_manifest,
+        "signature": base64.b64encode(priv.sign(canonical_json_bytes(fresh_manifest))).decode(),
+    }
+
+    calls = []
+
+    def fake_get(url, *args, **kwargs):
+        calls.append(url)
+        return type("_Resp200", (), {"status_code": 200, "json": staticmethod(lambda: dict(fresh_patch))})()
+
+    monkeypatch.setattr(httpx, "get", fake_get)
+
+    cache = LocalCache(public_key_b64=pub_b64, delta_path=str(tmp_path / "delta.json"))
+    cache.put(target_fp, expired_patch)
+
+    client = FMagenticLClient(local_cache=cache, require_signature=True)
+    resolved = client.resolve(target_fp)
+
+    assert len(calls) == 1
+    assert target_fp in calls[0]
+    assert resolved is not None
+    assert resolved["signature_verified"] is True
+    assert not resolved.get("staleness_warning")
 
 
 def test_local_cache_signature_enforcement(tmp_path):

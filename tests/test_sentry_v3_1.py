@@ -188,7 +188,7 @@ def test_middleware_mcp_oauth_200_and_fast404():
     out = json.loads(res.stdout.strip())
     assert out["authStatus"] == 200
     assert out["protStatus"] == 200
-    assert out["cardVer"] == "1.4.1"
+    assert out["cardVer"] == "2.1.0"
     assert out["scanStatus"] == 404
     assert out["mcpStatus"] == 200
     # Only /mcp should invoke context.next() (1 time); oauth-*, server-card, and /mcp/random-scanner-probe NEVER hit context.next()!

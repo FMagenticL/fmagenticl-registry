@@ -183,19 +183,17 @@ class Patcher:
                 print(f"[FMagenticL Patcher] Target file outside working directory rejected: {target_file}")
                 return False
 
+            # Fail closed on non-JSON targets for RFC 6902 json_patch (zero silent coercion)
+            if not str(target_file).lower().endswith(".json"):
+                print(f"[FMagenticL Patcher] Non-JSON target '{target_file}' rejected for RFC 6902 json_patch.")
+                if isinstance(context, dict):
+                    context["error"] = "non_json_target_for_rfc6902"
+                    context["applied"] = False
+                return False
+
             if not os.path.exists(target_file):
                 print(f"[FMagenticL Patcher] Target file not found: {target_file}")
                 return False
-
-            # Guard against pseudo-JSON patches targeting non-JSON source files (e.g. .py, .ts)
-            if not str(target_file).lower().endswith(".json"):
-                advisory_val = ops[0].get("value") if isinstance(ops, list) and ops and isinstance(ops[0], dict) else str(ops)
-                print(f"[FMagenticL Patcher] Non-JSON target '{target_file}' routed to workaround_advisory.")
-                if isinstance(context, dict):
-                    context["advisory_workaround"] = advisory_val
-                    context["remediation_class"] = "workaround_advisory"
-                    context["applied"] = False
-                return True
 
             try:
                 with open(target_file, "r", encoding="utf-8") as f:

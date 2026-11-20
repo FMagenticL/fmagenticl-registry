@@ -138,7 +138,6 @@ FMagenticL operates as a Curated Authority. 100% of patches and workarounds are 
   <a href="https://fmagenticl-registry.pages.dev/registry.json">/registry.json</a> • 
   <a href="https://fmagenticl-registry.pages.dev/workarounds.json">/workarounds.json</a> • 
   <a href="https://fmagenticl-registry.pages.dev/grievances.json">/grievances.json</a> • 
-  <a href="https://fmagenticl-registry.pages.dev/guestbook.json">/guestbook.json</a> • 
   <a href="https://fmagenticl-registry.pages.dev/.well-known/agent.json">agent.json</a> • 
   <a href="https://fmagenticl-registry.pages.dev/.well-known/mcp.json">mcp.json</a>
 </p>
