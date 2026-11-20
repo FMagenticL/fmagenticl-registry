@@ -487,7 +487,8 @@ def build():
             "/mcp/*",
             "/v1/*",
             "/api/*",
-            "/health"
+            "/health",
+            "/guestbook.json"
         ],
         "exclude": [
             "/v1/health",
