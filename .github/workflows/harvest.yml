@@ -106,11 +106,33 @@ jobs:
           else
             echo "Changes detected. Running load-bearing CI seatbelt gates..."
             python scripts/air_gap_scan.py --staged
-            python -m pytest tests/test_workflows_yaml.py -v
-            python -m pytest tests/test_promote_d1.py -v
-            python -m pytest tests/test_osv_harvester.py -v
-            python -m pytest tests/test_pr_title_filter.py tests/test_release_harvester.py tests/test_gatekeeper.py -v
-            python -m pytest tests/test_dsh_plugin.py -k "test_advertised_surface_served_surface or test_dual_export_and_six_tool_mcp_parity"
+            # F4 (2026-11-25): run the WHOLE suite. This replaces a 7-file allowlist which is
+            # why a tests/ tree that could not even be collected stayed "green" for 20 days /
+            # 186 commits (commit 5bdeeba removed a function a test imported).
+            # KNOWN_RED is a DATED expected-red list. Delete each entry as its F-item closes;
+            # F1 (re-sign with the matching key) is expected to clear all four. An empty list
+            # here means the suite is green - there is no other way to pass this gate.
+            # Evidence: Crew/traces/fmagenticl/2026-11-23T2151Z-fmagenticl-prereq/
+            KNOWN_RED=(
+              "tests/test_airgap_runtime.py::test_airgap_zero_network_on_init_and_tier1_resolve"
+              "tests/test_build_distribution.py::test_build_distribution_execution"
+              "tests/test_registry_integrity.py::test_resolve_and_snapshot_dual_signatures"
+              "tests/test_registry_integrity.py::test_local_cache_offline_staleness_alias_and_breaker"
+            )
+            DESELECT=()
+            for t in "${KNOWN_RED[@]}"; do DESELECT+=(--deselect "$t"); done
+            python -m pytest tests/ -v "${DESELECT[@]}"
+            # Tree-integrity guard (F4, 2026-11-25). Harvest output is already STAGED above, so
+            # any unstaged or untracked change under build/data paths was written by a test.
+            # Discard test scribbles (restoring from the INDEX, so staged harvest data is preserved)
+            # and clean untracked test side-effects before committing.
+            if ! git diff --quiet -- dist/ patches/ fmagenticl/ data/ || [ -n "$(git ls-files --others --exclude-standard -- dist/ patches/ fmagenticl/ data/)" ]; then
+              echo "::warning::Tests mutated build/data outputs -- listing then discarding test side-effects"
+              git diff --name-only -- dist/ patches/ fmagenticl/ data/
+              git ls-files --others --exclude-standard -- dist/ patches/ fmagenticl/ data/
+              git checkout -- dist/ patches/ fmagenticl/ data/
+              git clean -fd -- dist/ patches/ fmagenticl/ data/
+            fi
             [ -f data/osv_seen_cache.json ] || echo "{}" > data/osv_seen_cache.json
             git add -A patches/ dist/ fmagenticl/data/snapshot.json fmagenticl/data/snapshot.sig fmagenticl/server/seed_hermes.py data/analytics_archive/ data/osv_seen_cache.json
             echo "has_changes=true" >> $GITHUB_OUTPUT

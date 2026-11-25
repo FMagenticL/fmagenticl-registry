@@ -434,7 +434,9 @@ def test_expired_delta_falls_through_to_tier2_refresh(tmp_path, monkeypatch):
     cache = LocalCache(public_key_b64=pub_b64, delta_path=str(tmp_path / "delta.json"))
     cache.put(target_fp, expired_patch)
 
-    client = FMagenticLClient(local_cache=cache, require_signature=True)
+    # air_gap=False: this test counts httpx.get calls on the Tier-2 refresh path, so it must opt
+    # into egress; the cache's snapshot fails against the test's pub_b64 by construction.
+    client = FMagenticLClient(local_cache=cache, require_signature=True, air_gap=False)
     resolved = client.resolve(target_fp)
 
     assert len(calls) == 1

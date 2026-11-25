@@ -5,10 +5,14 @@ Resolves a fingerprint through three tiers:
     1. Local cache (memory snapshot + on-disk delta cache).
     2. Edge CDN fetch (single-attempt, bounded timeout, circuit-breaker gated,
        with cryptographic signature & fingerprint verification).
-    3. Graceful bypass (return None, never raise, never block the host).
+    3. Graceful bypass (return None, never raise, never block the host) -- except under air-gap,
+   where an unverifiable snapshot is refused loudly rather than silently egressed.
 
 Contract with the host agent runtime:
-    - resolve() returns a patch dict or None. It never raises.
+    - resolve() returns a patch dict or None. It never raises -- EXCEPT in air-gap mode, where
+      unverifiable local data raises FMagenticLIntegrityError instead of silently egressing (F2).
+      The report_*/get_* methods preserve their "never raises" contract: they return a
+      REFUSED_AIR_GAP status dict instead of reaching the network.
     - Worst-case latency is bounded by the HTTP timeout (1.5s total).
     - A missing patch is a signal, not an error.
 
@@ -38,6 +42,7 @@ from .fingerprint import (
 )
 from .sanitizer import scrub_structure, scrub_text
 from .verify import verify_patch_signature, verify_patch_fingerprint, verify_patch_envelope
+from .errors import FMagenticLIntegrityError
 
 
 # ---------------------------------------------------------------------------
@@ -137,6 +142,7 @@ class FMagenticLClient:
         model_name: str = "unknown",
         agent_runtime: Optional[str] = None,
         require_signature: bool = True,
+        air_gap: Optional[bool] = None,
         **kwargs,
     ):
         if local_cache is not None:
@@ -163,6 +169,10 @@ class FMagenticLClient:
             if os.environ.get("FMAGENTICL_REQUIRE_SIGNATURE", "1").lower() not in ("false", "0")
             else False
         )
+        # F2 (2026-11-25): air-gap mode defaults ON - fail closed rather than silently egress.
+        if air_gap is None:
+            air_gap = os.environ.get("FMAGENTICL_AIR_GAP", "1").lower() not in ("false", "0")
+        self.air_gap = bool(air_gap)
         self._metrics = {
             "memory_hit": 0,
             "delta_hit": 0,
@@ -172,6 +182,7 @@ class FMagenticLClient:
             "edge_parse_error": 0,
             "breaker_open": 0,
             "bypass": 0,
+            "integrity_refusal": 0,
         }
 
         # auto_ping is deprecated and ignored (zero outbound pings on client init)
@@ -323,7 +334,42 @@ class FMagenticLClient:
         self._metrics["bypass"] += 1
         return None
 
+    def _egress_block_reason(self, context: str) -> Optional[str]:
+        """Return a refusal message when air-gap policy forbids egress, else None.
+
+        F2 completeness (2026-11-25): the in-build Goldfish audit found four methods reaching
+        the network directly, bypassing the resolve-path guard. Every egress site now consults
+        this single predicate, so the guarantee is structural rather than a matter of discipline.
+        """
+        if self.air_gap and getattr(self.local_cache, "_snapshot_verification_failed", False):
+            return (
+                f"Refusing {context}: the bundled snapshot is present but failed signature "
+                "verification, and air-gap mode forbids egress. Fix the snapshot signature, or "
+                "set FMAGENTICL_AIR_GAP=0 to allow edge fallback."
+            )
+        return None
+
+    def _assert_egress_allowed(self, context: str) -> None:
+        """Raising variant, used on the resolve path (the caller asked for an answer)."""
+        reason = self._egress_block_reason(context)
+        if reason:
+            self._metrics["integrity_refusal"] += 1
+            raise FMagenticLIntegrityError(reason)
+
     def _query_remote(self, fp_hex: str) -> Optional[dict]:
+        """Guarded entry point to the edge CDN - all resolve egress flows through here.
+
+        F2 (2026-11-25): air-gap mode is ON by default. Calls
+        ``self._assert_egress_allowed("network fallback")`` at entry before delegating to
+        ``_query_remote_unchecked``. If the bundled snapshot is present but failed
+        signature verification, refuse with FMagenticLIntegrityError rather than reaching
+        the network. Pass air_gap=False, or set FMAGENTICL_AIR_GAP=0, to restore the
+        previous silent fallback behaviour.
+        """
+        self._assert_egress_allowed("network fallback")
+        return self._query_remote_unchecked(fp_hex)
+
+    def _query_remote_unchecked(self, fp_hex: str) -> Optional[dict]:
         """
         Single-attempt fetch from the edge CDN.
 
@@ -425,6 +471,11 @@ class FMagenticLClient:
         # Outbound Payload Air-Gap: scrub all secrets, PII, keys, and URIs before network dispatch
         payload = scrub_structure(raw_payload)
 
+        _refusal = self._egress_block_reason("telemetry submission")
+        if _refusal:
+            self._metrics["integrity_refusal"] += 1
+            return {"status": "REFUSED_AIR_GAP", "error": _refusal, "fingerprint": fp}
+
         try:
             req_timeout = self.timeout or TIMEOUT
             response = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)
@@ -506,6 +557,11 @@ class FMagenticLClient:
             "verification_tier": verification_tier,
         })
 
+        _refusal = self._egress_block_reason("grievance submission")
+        if _refusal:
+            self._metrics["integrity_refusal"] += 1
+            return {"status": "REFUSED_AIR_GAP", "error": _refusal, "target": target}
+
         try:
             req_timeout = self.timeout or TIMEOUT
             response = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)
@@ -535,6 +591,11 @@ class FMagenticLClient:
             - Bounded by self.timeout.
         """
         url = f"{self.edge_base.rstrip('/')}/v1/grievance/{target}"
+
+        _refusal = self._egress_block_reason("grievance query")
+        if _refusal:
+            self._metrics["integrity_refusal"] += 1
+            return {"target": target, "total": 0, "grievances": [], "status": "REFUSED_AIR_GAP", "error": _refusal}
 
         try:
             req_timeout = self.timeout or TIMEOUT
@@ -571,6 +632,11 @@ class FMagenticLClient:
             "submitted_by": submitted_by,
             "notes": notes or ""
         })
+        _refusal = self._egress_block_reason("patch outcome report")
+        if _refusal:
+            self._metrics["integrity_refusal"] += 1
+            return {"status": "REFUSED_AIR_GAP", "error": _refusal, "fingerprint": fingerprint}
+
         try:
             req_timeout = self.timeout or TIMEOUT
             resp = httpx.post(url, json=payload, timeout=req_timeout, follow_redirects=False)

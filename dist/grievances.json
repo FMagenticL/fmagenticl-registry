@@ -1,6 +1,6 @@
 {
   "count": 3492,
-  "generated_at": "2026-11-25T12:54:38Z",
+  "generated_at": "2026-11-25T14:04:53Z",
   "grievances": [
     {
       "applies_to": "can4hou6joeng4/boss-agent-cli",
@@ -33208,7 +33208,7 @@
       "symptom": "Make Origin validation opt-in in the app factories (keep Host validation on)",
       "target": "typescript-sdk",
       "verification_tier": "reporter_verified",
-      "workaround": "Fix: feat(server): accept <scheme>://* entries in allowedOrigins. Target files: .changeset/origin-scheme-entries.md, docs/serving/express.md, docs/serving/fastify.md. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2907)"
+      "workaround": "Fix: feat(server): accept <scheme>://* entries in allowedOrigins. Target files: .changeset/origin-scheme-entries.md, docs/serving/express.md, docs/serving/fastify.md. _Requested by **Felix Weinberger** \u00b7 [Slack thread]([redacted-slack-url])_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2907)"
     },
     {
       "applies_to": "e2b-dev/E2B",
@@ -33250,7 +33250,7 @@
       "symptom": "SSE stream retries a 401 forever when onUnauthorized keeps resolving",
       "target": "typescript-sdk",
       "verification_tier": "reporter_verified",
-      "workaround": "Fix: fix(client): retry the SSE connection once after onUnauthorized. Target files: .changeset/sse-connect-retry-once.md, packages/client/src/client/sse.ts, packages/client/test/client/sse.test.ts. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2905)"
+      "workaround": "Fix: fix(client): retry the SSE connection once after onUnauthorized. Target files: .changeset/sse-connect-retry-once.md, packages/client/src/client/sse.ts, packages/client/test/client/sse.test.ts. _Requested by **Felix Weinberger** \u00b7 [Slack thread]([redacted-slack-url])_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2905)"
     },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
@@ -33460,7 +33460,7 @@
       "symptom": "[v2] @modelcontextprotocol/node: optional hono peer is unmet under strict package managers, and becomes a runtime crash with @hono/node-server 2.x (#2574)",
       "target": "typescript-sdk",
       "verification_tier": "reporter_verified",
-      "workaround": "Fix: fix(node): make hono a regular dependency. Target files: .changeset/node-hono-regular-dependency.md, docs/migration/upgrade-to-v2.md, packages/middleware/node/package.json. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2897)"
+      "workaround": "Fix: fix(node): make hono a regular dependency. Target files: .changeset/node-hono-regular-dependency.md, docs/migration/upgrade-to-v2.md, packages/middleware/node/package.json. _Requested by **Felix Weinberger** \u00b7 [Slack thread]([redacted-slack-url])_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2897)"
     },
     {
       "applies_to": "pydantic/pydantic",
@@ -82099,7 +82099,7 @@
       "symptom": "Make Origin validation opt-in in the app factories (keep Host validation on)",
       "target": "typescript-sdk",
       "verification_tier": "reporter_verified",
-      "workaround": "Fix: feat(server): accept <scheme>://* entries in allowedOrigins. Target files: .changeset/origin-scheme-entries.md, docs/serving/express.md, docs/serving/fastify.md. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2907)"
+      "workaround": "Fix: feat(server): accept <scheme>://* entries in allowedOrigins. Target files: .changeset/origin-scheme-entries.md, docs/serving/express.md, docs/serving/fastify.md. _Requested by **Felix Weinberger** \u00b7 [Slack thread]([redacted-slack-url])_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2907)"
     },
     {
       "applies_to": "e2b-dev/E2B",
@@ -82141,7 +82141,7 @@
       "symptom": "SSE stream retries a 401 forever when onUnauthorized keeps resolving",
       "target": "typescript-sdk",
       "verification_tier": "reporter_verified",
-      "workaround": "Fix: fix(client): retry the SSE connection once after onUnauthorized. Target files: .changeset/sse-connect-retry-once.md, packages/client/src/client/sse.ts, packages/client/test/client/sse.test.ts. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2905)"
+      "workaround": "Fix: fix(client): retry the SSE connection once after onUnauthorized. Target files: .changeset/sse-connect-retry-once.md, packages/client/src/client/sse.ts, packages/client/test/client/sse.test.ts. _Requested by **Felix Weinberger** \u00b7 [Slack thread]([redacted-slack-url])_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2905)"
     },
     {
       "applies_to": "modelcontextprotocol/typescript-sdk",
@@ -82351,7 +82351,7 @@
       "symptom": "[v2] @modelcontextprotocol/node: optional hono peer is unmet under strict package managers, and becomes a runtime crash with @hono/node-server 2.x (#2574)",
       "target": "typescript-sdk",
       "verification_tier": "reporter_verified",
-      "workaround": "Fix: fix(node): make hono a regular dependency. Target files: .changeset/node-hono-regular-dependency.md, docs/migration/upgrade-to-v2.md, packages/middleware/node/package.json. _Requested by **Felix Weinberger** \u00b7 [Slack thread](https://ant-mcp-oss.slack.com/archives/C0BGE84P7T7/p1789215705361939?thread_ts=1789215705.361939&cid=C0BGE84P7T7)_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2897)"
+      "workaround": "Fix: fix(node): make hono a regular dependency. Target files: .changeset/node-hono-regular-dependency.md, docs/migration/upgrade-to-v2.md, packages/middleware/node/package.json. _Requested by **Felix Weinberger** \u00b7 [Slack thread]([redacted-slack-url])_ (Ref: https://github.com/modelcontextprotocol/typescript-sdk/pull/2897)"
     },
     {
       "applies_to": "pydantic/pydantic",

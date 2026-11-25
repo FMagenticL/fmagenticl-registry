@@ -1,5 +1,32 @@
-import os, sys, json, glob, hashlib, datetime, base64, shutil, time
+import os, sys, json, glob, hashlib, datetime, base64, shutil, time, re
 from pathlib import Path
+
+
+def _preserve_updated_at_if_unchanged(
+    path,
+    payload: dict,
+    default_iso: str,
+    *,
+    separators=None,
+    indent=None,
+) -> bytes:
+    """Keep existing updated_at (and exact bytes) when all other JSON fields are unchanged."""
+    p = Path(path)
+    if p.exists():
+        try:
+            existing = json.loads(p.read_text(encoding="utf-8"))
+            if isinstance(existing, dict) and "updated_at" in existing:
+                candidate = {k: v for k, v in payload.items() if k != "updated_at"}
+                existing_cmp = {k: v for k, v in existing.items() if k != "updated_at"}
+                if existing_cmp == candidate:
+                    out = dict(payload)
+                    out["updated_at"] = existing["updated_at"]
+                    return json.dumps(out, separators=separators, indent=indent).encode("utf-8")
+        except Exception:
+            pass
+    out = dict(payload)
+    out["updated_at"] = default_iso
+    return json.dumps(out, separators=separators, indent=indent).encode("utf-8")
 
 
 def _write_bytes_safe(path, data: bytes, retries: int = 12, delay: float = 0.05) -> None:
@@ -355,15 +382,25 @@ def build():
                 shutil.copyfile(dist_sig, pkg_sig)
 
     # 6. Dynamic Health & Census Manifests (/v1/health and /health)
+    _slack_re = re.compile(r"https?://[^\s\"')>]*slack\.com/[^\s\"')>]*", re.IGNORECASE)
     workarounds_items = []
     for w_name in ["dist/workarounds.json", "dist/grievances.json"]:
         w_path = Path(w_name)
         if w_path.exists():
             try:
-                w_data = json.loads(w_path.read_text(encoding="utf-8"))
-                workarounds_items = w_data.get("workarounds", [])
-                if workarounds_items:
-                    break
+                raw_w = w_path.read_text(encoding="utf-8")
+                w_data = json.loads(raw_w)
+                if "slack.com/" in raw_w.lower():
+                    for w_key in ("workarounds", "grievances"):
+                        if isinstance(w_data.get(w_key), list):
+                            for item in w_data[w_key]:
+                                for field in ("symptom", "workaround"):
+                                    val = item.get(field)
+                                    if isinstance(val, str) and "slack.com/" in val.lower():
+                                        item[field] = _slack_re.sub("[redacted-slack-url]", val)
+                    _write_bytes_safe(w_path, json.dumps(w_data, indent=2, sort_keys=True).encode("utf-8"))
+                if not workarounds_items:
+                    workarounds_items = w_data.get("workarounds", [])
             except Exception:
                 pass
 
@@ -394,11 +431,15 @@ def build():
         "verified_workarounds": verified_workarounds_count,
         "total_grievances": total_grievances_count,
         "bot_harvested_grievances": bot_harvested_count,
-        "updated_at": now_iso,
     }
-    health_bytes = json.dumps(health_payload, separators=(",", ":")).encode("utf-8")
-    _write_bytes_safe("dist/v1/health", health_bytes)
-    _write_bytes_safe("dist/health", health_bytes)
+    _write_bytes_safe(
+        "dist/v1/health",
+        _preserve_updated_at_if_unchanged("dist/v1/health", health_payload, now_iso, separators=(",", ":")),
+    )
+    _write_bytes_safe(
+        "dist/health",
+        _preserve_updated_at_if_unchanged("dist/health", health_payload, now_iso, separators=(",", ":")),
+    )
 
     # 6b. Per-target static shards (served by CDN; consumed by MCP to avoid parsing the full feed)
     import re as _re
@@ -449,7 +490,6 @@ def build():
         "bearer_methods_supported": ["none"],
         "resource_documentation": "https://fmagenticl-registry.pages.dev/mcp",
         "auth_policy": "none_public_curated_registry",
-        "updated_at": now_iso,
     }
     oauth_authz_meta = {
         "issuer": "https://fmagenticl-registry.pages.dev",
@@ -458,10 +498,19 @@ def build():
         "response_types_supported": [],
         "grant_types_supported": [],
         "auth_policy": "none_public_curated_registry",
-        "updated_at": now_iso,
     }
-    res_bytes = json.dumps(oauth_resource_meta, indent=2).encode("utf-8")
-    authz_bytes = json.dumps(oauth_authz_meta, indent=2).encode("utf-8")
+    res_bytes = _preserve_updated_at_if_unchanged(
+        "dist/.well-known/oauth-protected-resource/index.json",
+        oauth_resource_meta,
+        now_iso,
+        indent=2,
+    )
+    authz_bytes = _preserve_updated_at_if_unchanged(
+        "dist/.well-known/oauth-authorization-server/index.json",
+        oauth_authz_meta,
+        now_iso,
+        indent=2,
+    )
 
     for p in ["dist/.well-known/oauth-protected-resource/index.json", "dist/.well-known/oauth-protected-resource.json"]:
         _write_bytes_safe(p, res_bytes)

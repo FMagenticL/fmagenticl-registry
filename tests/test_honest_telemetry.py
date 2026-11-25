@@ -6,10 +6,16 @@ import sys
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
-sys.path.insert(0, str(REPO_ROOT / "scratch"))
+# NOTE (2026-11-25): `scratch/` was previously inserted ahead of `scripts/` here. Because
+# .gitignore lists scratch/ (line 51), a local untracked scratch/run_90min_telemetry.py shadowed
+# the tracked module and masked a collection failure that CI never ran. Do not reintroduce it:
+# local runs must import exactly what a clean checkout imports.
+#
+# The retired helper `check_workarounds_mutation` was folded into `audit_workarounds_payload`
+# by commit 5bdeeba without updating this file, which broke collection for 20 days / 186 commits.
 
 from fetch_cf_analytics import fetch_window_metrics, query_d1_count
-from run_90min_telemetry import check_workarounds_mutation
+from run_90min_telemetry import audit_workarounds_payload
 
 
 def test_fetch_window_metrics_counts_504_in_5xx():
@@ -64,24 +70,52 @@ def test_query_d1_count_reports_error_cleanly():
         assert "Connection refused" in err
 
 
-def test_workarounds_hash_mutation_detection(tmp_path):
-    cache_file = tmp_path / ".test_sha256"
-    with patch("run_90min_telemetry.SHA256_CACHE", cache_file):
-        # First call sets baseline
-        h1, changed1, old1 = check_workarounds_mutation(b"first payload")
-        assert not changed1
-        assert old1 == ""
+def test_workarounds_mutation_detection_via_audit_payload(tmp_path):
+    """Mutation detection, asserted through the surface that actually exists today.
 
-        # Second call with same payload -> no change
-        h2, changed2, old2 = check_workarounds_mutation(b"first payload")
-        assert not changed2
-        assert h2 == h1
+    `check_workarounds_mutation` was folded into `audit_workarounds_payload`'s `mutation_status`
+    by commit 5bdeeba. This test now exercises that surviving surface, and patches the same three
+    module-level paths the function actually writes (STATE_CACHE, SHA256_CACHE, SCRATCH_DIR).
+    """
+    state_file = tmp_path / ".state.json"
+    sha_file = tmp_path / ".sha256"
+    scratch_dir = tmp_path / "scratch"
 
-        # Third call with mutated payload -> detected change
-        h3, changed3, old3 = check_workarounds_mutation(b"mutated payload")
-        assert changed3
-        assert old3 == h1
-        assert h3 != h1
+    def payload(ids):
+        return json.dumps({
+            "workarounds": [
+                {
+                    "id": i,
+                    "target": "requests",
+                    "symptom": "pool exhaustion under load",
+                    "workaround": "Upgrade requests to 2.31.0 to clear the pool exhaustion defect.",
+                    "created_at": "2026-01-01T00:00:00",
+                }
+                for i in ids
+            ]
+        }).encode("utf-8")
+
+    with patch("run_90min_telemetry.STATE_CACHE", state_file), \
+         patch("run_90min_telemetry.SHA256_CACHE", sha_file), \
+         patch("run_90min_telemetry.SCRATCH_DIR", scratch_dir):
+
+        # First observation establishes the baseline: no previous hash, no change, no violations.
+        info1, violations1 = audit_workarounds_payload(payload(["g1"]))
+        assert info1["mutation_status"] == "STABLE"
+        assert info1["prev_sha256"] == ""
+        assert violations1 == []
+
+        # Identical payload -> same hash, still stable.
+        info2, _ = audit_workarounds_payload(payload(["g1"]))
+        assert info2["sha256"] == info1["sha256"]
+        assert info2["mutation_status"] == "STABLE"
+
+        # Mutated payload (one added record) -> change detected against the previous hash.
+        info3, _ = audit_workarounds_payload(payload(["g1", "g2"]))
+        assert info3["sha256"] != info1["sha256"]
+        assert info3["prev_sha256"] == info1["sha256"]
+        assert info3["delta"] == 1
+        assert info3["mutation_status"].startswith("HARVEST_GROWTH")
 
 
 if __name__ == "__main__":
@@ -94,9 +128,9 @@ if __name__ == "__main__":
     test_query_d1_count_reports_error_cleanly()
     print("PASS: test_query_d1_count_reports_error_cleanly")
 
-    print("Running test_workarounds_hash_mutation_detection...")
+    print("Running test_workarounds_mutation_detection_via_audit_payload...")
     with tempfile.TemporaryDirectory() as td:
-        test_workarounds_hash_mutation_detection(Path(td))
-    print("PASS: test_workarounds_hash_mutation_detection")
+        test_workarounds_mutation_detection_via_audit_payload(Path(td))
+    print("PASS: test_workarounds_mutation_detection_via_audit_payload")
 
     print("\nALL HONEST TELEMETRY UNIT TESTS PASSED (3/3)!")

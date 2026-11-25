@@ -97,4 +97,7 @@ def client_with_empty_cache(tmp_path, monkeypatch):
     monkeypatch.setenv("FMAGENTICL_DELTA_CACHE_PATH", str(delta_cache))
 
     cache = LocalCache(snapshot_path=str(empty_snapshot))
-    return MiddlewareClient(local_cache=cache)
+    # air_gap=False: this fixture exists to exercise the EDGE path, so it must opt into egress.
+    # The empty snapshot has no .sig, so under the F2 default (fail closed) every Tier-2/Tier-3
+    # assertion here would correctly refuse instead of reaching the network.
+    return MiddlewareClient(local_cache=cache, air_gap=False)

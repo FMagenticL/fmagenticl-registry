@@ -62,11 +62,15 @@ class LocalCache:
         self._aliases: dict = {}
         self._delta: dict = {}
         self._snapshot_signature_verified: bool = False
+        # F2: distinguishes "no snapshot shipped" (harmless, edge-only mode) from
+        # "snapshot present but failed verification" (an integrity event to report).
+        self._snapshot_verification_failed: bool = False
         self._load_snapshot()
         self._load_delta()
 
     def _load_snapshot(self) -> None:
         if not self.snapshot_path or not os.path.exists(self.snapshot_path):
+            self._snapshot_verification_failed = False
             return
 
         snap_sig_ok = False
@@ -76,6 +80,9 @@ class LocalCache:
                 sig_path=self.sig_path,
                 public_key_b64=self.public_key_b64,
             ):
+                # Fail closed: never trust unverified data - but record *why* the cache is
+                # empty, so the client can refuse loudly instead of silently going online.
+                self._snapshot_verification_failed = True
                 return
             snap_sig_ok = True
 

@@ -71,6 +71,11 @@ jobs:
           FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
         run: python scripts/build_distribution.py
 
+      - name: Run verification suite
+        run: |
+          pip install pytest
+          python -m pytest tests/ -v
+
       - name: Deploy to Cloudflare Pages
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: cloudflare/wrangler-action@v3

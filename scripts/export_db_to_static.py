@@ -11,6 +11,7 @@ Behavior:
 
 import json
 import os
+import re
 import sqlite3
 import subprocess
 import sys
@@ -47,6 +48,40 @@ except Exception:
     D1_DATABASE_ID = "8f0f1fae-2d36-4361-a547-26c0aa08d23d"
 
 ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID") or "f83dbbaa261d9ceac1f9f666fa9bd07b"
+
+SLACK_URL_RE = re.compile(r"https?://[^\s\"')>]*slack\.com/[^\s\"')>]*", re.IGNORECASE)
+
+
+def _scrub_workaround_row(row: dict) -> dict:
+    """Scrub slack.com URLs from workaround/symptom text before static export."""
+    cleaned = dict(row)
+    for field in ("symptom", "workaround"):
+        val = cleaned.get(field)
+        if isinstance(val, str) and "slack.com/" in val.lower():
+            cleaned[field] = SLACK_URL_RE.sub("[redacted-slack-url]", val)
+    return cleaned
+
+
+def _scrub_static_workarounds_files(dist_dir: str = "dist") -> None:
+    """Ensure committed dist/workarounds.json and dist/grievances.json have zero slack.com URLs."""
+    for fname in ("workarounds.json", "grievances.json"):
+        fpath = Path(dist_dir) / fname
+        if not fpath.exists():
+            continue
+        raw = fpath.read_text(encoding="utf-8")
+        if "slack.com/" not in raw.lower():
+            continue
+        data = json.loads(raw)
+        changed = False
+        for key in ("workarounds", "grievances"):
+            items = data.get(key)
+            if isinstance(items, list):
+                new_items = [_scrub_workaround_row(item) for item in items]
+                if new_items != items:
+                    data[key] = new_items
+                    changed = True
+        if changed:
+            fpath.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
 
 
 def database_available(path: str) -> bool:
@@ -219,7 +254,7 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
                 for g in prev_grievances:
                     gid = g.get("id")
                     if gid and gid not in PURGE_GRIEVANCE_IDS:
-                        existing_map[gid] = g
+                        existing_map[gid] = _scrub_workaround_row(g)
             except Exception:
                 pass
 
@@ -229,6 +264,7 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
                 continue
             if r.get("verification_tier") == "osv_verified" and (r.get("created_at") or "") < "2026-01-01":
                 continue
+            r = _scrub_workaround_row(r)
             wa_txt = (r.get("workaround") or "").strip()
             sym_txt = (r.get("symptom") or "").strip()
             if len(wa_txt) < 15 or wa_txt == sym_txt:
@@ -284,6 +320,7 @@ def export_from_remote_d1(dist_dir: str = "dist") -> int:
 def main() -> int:
     if resolve_token() or os.environ.get("CLOUDFLARE_API_TOKEN") or "--remote-d1" in sys.argv:
         export_from_remote_d1("dist")
+    _scrub_static_workarounds_files("dist")
 
     if "--from-local-sqlite" in sys.argv and database_available(DB_PATH):
         count = export_from_db(DB_PATH, OUT_DIR)

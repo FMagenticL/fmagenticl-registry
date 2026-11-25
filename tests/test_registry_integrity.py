@@ -245,3 +245,20 @@ def test_patcher_dry_run_all_85_patches(tmp_path, monkeypatch):
 
     assert blocked_count == 3
     assert ok_count == 82
+
+
+def test_source_patches_unsigned_and_compiled_surfaces_fully_enveloped():
+    """F5 invariant: patches/*.json are unsigned source inputs; dist/ carries 100% dual-signed envelopes."""
+    patch_files = sorted((REPO_ROOT / "patches").glob("*.json"))
+    assert len(patch_files) == 85
+    for pf in patch_files:
+        data = json.loads(pf.read_text(encoding="utf-8"))
+        assert "manifest" not in data, f"Source patch {pf.name} must not embed compiled manifest"
+        assert "ed25519_sig" not in data, f"Source patch {pf.name} must not embed compiled signature"
+
+    resolve_files = sorted((REPO_ROOT / "dist" / "v1" / "resolve").glob("*.json"))
+    assert len(resolve_files) == 129
+    for rf in resolve_files:
+        obj = json.loads(rf.read_text(encoding="utf-8"))
+        assert isinstance(obj.get("manifest"), dict), f"Compiled entry {rf.name} missing manifest"
+        assert obj.get("ed25519_sig"), f"Compiled entry {rf.name} missing top-level ed25519_sig"
