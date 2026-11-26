@@ -106,22 +106,9 @@ jobs:
           else
             echo "Changes detected. Running load-bearing CI seatbelt gates..."
             python scripts/air_gap_scan.py --staged
-            # F4 (2026-11-25): run the WHOLE suite. This replaces a 7-file allowlist which is
-            # why a tests/ tree that could not even be collected stayed "green" for 20 days /
-            # 186 commits (commit 5bdeeba removed a function a test imported).
-            # KNOWN_RED is a DATED expected-red list. Delete each entry as its F-item closes;
-            # F1 (re-sign with the matching key) is expected to clear all four. An empty list
-            # here means the suite is green - there is no other way to pass this gate.
-            # Evidence: Crew/traces/fmagenticl/2026-11-23T2151Z-fmagenticl-prereq/
-            KNOWN_RED=(
-              "tests/test_airgap_runtime.py::test_airgap_zero_network_on_init_and_tier1_resolve"
-              "tests/test_build_distribution.py::test_build_distribution_execution"
-              "tests/test_registry_integrity.py::test_resolve_and_snapshot_dual_signatures"
-              "tests/test_registry_integrity.py::test_local_cache_offline_staleness_alias_and_breaker"
-            )
-            DESELECT=()
-            for t in "${KNOWN_RED[@]}"; do DESELECT+=(--deselect "$t"); done
-            python -m pytest tests/ -v "${DESELECT[@]}"
+            # F4 (2026-11-25): run the WHOLE suite with zero deselections.
+            # F1 (re-sign with the matching key) and D1 Slack scrub are verified green in CI.
+            python -m pytest tests/ -v
             # Tree-integrity guard (F4, 2026-11-25). Harvest output is already STAGED above, so
             # any unstaged or untracked change under build/data paths was written by a test.
             # Discard test scribbles (restoring from the INDEX, so staged harvest data is preserved)
