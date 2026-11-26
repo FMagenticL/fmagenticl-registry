@@ -445,7 +445,8 @@ def main():
         sys.exit(1)
 
     now = datetime.now(timezone.utc)
-    hist_start = datetime(2026, 10, 23, 0, 0, 0, tzinfo=timezone.utc)
+    # Clamp to 30 days so queries never exceed Cloudflare GraphQL's 4w4d (32-day) retention limit.
+    hist_start = max(datetime(2026, 10, 23, 0, 0, 0, tzinfo=timezone.utc), now - timedelta(days=30))
     recent_start = now - timedelta(hours=4)
 
     hist = fetch_window_metrics(account_id, hist_start, now, token)
@@ -467,7 +468,7 @@ def main():
     recent_err_str = format_paths(recent["top_error_paths"])
 
     report_markdown = (
-        f"### 📊 CUMULATIVE ANALYTICS (Oct 23 – Now) [Sampled Estimates]\n"
+        f"### 📊 CUMULATIVE ANALYTICS ({hist_start.strftime('%b %d')} – Now) [Sampled Estimates]\n"
         f"- **Total Requests:** {hist['total_requests']:,}\n"
         f"- **Total Bandwidth:** {hist['bandwidth_mb']:.2f} MB\n"
         f"- **Status Codes:** 2xx: {hist['c_2xx']:,} | 3xx: {hist['c_3xx']:,} | 4xx: {hist['c_4xx']:,} | 5xx (All Server/Gateway Errors): {hist['c_5xx_total']:,} (of which 504 Timeouts: {hist['c_504']:,}, Other 5xx: {hist['c_5xx_other']:,})\n"
