@@ -40,13 +40,13 @@ jobs:
           python scripts/registry_lint_gate.py
           python scripts/air_gap_scan.py
 
+      - name: Run verification suite
+        run: python -m pytest tests/ -v
+
       - name: Build static distribution and sign
         env:
           FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
         run: python scripts/build_distribution.py
-
-      - name: Run verification suite
-        run: python -m pytest tests/ -v
 
       - name: Deploy to Cloudflare Pages
         if: github.ref == 'refs/heads/main'
