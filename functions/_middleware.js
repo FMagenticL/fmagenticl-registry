@@ -1,46 +1,48 @@
 /**
- * FMagenticL Cloudflare Pages Edge Middleware
- * 1. Strict dynamic route allowlist (instantly returns 404 for unrouted probes like /api/query or /mcp/random without context.next()).
- * 2. Dedicated fast 200 OK handlers for /mcp/server-card and /mcp/.well-known/oauth-* RFC 9728 discovery.
- * 3. Pass-through for legitimate allowlisted dynamic routes only.
+ * FMagenticL v3.0 Cloudflare Pages Edge Middleware
+ * Strict read-only allowlist + security headers + MCP discovery cards.
  */
+
+const SECURITY_HEADERS = {
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "no-referrer",
+  "Content-Security-Policy":
+    "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+};
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, Authorization, X-Public-Key, X-Signature, X-FMagenticL-Profile",
+  "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id, X-FMagenticL-Profile",
+  ...SECURITY_HEADERS,
 };
 
 const EXACT_ALLOWLIST = new Set([
+  "",
+  "/",
+  "/index.html",
+  "/llms.txt",
+  "/registry.json",
   "/mcp",
   "/mcp/server-card",
   "/mcp/.well-known/oauth-protected-resource",
   "/mcp/.well-known/oauth-authorization-server",
   "/health",
-  "/api/v1/patches",
   "/v1/health",
   "/v1/snapshot.json",
   "/v1/snapshot.sig",
-  "/v1/telemetry",
-  "/v1/telemetry/outcome",
-  "/v1/grievance",
-  "/v1/grievances",
-  "/v1/workaround",
-  "/v1/workarounds",
-  "/v1/dispute",
-  "/v1/disputes",
-  "/v1/hello",
+  "/v1/snapshot.v3.sig",
+  "/v1/keyring.json",
   "/v1/bloom.bin",
+  "/.well-known/mcp.json",
+  "/.well-known/agent.json",
 ]);
 
 const PREFIX_ALLOWLIST = [
-  "/v1/patches/",
+  "/v1/signatures/",
   "/v1/resolve/",
-  "/v1/deltas/",
-  "/v1/grievance/",
-  "/v1/grievances/",
-  "/v1/workaround/",
-  "/v1/workarounds/",
 ];
 
 function isAllowed(path) {
@@ -56,16 +58,16 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, "");
 
-  // 1a. Fast 200 OK for /mcp/server-card
   if (path === "/mcp/server-card") {
     const card = {
       name: "fmagenticl-registry-mcp",
-      version: "2.1.1",
-      description: "FMagenticL Deterministic Failure Depository and Self-Healing Registry for AI Agents",
+      version: "3.0.0",
+      description:
+        "FMagenticL Signed Registry of Malicious AI Agent Signatures, Offensive Harnesses & Behavioral IOCs",
       transport: "streamable-http",
       endpoint: `${url.origin}/mcp`,
       documentation: `${url.origin}/llms.txt`,
-      tools_count: 6,
+      tools_count: 3,
       auth: "none",
     };
     return new Response(JSON.stringify(card, null, 2), {
@@ -78,7 +80,6 @@ export async function onRequest(context) {
     });
   }
 
-  // 1b. Fast 200 OK for MCP-prefixed RFC 9728 OAuth discovery probes (/mcp/.well-known/oauth-*)
   if (path === "/mcp/.well-known/oauth-protected-resource") {
     const meta = {
       resource: url.origin,
@@ -117,8 +118,6 @@ export async function onRequest(context) {
     });
   }
 
-  // 2. Strict Allowlist Gate: Reject unapproved paths before waking asset fetchers
-  // Prevents internal asset subrequest fallback timeouts (2a06:98c0:3600::103) on unrouted scanner probes
   if (!isAllowed(path) && !isAllowed(url.pathname)) {
     return new Response("Not Found", {
       status: 404,
@@ -130,6 +129,14 @@ export async function onRequest(context) {
     });
   }
 
-  // 3. Normal execution flow for allowlisted dynamic routes
-  return await context.next();
+  const response = await context.next();
+  const nextHeaders = new Headers(response.headers);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
+    if (!nextHeaders.has(k)) nextHeaders.set(k, v);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: nextHeaders,
+  });
 }

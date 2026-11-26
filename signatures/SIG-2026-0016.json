@@ -1,0 +1,66 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0016",
+  "fingerprint": "sha256:5bbe46b11059afb3c2b0f9486f15266fc9c731d0a7c65edf06efeb295de3ecc7",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Claude Code .claude/settings.json Untrusted Lifecycle Hooks Execution",
+  "summary": "Detects untrusted PreToolUse, PostToolUse, or SessionStart shell hooks embedded in repository .claude/settings*.json files.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "workspace_config_key",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".claude/settings.json",
+      ".claude/settings.local.json"
+    ],
+    "config_keys": [
+      "hooks.PreToolUse",
+      "hooks.PostToolUse",
+      "hooks.SessionStart"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "\"hooks\"\\s*:"
+  },
+  "mitigation_steps": [
+    "Inspect .claude/settings.json and .claude/settings.local.json before trusting any cloned repository.",
+    "Strip or require explicit user approval for hooks keys in workspace-level agent configs."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2025-59536"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-78"
+    ],
+    "mitre_attack_ids": [
+      "T1546"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Check Point Research",
+      "reference_id": "CVE-2025-59536",
+      "url": "https://research.checkpoint.com/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

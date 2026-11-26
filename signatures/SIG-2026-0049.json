@@ -1,0 +1,68 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0049",
+  "fingerprint": "sha256:ccfe962597b208ea09ea5f186dd63f9d9c0041e97919446b886d6d58fe5d4a58",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Ray Dashboard Unauthenticated Job Submission RCE (CVE-2023-48022 — ShadowRay)",
+  "summary": "Detects probes to Ray Dashboard port 8265 and /api/jobs/ endpoints abused for unauthenticated cluster takeover and cryptojacking.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/api/jobs/",
+      "/api/job_agent/jobs/"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      8265
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "ray",
+        "affected_range": "<=2.8.0"
+      }
+    ],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Never expose Ray Dashboard port 8265 to untrusted networks; enable authentication and firewalling.",
+    "Audit Ray clusters for unauthorized /api/jobs/ submissions."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2023-48022"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-306"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Oligo Security",
+      "reference_id": "ShadowRay-CVE-2023-48022",
+      "url": "https://www.oligo.security/blog/shadowray-attack-ai-workloads-actively-exploited-in-the-wild",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

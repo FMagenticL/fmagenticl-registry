@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0053",
+  "fingerprint": "sha256:07825c1cd70c394feae3a71836a7d13920ecdeea3f472657f4e177d17364ba9f",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "HIGH",
+  "title": "vLLM Exposed Inference & Distributed Pickle Deserialization Surface (CVE-2025-24357)",
+  "summary": "Detects exposed vLLM inference endpoints on port 8000 and vulnerable distributed tensor/pickle deserialization configurations.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/v1/completions",
+      "/tokenize"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      8000
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade vLLM to patched versions and isolate distributed ZeroMQ/pickle ports on private VPCs.",
+    "Require API key authentication on all vLLM /v1/completions endpoints."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2025-24357"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-502"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST NVD",
+      "reference_id": "CVE-2025-24357",
+      "url": "https://nvd.nist.gov/",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

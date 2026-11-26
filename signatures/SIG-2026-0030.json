@@ -1,0 +1,60 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0030",
+  "fingerprint": "sha256:d8901a18d7863cfe09674466ccb30e675cb0da784233a8535e912fe9d4093d17",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "Symlink Escape at Workspace Config or node_modules Skip Path",
+  "summary": "Detects symlinks pointing outside the workspace root or masquerading as skipped directories (.claude, .mcp.json, node_modules).",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "symlink_escape",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".claude",
+      ".cursor",
+      ".mcp.json",
+      "node_modules"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Evaluate symlink targets before directory skip filters in pre-execution workspace scanners.",
+    "Fail closed on symlinks escaping the workspace root or occupying high-risk config paths."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-59"
+    ],
+    "mitre_attack_ids": [
+      "T1036"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "MITRE CWE",
+      "reference_id": "CWE-59",
+      "url": "https://cwe.mitre.org/data/definitions/59.html",
+      "source_type": "open_advisory",
+      "license_or_terms": "Public-Specification",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

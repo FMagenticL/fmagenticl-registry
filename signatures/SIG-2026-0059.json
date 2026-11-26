@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0059",
+  "fingerprint": "sha256:063f013f4d72edff5eb32daf76391ee5fe68606ef834bbb709f558b533b2f546",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Azure App Service Kudu SCM VFS & Command Execution Post-Token Theft",
+  "summary": "Detects automated post-compromise calls to Azure App Service Kudu SCM /api/vfs/, /api/command, and /api/zipdeploy endpoints.",
+  "observable": {
+    "surface": "cloud_control_plane",
+    "observable_type": "cloud_scm_lateral_movement",
+    "http_paths": [
+      "/api/vfs/",
+      "/api/command",
+      "/api/zipdeploy"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      443
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Restrict Azure App Service SCM/Kudu endpoints to private endpoints or Zero-Trust IP allowlists.",
+    "Alert immediately on /api/command or /api/vfs/ access from unfamiliar principals."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "FLASH-20261113-001"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1078.004",
+      "T1059"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "FBI Cyber Division FLASH Advisory",
+      "reference_id": "FLASH-20261113-001",
+      "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

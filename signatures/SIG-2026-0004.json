@@ -1,0 +1,64 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0004",
+  "fingerprint": "sha256:e84dd321ed0428596174bc594b132f3980f596f83f0ee6bdfbf13f9de3283638",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "Villager Kali-MCP Autonomous Pentest Task Bus",
+  "summary": "Detects HTTP task-bus endpoints, default ports, and Kali-MCP driver artifacts associated with the Villager offensive agent framework.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "harness_port_and_process",
+    "http_paths": [
+      "/villager/task",
+      "/mcp/kali-exec"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      37695,
+      25989
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "villager-agent",
+      "kali-driver-mcp"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:villager-agent|kali-driver-mcp|/villager/task)"
+  },
+  "mitigation_steps": [
+    "Block inbound/outbound access to default Villager task-bus ports (37695, 25989).",
+    "Quarantine unauthorized packages or containers invoking kali-driver-mcp."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Straiker / PyPI Threat Research",
+      "reference_id": "Villager-Malicious-Agent",
+      "url": "https://www.straiker.ai/blog/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

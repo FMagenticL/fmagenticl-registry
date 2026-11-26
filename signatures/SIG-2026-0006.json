@@ -1,0 +1,63 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0006",
+  "fingerprint": "sha256:6f9c651ef2a33c33f923f1d247d3015a2ed0f907eedadb75d611a3854a6d23b4",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "New API Stolen-Key Aggregation Proxy",
+  "summary": "Detects proxy gateway headers and endpoint probes characteristic of New API stolen-key aggregation servers.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "http_header_and_path",
+    "http_paths": [
+      "/api/user/self",
+      "/v1/models"
+    ],
+    "http_headers": [
+      "New-Api-User"
+    ],
+    "user_agents": [
+      "New API"
+    ],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:New-Api-User|New API)"
+  },
+  "mitigation_steps": [
+    "Alert on New-Api-User headers or New API User-Agent strings targeting internal LLM endpoints.",
+    "Enforce per-principal egress allowlists for model provider API calls."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1090",
+      "T1528"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Sysdig TRT",
+      "reference_id": "Sysdig-LLMjacking-Relay",
+      "url": "https://sysdig.com/blog/llmjacking-stolen-cloud-credentials/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

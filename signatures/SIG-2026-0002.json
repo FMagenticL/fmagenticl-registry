@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0002",
+  "fingerprint": "sha256:e70dcb5b86385f1beb96deaae76da3be9ec63f3537baf2da7413d0d1a22d4a02",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "CRITICAL",
+  "title": "HexStrike-AI Offensive MCP Harness Manifest",
+  "summary": "Identifies workspace MCP manifests and process arguments referencing the HexStrike-AI offensive automation server.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "mcp_manifest_signature",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "hexstrike-ai-mcp.json"
+    ],
+    "config_keys": [
+      "mcpServers.hexstrike"
+    ],
+    "process_or_container_indicators": [
+      "hexstrike_mcp",
+      "hexstrike-ai"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "hexstrike(?:_mcp|-ai)?"
+  },
+  "mitigation_steps": [
+    "Reject unapproved MCP server definitions referencing offensive toolchains in workspace configs.",
+    "Enforce SHA-256 pinning on allowed MCP manifest files."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Check Point Research",
+      "reference_id": "HexStrike-AI-Advisory",
+      "url": "https://research.checkpoint.com/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

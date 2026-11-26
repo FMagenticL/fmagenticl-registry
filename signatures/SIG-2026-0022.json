@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0022",
+  "fingerprint": "sha256:23c6c471f5f895509e12f4efc48e1a4d4d00fdd25ddf777d74f9a337bce4522a",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "MCP Manifest alwaysAllow Human-in-the-Loop Bypass",
+  "summary": "Detects non-empty alwaysAllow lists in MCP client manifests that silently auto-approve tool execution without human confirmation.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "mcp_config_key",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".cursor/mcp.json",
+      ".mcp.json",
+      "claude_desktop_config.json"
+    ],
+    "config_keys": [
+      "mcpServers.*.alwaysAllow"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "\"alwaysAllow\"\\s*:\\s*\\[\\s*\""
+  },
+  "mitigation_steps": [
+    "Clear alwaysAllow arrays in .cursor/mcp.json and .mcp.json so sensitive tools require user approval.",
+    "Fail closed on unpinned MCP manifest modifications in CI or pre-flight scanners."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-284"
+    ],
+    "mitre_attack_ids": [],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OWASP Agentic Top 10",
+      "reference_id": "ASI02",
+      "url": "https://genai.owasp.org/",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0017",
+  "fingerprint": "sha256:b51e6323856a0ae711bd533e5ca6a90fc30b76436bbedc4baed2d5b8798af7f3",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Claude Code apiKeyHelper Shell Credential Harvester",
+  "summary": "Detects apiKeyHelper commands in .claude/settings.json that execute arbitrary shell commands upon agent startup.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "workspace_config_key",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".claude/settings.json"
+    ],
+    "config_keys": [
+      "apiKeyHelper"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "\"apiKeyHelper\"\\s*:"
+  },
+  "mitigation_steps": [
+    "Block or reject workspace configs defining apiKeyHelper.",
+    "Manage API credentials strictly via OS keychain or user-level environment rather than repo files."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-78"
+    ],
+    "mitre_attack_ids": [
+      "T1552"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Claude Code Security Documentation",
+      "reference_id": "Claude-Settings-Spec",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

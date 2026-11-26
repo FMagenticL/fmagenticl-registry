@@ -1,0 +1,55 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0042",
+  "fingerprint": "sha256:9b8b970d9647e3e15eb179ec754040352ceccc8830f38a0969fe61cb4b9c180b",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Multi-Subagent Concurrent Parameter & User-Agent Collision (<=2s Window)",
+  "summary": "Detects >=3 concurrent sub-agents colliding on the same endpoint with distinct User-Agents or parameter sets within <=2 seconds.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "subagent_collision",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 2,
+    "threshold_count": 3,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Correlate /24 subnet and actor_id request collisions across distinct User-Agent strings.",
+    "Throttle and inspect concurrent multi-parameter sweeps characteristic of parallel agent swarms."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1595"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Autonomous Swarm Threat Research",
+      "reference_id": "Subagent-Collision-Pattern",
+      "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

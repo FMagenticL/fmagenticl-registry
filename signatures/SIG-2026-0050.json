@@ -1,0 +1,64 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0050",
+  "fingerprint": "sha256:3a09d5df8df03b8f836ce0ffc41068d61e2c1fe086a098a86693831d60ed1e9a",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Ollama Exposed Unauthenticated Daemon & Path Traversal (CVE-2024-37032)",
+  "summary": "Detects exposed Ollama daemons on port 11434 and probes to /api/pull, /api/push, /api/create, and /api/blobs/.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/api/pull",
+      "/api/push",
+      "/api/create",
+      "/api/blobs/"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      11434
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade Ollama to a patched release and bind OLLAMA_HOST strictly to 127.0.0.1.",
+    "Place an authenticating reverse proxy in front of any shared Ollama inference server."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2024-37032"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-22"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Wiz Research",
+      "reference_id": "Probllama-CVE-2024-37032",
+      "url": "https://www.wiz.io/blog/probllama-ollama-vulnerability-cve-2024-37032",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

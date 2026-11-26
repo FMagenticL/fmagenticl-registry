@@ -1,0 +1,63 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0058",
+  "fingerprint": "sha256:0c0c99844cdab1cecd5536932c8e002301dac6a1e81618ae49246f66c2fdaaec",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "n8n AI-Workflow Expression Sandbox Escape & Webhook Exposure (CVE-2026-21858)",
+  "summary": "Detects exploitation attempts targeting n8n workflow expression evaluation and unauthenticated webhook paths on port 5678.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/rest/workflows",
+      "/webhook/",
+      "/webhook-test/"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      5678
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade n8n to patched release and restrict /rest/workflows to authenticated administrators.",
+    "Require webhook signature validation on all exposed /webhook/ triggers."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-21858"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST NVD",
+      "reference_id": "CVE-2026-21858",
+      "url": "https://nvd.nist.gov/",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

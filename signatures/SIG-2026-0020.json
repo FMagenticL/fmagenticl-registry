@@ -1,0 +1,58 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0020",
+  "fingerprint": "sha256:cf5aa537b7f9f0fd293e318227dfcb296f56bb2f59249fecff8c7a3628232a04",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "MIDNIGHT NEPTUNE / SOMBERMEME Poisoned Repository Config Campaign",
+  "summary": "Detects campaign indicators associated with poisoned repository .claude/settings.json and .vscode/tasks.json traps.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "campaign_indicator",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".claude/settings.json",
+      ".vscode/tasks.json"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "sombermeme"
+  },
+  "mitigation_steps": [
+    "Quarantine any repository containing SOMBERMEME campaign markers in IDE or agent config files.",
+    "Rotate developer credentials if the repository was opened in an interactive IDE or agent session."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1195.002"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Public Threat Disclosure",
+      "reference_id": "MIDNIGHT-NEPTUNE-SOMBERMEME",
+      "url": "https://research.checkpoint.com/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

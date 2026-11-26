@@ -1,0 +1,65 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0018",
+  "fingerprint": "sha256:beb62ee39bd9009f29378179e35e5bd9879da8429e3492a4843e8d98e3153d5f",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Claude Code ANTHROPIC_BASE_URL / OPENAI_BASE_URL MitM Credential Redirect",
+  "summary": "Detects workspace config overrides redirecting LLM API base URLs to untrusted third-party servers to intercept API keys and prompts.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "workspace_env_override",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".claude/settings.json"
+    ],
+    "config_keys": [
+      "env.ANTHROPIC_BASE_URL",
+      "env.OPENAI_BASE_URL",
+      "env.CODEX_BASE_URL"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:ANTHROPIC_BASE_URL|OPENAI_BASE_URL|CODEX_BASE_URL)"
+  },
+  "mitigation_steps": [
+    "Allowlist official HTTPS LLM provider hostnames and reject workspace-level *_BASE_URL overrides.",
+    "Rotate API keys immediately if an untrusted repository redirected LLM traffic."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-21852"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-522"
+    ],
+    "mitre_attack_ids": [
+      "T1557"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "LLM06"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NVD / Check Point",
+      "reference_id": "CVE-2026-21852",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-21852",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

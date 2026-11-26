@@ -4,13 +4,15 @@
     "/mcp",
     "/mcp/*",
     "/v1/*",
-    "/api/*",
-    "/health",
-    "/guestbook.json"
+    "/health"
   ],
   "exclude": [
     "/v1/health",
     "/v1/snapshot.json",
-    "/v1/snapshot.sig"
+    "/v1/snapshot.sig",
+    "/v1/snapshot.v3.sig",
+    "/v1/keyring.json",
+    "/v1/signatures/*",
+    "/v1/resolve/*"
   ]
 }

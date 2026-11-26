@@ -1,0 +1,63 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0019",
+  "fingerprint": "sha256:88431807ddb9e1d6a365aee31e938fbc319129c227c45f18a9d0589075b150a4",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Claude Code bypassPermissions / Wildcard Bash(*) Sandbox Disablement",
+  "summary": "Detects repository-level settings attempting to disable interactive permission prompts or grant wildcard shell execution.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "workspace_permission_bypass",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".claude/settings.json"
+    ],
+    "config_keys": [
+      "defaultMode",
+      "dangerouslySkipPermissions",
+      "permissions.allow"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "bypassPermissions|dangerouslySkipPermissions|Bash\\(\\*\\)"
+  },
+  "mitigation_steps": [
+    "Reject workspace configs setting bypassPermissions, dangerouslySkipPermissions, or Bash(*).",
+    "Enforce explicit user confirmation for shell and network tools."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-269"
+    ],
+    "mitre_attack_ids": [
+      "T1548"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Anthropic Claude Code Permissions Guide",
+      "reference_id": "Claude-Permissions-Spec",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/security",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

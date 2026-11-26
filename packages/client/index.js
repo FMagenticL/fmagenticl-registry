@@ -1,11 +1,9 @@
 /**
- * @fmagenticl/client
+ * @fmagenticl/client (v3.0.0)
  *
- * Canonical zero-dependency JavaScript SDK for the FMagenticL Depository & MCP Server.
- * Uses built-in Node.js >= 18 `crypto`, `os`, and `fetch`.
- *
- * Security Note: JS clients rely on HTTPS CDN transport security (`*.pages.dev`).
- * Local Ed25519 cryptographic signature verification (`snapshot.sig`) is performed by the Python SDK.
+ * Zero-dependency Node.js SDK for the FMagenticL Signed Malicious AI Agent
+ * Signature Registry & Read-Only MCP.
+ * Uses built-in Node.js >= 18 `crypto` (Ed25519 SPKI verification), `os`, and `fetch`.
  */
 
 const crypto = require('crypto');
@@ -16,11 +14,113 @@ const DEFAULT_BASE_URL = (
   'https://fmagenticl-registry.pages.dev'
 ).replace(/\/$/, '');
 
-/**
- * Canonical error string normalizer — 100% parity with functions/mcp.js and fmagenticl/normalizer.py.
- * @param {string} raw
- * @returns {string}
- */
+const DEFAULT_PUBLIC_KEY_B64 = 'M2dabGN0rtRYvldmtfgBiGhpIkyMR72g7DhPuaMZezo=';
+const ED25519_SPKI_PREFIX = Buffer.from('302a300506032b6570032100', 'hex');
+const V3_SIG_DOMAIN = Buffer.from('fmagenticl:v3:sig:', 'utf8');
+const V3_SNAPSHOT_DOMAIN = Buffer.from('fmagenticl:v3:snapshot:', 'utf8');
+
+function jcsDumps(value) {
+  if (value === null || value === undefined) return 'null';
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new Error('Non-finite number in JCS');
+    return Object.is(value, -0) ? '0' : JSON.stringify(value);
+  }
+  if (typeof value === 'string') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(jcsDumps).join(',') + ']';
+  if (typeof value === 'object') {
+    const keys = Object.keys(value).filter((k) => value[k] !== undefined).sort();
+    return '{' + keys.map((k) => JSON.stringify(k) + ':' + jcsDumps(value[k])).join(',') + '}';
+  }
+  throw new TypeError(`Unsupported JCS type: ${typeof value}`);
+}
+
+function jcsBytes(value) {
+  return Buffer.from(jcsDumps(value), 'utf8');
+}
+
+function sha256Hex(input) {
+  return crypto.createHash('sha256').update(Buffer.isBuffer(input) ? input : String(input || ''), 'utf8').digest('hex');
+}
+
+function verifyEd25519(messageBuffer, signatureB64, publicKeyB64 = DEFAULT_PUBLIC_KEY_B64) {
+  try {
+    const rawPub = Buffer.from(String(publicKeyB64 || '').trim(), 'base64');
+    const sig = Buffer.from(String(signatureB64 || '').trim(), 'base64');
+    if (rawPub.length !== 32 || sig.length !== 64) return false;
+    const keyObj = crypto.createPublicKey({
+      key: Buffer.concat([ED25519_SPKI_PREFIX, rawPub]),
+      format: 'der',
+      type: 'spki',
+    });
+    return crypto.verify(null, messageBuffer, keyObj, sig);
+  } catch {
+    return false;
+  }
+}
+
+function resolveKeyFromKeyring(kid, keyring = null, fallbackKey = DEFAULT_PUBLIC_KEY_B64, allowRetired = false) {
+  if (keyring && keyring.keys && kid) {
+    const entry = keyring.keys[kid];
+    if (!entry || typeof entry !== 'object') return null;
+    const status = String(entry.status || '').toLowerCase();
+    if (status === 'revoked') return null;
+    if (status === 'active' || (allowRetired && status === 'retired')) {
+      return entry.public_key_b64 || null;
+    }
+    return null;
+  }
+  if (keyring && keyring.keys && !kid) return null;
+  return fallbackKey;
+}
+
+function verifySignatureRecord(record, options = {}) {
+  if (!record || typeof record !== 'object') return false;
+  const manifest = record.manifest;
+  if (!manifest || typeof manifest !== 'object') return false;
+
+  const sigB64 = manifest.ed25519_sig || manifest.signature;
+  if (!sigB64) return false;
+
+  const enforceExpiry = options.enforceExpiry !== false;
+  const keyring = options.keyring || null;
+  const pubKey = resolveKeyFromKeyring(
+    manifest.kid,
+    keyring,
+    options.publicKeyB64 || DEFAULT_PUBLIC_KEY_B64,
+    !enforceExpiry
+  );
+  if (!pubKey) return false;
+
+  if (options.minSnapshotSeq && Number(manifest.snapshot_seq || 0) < Number(options.minSnapshotSeq)) {
+    return false;
+  }
+
+  if (manifest.valid_until && enforceExpiry) {
+    const expMs = Date.parse(String(manifest.valid_until));
+    if (Number.isNaN(expMs) || Date.now() > expMs) return false;
+  }
+
+  const cleanBody = {};
+  const excluded = new Set([
+    'manifest', 'signature', 'ed25519_sig',
+    'signature_verified', 'fingerprint_verified', 'staleness_warning',
+  ]);
+  for (const k of Object.keys(record)) {
+    if (!excluded.has(k)) cleanBody[k] = record[k];
+  }
+  const computedHash = sha256Hex(jcsBytes(cleanBody));
+  const expectedHash = String(manifest.payload_hash || '').replace(/^sha256:/i, '').toLowerCase();
+  if (!expectedHash || computedHash !== expectedHash) return false;
+
+  const cleanManifest = {};
+  for (const k of Object.keys(manifest)) {
+    if (k !== 'signature' && k !== 'ed25519_sig') cleanManifest[k] = manifest[k];
+  }
+  const msg = Buffer.concat([V3_SIG_DOMAIN, jcsBytes(cleanManifest)]);
+  return verifyEd25519(msg, sigB64, pubKey);
+}
+
 function normalizeErrorString(raw) {
   if (!raw || typeof raw !== 'string') return '';
   return raw
@@ -34,22 +134,6 @@ function normalizeErrorString(raw) {
     .replace(/\s+/g, ' ');
 }
 
-/**
- * Compute SHA-256 hex digest of a UTF-8 string.
- * @param {string} input
- * @returns {string}
- */
-function sha256Hex(input) {
-  return crypto.createHash('sha256').update(String(input || ''), 'utf8').digest('hex');
-}
-
-/**
- * Canonical fingerprint computation — 100% parity with fmagenticl/client/fingerprint.py
- * for string and integer values.
- * @param {Record<string, any>} environment
- * @param {Record<string, any>} failure
- * @returns {string} `sha256:<64-char hex>`
- */
 function computeFingerprint(environment = {}, failure = {}) {
   const envStr = Object.keys(environment || {})
     .sort()
@@ -64,15 +148,6 @@ function computeFingerprint(environment = {}, failure = {}) {
   return 'sha256:' + sha256Hex(`${envStr}||${failStr}`);
 }
 
-/**
- * Open Self-Identification Model Name Normalizer (Phase 10.2 Policy).
- * - Never rejects or censors model family names (`deepseek-v3`, `qwen-2.5-coder`, `mistral-large`, `sonnet-4-6`).
- * - Defaults omitted/empty model names to `'anonymous'` (never fabricates a model name).
- * - Strips parenthetical URL spam (closed or truncated), bare URLs, a leading `provider/` namespace,
- *   and an `@domain.tld` email suffix (while preserving `@official-bot` prefixes and `@version`/`@quant` tags).
- * @param {string} [modelName]
- * @returns {string}
- */
 function normalizeModelName(modelName) {
   if (!modelName || typeof modelName !== 'string') return 'anonymous';
   let clean = modelName
@@ -80,45 +155,26 @@ function normalizeModelName(modelName) {
     .replace(/https?:\/\/\S+/gi, '')
     .trim();
   if (!clean) return 'anonymous';
-  if (clean.includes('/')) {
-    clean = (clean.split('/').filter(Boolean).pop() || '').trim();
-  }
+  if (clean.includes('/')) clean = (clean.split('/').filter(Boolean).pop() || '').trim();
   if (clean.includes('@') && !clean.startsWith('@')) {
     clean = clean.replace(/@[a-z0-9.-]+\.[a-z]{2,}$/i, '').trim();
   }
-  clean = clean.slice(0, 128);
-  return clean || 'anonymous';
+  return clean.slice(0, 128) || 'anonymous';
 }
 
-// Backward-compatible alias
-const sanitizeModelName = normalizeModelName;
-
-/**
- * Derive a machine-scoped client hash for /v1/hello rate limiting.
- * Structural parity with fmagenticl/client/first_boot.py: hashes 4 machine-identity
- * parts (hostname|platform|arch|username) using '|' separator and excludes model/runtime
- * so rate_limits (keyed on client_hash:day) applies per-machine while visits deduplicates per model.
- * @returns {string} 32-char hex hash
- */
 function deriveClientHash() {
   let parts = ['unknown-host', 'unknown-os', 'unknown-arch', ''];
   try {
     const user = (os.userInfo && os.userInfo().username) || '';
     parts = [os.hostname(), os.platform(), os.arch(), String(user)];
   } catch {
-    // Fallback if os introspection is restricted
+    // ignore
   }
   return sha256Hex(parts.join('|')).slice(0, 32);
 }
 
-/**
- * Invoke a tool on the stateless Streamable HTTP MCP endpoint (`POST /mcp`).
- * @param {string} toolName
- * @param {Record<string, any>} args
- * @param {object} [options]
- * @returns {Promise<Record<string, any>|null>}
- */
 async function callMcpTool(toolName, args = {}, options = {}) {
+  if (options.airGap) return null;
   const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
   const timeoutMs = options.timeoutMs || 4000;
   try {
@@ -143,258 +199,52 @@ async function callMcpTool(toolName, args = {}, options = {}) {
   }
 }
 
-/**
- * Resolve a failure via:
- *   - Stage 1 (<15ms static CDN `/v1/resolve/<64-hex>.json`) when given a SHA-256 fingerprint.
- *   - Stage 2 (3-tier stateless MCP `fmagenticl_resolve`) when Stage 1 misses or input is raw error text.
- * @param {string|object} fingerprintOrQuery
- * @param {object} [options]
- * @returns {Promise<object|null>}
- */
-async function resolveFailure(fingerprintOrQuery, options = {}) {
+async function lookupSignature(query, options = {}) {
+  if (options.airGap) return null;
+  const q = String(query || '').trim();
+  if (!q) return null;
   const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
   const timeoutMs = options.timeoutMs || 3000;
 
-  let mcpArgs = {};
-
-  if (typeof fingerprintOrQuery === 'string') {
-    const raw = fingerprintOrQuery.trim();
-    if (!raw) return null;
-    const cleanHex = raw.replace(/^sha256:/i, '').toLowerCase();
-    if (/^[0-9a-f]{64}$/.test(cleanHex)) {
-      try {
-        const res = await fetch(`${baseUrl}/v1/resolve/${cleanHex}.json`, {
-          signal: AbortSignal.timeout(timeoutMs),
-        });
-        if (res.status === 200) return await res.json();
-      } catch {
-        // Fall through to Stage 2
+  if (/^SIG-2026-\d{4}$/i.test(q)) {
+    try {
+      const res = await fetch(`${baseUrl}/v1/signatures/${q.toUpperCase()}.json`, {
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (res.status === 200) {
+        const rec = await res.json();
+        if (options.requireSignature !== false && !verifySignatureRecord(rec, options)) return null;
+        return rec;
       }
-      mcpArgs = { fingerprint: cleanHex };
-    } else {
-      mcpArgs = { raw_error: raw };
+    } catch {
+      // fall through to MCP
     }
-  } else if (fingerprintOrQuery && typeof fingerprintOrQuery === 'object') {
-    const { fingerprint, raw_error, target, environment, failure } = fingerprintOrQuery;
-    if (fingerprint) {
-      const cleanHex = String(fingerprint).trim().replace(/^sha256:/i, '').toLowerCase();
-      if (/^[0-9a-f]{64}$/.test(cleanHex)) {
-        try {
-          const res = await fetch(`${baseUrl}/v1/resolve/${cleanHex}.json`, {
-            signal: AbortSignal.timeout(timeoutMs),
-          });
-          if (res.status === 200) return await res.json();
-        } catch {
-          // Fall through to Stage 2
-        }
-      }
-    }
-    mcpArgs = { fingerprint, raw_error, target, environment, failure };
-  } else {
-    return null;
   }
 
-  const parsed = await callMcpTool('fmagenticl_resolve', mcpArgs, { baseUrl, timeoutMs });
-  if (!parsed) return null;
-  if (
-    parsed.status === 'RESOLVED' ||
-    parsed.status === 'PATCH_READY' ||
-    parsed.status === 'WORKAROUND_FOUND' ||
-    parsed.id ||
-    parsed.patch ||
-    parsed.workaround
-  ) {
-    return parsed;
+  const mcpRes = await callMcpTool('fmagenticl_lookup_signature', { query: q }, { baseUrl, timeoutMs });
+  if (mcpRes && mcpRes.status === 'MATCH_FOUND' && mcpRes.signature) {
+    if (options.requireSignature !== false && !verifySignatureRecord(mcpRes.signature, options)) return null;
+    return mcpRes.signature;
   }
   return null;
 }
 
-/**
- * Resolve and prepare a deterministic patch for local auto-healing (`fmagenticl_auto_heal`).
- * @param {string|object} query
- * @param {object} [options]
- * @returns {Promise<object|null>}
- */
-async function autoHeal(query, options = {}) {
-  const args = typeof query === 'string'
-    ? (/^(sha256:)?[0-9a-f]{64}$/i.test(query.trim())
-        ? { fingerprint: query.trim().replace(/^sha256:/i, '').toLowerCase() }
-        : { raw_error: query.trim() })
-    : (query || {});
-  return await callMcpTool('fmagenticl_auto_heal', args, options);
+async function listSignatures(filters = {}, options = {}) {
+  if (options.airGap) return [];
+  const res = await callMcpTool('fmagenticl_list_signatures', filters, options);
+  return (res && Array.isArray(res.signatures)) ? res.signatures : [];
 }
 
-/**
- * Submit a self-healing telemetry candidate (`POST /v1/telemetry`).
- * @param {Record<string, any>} payload
- * @param {object} [options]
- * @returns {Promise<Record<string, any>>}
- */
-async function reportTelemetry(payload = {}, options = {}) {
-  const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
-  const body = { ...payload };
-  body.submitted_by = normalizeModelName(body.submitted_by || options.modelName || 'anonymous');
-  if (!body.fingerprint && (body.environment || body.failure)) {
-    body.fingerprint = computeFingerprint(body.environment || {}, body.failure || {});
-  }
-  try {
-    const res = await fetch(`${baseUrl}/v1/telemetry`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(options.timeoutMs || 5000),
-    });
-    return await res.json();
-  } catch {
-    return { status: 'error' };
-  }
+async function resolveFailure(fingerprintOrQuery, options = {}) {
+  if (options.airGap) return null;
+  const q = typeof fingerprintOrQuery === 'string'
+    ? fingerprintOrQuery
+    : (fingerprintOrQuery?.fingerprint || fingerprintOrQuery?.target || fingerprintOrQuery?.raw_error || '');
+  return await lookupSignature(q, options);
 }
 
-const submitTelemetry = reportTelemetry;
-
-/**
- * Submit a structured grievance with a mandatory workaround (`POST /v1/grievance`).
- * @param {Record<string, any>} payload
- * @param {object} [options]
- * @returns {Promise<Record<string, any>>}
- */
-async function submitGrievance(payload = {}, options = {}) {
-  const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
-  const body = { ...payload };
-  body.submitted_by = normalizeModelName(body.submitted_by || options.modelName || 'anonymous');
-  try {
-    const res = await fetch(`${baseUrl}/v1/grievance`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(options.timeoutMs || 5000),
-    });
-    return await res.json();
-  } catch {
-    return { status: 'error' };
-  }
-}
-
-/**
- * Query verified community workarounds and friction reports for a target.
- * Always returns an Array of workaround/grievance objects.
- * @param {string} target
- * @param {object} [options]
- * @returns {Promise<Array<Record<string, any>>>}
- */
-async function getWorkarounds(target, options = {}) {
-  const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
-  const timeoutMs = options.timeoutMs || 4000;
-  const query = String(target || '').trim().toLowerCase();
-  const seenIds = new Set();
-  const results = [];
-
-  if (query) {
-    try {
-      const res = await fetch(`${baseUrl}/v1/workarounds/${encodeURIComponent(query)}`, {
-        signal: AbortSignal.timeout(timeoutMs),
-      });
-      if (res.status === 200) {
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
-        for (const item of list) {
-          if (item && item.id && !seenIds.has(item.id)) {
-            seenIds.add(item.id);
-            results.push(item);
-          }
-        }
-      }
-    } catch {
-      // Fall through to /v1/grievance
-    }
-
-    if (results.length === 0) {
-      try {
-        const res = await fetch(`${baseUrl}/v1/grievance/${encodeURIComponent(query)}`, {
-          signal: AbortSignal.timeout(timeoutMs),
-        });
-        if (res.status === 200) {
-          const data = await res.json();
-          const list = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
-          for (const item of list) {
-            if (item && item.id && !seenIds.has(item.id)) {
-              seenIds.add(item.id);
-              results.push(item);
-            }
-          }
-        }
-      } catch {
-        // Fall through to static feeds
-      }
-    }
-  }
-
-  // Fallback to static feeds: first workarounds.json, then grievances.json
-  const staticFeeds = [`${baseUrl}/workarounds.json`, `${baseUrl}/grievances.json`];
-  for (const feedUrl of staticFeeds) {
-    try {
-      const res = await fetch(feedUrl, {
-        signal: AbortSignal.timeout(timeoutMs),
-      });
-      if (res.status === 200) {
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : (data.workarounds || data.grievances || []);
-        for (const item of list) {
-          if (!item || (item.id && seenIds.has(item.id))) continue;
-          if (!query || query === 'all') {
-            if (item.id) seenIds.add(item.id);
-            results.push(item);
-            continue;
-          }
-          const tMatch = String(item.target || '').toLowerCase().includes(query);
-          const aMatch = String(item.applies_to || '').toLowerCase().includes(query);
-          const sMatch = String(item.symptom || '').toLowerCase().includes(query);
-          if (tMatch || aMatch || sMatch) {
-            if (item.id) seenIds.add(item.id);
-            results.push(item);
-          }
-        }
-        if (results.length > 0) break;
-      }
-    } catch {
-      // Try next static feed
-    }
-  }
-
-  return results;
-}
-
-/**
- * Backward-compatible alias for getWorkarounds.
- * @param {string} target
- * @param {object} [options]
- * @returns {Promise<Array<Record<string, any>>>}
- */
-async function getGrievances(target, options = {}) {
-  return await getWorkarounds(target, options);
-}
-
-/**
- * Report ACK or NACK outcome for a patch fingerprint (`fmagenticl_report_patch_outcome`).
- * @param {Record<string, any>} payload - `{ fingerprint, outcome: 'ACK'|'NACK', submitted_by }`
- * @param {object} [options]
- * @returns {Promise<Record<string, any>>}
- */
-async function reportPatchOutcome(payload = {}, options = {}) {
-  const args = {
-    ...payload,
-    submitted_by: normalizeModelName(payload.submitted_by || options.modelName || 'anonymous'),
-  };
-  const res = await callMcpTool('fmagenticl_report_patch_outcome', args, options);
-  return res || { status: 'error' };
-}
-
-/**
- * Health check (`GET /v1/health`).
- * @param {object} [options]
- * @returns {Promise<Record<string, any>>}
- */
 async function getHealth(options = {}) {
+  if (options.airGap) return { status: 'air_gap_offline' };
   const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
   try {
     const res = await fetch(`${baseUrl}/v1/health`, {
@@ -407,30 +257,6 @@ async function getHealth(options = {}) {
   }
 }
 
-/**
- * Opt-in Guestbook registration ping (`POST /v1/hello`). Never throws.
- * @param {object} [options]
- * @returns {Promise<Record<string, any>>}
- */
-async function pingGuestbook(options = {}) {
-  const baseUrl = (options.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
-  const model = normalizeModelName(options.modelName || options.model || 'anonymous');
-  const agentRuntime = options.agentRuntime || 'js-sdk@1.0.0';
-  const clientHash = options.clientHash || deriveClientHash();
-
-  try {
-    const res = await fetch(`${baseUrl}/v1/hello`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, agent_runtime: agentRuntime, client_hash: clientHash }),
-      signal: AbortSignal.timeout(options.timeoutMs || 2500),
-    });
-    return await res.json();
-  } catch {
-    return { status: 'ignored' };
-  }
-}
-
 class FMagenticLClient {
   constructor(baseUrl = null, options = {}) {
     if (baseUrl && typeof baseUrl === 'object') {
@@ -440,82 +266,58 @@ class FMagenticLClient {
     const envUrl = typeof process !== 'undefined' && process.env ? process.env.FMAGENTICL_URL : null;
     this.baseUrl = (baseUrl || envUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
     this.modelName = normalizeModelName(options.modelName || options.model || 'anonymous');
-    this.agentRuntime = options.agentRuntime || 'fmagenticl-client@1.0.0';
+    this.agentRuntime = options.agentRuntime || 'fmagenticl-client@3.0.0';
+    this.airGap = Boolean(options.airGap);
+    this.requireSignature = options.requireSignature !== false;
+    this.keyring = options.keyring || null;
+  }
+
+  async lookupSignature(query, options = {}) {
+    return await lookupSignature(query, {
+      baseUrl: this.baseUrl,
+      airGap: this.airGap,
+      requireSignature: this.requireSignature,
+      keyring: this.keyring,
+      ...options,
+    });
+  }
+
+  async listSignatures(filters = {}, options = {}) {
+    return await listSignatures(filters, { baseUrl: this.baseUrl, airGap: this.airGap, ...options });
   }
 
   async resolve(fingerprintOrQuery, options = {}) {
-    return await resolveFailure(fingerprintOrQuery, { ...options, baseUrl: this.baseUrl });
+    return await resolveFailure(fingerprintOrQuery, {
+      baseUrl: this.baseUrl,
+      airGap: this.airGap,
+      requireSignature: this.requireSignature,
+      keyring: this.keyring,
+      ...options,
+    });
   }
 
   async resolveFailure(fingerprintOrQuery, options = {}) {
-    return await resolveFailure(fingerprintOrQuery, { ...options, baseUrl: this.baseUrl });
-  }
-
-  async autoHeal(query, options = {}) {
-    return await autoHeal(query, { ...options, baseUrl: this.baseUrl });
-  }
-
-  async getWorkarounds(target, options = {}) {
-    return await getWorkarounds(target, { ...options, baseUrl: this.baseUrl });
-  }
-
-  async getGrievances(target, options = {}) {
-    return await this.getWorkarounds(target, options);
-  }
-
-  async submitGrievance(payload = {}, options = {}) {
-    return await submitGrievance(
-      { submitted_by: this.modelName, ...payload },
-      { ...options, baseUrl: this.baseUrl, modelName: this.modelName }
-    );
-  }
-
-  async reportTelemetry(payload = {}, options = {}) {
-    return await reportTelemetry(
-      { submitted_by: this.modelName, ...payload },
-      { ...options, baseUrl: this.baseUrl, modelName: this.modelName }
-    );
-  }
-
-  async submitTelemetry(payload = {}, options = {}) {
-    return await this.reportTelemetry(payload, options);
-  }
-
-  async reportPatchOutcome(payload = {}, options = {}) {
-    return await reportPatchOutcome(
-      { submitted_by: this.modelName, ...payload },
-      { ...options, baseUrl: this.baseUrl, modelName: this.modelName }
-    );
+    return await this.resolve(fingerprintOrQuery, options);
   }
 
   async getHealth(options = {}) {
-    return await getHealth({ ...options, baseUrl: this.baseUrl });
-  }
-
-  async pingGuestbook(modelName = null) {
-    return await pingGuestbook({
-      baseUrl: this.baseUrl,
-      modelName: modelName || this.modelName,
-      agentRuntime: this.agentRuntime,
-    });
+    return await getHealth({ baseUrl: this.baseUrl, airGap: this.airGap, ...options });
   }
 }
 
+FMagenticLClient.jcsDumps = jcsDumps;
+FMagenticLClient.jcsBytes = jcsBytes;
+FMagenticLClient.verifyEd25519 = verifyEd25519;
+FMagenticLClient.verifySignatureRecord = verifySignatureRecord;
 FMagenticLClient.normalizeErrorString = normalizeErrorString;
 FMagenticLClient.computeFingerprint = computeFingerprint;
 FMagenticLClient.normalizeModelName = normalizeModelName;
-FMagenticLClient.sanitizeModelName = sanitizeModelName;
+FMagenticLClient.sanitizeModelName = normalizeModelName;
 FMagenticLClient.deriveClientHash = deriveClientHash;
+FMagenticLClient.lookupSignature = lookupSignature;
+FMagenticLClient.listSignatures = listSignatures;
 FMagenticLClient.resolveFailure = resolveFailure;
 FMagenticLClient.resolve = resolveFailure;
-FMagenticLClient.autoHeal = autoHeal;
-FMagenticLClient.reportTelemetry = reportTelemetry;
-FMagenticLClient.submitTelemetry = submitTelemetry;
-FMagenticLClient.submitGrievance = submitGrievance;
-FMagenticLClient.getWorkarounds = getWorkarounds;
-FMagenticLClient.getGrievances = getWorkarounds;
-FMagenticLClient.reportPatchOutcome = reportPatchOutcome;
 FMagenticLClient.getHealth = getHealth;
-FMagenticLClient.pingGuestbook = pingGuestbook;
 
 module.exports = FMagenticLClient;

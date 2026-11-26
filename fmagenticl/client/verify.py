@@ -24,6 +24,51 @@ except ImportError:
     InvalidSignature = Exception
 
 from fmagenticl.client.config import FMAGENTICL_PUBLIC_KEY
+from fmagenticl.client.jcs import jcs_bytes
+
+V3_SIG_DOMAIN = b"fmagenticl:v3:sig:"
+V3_SNAPSHOT_DOMAIN = b"fmagenticl:v3:snapshot:"
+
+
+def load_keyring(keyring_path: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
+    """Load keyring.json mapping kid -> {public_key_b64, status, ...}."""
+    if not keyring_path:
+        keyring_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "data",
+            "keyring.json",
+        )
+    if not os.path.isfile(keyring_path):
+        return {}
+    try:
+        with open(keyring_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        keys = data.get("keys", {}) if isinstance(data, dict) else {}
+        return keys if isinstance(keys, dict) else {}
+    except Exception:
+        return {}
+
+
+def resolve_public_key_for_kid(
+    kid: Optional[str],
+    keyring: Optional[Dict[str, Dict[str, Any]]] = None,
+    fallback_public_key_b64: Optional[str] = None,
+    allow_retired: bool = False,
+) -> Optional[str]:
+    """Resolve public key for kid. Unconditionally returns None on revoked or unknown kid."""
+    if keyring and kid:
+        entry = keyring.get(kid)
+        if not isinstance(entry, dict):
+            return None
+        status = str(entry.get("status", "")).lower()
+        if status == "revoked":
+            return None
+        if status == "active" or (allow_retired and status == "retired"):
+            return entry.get("public_key_b64")
+        return None
+    if keyring and not kid:
+        return None
+    return fallback_public_key_b64 or FMAGENTICL_PUBLIC_KEY
 
 
 def canonical_json_bytes(data: Any) -> bytes:
@@ -171,8 +216,19 @@ def verify_patch_envelope(
             )
         }
 
+    manifest_version = manifest.get("manifest_version", 2)
     try:
-        computed_hash = compute_payload_hash(remediation)
+        if manifest_version >= 3:
+            clean_full = {
+                k: v for k, v in patch.items()
+                if k not in (
+                    "manifest", "signature", "ed25519_sig",
+                    "signature_verified", "fingerprint_verified", "staleness_warning",
+                )
+            }
+            computed_hash = hashlib.sha256(jcs_bytes(clean_full)).hexdigest()
+        else:
+            computed_hash = compute_payload_hash(remediation)
     except TypeError:
         return False
 
@@ -194,11 +250,27 @@ def verify_patch_envelope(
     except Exception:
         return False
 
-    # 4. Ed25519 signature verification over canonical manifest bytes
+    # 4. Ed25519 signature verification over canonical manifest bytes (v3 JCS domain-separated or v2 legacy)
+    manifest_version = manifest.get("manifest_version", 2)
+    resolved_key = public_key_b64
+    kid = manifest.get("kid")
+    if manifest_version >= 3:
+        if resolved_key is None:
+            keyring = load_keyring()
+            if keyring:
+                resolved_key = resolve_public_key_for_kid(
+                    kid, keyring=keyring, fallback_public_key_b64=None, allow_retired=not enforce_expiry
+                )
+                if not resolved_key:
+                    return False
+        clean_manifest = {k: v for k, v in manifest.items() if k not in ("signature", "ed25519_sig")}
+        manifest_bytes = V3_SIG_DOMAIN + jcs_bytes(clean_manifest)
+        return verify_signature(manifest_bytes, sig_b64, public_key_b64=resolved_key)
+
     clean_manifest = {k: v for k, v in manifest.items() if k not in ("signature", "ed25519_sig")}
     manifest_bytes = canonical_json_bytes(clean_manifest)
 
-    return verify_signature(manifest_bytes, sig_b64, public_key_b64=public_key_b64)
+    return verify_signature(manifest_bytes, sig_b64, public_key_b64=resolved_key)
 
 
 def verify_query_fingerprint(
@@ -250,7 +322,7 @@ def verify_query_fingerprint(
     valid_fields = (
         "patch_type", "action", "json_patch", "fallback_cli", "file_ops",
         "mcp_uri", "strategy", "config_patch", "unified_diff", "dependency_pin",
-        "workaround_advisory", "workaround"
+        "workaround_advisory", "workaround", "observable", "mitigation_steps"
     )
     if not any(k in remediation for k in valid_fields):
         return False

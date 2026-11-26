@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0052",
+  "fingerprint": "sha256:134569ab4d1e467bcc733258f68ea381ed962b7217a6d6ade30f1393f9af7265",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "TorchServe Unauthenticated Management API Model-Archive RCE (CVE-2023-43654)",
+  "summary": "Detects probes to TorchServe management port 8081 (/models, /workflows) for arbitrary remote MAR archive upload.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/models",
+      "/workflows"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      8081
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Bind TorchServe management API (8081) to localhost and restrict allowed_urls.",
+    "Upgrade TorchServe to patched versions enforcing token auth on management routes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2023-43654"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-918"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Oligo Security",
+      "reference_id": "ShellTorch-CVE-2023-43654",
+      "url": "https://www.oligo.security/blog/shelltorch-torchserve-ssrf-vulnerability-cve-2023-43654",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

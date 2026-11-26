@@ -43,7 +43,8 @@ def test_client_circuit_breaker_integration(tmp_path):
         circuit_breaker=cb,
         circuit_failure_threshold=2,
         circuit_reset_timeout=0.2,
-        timeout=0.05
+        timeout=0.05,
+        air_gap=False,
     )
 
     env = {"os": "win32", "runtime": "node@24.15.0"}

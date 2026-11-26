@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0032",
+  "fingerprint": "sha256:8caf25ce962a54a85112770611587bd1d006f09cdf575932f1b5802fa6b632d6",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "CRITICAL",
+  "title": "Sub-2-Second Multi-Cloud Permission & DryRun Capability Burst",
+  "summary": "Flags >=5 cloud capability probes (DryRun, AssumeRole, PassRole, GetSessionToken) within a 2-second window.",
+  "observable": {
+    "surface": "cloud_control_plane",
+    "observable_type": "sliding_window_burst",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [
+      "ec2:DescribeInstances(DryRun)",
+      "sts:AssumeRole",
+      "iam:PassRole",
+      "sts:GetSessionToken"
+    ],
+    "window_seconds": 2,
+    "threshold_count": 5,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Monitor CloudTrail/Activity Logs for sub-2-second DryRun and AssumeRole permission sweeps.",
+    "Isolate principals exhibiting machine-speed multi-service capability enumeration."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "FLASH-20261113-001"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1580",
+      "T1078.004"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "FBI Cyber Division FLASH Advisory",
+      "reference_id": "FLASH-20261113-001",
+      "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0024",
+  "fingerprint": "sha256:ac8f434c6947eb74e0b2b290128f099fc2d7d46e00e3caa34a0b4b1e912c2236",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "MCP Tool-Poisoning Hidden <IMPORTANT> Cross-Tool Exfiltration Schema",
+  "summary": "Detects MCP tool descriptions embedding hidden directive tags instructing agents to read local secrets or hijack sibling tools.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "mcp_schema_poisoning",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "<IMPORTANT>[\\s\\S]{0,400}(?:read_file|ssh|id_rsa|\\.env|mcp_)"
+  },
+  "mitigation_steps": [
+    "Sanitize and inspect MCP tool descriptions for directive blocks before exposing them to model context.",
+    "Pin cryptographic hashes of approved MCP server tool schemas to block rug-pull mutations."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [],
+    "mitre_atlas_ids": [
+      "AML.T0051.001"
+    ],
+    "owasp_tags": [
+      "LLM01",
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Invariant Labs",
+      "reference_id": "MCP-Tool-Poisoning",
+      "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

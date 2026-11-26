@@ -1,0 +1,60 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0033",
+  "fingerprint": "sha256:5d9d0c6720d026645b2d28094650f8d17a0df037c1eecf976cb9d5129aae8ca4",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "CRITICAL",
+  "title": "Sub-Second Cloud Object Storage PutBlob to DeleteBlob Write-Permission Probe",
+  "summary": "Detects autonomous write-access verification where PutBlob/PutObject is immediately followed by DeleteBlob/DeleteObject within <=1s.",
+  "observable": {
+    "surface": "cloud_control_plane",
+    "observable_type": "paired_write_delete_probe",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [
+      "PutBlob",
+      "DeleteBlob",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ],
+    "window_seconds": 1,
+    "threshold_count": 2,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Alert on PutBlob/DeleteBlob or PutObject/DeleteObject pairs executed within 1 second on sensitive buckets.",
+    "Enforce least-privilege SAS tokens and immutable object-lock policies."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "FLASH-20261113-001"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1530"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "FBI Cyber Division FLASH Advisory",
+      "reference_id": "FLASH-20261113-001",
+      "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

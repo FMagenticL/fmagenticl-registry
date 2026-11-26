@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0031",
+  "fingerprint": "sha256:b7858ff82476f12eb7d4426370d9fc16616ae2deb3b2e1b5db08eb87682848bc",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "CRITICAL",
+  "title": "AWS Bedrock LLMjacking Capability Discovery Sequence",
+  "summary": "Identifies machine-speed sequences calling sts:GetCallerIdentity followed by Bedrock model availability checks and InvokeModel.",
+  "observable": {
+    "surface": "cloud_control_plane",
+    "observable_type": "cloud_api_sequence",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [
+      "sts:GetCallerIdentity",
+      "bedrock:GetFoundationModelAvailability",
+      "bedrock:ListFoundationModels",
+      "bedrock:InvokeModel"
+    ],
+    "window_seconds": 60,
+    "threshold_count": 4,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Alert on rapid GetCallerIdentity -> GetFoundationModelAvailability -> InvokeModel sequences from non-standard principals.",
+    "Restrict bedrock:InvokeModel and ListFoundationModels via SCPs to approved workloads."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1580",
+      "T1078.004"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Sysdig TRT",
+      "reference_id": "Sysdig-LLMjacking-2024",
+      "url": "https://sysdig.com/blog/llmjacking-stolen-cloud-credentials/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0011",
+  "fingerprint": "sha256:b00c1a3a7b059aabe74d0674a1a6acf90a3c6f7972bb0fe6ff1b8ffe417a27e0",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "T3MP3ST / Autonomous Recon-Swarm Environment Footprint",
+  "summary": "Detects workspace directories, configuration files, and process indicators associated with the T3MP3ST autonomous recon harness.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "host_artifact_signature",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".t3mp3st/",
+      "t3mp3st.config.json"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "t3mp3st"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:\\.t3mp3st/|t3mp3st\\.config\\.json)"
+  },
+  "mitigation_steps": [
+    "Alert on unapproved .t3mp3st/ directories or t3mp3st.config.json files in production hosts.",
+    "Ensure authorized red-team harnesses are isolated to dedicated lab networks."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1595"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Public Tooling Documentation",
+      "reference_id": "T3MP3ST-Footprint",
+      "url": "https://github.com/elder-plinius/t3mp3st",
+      "source_type": "open_advisory",
+      "license_or_terms": "MIT",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

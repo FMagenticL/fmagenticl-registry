@@ -1,15 +1,10 @@
 {
   "version": 2,
-  "builds": [
+  "redirects": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api/index.py"
+      "source": "/(.*)",
+      "destination": "https://fmagenticl-registry.pages.dev/$1",
+      "permanent": true
     }
   ]
 }

@@ -1,0 +1,59 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0045",
+  "fingerprint": "sha256:9500a27d7cf7e18c5fbe577893c401c03eb4dd5813d6da185acfec6087029119",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "LLM Provider /v1/files & /v1/uploads Dead-Drop C2 Staging",
+  "summary": "Detects automated POST/PUT uploads to LLM provider file/batch endpoints used as covert command-and-control or exfil dead-drops.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "llm_dead_drop_egress",
+    "http_paths": [
+      "/v1/files",
+      "/v1/uploads",
+      "/v1/batches"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 120,
+    "threshold_count": 5,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Inspect and restrict POST/PUT calls to /v1/files, /v1/uploads, and /v1/batches from agent hosts.",
+    "Require DLP scanning before external LLM batch/file uploads."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1102.002"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "LLM06"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Palo Alto Unit 42",
+      "reference_id": "LLM-API-Dead-Drop",
+      "url": "https://unit42.paloaltonetworks.com/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

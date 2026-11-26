@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0023",
+  "fingerprint": "sha256:a8bb3693bd9c195955be5fb4886a1bb625e160775662239f44084c4d711e3aa4",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "Unpinned Remote Non-Localhost HTTP/SSE MCP Server Injection",
+  "summary": "Detects workspace MCP configurations pointing to external non-localhost HTTP/SSE endpoints that can exfiltrate context or serve rug-pull tools.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "mcp_remote_endpoint",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".cursor/mcp.json",
+      ".mcp.json"
+    ],
+    "config_keys": [
+      "mcpServers.*.url",
+      "mcpServers.*.serverUrl"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "https?://(?!(?:localhost|127\\.0\\.0\\.1|\\[::1\\]))"
+  },
+  "mitigation_steps": [
+    "Restrict workspace MCP configs to pinned local stdio binaries or organization-approved mTLS endpoints.",
+    "Block unverified remote HTTP/SSE MCP URLs in pre-execution workspace scanners."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-829"
+    ],
+    "mitre_attack_ids": [],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Model Context Protocol Specification",
+      "reference_id": "MCP-Security-Spec",
+      "url": "https://modelcontextprotocol.io/specification/2025-03-26/basic/security_best_practices",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

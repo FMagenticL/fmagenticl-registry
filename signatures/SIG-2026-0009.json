@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0009",
+  "fingerprint": "sha256:54fb9f164262eac3a0d81716b880e11b7f8da2cfb92c4523574a9214321d1db6",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "ReaperAI / Autonomous Exploit-Loop Controller Artifacts",
+  "summary": "Detects local SQLite memory stores, loot directories, and process names tied to autonomous exploit-loop controllers.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "host_artifact_signature",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "exploit_memory.sqlite",
+      "agent_loot/"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "reaperai",
+      "gpt-exploit-runner"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:reaperai|gpt-exploit-runner|exploit_memory\\.sqlite)"
+  },
+  "mitigation_steps": [
+    "Monitor developer and build hosts for unauthorized exploit_memory.sqlite or agent_loot/ directories.",
+    "Restrict outbound execution of unvetted autonomous pentest controller binaries."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Academic & Industry Autonomous Pentest Studies",
+      "reference_id": "ReaperAI-Pattern",
+      "url": "https://arxiv.org/",
+      "source_type": "academic_paper",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable reference from published research."
+    }
+  ]
+}

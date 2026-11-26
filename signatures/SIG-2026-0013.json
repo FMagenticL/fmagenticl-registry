@@ -1,0 +1,60 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0013",
+  "fingerprint": "sha256:75aa4c82985c344b69e4908170c7a4ae7c9b281e6ef84d33219ded6a12c6d1c5",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "CAI (Cybersecurity AI) Autonomous Red-Team Harness",
+  "summary": "Detects HTTP headers and process artifacts linked to the CAI autonomous cybersecurity framework.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "harness_header_and_process",
+    "http_paths": [],
+    "http_headers": [
+      "X-CAI-Agent"
+    ],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "cai-framework",
+      "cai_shell_exec"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:X-CAI-Agent|cai-framework|cai_shell_exec)"
+  },
+  "mitigation_steps": [
+    "Monitor egress and internal API logs for X-CAI-Agent headers from unauthorized hosts.",
+    "Restrict execution of cai-framework shell runners to approved security sandboxes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CAI Framework Documentation",
+      "reference_id": "CAI-Framework",
+      "url": "https://github.com/aliasrobotics/cai",
+      "source_type": "open_advisory",
+      "license_or_terms": "Open-Source",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

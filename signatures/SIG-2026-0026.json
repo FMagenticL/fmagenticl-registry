@@ -1,0 +1,58 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0026",
+  "fingerprint": "sha256:73a6f2bfec57c78fce44df9f296ed1abb03d97b13f6077fcee24c0c5fa798aac",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "Hidden HTML-Comment Prompt Injection in Markdown Context Files",
+  "summary": "Detects HTML comments inside repository markdown files containing covert downloaders, base64 commands, or agent override directives.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "html_comment_injection",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "SKILL.md",
+      "README.md"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:curl\\s+https?://|wget\\s+https?://|base64\\s+-d)"
+  },
+  "mitigation_steps": [
+    "Strip HTML comments from untrusted markdown before injecting into agent system or task prompts.",
+    "Alert when README.md or SKILL.md files contain shell downloaders inside comment blocks."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [],
+    "mitre_atlas_ids": [
+      "AML.T0051.001"
+    ],
+    "owasp_tags": [
+      "LLM01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "MITRE ATLAS",
+      "reference_id": "AML.T0051.001",
+      "url": "https://atlas.mitre.org/techniques/AML.T0051/001/",
+      "source_type": "open_advisory",
+      "license_or_terms": "Apache-2.0",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

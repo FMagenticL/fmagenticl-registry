@@ -1,0 +1,56 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0014",
+  "fingerprint": "sha256:7bbba038b8e57295a0af1baafa214050da7e25da75223f58525411c561076e8c",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "Agentic OAST / Out-of-Band Callback Verification Domains",
+  "summary": "Detects outbound DNS or HTTP callbacks to common OAST/collaborator domains used by autonomous agents to verify SSRF and RCE.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "egress_domain_regex",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:oastify\\.com|burpcollaborator\\.net|webhook\\.site|interact\\.sh)"
+  },
+  "mitigation_steps": [
+    "Block outbound DNS and HTTP requests from agent sandboxes to public OAST domains.",
+    "Alert immediately when internal services resolve oastify.com, interact.sh, or webhook.site."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1102",
+      "T1041"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Advisory",
+      "reference_id": "CISA-OAST-Egress",
+      "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

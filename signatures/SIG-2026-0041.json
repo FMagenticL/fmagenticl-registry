@@ -1,0 +1,53 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0041",
+  "fingerprint": "sha256:827e353785504d78e5a5468c76d32ef2102874e288e7a19f63fa60b7a358b198",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Distributed Residential-Proxy Route-Template Sweep (>=5 Distinct IPs / 5s)",
+  "summary": "Detects coordinated proxy-rotated scraping or vulnerability probing where >=5 distinct source IPs hit one normalized route template in 5s.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "distributed_route_burst",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 5,
+    "threshold_count": 5,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Aggregate rate-limit and anomaly windows by normalized route template in addition to source IP.",
+    "Challenge coordinated multi-IP sweeps hitting unauthenticated API routes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1090.003"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Advisory",
+      "reference_id": "CISA-Proxy-Botnets",
+      "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

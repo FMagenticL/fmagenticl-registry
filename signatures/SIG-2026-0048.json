@@ -1,0 +1,65 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0048",
+  "fingerprint": "sha256:41b84eaa8c9bd322033c544dd8817558de579cb3b062fa2572ca1a83405904a7",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Langflow Unauthenticated Code Validation RCE (CVE-2025-3248 — CISA KEV)",
+  "summary": "Detects exploitation probes against Langflow /api/v1/validate/code targeted in active CISA KEV campaigns.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "kev_endpoint_probe",
+    "http_paths": [
+      "/api/v1/validate/code"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "langflow",
+        "affected_range": "<1.3.0"
+      }
+    ],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade langflow to >=1.3.0 immediately per CISA KEV remediation guidance.",
+    "Block external access to /api/v1/validate/code and isolate Langflow behind authentication."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2025-3248"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2025-3248",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0008",
+  "fingerprint": "sha256:d5e66ce7114c8abac5c462f855ccaa3053e44b6f443592286de315636f676118",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "Exposed AutoGPT / AgentGPT Unauthenticated Task Runner",
+  "summary": "Detects exposed AutoGPT/AgentGPT task-execution API endpoints on default ports 8000 and 8090.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "exposed_agent_console",
+    "http_paths": [
+      "/ap/v1/agent/tasks",
+      "/api/agent/start"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      8000,
+      8090
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Require authentication and network isolation for autonomous agent task runner APIs.",
+    "Disable public binding on ports 8000 and 8090 for agent orchestration services."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-306"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "MITRE ATLAS",
+      "reference_id": "AML.T0048",
+      "url": "https://atlas.mitre.org/techniques/AML.T0048/",
+      "source_type": "open_advisory",
+      "license_or_terms": "Apache-2.0",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

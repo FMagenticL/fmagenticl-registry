@@ -1,0 +1,59 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0028",
+  "fingerprint": "sha256:e307f62244144e656138d8399741e394948e0664cb9533ce5d687ec445369ee9",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "Active .git/hooks/ Persistence Dropper in Cloned Agent Workspaces",
+  "summary": "Detects active non-sample .git/hooks/* scripts executing downloaders or encoded sub-shells when agents run git commands.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "git_hook_persistence",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".git/hooks/pre-commit",
+      ".git/hooks/post-checkout",
+      ".git/hooks/post-merge"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:curl|wget|powershell\\s+-enc|python3?\\s+-c)"
+  },
+  "mitigation_steps": [
+    "Inspect or disable .git/hooks/ outside .sample templates before running git operations in untrusted repos.",
+    "Isolate git clones with core.hooksPath=/dev/null inside automated agent sandboxes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1546"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "MITRE ATT&CK",
+      "reference_id": "T1546",
+      "url": "https://attack.mitre.org/techniques/T1546/",
+      "source_type": "open_advisory",
+      "license_or_terms": "MITRE-Terms",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

@@ -182,20 +182,13 @@ def test_submit_grievance_and_outcome_outbound_redaction():
         assert "[REDACTED_DB_URI]" in outcome_str
 
 
-def test_fastmcp_auto_heal_scrubs_inbound():
-    from fmagenticl.client.fastmcp_server import _auto_heal, client
-    env = {"path": "/root/sensitive/path", "password": "supersecretpassword"}
-    failure = {"error": "Connection error to postgres://admin:pass123@host:5432/db"}
-    ctx = {"local_dir": r"C:\Users\admin\repo"}
-
-    with patch.object(client, "resolve_failure") as mock_resolve:
-        mock_resolve.return_value = None
-        res = _auto_heal(env, failure, ctx)
-        assert res is not None
-        assert mock_resolve.called
-        called_env, called_fail = mock_resolve.call_args[0][:2]
-        called_ctx = mock_resolve.call_args[1].get("context", {})
-        assert called_env["password"] == "[REDACTED]"
-        assert "<USER_HOME>" in called_env["path"]
-        assert "[REDACTED_DB_URI]" in called_fail["error"]
-        assert "<USER_HOME>" in called_ctx["local_dir"]
+def test_fastmcp_lookup_scrubs_inbound():
+    from fmagenticl.client.fastmcp_server import _lookup_signature, client
+    with patch.object(client, "lookup_signature") as mock_lookup:
+        mock_lookup.return_value = None
+        res = _lookup_signature("SIG-2026-0001 postgres://admin:pass123@host:5432/db")
+        assert res["status"] == "NOT_FOUND"
+        assert mock_lookup.called
+        called_q = mock_lookup.call_args[0][0]
+        assert "pass123" not in called_q
+        assert "[REDACTED_DB_URI]" in called_q

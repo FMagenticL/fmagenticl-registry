@@ -1,3 +1,5 @@
 recursive-include fmagenticl/schema *.json
 include fmagenticl/data/snapshot.json
 include fmagenticl/data/snapshot.sig
+include fmagenticl/data/snapshot.v3.sig
+include fmagenticl/data/keyring.json

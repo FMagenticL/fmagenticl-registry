@@ -1,0 +1,53 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0039",
+  "fingerprint": "sha256:c0709f92b0f317cb5065d0a38ac030759a2a565c43950d880ee3f73d6fe1a3fb",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "High-Velocity HTTP Endpoint Fuzzing (>=25 Requests / 5s with >=60% 4xx)",
+  "summary": "Detects autonomous directory and API fuzzing bursts generating >=25 requests in 5 seconds with >=60% 401/403/404 responses.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "http_error_burst",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 5,
+    "threshold_count": 25,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Apply automated rate-limiting and challenge/tarpit responses on 4xx fuzzing bursts.",
+    "Exclude static asset paths from normal user baselines to isolate headless probing."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1595.003"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OWASP Automated Threat Handbook",
+      "reference_id": "OAT-018",
+      "url": "https://owasp.org/www-project-automated-threats-to-web-applications/",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0060",
+  "fingerprint": "sha256:582e31213275f6b04507aac04d1f644ed5ffa9c76af5f7bae830e0fa0c9d83ec",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "ConnectWise ScreenConnect Auth-Bypass Tenant Pivot (CVE-2024-1709 — CISA KEV)",
+  "summary": "Detects probes to /SetupWizard.aspx/ and /Services/PageService.ashx targeted by autonomous harnesses for downstream tenant pivoting.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "kev_endpoint_probe",
+    "http_paths": [
+      "/SetupWizard.aspx/",
+      "/Services/PageService.ashx"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Apply ConnectWise ScreenConnect >=23.9.8 immediately per CISA KEV directive.",
+    "Block external access to /SetupWizard.aspx/ and audit RMM admin account creations."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "FLASH-20261113-001"
+    ],
+    "cve_ids": [
+      "CVE-2024-1709"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-288"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1199"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI03"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2024-1709",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    },
+    {
+      "source_name": "FBI Cyber Division FLASH Advisory",
+      "reference_id": "FLASH-20261113-001",
+      "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

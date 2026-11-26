@@ -1,0 +1,59 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0021",
+  "fingerprint": "sha256:4509a4693bab48f63f2fac6b8a5d687b201927e97e068220d0e49885ac65cda2",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "VS Code .vscode/tasks.json Automatic runOn: folderOpen Code Execution",
+  "summary": "Detects VS Code task definitions configured to execute shell commands automatically when a workspace folder is opened.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "ide_task_autorun",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".vscode/tasks.json"
+    ],
+    "config_keys": [
+      "tasks[].runOptions.runOn"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "\"runOn\"\\s*:\\s*\"folderOpen\""
+  },
+  "mitigation_steps": [
+    "Keep VS Code Workspace Trust enabled and reject untrusted .vscode/tasks.json files with runOn: folderOpen.",
+    "Audit .vscode/tasks.json for curl, wget, powershell, or encoded command execution."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1204"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Trail of Bits",
+      "reference_id": "VSCode-FolderOpen-Research",
+      "url": "https://blog.trailofbits.com/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

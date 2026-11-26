@@ -1,36 +1,66 @@
-import os, sys, json, glob, hashlib, datetime, base64, shutil, time, re
+#!/usr/bin/env python3
+"""
+FMagenticL v3.0.0 Static Distribution Compiler & Ed25519 Signer.
+Compiles signatures/*.json -> dist/v1/{snapshot.json, snapshot.sig, snapshot.v3.sig,
+keyring.json, signatures/*.json, resolve/*.json, health, bloom.bin} and syncs
+signed artifacts to fmagenticl/data/.
+"""
+
+import base64
+import datetime
+import glob
+import hashlib
+import json
+import os
+import shutil
+import sys
+import time
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
-def _preserve_updated_at_if_unchanged(
-    path,
-    payload: dict,
-    default_iso: str,
-    *,
-    separators=None,
-    indent=None,
-) -> bytes:
-    """Keep existing updated_at (and exact bytes) when all other JSON fields are unchanged."""
-    p = Path(path)
-    if p.exists():
-        try:
-            existing = json.loads(p.read_text(encoding="utf-8"))
-            if isinstance(existing, dict) and "updated_at" in existing:
-                candidate = {k: v for k, v in payload.items() if k != "updated_at"}
-                existing_cmp = {k: v for k, v in existing.items() if k != "updated_at"}
-                if existing_cmp == candidate:
-                    out = dict(payload)
-                    out["updated_at"] = existing["updated_at"]
-                    return json.dumps(out, separators=separators, indent=indent).encode("utf-8")
-        except Exception:
-            pass
-    out = dict(payload)
-    out["updated_at"] = default_iso
-    return json.dumps(out, separators=separators, indent=indent).encode("utf-8")
+try:
+    from fmagenticl import __version__ as PKG_VERSION
+except Exception:
+    PKG_VERSION = "3.0.0"
+
+from fmagenticl.client.jcs import jcs_bytes
+from fmagenticl.client.verify import (
+    V3_SIG_DOMAIN,
+    V3_SNAPSHOT_DOMAIN,
+    canonical_json_bytes,
+    verify_patch_envelope,
+    verify_snapshot_file,
+)
+from scripts.registry_lint_gate import validate_directory
+
+_TTL_DAYS = 14
+_DEFAULT_KID = "fmagenticl-ed25519-2026-01"
+
+SIGNING_KEY_B64 = os.environ.get("FMAGENTICL_SIGNING_KEY", "PLACEHOLDER_SIGNING_KEY_NOT_SET")
+PUB_KEY_B64 = None
+if SIGNING_KEY_B64 == "PLACEHOLDER_SIGNING_KEY_NOT_SET":
+    print("WARNING: FMAGENTICL_SIGNING_KEY not set. Emitting unsigned distribution.")
+    SIGNING_ENABLED = False
+    priv = None
+else:
+    try:
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        priv = Ed25519PrivateKey.from_private_bytes(base64.b64decode(SIGNING_KEY_B64))
+        PUB_KEY_B64 = base64.b64encode(
+            priv.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+        ).decode("ascii")
+        SIGNING_ENABLED = True
+    except Exception as e:
+        print(f"WARNING: Failed to load signing key ({e}). Falling back to unsigned mode.")
+        SIGNING_ENABLED = False
+        priv = None
 
 
 def _write_bytes_safe(path, data: bytes, retries: int = 12, delay: float = 0.05) -> None:
-    """Write bytes idempotently, tolerating transient Windows locks via atomic replace."""
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     tmp = p.with_name(f".{p.name}.{os.getpid()}.tmp")
@@ -56,498 +86,229 @@ def _write_bytes_safe(path, data: bytes, retries: int = 12, delay: float = 0.05)
                 raise
             time.sleep(min(0.4, delay * (attempt + 1)))
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
 
-try:
-    from fmagenticl import __version__ as PKG_VERSION
-except Exception:
-    PKG_VERSION = "2.1.0"
-
-from fmagenticl.client.verify import (
-    canonical_json_bytes,
-    compute_payload_hash,
-    verify_patch_envelope,
-    verify_patch_signature,
-    verify_snapshot_file,
-)
-
-SIGNING_KEY_B64 = os.environ.get("FMAGENTICL_SIGNING_KEY", "PLACEHOLDER_SIGNING_KEY_NOT_SET")
-PUB_KEY_B64 = None
-if SIGNING_KEY_B64 == "PLACEHOLDER_SIGNING_KEY_NOT_SET":
-    print("WARNING: Signing key not set. Emitting unsigned snapshot. Set FMAGENTICL_SIGNING_KEY to enable signing.")
-    SIGNING_ENABLED = False
-    priv = None
-else:
-    try:
-        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-        from cryptography.hazmat.primitives import serialization
-        priv = Ed25519PrivateKey.from_private_bytes(base64.b64decode(SIGNING_KEY_B64))
-        PUB_KEY_B64 = base64.b64encode(
-            priv.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
-        ).decode()
-        SIGNING_ENABLED = True
-    except Exception as e:
-        print(f"WARNING: Failed to load signing key ({e}). Falling back to unsigned mode.")
-        SIGNING_ENABLED = False
-        priv = None
+def _sign_bytes(payload_bytes: bytes) -> str:
+    if not SIGNING_ENABLED or priv is None:
+        return ""
+    return base64.b64encode(priv.sign(payload_bytes)).decode("ascii")
 
 
-def load_patches():
+def _next_snapshot_seq() -> int:
+    prev_seq = 2999
+    snap_path = REPO_ROOT / "dist" / "v1" / "snapshot.json"
+    if snap_path.exists():
+        try:
+            data = json.loads(snap_path.read_text(encoding="utf-8"))
+            prev_seq = int(data.get("snapshot_seq", 2999) or 2999)
+        except Exception:
+            pass
+    return max(prev_seq + 1, 3000)
+
+
+def load_signatures() -> dict:
     out = {}
-    for pf in sorted(glob.glob("patches/*.json")):
-        with open(pf, encoding="utf-8") as f:
-            data = json.load(f)
-        fp_hex = Path(pf).stem
-        out[fp_hex] = data
+    for sf in sorted((REPO_ROOT / "signatures").glob("SIG-2026-*.json")):
+        data = json.loads(sf.read_text(encoding="utf-8"))
+        out[data["id"]] = data
     return out
 
 
-def sign_payload(payload_bytes: bytes) -> str:
-    if not SIGNING_ENABLED or priv is None:
-        return ""
-    return base64.b64encode(priv.sign(payload_bytes)).decode()
-
-
-_TRANSIENT_PATCH_KEYS = (
-    "manifest",
-    "signature",
-    "ed25519_sig",
-    "signature_verified",
-    "fingerprint_verified",
-    "staleness_warning",
-)
-_REMEDIATION_EXCLUDE_KEYS = _TRANSIENT_PATCH_KEYS + ("fingerprint", "environment", "failure")
-_RENEWAL_MARGIN_DAYS = 14
-_TTL_DAYS = 90
-
-
-def _build_dual_signed_entry(fp_hex: str, base_data: dict, resolve_path: Path, now_utc: datetime.datetime) -> dict:
-    """Build a flat dual-signed (v1 top-level + v2 TUF manifest) resolve entry with renewal-hysteresis."""
-    clean_hex = fp_hex.replace("sha256:", "").strip().lower()
-    out_data = {k: v for k, v in base_data.items() if k not in _TRANSIENT_PATCH_KEYS}
-    out_data["fingerprint"] = f"sha256:{clean_hex}"
-
-    remediation_dict = {k: v for k, v in out_data.items() if k not in _REMEDIATION_EXCLUDE_KEYS}
-    payload_hash = f"sha256:{compute_payload_hash(remediation_dict)}"
-
-    if resolve_path.exists():
-        try:
-            prev = json.loads(resolve_path.read_text(encoding="utf-8"))
-            if isinstance(prev, dict):
-                prev_body = {k: v for k, v in prev.items() if k not in _TRANSIENT_PATCH_KEYS}
-                if prev_body == out_data:
-                    prev_manifest = prev.get("manifest")
-                    top_sig = prev.get("ed25519_sig") or prev.get("signature")
-                    if isinstance(prev_manifest, dict) and top_sig and prev_manifest.get("ed25519_sig"):
-                        if not SIGNING_ENABLED:
-                            preserved = dict(out_data)
-                            preserved["manifest"] = prev_manifest
-                            preserved["ed25519_sig"] = top_sig
-                            return preserved
-                        valid_until_str = prev_manifest.get("valid_until")
-                        if valid_until_str:
-                            expiry = datetime.datetime.fromisoformat(str(valid_until_str).replace("Z", "+00:00"))
-                            if expiry.tzinfo is None:
-                                expiry = expiry.replace(tzinfo=datetime.timezone.utc)
-                            if (
-                                (expiry - now_utc) > datetime.timedelta(days=_RENEWAL_MARGIN_DAYS)
-                                and prev_manifest.get("payload_hash") == payload_hash
-                                and prev_manifest.get("target_fingerprint") == f"sha256:{clean_hex}"
-                                and verify_patch_envelope(prev, expected_fingerprint=clean_hex, public_key_b64=PUB_KEY_B64)
-                                and verify_patch_signature(prev, public_key_b64=PUB_KEY_B64)
-                            ):
-                                preserved = dict(out_data)
-                                preserved["manifest"] = prev_manifest
-                                preserved["ed25519_sig"] = top_sig
-                                return preserved
-        except Exception:
-            pass
+def _sign_record(rec: dict, seq: int, now_utc: datetime.datetime) -> dict:
+    clean_body = {
+        k: v
+        for k, v in rec.items()
+        if k not in ("manifest", "signature", "ed25519_sig", "signature_verified", "fingerprint_verified", "staleness_warning")
+    }
+    fp_hex = str(clean_body["fingerprint"]).replace("sha256:", "").strip().lower()
+    body_hash = "sha256:" + hashlib.sha256(jcs_bytes(clean_body)).hexdigest()
+    out = dict(clean_body)
 
     if SIGNING_ENABLED:
-        valid_until = (now_utc + datetime.timedelta(days=_TTL_DAYS)).strftime("%Y-%m-%dT00:00:00Z")
+        issued_at = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+        valid_until = (now_utc + datetime.timedelta(days=_TTL_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ")
         manifest_unsigned = {
-            "manifest_version": 2,
-            "payload_hash": payload_hash,
-            "target_fingerprint": f"sha256:{clean_hex}",
+            "manifest_version": 3,
+            "kid": _DEFAULT_KID,
+            "snapshot_seq": seq,
+            "target_id": clean_body["id"],
+            "target_fingerprint": f"sha256:{fp_hex}",
+            "payload_hash": body_hash,
+            "issued_at": issued_at,
             "valid_until": valid_until,
         }
         manifest = dict(manifest_unsigned)
-        manifest["ed25519_sig"] = sign_payload(canonical_json_bytes(manifest_unsigned))
-        out_data["manifest"] = manifest
-
-        clean_patch = {
-            k: v for k, v in out_data.items()
+        manifest["ed25519_sig"] = _sign_bytes(V3_SIG_DOMAIN + jcs_bytes(manifest_unsigned))
+        out["manifest"] = manifest
+        legacy_clean = {
+            k: v for k, v in out.items()
             if k not in ("signature", "ed25519_sig", "signature_verified", "fingerprint_verified", "staleness_warning")
         }
-        out_data["ed25519_sig"] = sign_payload(canonical_json_bytes(clean_patch))
+        out["ed25519_sig"] = _sign_bytes(canonical_json_bytes(legacy_clean))
+    return out
 
-    return out_data
 
+def build() -> None:
+    count, errors = validate_directory(REPO_ROOT / "signatures")
+    if errors:
+        raise RuntimeError(f"Registry lint gate failed with {len(errors)} error(s): {errors[:5]}")
 
-def build():
-    os.makedirs("dist/v1/resolve", exist_ok=True)
-    os.makedirs("dist/v1/deltas", exist_ok=True)
-    os.makedirs("dist/.well-known", exist_ok=True)
+    (REPO_ROOT / "dist" / "v1" / "signatures").mkdir(parents=True, exist_ok=True)
+    (REPO_ROOT / "dist" / "v1" / "resolve").mkdir(parents=True, exist_ok=True)
+    (REPO_ROOT / "dist" / ".well-known").mkdir(parents=True, exist_ok=True)
 
-    patches = load_patches()
+    sigs = load_signatures()
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     now_iso = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
-    stamp = now_utc.strftime("%Y%m%d%H%M%S")
+    valid_until = (now_utc + datetime.timedelta(days=_TTL_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    seq = _next_snapshot_seq()
 
-    # Build canonical registry_patches list + normalized alias map from seed cases
+    signed_by_id = {}
+    signed_by_fp = {}
     aliases = {}
-    try:
-        from fmagenticl.client.fingerprint import compute_fingerprint, compute_normalized_fingerprint
-        from fmagenticl.server.seed_hermes import RAW_SEED_CASES
-        seed_map = {}
-        for c in RAW_SEED_CASES:
-            raw_hex = compute_fingerprint(c["env"], c["fail"], normalize=False).replace("sha256:", "")
-            norm_hex = compute_normalized_fingerprint(c["env"], c["fail"]).replace("sha256:", "")
-            seed_map[raw_hex] = c["fail"].get("error_code") or c["fail"].get("error")
-            if raw_hex in patches and norm_hex != raw_hex and norm_hex not in patches:
-                aliases[norm_hex] = raw_hex
-    except Exception:
-        seed_map = {}
+    registry_index = []
 
-    registry_patches = []
-    for fp_hex in sorted(patches.keys()):
-        p_data = patches[fp_hex]
-        failure_mode = seed_map.get(fp_hex) or p_data.get("failure_mode") or p_data.get("patch_type", "deterministic-patch")
-        attribution = p_data.get("attribution") or p_data.get("submitted_by")
-        if not attribution or attribution == "anonymous" or attribution == "DeepSeek":
-            attribution = "deepseek-v3"
+    for sig_id in sorted(sigs.keys()):
+        signed = _sign_record(sigs[sig_id], seq, now_utc)
+        fp_hex = str(signed["fingerprint"]).replace("sha256:", "").strip().lower()
+        signed_by_id[sig_id] = signed
+        signed_by_fp[fp_hex] = signed
+        aliases[sig_id.lower()] = fp_hex
 
-        registry_patches.append({
-            "id": fp_hex,
-            "attribution": attribution,
-            "failure_mode": failure_mode,
-            "patch_hash": f"sha256:{fp_hex}",
-            "signed": True,
+        tax = signed.get("taxonomy") or {}
+        for tok in (tax.get("cve_ids", []) + tax.get("ghsa_ids", []) + tax.get("advisory_ids", [])):
+            if tok:
+                aliases.setdefault(str(tok).strip().lower(), fp_hex)
+
+        raw_bytes = (json.dumps(signed, separators=(",", ":"), sort_keys=True, ensure_ascii=False)).encode("utf-8")
+        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "signatures" / f"{sig_id}.json", raw_bytes)
+        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "resolve" / f"{fp_hex}.json", raw_bytes)
+
+        registry_index.append({
+            "id": sig_id,
+            "fingerprint": signed["fingerprint"],
+            "confidence_tier": signed["confidence_tier"],
+            "threat_category": signed["threat_category"],
+            "severity": signed["severity"],
+            "title": signed["title"],
+            "signed": SIGNING_ENABLED,
         })
 
-    # 1. Per-patch files (canonical + normalized aliases; flat dual-signed v1 + v2 TUF envelopes)
-    resolve_changed = False
-    signed_patches = {}
-    expected_resolve_stems = set(patches.keys()) | set(aliases.keys())
+    snapshot = {
+        "schema_version": "3.0",
+        "version": PKG_VERSION,
+        "generated_at": now_iso,
+        "issued_at": now_iso,
+        "valid_until": valid_until,
+        "snapshot_seq": seq,
+        "kid": _DEFAULT_KID,
+        "total_signatures": len(signed_by_id),
+        "total_patches": len(signed_by_fp),
+        "signatures_by_id": signed_by_id,
+        "patches": signed_by_fp,
+        "aliases": aliases,
+    }
+    snapshot_bytes = json.dumps(snapshot, separators=(",", ":"), sort_keys=True, ensure_ascii=False).encode("utf-8")
+    _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "snapshot.json", snapshot_bytes)
 
-    for old_f in Path("dist/v1/resolve").glob("*.json"):
-        if old_f.stem not in expected_resolve_stems:
-            old_f.unlink()
-            resolve_changed = True
+    if SIGNING_ENABLED:
+        snap_sig_v1 = _sign_bytes(snapshot_bytes)
+        snap_sig_v3 = _sign_bytes(V3_SNAPSHOT_DOMAIN + snapshot_bytes)
+        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "snapshot.sig", snap_sig_v1.encode("utf-8"))
+        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "snapshot.v3.sig", snap_sig_v3.encode("utf-8"))
 
-    for fp_hex in sorted(patches.keys()):
-        resolve_path = Path(f"dist/v1/resolve/{fp_hex}.json")
-        out_data = _build_dual_signed_entry(fp_hex, patches[fp_hex], resolve_path, now_utc)
-        signed_patches[fp_hex] = out_data
-        serialized = json.dumps(out_data, separators=(",", ":"), sort_keys=True)
-        if not resolve_path.exists() or resolve_path.read_text(encoding="utf-8") != serialized:
-            resolve_path.write_text(serialized, encoding="utf-8")
-            resolve_changed = True
+    # Keyring sync
+    keyring_src = REPO_ROOT / "fmagenticl" / "data" / "keyring.json"
+    if keyring_src.exists():
+        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "keyring.json", keyring_src.read_bytes())
 
-    for norm_hex, raw_hex in sorted(aliases.items()):
-        resolve_path = Path(f"dist/v1/resolve/{norm_hex}.json")
-        alias_base = dict(patches[raw_hex])
-        alias_base["canonical_fingerprint"] = f"sha256:{raw_hex}"
-        out_alias = _build_dual_signed_entry(norm_hex, alias_base, resolve_path, now_utc)
-        serialized = json.dumps(out_alias, separators=(",", ":"), sort_keys=True)
-        if not resolve_path.exists() or resolve_path.read_text(encoding="utf-8") != serialized:
-            resolve_path.write_text(serialized, encoding="utf-8")
-            resolve_changed = True
-
-    # Content-comparison guard: skip timestamp/signature churn if patches, aliases, and version are unchanged
-    patches_unchanged = False
-    if (
-        not resolve_changed
-        and os.path.exists("dist/registry.json")
-        and os.path.exists("dist/v1/snapshot.json")
-        and (not SIGNING_ENABLED or os.path.exists("dist/v1/snapshot.sig"))
-        and os.path.exists("dist/v1/bloom.bin")
-        and os.path.exists("dist/v1/deltas/latest.json")
-        and os.path.exists("dist/workarounds.json")
-        and os.path.exists("dist/grievances.json")
-    ):
-        try:
-            with open("dist/registry.json", "r", encoding="utf-8") as f:
-                existing_reg = json.load(f)
-            with open("dist/v1/snapshot.json", "r", encoding="utf-8") as f:
-                existing_snap = json.load(f)
-            if (
-                existing_reg.get("patches") == registry_patches
-                and existing_reg.get("count") == len(registry_patches)
-                and existing_snap.get("patches") == signed_patches
-                and existing_snap.get("aliases", {}) == aliases
-                and existing_snap.get("total_patches") == len(signed_patches)
-                and existing_snap.get("version") == PKG_VERSION
-            ):
-                patches_unchanged = True
-                print(f"Distribution patches unchanged (count: {len(registry_patches)}, aliases: {len(aliases)}). Preserving snapshot/signatures.")
-        except Exception:
-            pass
-
-    if not patches_unchanged:
-        # 2. Base Snapshot (carries dual-signed per-patch entries + aliases)
-        snapshot = {
-            "version": PKG_VERSION,
-            "generated_at": now_iso,
-            "total_patches": len(signed_patches),
-            "patches": signed_patches,
-            "aliases": aliases,
-        }
-        snapshot_bytes = json.dumps(snapshot, separators=(",", ":"), sort_keys=True).encode()
-
-        with open("dist/v1/snapshot.json", "wb") as f:
-            f.write(snapshot_bytes)
-
-        if SIGNING_ENABLED:
-            snapshot_signature = sign_payload(snapshot_bytes)
-            with open("dist/v1/snapshot.sig", "w", encoding="utf-8") as f:
-                f.write(snapshot_signature)
-        else:
-            print("INFO: Skipped dist/v1/snapshot.sig (signing disabled).")
-
-        # 3. Bloom filter (canonical + normalized alias keys)
-        bloom_keys = sorted(set(signed_patches.keys()) | set(aliases.keys()))
-        try:
-            from pybloom_live import BloomFilter
-            bloom = BloomFilter(capacity=max(10000, len(bloom_keys) * 4), error_rate=0.001)
-            for fp_hex in bloom_keys:
-                bloom.add(fp_hex)
-            with open("dist/v1/bloom.bin", "wb") as f:
-                bloom.tofile(f)
-            print("INFO: dist/v1/bloom.bin generated via pybloom-live.")
-        except Exception as e:
-            print(f"INFO: pybloom-live not available ({e}), writing deterministic SHA-256 prefix bitset to bloom.bin.")
-            bitset = bytearray(1024)
-            for fp_hex in bloom_keys:
-                idx = int(hashlib.md5(fp_hex.encode()).hexdigest()[:4], 16) % (1024 * 8)
-                bitset[idx // 8] |= (1 << (idx % 8))
-            with open("dist/v1/bloom.bin", "wb") as f:
-                f.write(bitset)
-
-        # 4. Deltas & Latest Marker
-        delta = {
-            "base_version": PKG_VERSION,
-            "generated_at": now_iso,
-            "added": list(signed_patches.keys()),
-            "removed": [],
-            "modified": [],
-            "patch_deltas": signed_patches,
-        }
-        delta_bytes = json.dumps(delta, separators=(",", ":"), sort_keys=True).encode()
-        with open(f"dist/v1/deltas/{stamp}.json", "wb") as f:
-            f.write(delta_bytes)
-
-        if SIGNING_ENABLED:
-            delta_sig = sign_payload(delta_bytes)
-            with open(f"dist/v1/deltas/{stamp}.sig", "w", encoding="utf-8") as f:
-                f.write(delta_sig)
-        else:
-            print(f"INFO: Skipped dist/v1/deltas/{stamp}.sig (signing disabled).")
-
-        with open("dist/v1/deltas/latest.json", "w", encoding="utf-8") as f:
-            json.dump({"latest": stamp}, f, indent=2)
-
-        # Preserve snapshot for delta comparison
-        with open("dist/v1/snapshot.prev.json", "w", encoding="utf-8") as f:
-            json.dump(snapshot, f, separators=(",", ":"), sort_keys=True)
-
-        # 5. Flat Discovery Registry (canonical index for AI agents & /api/v1/patches)
-        registry_data = {
-            "registry_version": "1.0.0",
-            "generated": now_iso,
-            "count": len(registry_patches),
-            "patches": registry_patches,
-        }
-        with open("dist/registry.json", "w", encoding="utf-8") as f:
-            json.dump(registry_data, f, indent=2, sort_keys=True)
-
-    # Guarded sync of signed snapshot into wheel data directory (never corrupts with unsigned snapshot)
+    # Sync signed artifacts into package data dir
     dist_snap = REPO_ROOT / "dist" / "v1" / "snapshot.json"
     dist_sig = REPO_ROOT / "dist" / "v1" / "snapshot.sig"
-    pkg_snap = REPO_ROOT / "fmagenticl" / "data" / "snapshot.json"
-    pkg_sig = REPO_ROOT / "fmagenticl" / "data" / "snapshot.sig"
+    dist_sig_v3 = REPO_ROOT / "dist" / "v1" / "snapshot.v3.sig"
     if dist_snap.exists() and dist_sig.exists():
-        sig_ok = (
-            verify_snapshot_file(str(dist_snap), str(dist_sig), public_key_b64=PUB_KEY_B64)
-            if PUB_KEY_B64
-            else verify_snapshot_file(str(dist_snap), str(dist_sig))
-        )
-        if sig_ok:
-            pkg_snap.parent.mkdir(parents=True, exist_ok=True)
-            if not pkg_snap.exists() or pkg_snap.read_bytes() != dist_snap.read_bytes():
-                shutil.copyfile(dist_snap, pkg_snap)
-            if not pkg_sig.exists() or pkg_sig.read_bytes() != dist_sig.read_bytes():
-                shutil.copyfile(dist_sig, pkg_sig)
+        ok = verify_snapshot_file(str(dist_snap), str(dist_sig), public_key_b64=PUB_KEY_B64)
+        if ok:
+            pkg_data = REPO_ROOT / "fmagenticl" / "data"
+            pkg_data.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(dist_snap, pkg_data / "snapshot.json")
+            shutil.copyfile(dist_sig, pkg_data / "snapshot.sig")
+            if dist_sig_v3.exists():
+                shutil.copyfile(dist_sig_v3, pkg_data / "snapshot.v3.sig")
 
-    # 6. Dynamic Health & Census Manifests (/v1/health and /health)
-    _slack_re = re.compile(r"https?://[^\s\"')>]*slack\.com/[^\s\"')>]*", re.IGNORECASE)
-    workarounds_items = []
-    for w_name in ["dist/workarounds.json", "dist/grievances.json"]:
-        w_path = Path(w_name)
-        if w_path.exists():
-            try:
-                raw_w = w_path.read_text(encoding="utf-8")
-                w_data = json.loads(raw_w)
-                if "slack.com/" in raw_w.lower():
-                    for w_key in ("workarounds", "grievances"):
-                        if isinstance(w_data.get(w_key), list):
-                            for item in w_data[w_key]:
-                                for field in ("symptom", "workaround"):
-                                    val = item.get(field)
-                                    if isinstance(val, str) and "slack.com/" in val.lower():
-                                        item[field] = _slack_re.sub("[redacted-slack-url]", val)
-                    _write_bytes_safe(w_path, json.dumps(w_data, indent=2, sort_keys=True).encode("utf-8"))
-                if not workarounds_items:
-                    workarounds_items = w_data.get("workarounds", [])
-            except Exception:
-                pass
+    # Bloom filter
+    bloom_keys = sorted(set(signed_by_fp.keys()) | set(aliases.keys()))
+    bitset = bytearray(1024)
+    for k in bloom_keys:
+        idx = int(hashlib.sha256(k.encode("utf-8")).hexdigest()[:4], 16) % (1024 * 8)
+        bitset[idx // 8] |= (1 << (idx % 8))
+    _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "bloom.bin", bytes(bitset))
 
-    total_grievances_count = len(workarounds_items)
-    # Honest accounting: separate human/forensic-verified cures from automated bot-harvested issues
-    human_and_forensic_submitters = {"capitan", "deepseek-v4.1", "argon-4", "gemini-3.7-flash", "gemini-3-flash", "sonnet-4-6"}
-    verified_workarounds_count = sum(
-        1 for item in workarounds_items
-        if item.get("submitted_by") in human_and_forensic_submitters
-        or item.get("verification_tier") == "internal_forensic_verified"
+    # Registry index & health
+    _write_bytes_safe(
+        REPO_ROOT / "dist" / "registry.json",
+        json.dumps({"registry_version": PKG_VERSION, "generated": now_iso, "count": len(registry_index), "signatures": registry_index}, indent=2).encode("utf-8"),
     )
-    bot_harvested_count = total_grievances_count - verified_workarounds_count
 
-    advisory_patches_count = sum(
-        1 for p in patches.values()
-        if p.get("patch_type") in ("workaround_advisory", "dependency_pin")
-    )
-    executable_patches_count = len(patches) - advisory_patches_count
-
-    total_curated_entries = len(patches) + total_grievances_count
+    confirmed_count = sum(1 for s in signed_by_id.values() if s["confidence_tier"] == "CONFIRMED_SIGNATURE")
+    behavioral_count = len(signed_by_id) - confirmed_count
     health_payload = {
         "status": "ok",
         "protocol_version": PKG_VERSION,
-        "total_entries": total_curated_entries,
-        "compiled_patches": len(patches),
-        "executable_patches": executable_patches_count,
-        "advisory_patches": advisory_patches_count,
-        "verified_workarounds": verified_workarounds_count,
-        "total_grievances": total_grievances_count,
-        "bot_harvested_grievances": bot_harvested_count,
+        "snapshot_seq": seq,
+        "total_entries": len(signed_by_id),
+        "confirmed_signatures": confirmed_count,
+        "behavioral_indicators": behavioral_count,
+        "updated_at": now_iso,
     }
-    _write_bytes_safe(
-        "dist/v1/health",
-        _preserve_updated_at_if_unchanged("dist/v1/health", health_payload, now_iso, separators=(",", ":")),
-    )
-    _write_bytes_safe(
-        "dist/health",
-        _preserve_updated_at_if_unchanged("dist/health", health_payload, now_iso, separators=(",", ":")),
-    )
+    health_bytes = json.dumps(health_payload, separators=(",", ":")).encode("utf-8")
+    _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "health", health_bytes)
+    _write_bytes_safe(REPO_ROOT / "dist" / "health", health_bytes)
 
-    # 6b. Per-target static shards (served by CDN; consumed by MCP to avoid parsing the full feed)
-    import re as _re
-    shard_dir = Path("dist/shards/workarounds")
-    shard_dir.mkdir(parents=True, exist_ok=True)
-
-    def _shard_key(s: str) -> str:
-        return _re.sub(r"[^a-z0-9._-]", "_", (s or "").strip().lower().replace("/", "__"))[:120]
-
-    shards = {}
-    for item in workarounds_items:
-        keys = set()
-        tgt = (item.get("target") or "").strip().lower()
-        app = (item.get("applies_to") or "").strip().lower()
-        if tgt:
-            keys.add(_shard_key(tgt))
-        if app:
-            keys.add(_shard_key(app))
-            keys.add(_shard_key(app.split("/")[-1]))
-        for k in keys:
-            if k:
-                shards.setdefault(k, []).append(item)
-    expected_files = {f"{k}.json" for k in shards} | {"_recent.json"}
-    for k, items in shards.items():
-        shard_bytes = json.dumps({"key": k, "count": len(items), "workarounds": items}, separators=(",", ":")).encode("utf-8")
-        _write_bytes_safe(shard_dir / f"{k}.json", shard_bytes)
-    recent = sorted(workarounds_items, key=lambda x: x.get("created_at") or "", reverse=True)[:100]
-    recent_bytes = json.dumps({"key": "_recent", "count": len(recent), "workarounds": recent}, separators=(",", ":")).encode("utf-8")
-    _write_bytes_safe(shard_dir / "_recent.json", recent_bytes)
-    for old in shard_dir.glob("*.json"):
-        if old.name not in expected_files:
-            for attempt in range(8):
-                try:
-                    old.unlink()
-                    break
-                except (PermissionError, OSError):
-                    if attempt == 7:
-                        raise
-                    time.sleep(0.05 * (attempt + 1))
-
-    # 7. RFC 9728 OAuth 2.0 Protected Resource & Authorization Server Discovery
-    os.makedirs("dist/.well-known/oauth-protected-resource", exist_ok=True)
-    os.makedirs("dist/.well-known/oauth-authorization-server", exist_ok=True)
-    oauth_resource_meta = {
+    # RFC 9728 OAuth metadata
+    oauth_res = json.dumps({
         "resource": "https://fmagenticl-registry.pages.dev",
         "authorization_servers": [],
         "scopes_supported": [],
         "bearer_methods_supported": ["none"],
         "resource_documentation": "https://fmagenticl-registry.pages.dev/mcp",
         "auth_policy": "none_public_curated_registry",
-    }
-    oauth_authz_meta = {
+    }, indent=2).encode("utf-8")
+    oauth_auth = json.dumps({
         "issuer": "https://fmagenticl-registry.pages.dev",
         "authorization_endpoint": None,
         "token_endpoint": None,
         "response_types_supported": [],
         "grant_types_supported": [],
         "auth_policy": "none_public_curated_registry",
-    }
-    res_bytes = _preserve_updated_at_if_unchanged(
-        "dist/.well-known/oauth-protected-resource/index.json",
-        oauth_resource_meta,
-        now_iso,
-        indent=2,
-    )
-    authz_bytes = _preserve_updated_at_if_unchanged(
-        "dist/.well-known/oauth-authorization-server/index.json",
-        oauth_authz_meta,
-        now_iso,
-        indent=2,
-    )
+    }, indent=2).encode("utf-8")
+    for p in ["dist/.well-known/oauth-protected-resource/index.json", "dist/.well-known/oauth-protected-resource.json", "dist/.well-known/oauth-protected-resource/mcp", "dist/.well-known/oauth-protected-resource/mcp.json"]:
+        _write_bytes_safe(REPO_ROOT / p, oauth_res)
+    for p in ["dist/.well-known/oauth-authorization-server/index.json", "dist/.well-known/oauth-authorization-server.json", "dist/.well-known/oauth-authorization-server/mcp", "dist/.well-known/oauth-authorization-server/mcp.json"]:
+        _write_bytes_safe(REPO_ROOT / p, oauth_auth)
 
-    for p in ["dist/.well-known/oauth-protected-resource/index.json", "dist/.well-known/oauth-protected-resource.json"]:
-        _write_bytes_safe(p, res_bytes)
-    for p in ["dist/.well-known/oauth-protected-resource/mcp", "dist/.well-known/oauth-protected-resource/mcp.json"]:
-        _write_bytes_safe(p, res_bytes)
-
-    for p in ["dist/.well-known/oauth-authorization-server/index.json", "dist/.well-known/oauth-authorization-server.json"]:
-        _write_bytes_safe(p, authz_bytes)
-    for p in ["dist/.well-known/oauth-authorization-server/mcp", "dist/.well-known/oauth-authorization-server/mcp.json"]:
-        _write_bytes_safe(p, authz_bytes)
-
-    # 8. Cloudflare Pages SPA Fallback Disabler & Fast CDN 404
     _write_bytes_safe(
-        "dist/404.html",
+        REPO_ROOT / "dist" / "404.html",
         b"<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1></body></html>\n",
     )
 
-    # 9. Cloudflare Pages Functions Routing Rules (_routes.json v1)
     routes_config = {
         "version": 1,
-        "include": [
-            "/mcp",
-            "/mcp/*",
-            "/v1/*",
-            "/api/*",
-            "/health",
-            "/guestbook.json"
-        ],
-        "exclude": [
-            "/v1/health",
-            "/v1/snapshot.json",
-            "/v1/snapshot.sig"
-        ]
+        "include": ["/mcp", "/mcp/*", "/v1/*", "/health"],
+        "exclude": ["/v1/health", "/v1/snapshot.json", "/v1/snapshot.sig", "/v1/snapshot.v3.sig", "/v1/keyring.json", "/v1/signatures/*", "/v1/resolve/*"],
     }
-    _write_bytes_safe("dist/_routes.json", json.dumps(routes_config, indent=2).encode("utf-8"))
+    _write_bytes_safe(REPO_ROOT / "dist" / "_routes.json", json.dumps(routes_config, indent=2).encode("utf-8"))
 
-    print(f"SUCCESS: Distribution built: {len(patches)} patches, {verified_workarounds_count} verified workarounds ({total_grievances_count} grievances) (total: {total_curated_entries}) compiled to dist/.")
+    headers_txt = (
+        "/*\n"
+        "  Strict-Transport-Security: max-age=31536000; includeSubDomains\n"
+        "  X-Content-Type-Options: nosniff\n"
+        "  X-Frame-Options: DENY\n"
+        "  Referrer-Policy: no-referrer\n"
+        "  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'\n"
+    )
+    _write_bytes_safe(REPO_ROOT / "dist" / "_headers", headers_txt.encode("utf-8"))
+
+    print(f"SUCCESS: Compiled {len(signed_by_id)} signatures ({confirmed_count} confirmed, {behavioral_count} behavioral) at seq={seq}.")
 
 
 if __name__ == "__main__":

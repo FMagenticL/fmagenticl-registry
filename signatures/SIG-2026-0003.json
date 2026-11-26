@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0003",
+  "fingerprint": "sha256:7fd722986893ea44b3fcb51fe1d440615d7e432ace3be1d929dd7f341d5143a3",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "CyberStrikeAI Autonomous Offensive Orchestrator",
+  "summary": "Detects HTTP orchestration endpoints and server binaries linked to the CyberStrikeAI autonomous offensive framework.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "harness_endpoint_and_binary",
+    "http_paths": [
+      "/api/v1/cyberstrike/",
+      "/cyberstrike/tasks"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "cyberstrikeai",
+      "cyberstrike-server"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:cyberstrikeai|cyberstrike-server|/cyberstrike/tasks)"
+  },
+  "mitigation_steps": [
+    "Block unauthorized outbound and inbound traffic to CyberStrikeAI control paths.",
+    "Monitor host process trees for autonomous offensive orchestrator binaries."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Forescout / Team Cymru Threat Research",
+      "reference_id": "CyberStrikeAI-Research",
+      "url": "https://www.forescout.com/research-labs/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

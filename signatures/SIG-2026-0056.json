@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0056",
+  "fingerprint": "sha256:93d9632d0e7c7da80409c644078b3bdf02ccb93e78e33f25981b0d8be269cf16",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Flowise Unauthenticated File Upload & Vector-Store Takeover (CVE-2025-26319)",
+  "summary": "Detects unauthenticated probes against Flowise /api/v1/attachments and /api/v1/vector/upsert endpoints.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/api/v1/attachments",
+      "/api/v1/vector/upsert"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      3000
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade Flowise to patched release and enforce authentication across all /api/v1/* routes.",
+    "Validate and sandbox file attachment uploads in agent workflow builders."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2025-26319"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-22"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST NVD",
+      "reference_id": "CVE-2025-26319",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-26319",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

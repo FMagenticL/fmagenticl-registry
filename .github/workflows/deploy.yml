@@ -1,14 +1,3 @@
-# ==============================================================================
-# FMagenticL Static Registry Compilation & Cloudflare Pages Deployment Workflow
-#
-# PREREQUISITES BEFORE THIS WORKFLOW RUNS:
-# 1. Repository must be pushed to a remote GitHub repository.
-# 2. The following repository secrets must be configured in Settings > Secrets > Actions:
-#    - FMAGENTICL_SIGNING_KEY: Base64-encoded Ed25519 private key for signing snapshots/deltas.
-#    - CLOUDFLARE_API_TOKEN: Cloudflare API token scoped to Pages & Workers deployment.
-#    - CLOUDFLARE_ACCOUNT_ID: Cloudflare Account ID.
-# ==============================================================================
-
 name: Compile Registry & Deploy CDN
 
 concurrency:
@@ -27,69 +16,42 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
 
-      - name: Install build dependencies
-        run: pip install cryptography pybloom-live httpx Pillow
+      - name: Install build and test dependencies
+        run: pip install -r requirements.txt pytest pyyaml
 
-      - name: Migrate D1, backfill SimHash & export grievances from Cloudflare D1
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Run registry lint and air-gap quarantine gates
         run: |
-          npm install -g wrangler
-          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN applies_to TEXT" || true
-          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b0 INTEGER" || true
-          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b1 INTEGER" || true
-          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b2 INTEGER" || true
-          wrangler d1 execute fmagenticl-registry --remote --command="ALTER TABLE grievances ADD COLUMN simhash_b3 INTEGER" || true
-          python scripts/migrate_d1.py || true
-          python scripts/migrate_d1.py --backfill-simhash || true
-          wrangler d1 execute fmagenticl-registry --remote --file=serverless/schema.sql || true
-          python scripts/seed_agent_nets.py
-          python scripts/promote_d1_to_registry.py --apply
-          python scripts/export_db_to_static.py
+          python scripts/registry_lint_gate.py
+          python scripts/air_gap_scan.py
 
-
-      - name: Build static distribution & sign
+      - name: Build static distribution and sign
         env:
           FMAGENTICL_SIGNING_KEY: ${{ secrets.FMAGENTICL_SIGNING_KEY }}
         run: python scripts/build_distribution.py
 
       - name: Run verification suite
-        run: |
-          pip install -r requirements.txt pytest pyyaml
-          python -m pytest tests/ -v
+        run: python -m pytest tests/ -v
 
       - name: Deploy to Cloudflare Pages
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        uses: cloudflare/wrangler-action@v3
+        if: github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=fmagenticl-registry
-
-      - name: Deploy Write-Path Worker to Cloudflare
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: 'serverless'
-          command: deploy
-

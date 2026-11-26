@@ -8,7 +8,7 @@ WORKFLOWS_DIR = REPO_ROOT / ".github" / "workflows"
 def test_all_github_workflows_parse_valid_yaml():
     """Every workflow file in .github/workflows/ must parse cleanly via PyYAML and contain valid step strings."""
     yml_files = sorted(WORKFLOWS_DIR.glob("*.yml"))
-    assert len(yml_files) >= 2, "Expected at least deploy.yml and harvest.yml"
+    assert len(yml_files) >= 1, "Expected at least deploy.yml"
 
     for yml_path in yml_files:
         content = yml_path.read_text(encoding="utf-8")

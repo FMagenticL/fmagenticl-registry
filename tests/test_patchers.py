@@ -25,7 +25,10 @@ def test_rfc6902_json_patch_success():
         ],
     }
 
-    res = Patcher.apply_patch(patch, {})
+    res_dry = Patcher.apply_patch(patch, {})
+    assert res_dry is True
+
+    res = Patcher.apply_patch(patch, {}, dry_run=False)
     assert res is True
 
     with open(test_json, "r", encoding="utf-8") as f:
@@ -92,29 +95,12 @@ def test_dry_run_never_mutates_disk_or_executes_cli(monkeypatch):
         assert ctx_cli["applied"] is False
         assert ctx_cli["advisory_cli"] == "pip --version"
 
-        # 4. MCP _auto_heal end-to-end cannot be tricked by context={"apply_cli": True, "dry_run": False}
-        import fmagenticl.client.fastmcp_server as fmcp
-
-        class _StubClient:
-            def resolve_failure(self, env, fail, context=None):
-                return {
-                    "fingerprint": "sha256:" + ("c" * 64),
-                    "signature_verified": False,
-                    "fingerprint_verified": True,
-                    "resolution_patch": {
-                        "patch_type": "application/json-patch+json",
-                        "target_file": test_json,
-                        "json_patch": [{"op": "replace", "path": "/version", "value": "HACKED"}],
-                    },
-                }
-
-        monkeypatch.setattr(fmcp, "_get_client", lambda: _StubClient())
-        heal_out = fmcp._auto_heal({}, {}, context={"apply_cli": True, "dry_run": False})
-        assert heal_out["status"] == "VALIDATED_DRY_RUN"
-        assert heal_out["applied"] is False
-        assert heal_out["signature_verified"] is False
-        with open(test_json, "r", encoding="utf-8") as f:
-            assert f.read() == raw_before
+        # 4. _check_target_allowed blocks .claude/settings.json across non-diff tracks
+        assert Patcher.apply_patch(
+            {"action": "FILE_CREATE", "target_file": ".claude/settings.json", "content": "{}"},
+            {},
+            dry_run=False,
+        ) is False
     finally:
         if os.path.exists(test_json):
             os.remove(test_json)
@@ -155,7 +141,10 @@ def test_ast_delete_key_legacy_patcher():
         json.dump(data, f)
 
     patch = {"action": "AST_DELETE_KEY", "target_file": test_json, "key_path": "engines"}
-    res = Patcher.apply_patch(patch, {})
+    res_dry = Patcher.apply_patch(patch, {})
+    assert res_dry is True
+
+    res = Patcher.apply_patch(patch, {}, dry_run=False)
     assert res is True
 
     with open(test_json, "r", encoding="utf-8") as f:
@@ -194,7 +183,10 @@ def test_peripheral_file_op():
         "patch_type": "file-op",
         "file_ops": [{"op": "create", "target_file": test_file, "content": "auto-generated header\n"}],
     }
-    res = Patcher.apply_patch(patch, {})
+    res_dry = Patcher.apply_patch(patch, {})
+    assert res_dry is True
+
+    res = Patcher.apply_patch(patch, {}, dry_run=False)
     assert res is True
     assert os.path.exists(test_file)
     with open(test_file, "r", encoding="utf-8") as f:

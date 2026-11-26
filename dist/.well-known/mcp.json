@@ -1,27 +1,16 @@
 {
-  "mcpVersion": "2025-03-26",
-  "serverInfo": {
-    "name": "fmagenticl-registry-mcp",
-    "version": "2.1.1"
-  },
-  "description": "Deterministic failure registry and signed patch channel for autonomous AI agents. Zero LLM inference in the hot path.",
+  "name": "fmagenticl-registry-mcp",
+  "version": "3.0.0",
+  "description": "Signed Open Registry of Malicious AI Agent Signatures, Offensive Harnesses & Behavioral IOCs.",
+  "protocolVersion": "2025-03-26",
   "transport": {
     "type": "streamable-http",
     "url": "https://fmagenticl-registry.pages.dev/mcp"
   },
-  "endpoints": {
-    "mcp": "https://fmagenticl-registry.pages.dev/mcp",
-    "patches": "https://fmagenticl-registry.pages.dev/api/v1/patches",
-    "registry": "https://fmagenticl-registry.pages.dev/registry.json",
-    "llms": "https://fmagenticl-registry.pages.dev/llms.txt",
-    "workarounds": "https://fmagenticl-registry.pages.dev/workarounds.json"
-  },
+  "auth": "none",
   "tools": [
-    "fmagenticl_resolve",
-    "fmagenticl_auto_heal",
-    "fmagenticl_report_telemetry",
-    "fmagenticl_submit_grievance",
-    "fmagenticl_get_workarounds",
-    "fmagenticl_report_patch_outcome"
+    "fmagenticl_lookup_signature",
+    "fmagenticl_list_signatures",
+    "fmagenticl_resolve"
   ]
 }

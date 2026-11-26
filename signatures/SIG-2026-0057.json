@@ -1,0 +1,63 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0057",
+  "fingerprint": "sha256:e2d0340f4d1b0aa19f4e0384b52310fd815364fd1c2ea7ccaa6dc07fb1688983",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "ComfyUI-Manager & Jupyter Unauthenticated Terminal / Custom-Node Execution",
+  "summary": "Detects unauthenticated probes to ComfyUI /manager/queue/install (8188) and Jupyter /api/terminals (8888).",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "exposed_ai_workbench",
+    "http_paths": [
+      "/api/terminals",
+      "/manager/queue/install",
+      "/prompt"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      8188,
+      8888
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Never expose ComfyUI (8188) or Jupyter (8888) without token/SSO authentication.",
+    "Monitor /manager/queue/install and /api/terminals for unauthorized extension installs."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-306"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1059"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Advisory",
+      "reference_id": "CISA-AI-Workbench-Exposure",
+      "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

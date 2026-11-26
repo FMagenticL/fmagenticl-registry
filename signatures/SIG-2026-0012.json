@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0012",
+  "fingerprint": "sha256:f5410c9c6cfcd4a3e562f1bc3475738a4c2c2967d47d87e258ea7d6b29fd8c4c",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "PentestGPT / Autonomous Subprocess Nmap-Sqlmap Wrapper",
+  "summary": "Detects process names and log artifacts produced by PentestGPT automated reconnaissance and scanning wrappers.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "host_artifact_signature",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "logs/pentestGPT_log.txt"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "pentestgpt",
+      "pentestgpt-connection"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "pentestgpt"
+  },
+  "mitigation_steps": [
+    "Alert on unexpected pentestgpt processes or pentestGPT_log.txt artifacts on corporate endpoints.",
+    "Correlate automated nmap/sqlmap subprocess launches with LLM API egress."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1046",
+      "T1595"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "USENIX Security",
+      "reference_id": "PentestGPT-2024",
+      "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/deng",
+      "source_type": "academic_paper",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable reference from published research."
+    }
+  ]
+}

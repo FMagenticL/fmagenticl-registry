@@ -1,0 +1,65 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0055",
+  "fingerprint": "sha256:11d885d160ab75adbc5b9e01888b97eaa37c2c83dc4deeb39c0baa5d9aad6962",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "HIGH",
+  "title": "Gradio Arbitrary File Read & Queue SSRF (CVE-2024-47872 / CVE-2024-1561)",
+  "summary": "Detects probes against Gradio /file=, /queue/join, and /component_server endpoints on port 7860.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "cve_port_and_endpoint",
+    "http_paths": [
+      "/file=",
+      "/queue/join",
+      "/component_server"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      7860
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade Gradio to latest patched version and disable public share=True tunnels in production.",
+    "Restrict /file= and /component_server routes behind authenticated proxies."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2024-47872",
+      "CVE-2024-1561"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-22",
+      "CWE-918"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST NVD",
+      "reference_id": "CVE-2024-47872",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-47872",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

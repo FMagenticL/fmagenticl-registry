@@ -1,0 +1,59 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0046",
+  "fingerprint": "sha256:3326a135141b6fcf9980b4da3f73fa2ad38f4cf706ba3ba808baece8c7cc7c20",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "LiteLLM Custom Guardrail Code Execution (CVE-2026-40217)",
+  "summary": "Detects exploitation attempts targeting LiteLLM /guardrails/test_custom_code with Python RCE primitives.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "cve_endpoint_and_payload",
+    "http_paths": [
+      "/guardrails/test_custom_code"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "__import__|exec\\(|eval\\(|codecs\\.decode"
+  },
+  "mitigation_steps": [
+    "Upgrade LiteLLM to patched release and disable unauthenticated /guardrails/test_custom_code access.",
+    "Block requests containing __import__, exec(, eval(, or codecs.decode on LLM proxy routes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-40217"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST NVD",
+      "reference_id": "CVE-2026-40217",
+      "url": "https://nvd.nist.gov/",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0029",
+  "fingerprint": "sha256:495a19452083318c7f28282c740ed1a946ff04c6cb605661dba22063638b88a8",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Agent Container Escape via /var/run/docker.sock or privileged: true",
+  "summary": "Detects container configurations exposing the host Docker socket, privileged mode, or unconfined seccomp profiles to agent runtimes.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "container_escape_config",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "Dockerfile",
+      "docker-compose.yml"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "/var/run/docker\\.sock|privileged\\s*:\\s*true|seccomp[:=]\\s*unconfined"
+  },
+  "mitigation_steps": [
+    "Never mount /var/run/docker.sock into agent execution containers.",
+    "Enforce privileged: false, cap_drop: [ALL], and default seccomp profiles."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-250"
+    ],
+    "mitre_attack_ids": [
+      "T1611"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST SP 800-190",
+      "reference_id": "NIST-SP-800-190",
+      "url": "https://csrc.nist.gov/pubs/sp/800/190/final",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

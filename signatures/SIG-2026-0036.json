@@ -1,0 +1,57 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0036",
+  "fingerprint": "sha256:4da60f50bb28b138f5f98b07adfa42899172c683c31c80782fdbb0e7e23727a6",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Automated Cloud IAM Access-Key Churn Loop",
+  "summary": "Detects >=3 CreateAccessKey/DeleteAccessKey or ServiceAccountKey mutations within 300s indicative of automated key hijacking.",
+  "observable": {
+    "surface": "cloud_control_plane",
+    "observable_type": "key_churn_window",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [
+      "iam:CreateAccessKey",
+      "iam:DeleteAccessKey",
+      "iam.serviceAccountKeys.create"
+    ],
+    "window_seconds": 300,
+    "threshold_count": 3,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Alert and revoke keys when IAM access-key creation/deletion churn exceeds 3 events in 5 minutes.",
+    "Prefer short-lived federated OIDC credentials over static IAM access keys."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1098.001"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Permiso Security",
+      "reference_id": "Cloud-Key-Churn-Research",
+      "url": "https://permiso.io/blog/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

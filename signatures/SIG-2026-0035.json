@@ -1,0 +1,60 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0035",
+  "fingerprint": "sha256:9899d829b80819f74b17c504499bad0f7bf35a0463dc273a22c8789de89f647c",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "CRITICAL",
+  "title": "Autonomous Entra ID AddPassword / AddKey Service Principal Persistence",
+  "summary": "Detects automated Entra ID Graph API sequences adding secondary credentials to existing applications or service principals.",
+  "observable": {
+    "surface": "cloud_control_plane",
+    "observable_type": "cloud_api_sequence",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [
+      "Application.ReadWrite.All",
+      "addPassword",
+      "addKey",
+      "updateApplication"
+    ],
+    "window_seconds": 30,
+    "threshold_count": 2,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Alert immediately on addPassword, addKey, or updateApplication calls outside approved CI pipelines.",
+    "Restrict Application.ReadWrite.All permissions and require PIM elevation."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "FLASH-20261113-001"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1098.001"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI03"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "FBI Cyber Division FLASH Advisory",
+      "reference_id": "FLASH-20261113-001",
+      "url": "https://www.ic3.gov/CSA/2026/261113.pdf",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

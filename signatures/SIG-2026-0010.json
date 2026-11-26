@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0010",
+  "fingerprint": "sha256:bb052eeb80bafb33122e89f6d774c0c8df4d68dbd9334734ff889cd5c98566ed",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "CRITICAL",
+  "title": "Anthropic-Disclosed State-Nexus Autonomous Claude Orchestration Pattern",
+  "summary": "Detects MCP server role configurations and target-state JSON artifacts matching documented autonomous cyber-operations orchestration.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "mcp_orchestration_pattern",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "ops_state/targets.json"
+    ],
+    "config_keys": [
+      "mcpServers.recon_runner",
+      "mcpServers.exploit_validator"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:recon_runner|exploit_validator|ops_state/targets\\.json)"
+  },
+  "mitigation_steps": [
+    "Audit MCP server manifests for unauthorized recon_runner or exploit_validator tool servers.",
+    "Monitor API gateways for sustained multi-turn autonomous target-state orchestration."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "GTG-2002"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1595"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Anthropic Threat Intelligence",
+      "reference_id": "GTG-2002",
+      "url": "https://www.anthropic.com/news/detecting-and-countering-malicious-uses-of-claude-march-2025",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

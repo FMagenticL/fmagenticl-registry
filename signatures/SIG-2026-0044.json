@@ -1,0 +1,59 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0044",
+  "fingerprint": "sha256:7ae72ed5677b0e388e605e3c5cc113c552f5922a7e0b00b8486e4f657d2227e7",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Sustained Automated Batch-Ingestion API Saturation (FinCEN Disruption Pattern)",
+  "summary": "Detects sustained automated probing and saturation of batch-filing or bulk-upload API endpoints at machine speed.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "batch_endpoint_saturation",
+    "http_paths": [
+      "/api/v1/batch",
+      "/v1/batches",
+      "/sftp-batch-upload"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 60,
+    "threshold_count": 60,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Enforce mutual TLS, strict request-size caps, and per-tenant burst quotas on batch ingestion APIs.",
+    "Monitor batch-upload gateways for prolonged anomalous error rates or latency spikes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "FIN-2026-R002"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1499"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "U.S. Treasury FinCEN",
+      "reference_id": "FIN-2026-R002",
+      "url": "https://www.fincen.gov/news/news-releases",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

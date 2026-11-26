@@ -1,0 +1,55 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0040",
+  "fingerprint": "sha256:1135c208f09cbc6498fabbaec9c299060df177fc9f0354734dad40312800b11d",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Machine-Speed REST UUID / Numeric IDOR Enumeration (>=15 Distinct IDs / 5s)",
+  "summary": "Detects rapid sequential or random enumeration of >=15 distinct UUID or numeric object IDs on a single route template in 5s.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "idor_route_sweep",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 5,
+    "threshold_count": 15,
+    "affected_packages": [],
+    "detection_regex": "/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+  },
+  "mitigation_steps": [
+    "Enforce object-level authorization checks on every UUID/numeric resource route.",
+    "Rate-limit and alert when a principal queries >=15 distinct resource IDs within 5 seconds."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-639"
+    ],
+    "mitre_attack_ids": [
+      "T1087"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OWASP API Security Top 10",
+      "reference_id": "API1:2023",
+      "url": "https://owasp.org/API-Security/",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

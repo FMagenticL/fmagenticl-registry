@@ -11,7 +11,26 @@ import subprocess
 import json
 import copy
 import shlex
+import tempfile
 from typing import Dict, Any, List, Optional
+
+
+def _atomic_write_text(target_file: str, text: str) -> None:
+    parent_dir = os.path.dirname(os.path.abspath(target_file))
+    if parent_dir:
+        os.makedirs(parent_dir, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=parent_dir or ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        os.replace(tmp_path, target_file)
+    except Exception:
+        try:
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
 try:
     import jsonpatch
@@ -43,14 +62,31 @@ def _is_safe_path(target_path: Optional[str]) -> bool:
 DIFF_DENYLIST = [
     re.compile(r"(?:^|[\\/])\.git(?:[\\/]|$)", re.IGNORECASE),
     re.compile(r"(?:^|[\\/])\.env", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.claude(?:[\\/]|$)", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.cursor(?:[\\/]|$)", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.vscode(?:[\\/]|$)", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.github(?:[\\/]|$)", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.agents(?:[\\/]|$)", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])\.mcp\.json$", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])(?:AGENTS|CLAUDE|SKILL)\.md$", re.IGNORECASE),
+    re.compile(r"(?:^|[\\/])(?:Dockerfile|Makefile)$", re.IGNORECASE),
     re.compile(r"(?:^|[\\/])sitecustomize\.py$", re.IGNORECASE),
     re.compile(r"(?:^|[\\/])usercustomize\.py$", re.IGNORECASE),
     re.compile(r"\.pth$", re.IGNORECASE),
     re.compile(r"(?:^|[\\/])conftest\.py$", re.IGNORECASE),
     re.compile(r"(?:^|[\\/])setup\.py$", re.IGNORECASE),
     re.compile(r"(?:^|[\\/])pyproject\.toml$", re.IGNORECASE),
-    re.compile(r"\.(?:sh|bat|ps1)$", re.IGNORECASE),
+    re.compile(r"\.(?:sh|bat|ps1|cmd)$", re.IGNORECASE),
 ]
+
+
+def _check_target_allowed(target_path: Optional[str]) -> bool:
+    """Enforce path containment inside cwd and block sensitive config/build files across all tracks."""
+    if not _is_safe_path(target_path):
+        return False
+    norm = str(target_path).replace("\\", "/")
+    return not any(pat.search(norm) for pat in DIFF_DENYLIST)
+
 
 class Patcher:
     """Deterministic self-healing patch execution engine implementing RFC 6902 two-track model."""
@@ -60,7 +96,7 @@ class Patcher:
         cls,
         patch: Dict[str, Any],
         context: Optional[Dict[str, Any]] = None,
-        dry_run: bool = False,
+        dry_run: bool = True,
     ) -> bool:
         """
         Apply or dry-run validate a deterministic patch.
@@ -111,11 +147,8 @@ class Patcher:
 
             # Security Containment: check safe path & hard-block security denylist
             for tf in target_files:
-                if not _is_safe_path(tf):
-                    print(f"[FMagenticL Patcher] Diff target path outside working directory rejected: {tf}")
-                    return False
-                if any(pat.search(tf) for pat in DIFF_DENYLIST):
-                    print(f"[FMagenticL Patcher] Diff target matches security denylist: {tf}")
+                if not _check_target_allowed(tf):
+                    print(f"[FMagenticL Patcher] Diff target rejected by path containment/denylist: {tf}")
                     return False
 
             if is_dry_run or not context.get("apply_diff", False):
@@ -179,8 +212,8 @@ class Patcher:
             if not target_file or not ops:
                 return False
 
-            if not _is_safe_path(target_file):
-                print(f"[FMagenticL Patcher] Target file outside working directory rejected: {target_file}")
+            if not _check_target_allowed(target_file):
+                print(f"[FMagenticL Patcher] Target file rejected by path containment/denylist: {target_file}")
                 return False
 
             # Fail closed on non-JSON targets for RFC 6902 json_patch (zero silent coercion)
@@ -239,11 +272,7 @@ class Patcher:
 
             # Write back patched file atomically
             try:
-                parent_dir = os.path.dirname(os.path.abspath(target_file))
-                if parent_dir:
-                    os.makedirs(parent_dir, exist_ok=True)
-                with open(target_file, "w", encoding="utf-8") as f:
-                    json.dump(patched_doc, f, indent=2)
+                _atomic_write_text(target_file, json.dumps(patched_doc, indent=2))
                 if isinstance(context, dict):
                     context["applied"] = True
                 return True
@@ -287,7 +316,7 @@ class Patcher:
                 for fop in patch["file_ops"]:
                     op_kind = fop.get("op")
                     fpath = fop.get("target_file") or fop.get("file")
-                    if not fpath or not _is_safe_path(fpath):
+                    if not fpath or not _check_target_allowed(fpath):
                         return False
                     if op_kind in ("delete", "unlock_write"):
                         print(f"[FMagenticL Patcher] Operation '{op_kind}' on '{fpath}' is blocked by security policy.")
@@ -299,28 +328,20 @@ class Patcher:
                 for fop in patch["file_ops"]:
                     if fop.get("op") == "create":
                         fpath = fop.get("target_file") or fop.get("file")
-                        pdir = os.path.dirname(os.path.abspath(fpath))
-                        if pdir:
-                            os.makedirs(pdir, exist_ok=True)
-                        with open(fpath, "w", encoding="utf-8") as fh:
-                            fh.write(fop.get("content", ""))
+                        _atomic_write_text(fpath, fop.get("content", ""))
                 if isinstance(context, dict):
                     context["applied"] = True
                 return True
 
             if action == "FILE_CREATE":
                 target_file = patch.get("target_file")
-                if target_file and _is_safe_path(target_file):
+                if target_file and _check_target_allowed(target_file):
                     if is_dry_run:
                         if isinstance(context, dict):
                             context["applied"] = False
                         return True
                     try:
-                        parent_dir = os.path.dirname(os.path.abspath(target_file))
-                        if parent_dir:
-                            os.makedirs(parent_dir, exist_ok=True)
-                        with open(target_file, "w", encoding="utf-8") as f:
-                            f.write(patch.get("content", ""))
+                        _atomic_write_text(target_file, patch.get("content", ""))
                         if isinstance(context, dict):
                             context["applied"] = True
                         return True
@@ -350,7 +371,7 @@ class Patcher:
         if action == "AST_DELETE_KEY":
             target_file = patch.get("target_file")
             key_path = patch.get("key_path")
-            if target_file and key_path and _is_safe_path(target_file) and os.path.exists(target_file):
+            if target_file and key_path and _check_target_allowed(target_file) and os.path.exists(target_file):
                 try:
                     with open(target_file, "r", encoding="utf-8") as f:
                         data = json.load(f)
@@ -370,8 +391,7 @@ class Patcher:
                                 context["preview_patched_doc"] = data
                                 context["applied"] = False
                             return True
-                        with open(target_file, "w", encoding="utf-8") as f:
-                            json.dump(data, f, indent=2)
+                        _atomic_write_text(target_file, json.dumps(data, indent=2))
                         if isinstance(context, dict):
                             context["applied"] = True
                         return True
@@ -383,15 +403,12 @@ class Patcher:
         if action == "CONFIG_INJECT":
             target_file = patch.get("target_file")
             config_patch = patch.get("config_patch")
-            if target_file and config_patch and _is_safe_path(target_file):
+            if target_file and config_patch and _check_target_allowed(target_file) and str(target_file).lower().endswith(".json"):
                 try:
                     data = {}
                     if os.path.exists(target_file):
                         with open(target_file, "r", encoding="utf-8") as f:
-                            try:
-                                data = json.load(f)
-                            except Exception:
-                                data = {}
+                            data = json.load(f)
                     if isinstance(data, dict) and isinstance(config_patch, dict):
                         data.update(config_patch)
                         if is_dry_run:
@@ -399,11 +416,7 @@ class Patcher:
                                 context["preview_patched_doc"] = data
                                 context["applied"] = False
                             return True
-                        parent_dir = os.path.dirname(os.path.abspath(target_file))
-                        if parent_dir:
-                            os.makedirs(parent_dir, exist_ok=True)
-                        with open(target_file, "w", encoding="utf-8") as f:
-                            json.dump(data, f, indent=2)
+                        _atomic_write_text(target_file, json.dumps(data, indent=2))
                         if isinstance(context, dict):
                             context["applied"] = True
                         return True

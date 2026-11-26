@@ -1,7 +1,7 @@
 {
   "name": "@fmagenticl/client",
-  "version": "1.1.0",
-  "description": "Zero-dependency Node.js SDK for FMagenticL deterministic failure resolution, MCP tools, and collective friction depository",
+  "version": "3.0.0",
+  "description": "Zero-dependency Node.js SDK for FMagenticL Signed Malicious AI Agent Signature Registry & Read-Only MCP",
   "main": "index.js",
   "engines": {
     "node": ">=18"
@@ -9,10 +9,10 @@
   "keywords": [
     "fmagenticl",
     "ai-agents",
+    "threat-intelligence",
+    "signatures",
     "mcp",
-    "telemetry",
-    "resolution",
-    "grievances"
+    "ed25519"
   ],
   "author": "FMagenticL Collective",
   "license": "MIT"

@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0043",
+  "fingerprint": "sha256:327264a03ed1b81d8c21290f5b2996cc7a02030c8f5c18e4137cce1cd7fe3367",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Zero-Static-Asset Headless Recon Across Sensitive Control Paths",
+  "summary": "Detects clients fetching >=8 sensitive routes (/.env, /.git/config, /saml, /kudu, /actuator/env) with zero static asset loads.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "headless_sensitive_traversal",
+    "http_paths": [
+      "/.env",
+      "/.git/config",
+      "/saml",
+      "/kudu",
+      "/actuator/env",
+      "/graphql",
+      "/wp-json"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 600,
+    "threshold_count": 8,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Track static-asset vs. sensitive-prefix ratios per actor to distinguish headless agents from browsers.",
+    "Return 404 at edge middleware for unrouted /.env, /.git, /kudu, and /actuator probes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1595.003"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI01"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Censys / GreyNoise",
+      "reference_id": "Headless-Recon-Baseline",
+      "url": "https://www.greynoise.io/blog",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual-Citation-Only",
+      "note": "Factual observable extraction from public threat research."
+    }
+  ]
+}

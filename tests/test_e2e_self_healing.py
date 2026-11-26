@@ -48,7 +48,7 @@ def test_e2e_self_healing_flow(monkeypatch, tmp_path):
     from fmagenticl.client.middleware import MiddlewareClient
 
     cache = LocalCache(snapshot_path="/nonexistent/snapshot.json", public_key_b64=pub_b64)
-    client = MiddlewareClient(local_cache=cache, require_signature=True)
+    client = MiddlewareClient(local_cache=cache, require_signature=True, air_gap=False)
 
     result = client.resolve("49f800ca559979a58e778451778b318026853c0c37814f1880b64047db68fae6")
 

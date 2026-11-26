@@ -1,0 +1,57 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0037",
+  "fingerprint": "sha256:76c55ac222748e963cbf68e6fbe4e7c6a4e87eff4746b9ad80f836aac84094c2",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "LLMjacking Token-Throughput Spike (>250,000 Tokens/Minute per Principal)",
+  "summary": "Detects abnormal sustained token consumption exceeding 250,000 tokens per 60-second window on a single API key or actor.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "token_velocity_threshold",
+    "http_paths": [
+      "/v1/chat/completions",
+      "/v1/messages",
+      "/model/*/converse"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 60,
+    "threshold_count": 250000,
+    "affected_packages": [],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Enforce per-principal token-per-minute quotas and automatic circuit-breaker throttling.",
+    "Alert billing and security teams on sudden off-hours token spikes."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OWASP LLM Top 10",
+      "reference_id": "LLM10",
+      "url": "https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/",
+      "source_type": "specification",
+      "license_or_terms": "Public-Specification",
+      "note": "Factual specification reference."
+    }
+  ]
+}

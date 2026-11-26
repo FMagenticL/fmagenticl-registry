@@ -1,0 +1,11 @@
+{
+  "schema_version": "3.0",
+  "default_kid": "fmagenticl-ed25519-2026-01",
+  "keys": {
+    "fmagenticl-ed25519-2026-01": {
+      "public_key_b64": "M2dabGN0rtRYvldmtfgBiGhpIkyMR72g7DhPuaMZezo=",
+      "status": "active",
+      "added_at": "2026-11-26T00:00:00Z"
+    }
+  }
+}

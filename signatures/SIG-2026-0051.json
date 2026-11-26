@@ -1,0 +1,70 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0051",
+  "fingerprint": "sha256:8eac747788a3e7bc400a426e3083853e2413b09a903b11ba977700073ec3c60c",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "MCP Inspector Localhost-Proxy Unauthenticated RCE (CVE-2025-49596)",
+  "summary": "Detects vulnerable @modelcontextprotocol/inspector versions and unauthenticated /sse /message proxy requests on ports 6274/6277.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "cve_port_and_package",
+    "http_paths": [
+      "/sse",
+      "/mcp",
+      "/message"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      6274,
+      6277
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "npm",
+        "name": "@modelcontextprotocol/inspector",
+        "affected_range": "<0.14.1"
+      }
+    ],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade @modelcontextprotocol/inspector to >=0.14.1 with session token authentication enabled.",
+    "Do not leave MCP Inspector proxy ports (6274, 6277) running during untrusted browsing."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2025-49596"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-306"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "GitHub Security Advisory",
+      "reference_id": "CVE-2025-49596",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-49596",
+      "source_type": "open_advisory",
+      "license_or_terms": "CC-BY-4.0",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

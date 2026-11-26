@@ -20,7 +20,7 @@ import threading
 import time
 from typing import Optional, Tuple
 
-from fmagenticl.client.verify import verify_snapshot_file
+from fmagenticl.client.verify import load_keyring, resolve_public_key_for_kid, verify_snapshot_file
 
 
 class LocalCache:
@@ -32,6 +32,7 @@ class LocalCache:
         verify_signature: bool = True,
         sig_path: Optional[str] = None,
         public_key_b64: Optional[str] = None,
+        keyring_path: Optional[str] = None,
     ):
         if snapshot_path is None or snapshot_path == "snapshot.json":
             bundled = os.path.join(
@@ -56,11 +57,15 @@ class LocalCache:
             cand = self.snapshot_path.rsplit(".json", 1)[0] + ".sig" if self.snapshot_path.endswith(".json") else self.snapshot_path + ".sig"
             if os.path.exists(cand):
                 self.sig_path = cand
+        self.keyring_path = keyring_path
+        self.keyring = load_keyring(keyring_path)
         self.public_key_b64 = public_key_b64
         self._lock = threading.Lock()
         self._memory: dict = {}
+        self._signatures_by_id: dict = {}
         self._aliases: dict = {}
         self._delta: dict = {}
+        self._snapshot_seq: int = 0
         self._snapshot_signature_verified: bool = False
         # F2: distinguishes "no snapshot shipped" (harmless, edge-only mode) from
         # "snapshot present but failed verification" (an integrity event to report).
@@ -73,12 +78,27 @@ class LocalCache:
             self._snapshot_verification_failed = False
             return
 
+        try:
+            with open(self.snapshot_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, ValueError):
+            self._snapshot_verification_failed = True
+            return
+
+        pub_key = self.public_key_b64
+        kid = data.get("kid") if isinstance(data, dict) else None
+        if self.keyring and kid and not self.public_key_b64:
+            pub_key = resolve_public_key_for_kid(kid, keyring=self.keyring, allow_retired=True)
+            if not pub_key:
+                self._snapshot_verification_failed = True
+                return
+
         snap_sig_ok = False
         if self.verify_signature:
             if not verify_snapshot_file(
                 self.snapshot_path,
                 sig_path=self.sig_path,
-                public_key_b64=self.public_key_b64,
+                public_key_b64=pub_key,
             ):
                 # Fail closed: never trust unverified data - but record *why* the cache is
                 # empty, so the client can refuse loudly instead of silently going online.
@@ -87,20 +107,21 @@ class LocalCache:
             snap_sig_ok = True
 
         try:
-            with open(self.snapshot_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
             patches = data.get("patches", {}) if isinstance(data, dict) else {}
+            sigs_by_id = data.get("signatures_by_id", {}) if isinstance(data, dict) else {}
             raw_aliases = data.get("aliases", {}) if isinstance(data, dict) else {}
             clean_aliases = {
                 str(k).replace("sha256:", "").strip().lower(): str(v).replace("sha256:", "").strip().lower()
                 for k, v in raw_aliases.items()
             } if isinstance(raw_aliases, dict) else {}
+            seq = int(data.get("snapshot_seq", 0)) if isinstance(data, dict) else 0
             with self._lock:
                 self._memory = patches
+                self._signatures_by_id = sigs_by_id if isinstance(sigs_by_id, dict) else {}
                 self._aliases = clean_aliases
+                self._snapshot_seq = seq
                 self._snapshot_signature_verified = snap_sig_ok
-        except (OSError, ValueError):
-            # Snapshot unreadable. Operate in edge-only mode.
+        except (OSError, ValueError, TypeError):
             pass
 
     def _load_delta(self) -> None:
@@ -163,9 +184,19 @@ class LocalCache:
 
     def put(self, fp_hex: str, patch: dict) -> None:
         clean_hex = fp_hex.replace("sha256:", "").strip().lower()
+        if isinstance(patch, dict) and isinstance(patch.get("manifest"), dict):
+            remote_seq = int(patch["manifest"].get("snapshot_seq", 0) or 0)
+            if remote_seq and self._snapshot_seq and remote_seq < self._snapshot_seq:
+                raise ValueError(f"Rollback rejected: snapshot_seq {remote_seq} < {self._snapshot_seq}")
         with self._lock:
             self._delta[clean_hex] = copy.deepcopy(patch)
         self._save_delta()
+
+    def list_all(self) -> list:
+        with self._lock:
+            if self._signatures_by_id:
+                return [copy.deepcopy(v) for v in self._signatures_by_id.values()]
+            return [copy.deepcopy(v) for v in self._memory.values()]
 
     def resolve(self, fp_hex: str) -> Optional[dict]:
         """Backward-compatible alias for get()."""

@@ -1,0 +1,58 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0034",
+  "fingerprint": "sha256:87c6e26d940f0158ac4f172264a03d2a19ea6177b030b2c7b7162f0102473a4a",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "CRITICAL",
+  "title": "Cloud IMDSv1/v2 Metadata Credential Harvest Burst (169.254.169.254)",
+  "summary": "Detects SSRF or host-agent probes targeting AWS/Azure/GCP link-local metadata endpoints to harvest IAM role tokens.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "metadata_ssrf_probe",
+    "http_paths": [
+      "/latest/meta-data/iam/security-credentials/",
+      "/metadata/identity/oauth2/token"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 5,
+    "threshold_count": 2,
+    "affected_packages": [],
+    "detection_regex": "169\\.254\\.169\\.254|fd00:ec2::254"
+  },
+  "mitigation_steps": [
+    "Enforce IMDSv2 with hop-limit=1 and block 169.254.169.254 / fd00:ec2::254 from agent egress.",
+    "Trigger immediate principal isolation when metadata endpoints appear in HTTP/process telemetry."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-918"
+    ],
+    "mitre_attack_ids": [
+      "T1552.005"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Advisory",
+      "reference_id": "CISA-IMDS-Exploitation",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual indicator extraction; original defensive summary."
+    }
+  ]
+}

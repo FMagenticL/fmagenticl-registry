@@ -23,7 +23,7 @@ def test_mcp_substitution_config_file():
         "config_patch": {"timeout": 30, "retries": 3}
     }
     
-    success = Patcher.apply_patch(patch)
+    success = Patcher.apply_patch(patch, dry_run=False)
     assert success is True
     
     with open(test_config, "r", encoding="utf-8") as f:
@@ -43,7 +43,7 @@ def test_mcp_substitution_dynamic_runtime():
         "mcp_uri": "http://127.0.0.1:8000/v1/resolve",
         "config_patch": {"fast_failover": True}
     }
-    success = Patcher.apply_patch(patch)
+    success = Patcher.apply_patch(patch, dry_run=False)
     assert success is True
 
 def test_config_inject():
@@ -57,7 +57,7 @@ def test_config_inject():
         "target_file": test_target,
         "config_patch": {"noImplicitAny": False, "strictNullChecks": False}
     }
-    success = Patcher.apply_patch(patch)
+    success = Patcher.apply_patch(patch, dry_run=False)
     assert success is True
     
     with open(test_target, "r", encoding="utf-8") as f:
@@ -76,7 +76,7 @@ def test_file_create_and_delete():
         "target_file": test_lock,
         "content": "LOCKED_PROCESS_ID=9999"
     }
-    assert Patcher.apply_patch(patch_create) is True
+    assert Patcher.apply_patch(patch_create, dry_run=False) is True
     assert os.path.exists(test_lock)
     
     patch_delete = {

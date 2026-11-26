@@ -1,0 +1,67 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0047",
+  "fingerprint": "sha256:0b19363a05b8eca36db271cb5a313bf1100da191037b1fe978fb7cfd5386dd5e",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "LiteLLM Virtual Key Admin Privilege Escalation Probe",
+  "summary": "Detects unauthorized probes to LiteLLM /key/generate, /key/update, and /user/new endpoints for admin key minting.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "cve_endpoint_probe",
+    "http_paths": [
+      "/key/generate",
+      "/key/update",
+      "/user/new"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "litellm",
+        "affected_range": "<1.40.12"
+      }
+    ],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Upgrade litellm beyond 1.40.12 and restrict /key/generate and /user/new to authenticated admins.",
+    "Alert on virtual-key requests carrying role=admin from unprivileged principals."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2024-4888"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-269"
+    ],
+    "mitre_attack_ids": [
+      "T1078"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI03"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NIST NVD",
+      "reference_id": "CVE-2024-4888",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4888",
+      "source_type": "open_advisory",
+      "license_or_terms": "NVD-Public-Domain",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

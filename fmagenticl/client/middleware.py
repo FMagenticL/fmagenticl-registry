@@ -272,6 +272,11 @@ class FMagenticLClient:
         if tier1 is not None:
             return tier1
 
+        if self.air_gap:
+            self._assert_egress_allowed("network fallback")
+            self._metrics["bypass"] += 1
+            return None
+
         clean_hex = fp_hex.replace("sha256:", "").strip().lower()
         if not self.circuit_breaker.can_request():
             self._metrics["breaker_open"] += 1
@@ -286,6 +291,54 @@ class FMagenticLClient:
 
         self._metrics["bypass"] += 1
         return None
+
+    def lookup_signature(self, query: str) -> Optional[dict]:
+        """Exact deterministic lookup by SIG-2026-XXXX, sha256:<hex>, CVE, GHSA, or advisory ID."""
+        if not query or not isinstance(query, str):
+            return None
+        q_clean = query.strip()
+        if not q_clean:
+            return None
+        res = self.resolve(q_clean)
+        if res is not None:
+            return res
+        q_lower = q_clean.lower()
+        alias_hex = self.local_cache.resolve_alias(q_lower)
+        if alias_hex != q_lower:
+            return self.resolve(alias_hex)
+        return None
+
+    def list_signatures(
+        self,
+        confidence_tier: Optional[str] = None,
+        threat_category: Optional[str] = None,
+        surface: Optional[str] = None,
+        severity: Optional[str] = None,
+        limit: int = 100,
+    ) -> list:
+        """Filter verified in-memory threat signatures deterministically."""
+        if self.air_gap and getattr(self.local_cache, "_snapshot_verification_failed", False):
+            self._assert_egress_allowed("signature listing")
+        items = self.local_cache.list_all() if hasattr(self.local_cache, "list_all") else []
+        out = []
+        for item in items:
+            if confidence_tier and item.get("confidence_tier") != confidence_tier:
+                continue
+            if threat_category and item.get("threat_category") != threat_category:
+                continue
+            if severity and item.get("severity") != severity:
+                continue
+            if surface and (item.get("observable") or {}).get("surface") != surface:
+                continue
+            out.append(item)
+            if len(out) >= limit:
+                break
+        return out
+
+    def scan_workspace(self, root_path: str) -> dict:
+        """Run strictly read-only WorkspaceScanner against verified local signatures."""
+        from fmagenticl.client.scanner import WorkspaceScanner
+        return WorkspaceScanner(self).scan_workspace(root_path)
 
     def resolve_failure(
         self,
@@ -302,6 +355,11 @@ class FMagenticLClient:
             hit = self._resolve_tier1(fp)
             if hit is not None:
                 return hit
+
+        if self.air_gap:
+            self._assert_egress_allowed("network fallback")
+            self._metrics["bypass"] += 1
+            return None
 
         if not self.circuit_breaker.can_request():
             self._metrics["breaker_open"] += 1

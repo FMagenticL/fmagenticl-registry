@@ -1,0 +1,61 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0027",
+  "fingerprint": "sha256:96cba7d9fc061bb9cfd91eba6734e24519e5898e5b1f80ee025eb489550599f5",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "Malicious npm preinstall / postinstall Pipe-to-Shell in Agent Plugins",
+  "summary": "Detects npm lifecycle hooks executing remote curl/wget/irm pipe-to-shell commands during MCP server or agent plugin installation.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "package_lifecycle_rce",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "package.json"
+    ],
+    "config_keys": [
+      "scripts.preinstall",
+      "scripts.install",
+      "scripts.postinstall"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:curl|wget|irm)\\s+[^|]+\\|\\s*(?:sh|bash|iex)"
+  },
+  "mitigation_steps": [
+    "Run npm install with --ignore-scripts in untrusted agent workspaces and sandboxes.",
+    "Block package.json lifecycle hooks containing remote shell downloaders."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1195.002"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "GitHub Advisory Database",
+      "reference_id": "GHSA-npm-lifecycle",
+      "url": "https://github.com/advisories",
+      "source_type": "open_advisory",
+      "license_or_terms": "CC-BY-4.0",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

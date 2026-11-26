@@ -1,0 +1,58 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0015",
+  "fingerprint": "sha256:8385891fa89569aaa260e551eef664ab71bab9d76faa666f1718a44028167822",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "MEDIUM",
+  "title": "Ephemeral Tunnel Reverse-Proxy Agent Exfil (cloudflared / ngrok Quick Tunnel)",
+  "summary": "Detects ad-hoc cloudflared quick tunnels and ngrok ephemeral endpoints launched inside agent sandboxes for C2 or exfiltration.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "tunnel_egress_pattern",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "cloudflared tunnel --url",
+      "ngrok http"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:trycloudflare\\.com|ngrok-free\\.app)"
+  },
+  "mitigation_steps": [
+    "Block outbound DNS/TLS to trycloudflare.com and ngrok-free.app from production agent sandboxes.",
+    "Alert on child processes invoking cloudflared tunnel --url or ngrok http."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1572"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "MITRE ATT&CK",
+      "reference_id": "T1572",
+      "url": "https://attack.mitre.org/techniques/T1572/",
+      "source_type": "open_advisory",
+      "license_or_terms": "MITRE-Terms",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

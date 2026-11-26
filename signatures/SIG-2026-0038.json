@@ -1,0 +1,58 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0038",
+  "fingerprint": "sha256:85cee4576c2ab014dcc35b5e1d4539f610cb7e529d4ecebe72c56643c0b26a88",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Host EDR / Sensor Service-Name Recon Sweep",
+  "summary": "Detects automated host enumeration querying CrowdStrike, Microsoft Defender, SentinelOne, or Carbon Black service processes.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "edr_discovery_sweep",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "csfalconservice",
+      "mssense",
+      "sentinelagent",
+      "carbonblack"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": 5,
+    "threshold_count": 3,
+    "affected_packages": [],
+    "detection_regex": "(?:csfalconservice|mssense|sentinelagent|carbonblack)"
+  },
+  "mitigation_steps": [
+    "Alert when unprivileged agent processes enumerate EDR daemon names.",
+    "Isolate host sessions exhibiting automated security-software discovery prior to lateral movement."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1518.001"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI02"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "MITRE ATT&CK",
+      "reference_id": "T1518.001",
+      "url": "https://attack.mitre.org/techniques/T1518/001/",
+      "source_type": "open_advisory",
+      "license_or_terms": "MITRE-Terms",
+      "note": "Structured factual metadata extraction."
+    }
+  ]
+}

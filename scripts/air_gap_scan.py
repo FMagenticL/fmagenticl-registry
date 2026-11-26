@@ -66,7 +66,7 @@ DESTRUCTIVE_COMMAND_PATTERNS = [
     ("Destructive Command: Format-Volume", re.compile(r'\bFormat-Volume\b', re.IGNORECASE)),
 ]
 
-IGNORE_DIRS = {'.git', '.pytest_cache', '__pycache__', 'venv', '.venv', 'build', '.egg-info', '.wrangler', '.agents', 'node_modules'}
+IGNORE_DIRS = {'.git', '.pytest_cache', '__pycache__', 'venv', '.venv', 'build', '.egg-info', '.wrangler', '.agents', 'node_modules', 'scratch'}
 IGNORE_FILES = {'air_gap_scan.py', 'sanitize_scan.py', 'full_privacy_audit.py', 'probe_external_surfaces.py', 'inspect_candidates.py'}
 
 KNOWN_TEST_ALLOWLIST = [
