@@ -60,7 +60,7 @@ export async function onRequest(context) {
   if (path === "/mcp/server-card") {
     const card = {
       name: "fmagenticl-registry-mcp",
-      version: "2.1.0",
+      version: "2.1.1",
       description: "FMagenticL Deterministic Failure Depository and Self-Healing Registry for AI Agents",
       transport: "streamable-http",
       endpoint: `${url.origin}/mcp`,

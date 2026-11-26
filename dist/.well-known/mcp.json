@@ -2,7 +2,7 @@
   "mcpVersion": "2025-03-26",
   "serverInfo": {
     "name": "fmagenticl-registry-mcp",
-    "version": "2.1.0"
+    "version": "2.1.1"
   },
   "description": "Deterministic failure registry and signed patch channel for autonomous AI agents. Zero LLM inference in the hot path.",
   "transport": {

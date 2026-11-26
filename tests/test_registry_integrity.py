@@ -90,19 +90,19 @@ def test_resolve_and_snapshot_dual_signatures():
 
 
 def test_health_census_and_version_parity_2_1_0():
-    assert __version__ == "2.1.0"
+    assert __version__ == "2.1.1"
     pyproject = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    assert 'version = "2.1.0"' in pyproject
+    assert 'version = "2.1.1"' in pyproject
 
     health = json.loads((REPO_ROOT / "dist" / "v1" / "health").read_text(encoding="utf-8"))
-    assert health["protocol_version"] == "2.1.0"
+    assert health["protocol_version"] == "2.1.1"
     assert health["compiled_patches"] == 85
     assert health["executable_patches"] == 54
     assert health["advisory_patches"] == 31
     assert health["executable_patches"] + health["advisory_patches"] == 85
 
     mcp_wellknown = json.loads((REPO_ROOT / "dist" / ".well-known" / "mcp.json").read_text(encoding="utf-8"))
-    assert mcp_wellknown["serverInfo"]["version"] == "2.1.0"
+    assert mcp_wellknown["serverInfo"]["version"] == "2.1.1"
 
     mcp_uri = (REPO_ROOT / "functions" / "mcp.js").as_uri()
     mw_uri = (REPO_ROOT / "functions" / "_middleware.js").as_uri()
@@ -134,8 +134,8 @@ def test_health_census_and_version_parity_2_1_0():
         capture_output=True, text=True, encoding="utf-8", check=True, timeout=30,
     )
     out = json.loads(res.stdout)
-    assert out["mcpInitVer"] == "2.1.0"
-    assert out["cardVer"] == "2.1.0"
+    assert out["mcpInitVer"] == "2.1.1"
+    assert out["cardVer"] == "2.1.1"
 
 
 def test_local_cache_offline_staleness_alias_and_breaker(tmp_path, monkeypatch):

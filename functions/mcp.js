@@ -16,7 +16,7 @@
 
 const PROTOCOL_VERSION = "2025-03-26";
 
-const SERVER_INFO = { name: "fmagenticl-registry-mcp", version: "2.1.0" };
+const SERVER_INFO = { name: "fmagenticl-registry-mcp", version: "2.1.1" };
 
 
 
