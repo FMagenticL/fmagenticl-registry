@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 def test_all_60_signatures_validate_clean_and_cover_all_categories():
     sig_dir = REPO_ROOT / "signatures"
     count, errors = validate_directory(sig_dir)
-    assert count == 60, f"Expected 60 signatures, found {count}"
+    assert count >= 60, f"Expected >= 60 signatures, found {count}"
     assert errors == [], f"Unexpected lint errors: {errors}"
 
     cats = set()

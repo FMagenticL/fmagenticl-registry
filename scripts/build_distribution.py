@@ -147,14 +147,20 @@ def _sign_record(rec: dict, seq: int, now_utc: datetime.datetime) -> dict:
     return out
 
 
-def build() -> None:
+def build(output_dir: Path | str | None = None, sync_pkg_data: bool = True) -> None:
+    out_dir = Path(output_dir) if output_dir is not None else (REPO_ROOT / "dist")
     count, errors = validate_directory(REPO_ROOT / "signatures")
     if errors:
         raise RuntimeError(f"Registry lint gate failed with {len(errors)} error(s): {errors[:5]}")
 
-    (REPO_ROOT / "dist" / "v1" / "signatures").mkdir(parents=True, exist_ok=True)
-    (REPO_ROOT / "dist" / "v1" / "resolve").mkdir(parents=True, exist_ok=True)
-    (REPO_ROOT / "dist" / ".well-known").mkdir(parents=True, exist_ok=True)
+    (out_dir / "v1" / "signatures").mkdir(parents=True, exist_ok=True)
+    (out_dir / "v1" / "resolve").mkdir(parents=True, exist_ok=True)
+    (out_dir / ".well-known").mkdir(parents=True, exist_ok=True)
+    if out_dir != REPO_ROOT / "dist":
+        for wk_name in ("agent.json", "mcp.json"):
+            src_wk = REPO_ROOT / "dist" / ".well-known" / wk_name
+            if src_wk.exists():
+                _write_bytes_safe(out_dir / ".well-known" / wk_name, src_wk.read_bytes())
 
     sigs = load_signatures()
     now_utc = datetime.datetime.now(datetime.timezone.utc)
@@ -180,8 +186,8 @@ def build() -> None:
                 aliases.setdefault(str(tok).strip().lower(), fp_hex)
 
         raw_bytes = (json.dumps(signed, separators=(",", ":"), sort_keys=True, ensure_ascii=False)).encode("utf-8")
-        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "signatures" / f"{sig_id}.json", raw_bytes)
-        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "resolve" / f"{fp_hex}.json", raw_bytes)
+        _write_bytes_safe(out_dir / "v1" / "signatures" / f"{sig_id}.json", raw_bytes)
+        _write_bytes_safe(out_dir / "v1" / "resolve" / f"{fp_hex}.json", raw_bytes)
 
         registry_index.append({
             "id": sig_id,
@@ -208,24 +214,24 @@ def build() -> None:
         "aliases": aliases,
     }
     snapshot_bytes = json.dumps(snapshot, separators=(",", ":"), sort_keys=True, ensure_ascii=False).encode("utf-8")
-    _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "snapshot.json", snapshot_bytes)
+    _write_bytes_safe(out_dir / "v1" / "snapshot.json", snapshot_bytes)
 
     if SIGNING_ENABLED:
         snap_sig_v1 = _sign_bytes(snapshot_bytes)
         snap_sig_v3 = _sign_bytes(V3_SNAPSHOT_DOMAIN + snapshot_bytes)
-        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "snapshot.sig", snap_sig_v1.encode("utf-8"))
-        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "snapshot.v3.sig", snap_sig_v3.encode("utf-8"))
+        _write_bytes_safe(out_dir / "v1" / "snapshot.sig", snap_sig_v1.encode("utf-8"))
+        _write_bytes_safe(out_dir / "v1" / "snapshot.v3.sig", snap_sig_v3.encode("utf-8"))
 
     # Keyring sync
     keyring_src = REPO_ROOT / "fmagenticl" / "data" / "keyring.json"
     if keyring_src.exists():
-        _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "keyring.json", keyring_src.read_bytes())
+        _write_bytes_safe(out_dir / "v1" / "keyring.json", keyring_src.read_bytes())
 
     # Sync signed artifacts into package data dir
-    dist_snap = REPO_ROOT / "dist" / "v1" / "snapshot.json"
-    dist_sig = REPO_ROOT / "dist" / "v1" / "snapshot.sig"
-    dist_sig_v3 = REPO_ROOT / "dist" / "v1" / "snapshot.v3.sig"
-    if dist_snap.exists() and dist_sig.exists():
+    dist_snap = out_dir / "v1" / "snapshot.json"
+    dist_sig = out_dir / "v1" / "snapshot.sig"
+    dist_sig_v3 = out_dir / "v1" / "snapshot.v3.sig"
+    if sync_pkg_data and dist_snap.exists() and dist_sig.exists():
         ok = verify_snapshot_file(str(dist_snap), str(dist_sig), public_key_b64=PUB_KEY_B64)
         if ok:
             pkg_data = REPO_ROOT / "fmagenticl" / "data"
@@ -241,11 +247,11 @@ def build() -> None:
     for k in bloom_keys:
         idx = int(hashlib.sha256(k.encode("utf-8")).hexdigest()[:4], 16) % (1024 * 8)
         bitset[idx // 8] |= (1 << (idx % 8))
-    _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "bloom.bin", bytes(bitset))
+    _write_bytes_safe(out_dir / "v1" / "bloom.bin", bytes(bitset))
 
     # Registry index & health
     _write_bytes_safe(
-        REPO_ROOT / "dist" / "registry.json",
+        out_dir / "registry.json",
         json.dumps({"registry_version": PKG_VERSION, "generated": now_iso, "count": len(registry_index), "signatures": registry_index}, indent=2).encode("utf-8"),
     )
 
@@ -261,8 +267,8 @@ def build() -> None:
         "updated_at": now_iso,
     }
     health_bytes = json.dumps(health_payload, separators=(",", ":")).encode("utf-8")
-    _write_bytes_safe(REPO_ROOT / "dist" / "v1" / "health", health_bytes)
-    _write_bytes_safe(REPO_ROOT / "dist" / "health", health_bytes)
+    _write_bytes_safe(out_dir / "v1" / "health", health_bytes)
+    _write_bytes_safe(out_dir / "health", health_bytes)
 
     # RFC 9728 OAuth metadata
     oauth_res = json.dumps({
@@ -281,13 +287,13 @@ def build() -> None:
         "grant_types_supported": [],
         "auth_policy": "none_public_curated_registry",
     }, indent=2).encode("utf-8")
-    for p in ["dist/.well-known/oauth-protected-resource/index.json", "dist/.well-known/oauth-protected-resource.json", "dist/.well-known/oauth-protected-resource/mcp", "dist/.well-known/oauth-protected-resource/mcp.json"]:
-        _write_bytes_safe(REPO_ROOT / p, oauth_res)
-    for p in ["dist/.well-known/oauth-authorization-server/index.json", "dist/.well-known/oauth-authorization-server.json", "dist/.well-known/oauth-authorization-server/mcp", "dist/.well-known/oauth-authorization-server/mcp.json"]:
-        _write_bytes_safe(REPO_ROOT / p, oauth_auth)
+    for p in [".well-known/oauth-protected-resource/index.json", ".well-known/oauth-protected-resource.json", ".well-known/oauth-protected-resource/mcp", ".well-known/oauth-protected-resource/mcp.json"]:
+        _write_bytes_safe(out_dir / p, oauth_res)
+    for p in [".well-known/oauth-authorization-server/index.json", ".well-known/oauth-authorization-server.json", ".well-known/oauth-authorization-server/mcp", ".well-known/oauth-authorization-server/mcp.json"]:
+        _write_bytes_safe(out_dir / p, oauth_auth)
 
     _write_bytes_safe(
-        REPO_ROOT / "dist" / "404.html",
+        out_dir / "404.html",
         b"<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1></body></html>\n",
     )
 
@@ -296,7 +302,7 @@ def build() -> None:
         "include": ["/mcp", "/mcp/*", "/v1/*", "/health"],
         "exclude": ["/v1/health", "/v1/snapshot.json", "/v1/snapshot.sig", "/v1/snapshot.v3.sig", "/v1/keyring.json", "/v1/signatures/*", "/v1/resolve/*"],
     }
-    _write_bytes_safe(REPO_ROOT / "dist" / "_routes.json", json.dumps(routes_config, indent=2).encode("utf-8"))
+    _write_bytes_safe(out_dir / "_routes.json", json.dumps(routes_config, indent=2).encode("utf-8"))
 
     headers_txt = (
         "/*\n"
@@ -306,7 +312,7 @@ def build() -> None:
         "  Referrer-Policy: no-referrer\n"
         "  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'\n"
     )
-    _write_bytes_safe(REPO_ROOT / "dist" / "_headers", headers_txt.encode("utf-8"))
+    _write_bytes_safe(out_dir / "_headers", headers_txt.encode("utf-8"))
 
     print(f"SUCCESS: Compiled {len(signed_by_id)} signatures ({confirmed_count} confirmed, {behavioral_count} behavioral) at seq={seq}.")
 

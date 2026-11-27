@@ -1,0 +1,65 @@
+{
+  "id": "SIG-2026-0077",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "One API / New API Family isCliRequest Header Authentication Bypass",
+  "summary": "Detects HTTP requests injecting the isCliRequest header against One API or New API gateway management and model endpoints to bypass auth and harvest upstream LLM keys.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "header_auth_bypass",
+    "http_paths": [
+      "/api/user/self",
+      "/v1/chat/completions",
+      "/v1/models"
+    ],
+    "http_headers": [
+      "isCliRequest"
+    ],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?i)^isCliRequest\\s*:"
+  },
+  "mitigation_steps": [
+    "Strip or reject external requests containing the isCliRequest HTTP header at the reverse proxy.",
+    "Update One API / New API deployments to patched releases and rotate upstream LLM keys."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-287",
+      "CWE-290"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1552"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI03"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Amazon Threat Intelligence",
+      "reference_id": "AWS-ARTEX-ONEAPI-2026",
+      "url": "https://aws.amazon.com/blogs/security/amazon-threat-intelligence-observes-threat-actors-running-cybercrime-campaigns-with-artex-ai-agents/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "Observed isCliRequest header auth-bypass exploitation in LLMjacking campaigns."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:0cbdd3533eeebe254482f341ecca177f9cde170f014960b7dfb51e4a8b2c2b9a"
+}

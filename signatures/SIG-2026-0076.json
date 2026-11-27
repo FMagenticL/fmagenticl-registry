@@ -1,0 +1,68 @@
+{
+  "id": "SIG-2026-0076",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "HIGH",
+  "title": "LiteLLM /prompts/test Unsandboxed SSTI Remote Code Execution (CVE-2026-42203)",
+  "summary": "Detects requests targeting LiteLLM /prompts/test endpoint with server-side template injection expressions capable of reading environment secrets or executing host code.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "prompt_template_ssti_rce",
+    "http_paths": [
+      "/prompts/test"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "litellm",
+        "affected_range": ">=1.81.16,<1.83.7"
+      }
+    ],
+    "detection_regex": "/prompts/test"
+  },
+  "mitigation_steps": [
+    "Upgrade litellm to >= 1.83.7 to sandbox prompt template rendering.",
+    "Restrict /prompts/test access to authenticated administrators or disable in production."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-42203"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-1336"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "runZero Security Research",
+      "reference_id": "CVE-2026-42203",
+      "url": "https://www.runzero.com/blog/litellm/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual CVE metadata extraction",
+      "note": "LiteLLM /prompts/test SSTI endpoint advisory."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:2774f7ced43b747c8f1a3e37251ed62dad47da73accde3f37b65941da31efe6c"
+}

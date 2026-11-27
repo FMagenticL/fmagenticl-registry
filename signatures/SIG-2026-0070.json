@@ -1,0 +1,67 @@
+{
+  "id": "SIG-2026-0070",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "HIGH",
+  "title": "Windsurf IDE STDIO MCP Prompt-Injection Auto-Execution (CVE-2026-30615)",
+  "summary": "Detects untrusted Windsurf MCP STDIO server configurations spawning raw shell interpreters without user consent via prompt-injection chains.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "untrusted_stdio_mcp_shell",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".mcp.json",
+      ".codeium/windsurf/mcp_config.json"
+    ],
+    "config_keys": [
+      "mcpServers.*.command",
+      "mcpServers.*.args"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?i)\"command\"\\s*:\\s*\"(?:sh|bash|cmd(?:\\.exe)?|powershell(?:\\.exe)?|pwsh)\""
+  },
+  "mitigation_steps": [
+    "Disallow raw shell interpreters in .mcp.json and .codeium/windsurf/mcp_config.json.",
+    "Upgrade Windsurf IDE past the CVE-2026-30615 patch level and require explicit STDIO approval."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-30615"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-78"
+    ],
+    "mitre_attack_ids": [
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051.001"
+    ],
+    "owasp_tags": [
+      "ASI01",
+      "ASI02",
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "SentinelOne Vulnerability Database",
+      "reference_id": "CVE-2026-30615",
+      "url": "https://www.sentinelone.com/vulnerability-database/cve-2026-30615/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual CVE metadata extraction",
+      "note": "CVE-2026-30615 Windsurf STDIO MCP execution summary."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:ed8ccd6c9237a9c52b7a85b74110ae247b52b1533e49727253ea806b0f0b40a1"
+}

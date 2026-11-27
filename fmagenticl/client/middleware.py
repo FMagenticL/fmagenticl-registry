@@ -27,6 +27,7 @@ Also exports (preserved from prior interface):
 import hashlib
 import json
 import os
+import re
 import time
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -299,14 +300,79 @@ class FMagenticLClient:
         q_clean = query.strip()
         if not q_clean:
             return None
-        res = self.resolve(q_clean)
-        if res is not None:
-            return res
+
+        # Tier 1: Direct SHA-256 hex or local cache alias lookup
         q_lower = q_clean.lower()
         alias_hex = self.local_cache.resolve_alias(q_lower)
         if alias_hex != q_lower:
-            return self.resolve(alias_hex)
+            res = self.resolve(alias_hex)
+            if res is not None:
+                return res
+
+        # If query is already a 64-char sha256 hex (with or without prefix), resolve directly
+        clean_hex = q_lower.replace("sha256:", "").strip()
+        if len(clean_hex) == 64 and all(c in "0123456789abcdef" for c in clean_hex):
+            return self.resolve(clean_hex)
+
+        # If query is a SIG-YYYY-NNNN ID: check integrity gate, then Tier-2 edge fallback if air_gap=False
+        if re.match(r"^SIG-\d{4}-\d{4,}$", q_clean, re.IGNORECASE):
+            sig_upper = q_clean.upper()
+            local_rec = self.local_cache.get_by_id(sig_upper) if hasattr(self.local_cache, "get_by_id") else None
+            if local_rec is not None:
+                return local_rec
+            self._assert_egress_allowed("signature lookup")
+            if self.air_gap:
+                self._metrics["bypass"] += 1
+                return None
+            fp_hex = hashlib.sha256(sig_upper.encode("utf-8")).hexdigest()
+            res = self.resolve(fp_hex)
+            if res is not None:
+                return res
+            return self._query_remote_signature_id(sig_upper)
+
         return None
+
+    def _query_remote_signature_id(self, sig_id: str) -> Optional[dict]:
+        """Tier-2 fallback to GET /v1/signatures/{sig_id}.json when air_gap=False."""
+        self._assert_egress_allowed("signature lookup")
+        if self.air_gap or not self.circuit_breaker.can_request():
+            return None
+        url = f"{self.edge_base.rstrip('/')}/v1/signatures/{sig_id}.json"
+        try:
+            req_timeout = self.timeout or TIMEOUT
+            response = httpx.get(url, timeout=req_timeout, follow_redirects=False)
+        except (httpx.TimeoutException, httpx.RequestError):
+            self._metrics["edge_timeout"] += 1
+            self.circuit_breaker.record_failure()
+            return None
+        if response.status_code != 200:
+            self._metrics["edge_miss"] += 1
+            if response.status_code >= 500:
+                self.circuit_breaker.record_failure()
+            return None
+        try:
+            patch = response.json()
+        except (ValueError, json.JSONDecodeError):
+            self._metrics["edge_parse_error"] += 1
+            return None
+        if not isinstance(patch, dict):
+            return None
+        fp_hex = hashlib.sha256(sig_id.encode("utf-8")).hexdigest()
+        pub_key = getattr(self.local_cache, "public_key_b64", None) if hasattr(self, "local_cache") else None
+        if "manifest" in patch:
+            sig_ok = verify_patch_envelope(patch, expected_fingerprint=fp_hex, public_key_b64=pub_key)
+            if not sig_ok:
+                self._metrics["signature_invalid"] += 1
+                return None
+            self.circuit_breaker.record_success()
+            self.local_cache.put(fp_hex, patch)
+            return patch
+        if self.require_signature:
+            self._metrics["signature_invalid"] += 1
+            return None
+        self.circuit_breaker.record_success()
+        self.local_cache.put(fp_hex, patch)
+        return patch
 
     def list_signatures(
         self,

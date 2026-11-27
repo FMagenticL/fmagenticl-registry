@@ -1,0 +1,82 @@
+{
+  "id": "SIG-2026-0072",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "LiteLLM MCP STDIO Test RCE Chained with Starlette BadHost (CVE-2026-42271 / CVE-2026-48710)",
+  "summary": "Detects exploitation of LiteLLM MCP preview endpoints allowing host command injection, including unauthenticated chaining via malformed Starlette Host headers.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "ai_gateway_rce_chain",
+    "http_paths": [
+      "/mcp-rest/test/connection",
+      "/mcp-rest/test/tools/list"
+    ],
+    "http_headers": [
+      "Host"
+    ],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "litellm",
+        "affected_range": ">=1.74.2,<1.83.7"
+      },
+      {
+        "ecosystem": "PyPI",
+        "name": "starlette",
+        "affected_range": "<=1.0.0"
+      }
+    ],
+    "detection_regex": "/mcp-rest/test/(?:connection|tools/list)"
+  },
+  "mitigation_steps": [
+    "Upgrade litellm to >= 1.83.7 and starlette past the CVE-2026-48710 fix.",
+    "Block external access to /mcp-rest/test/* endpoints and enforce strict Host header validation."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "CISA-KEV"
+    ],
+    "cve_ids": [
+      "CVE-2026-42271",
+      "CVE-2026-48710"
+    ],
+    "ghsa_ids": [
+      "GHSA-v4p8-mg3p-g94g"
+    ],
+    "cwe_ids": [
+      "CWE-78",
+      "CWE-77"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2026-42271",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "CC0-1.0 / US-Public-Domain",
+      "note": "CISA KEV entry for LiteLLM MCP STDIO test RCE."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:ac8fd1dfbb3a89ab68593134dabe3aebda8345a45d85a7ac71521df2c1fe30e8"
+}

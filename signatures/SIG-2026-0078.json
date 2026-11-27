@@ -1,0 +1,62 @@
+{
+  "id": "SIG-2026-0078",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "RAGFlow Jinja2 Server-Side Template Injection RCE (CVE-2026-28797)",
+  "summary": "Detects authenticated Jinja2 template-injection payloads targeting RAGFlow chat completion APIs actively exploited by autonomous agentic key-harvesting campaigns.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "jinja2_ssti_payload",
+    "http_paths": [
+      "/v1/chat/completions"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "\\{\\{.*(?:__class__|__mro__|__subclasses__|cycler|lipsum|joiner).*\\}\\}"
+  },
+  "mitigation_steps": [
+    "Patch RAGFlow past CVE-2026-28797 and enable Jinja2 SandboxedEnvironment.",
+    "Block HTTP payloads containing Python dunder SSTI introspection primitives on LLM endpoints."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-28797"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-1336"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Amazon Threat Intelligence",
+      "reference_id": "CVE-2026-28797",
+      "url": "https://aws.amazon.com/blogs/security/amazon-threat-intelligence-observes-threat-actors-running-cybercrime-campaigns-with-artex-ai-agents/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "Active exploitation of RAGFlow CVE-2026-28797 by autonomous agents."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:b331c9fc77c7338270b842746498539a30996dad3b90da5c077b0f4b60113d7a"
+}

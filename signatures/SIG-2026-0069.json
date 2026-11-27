@@ -1,0 +1,84 @@
+{
+  "id": "SIG-2026-0069",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "MCP-Suffix PyPI Typosquat Malware Cluster (langchain-core-mcp, openai-mcp)",
+  "summary": "Detects malicious PyPI packages impersonating mainstream AI SDKs with an -mcp suffix documented in OpenSSF MAL-2026-5318 and MAL-2026-5320.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "typosquat_ai_package",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "requirements.txt",
+      "pyproject.toml",
+      "uv.lock"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "langchain-core-mcp",
+        "affected_range": ">=0.0.0"
+      },
+      {
+        "ecosystem": "PyPI",
+        "name": "openai-mcp",
+        "affected_range": ">=0.0.0"
+      }
+    ],
+    "detection_regex": "\\b(?:langchain-core-mcp|openai-mcp|langchain_core_mcp)\\b"
+  },
+  "mitigation_steps": [
+    "Remove langchain-core-mcp and openai-mcp from Python environments and dependency manifests.",
+    "Pin verified AI SDK packages via hash-locked lockfiles and private artifact mirrors."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "MAL-2026-5318",
+      "MAL-2026-5320"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [
+      "GHSA-h7rx-63j6-3w83"
+    ],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1195.002",
+      "T1036.005"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0010"
+    ],
+    "owasp_tags": [
+      "ASI04"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OSV / OpenSSF Malicious Packages",
+      "reference_id": "MAL-2026-5318",
+      "url": "https://osv.dev/vulnerability/MAL-2026-5318",
+      "source_type": "open_advisory",
+      "license_or_terms": "Apache-2.0",
+      "note": "OpenSSF MAL-2026-5318 PyPI typosquat metadata."
+    },
+    {
+      "source_name": "GitHub Advisory Database",
+      "reference_id": "GHSA-h7rx-63j6-3w83",
+      "url": "https://github.com/advisories/GHSA-h7rx-63j6-3w83",
+      "source_type": "open_advisory",
+      "license_or_terms": "CC-BY-4.0",
+      "note": "GHSA advisory cross-reference for malicious MCP typosquat."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:563361e3ac107d1af92c4c5681edd29ceef79b443f793cfb54020b98ddf69c29"
+}

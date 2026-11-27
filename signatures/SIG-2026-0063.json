@@ -1,0 +1,68 @@
+{
+  "id": "SIG-2026-0063",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "PentAGI OOB Callback Ports, TLS Issuer & GraphQL Flow Sandbox",
+  "summary": "Detects PentAGI autonomous sandbox callback traffic across TCP ports 28000-29999, port 33333 PentAGI TLS certificates, update check-ins, and ASK_USER=false configs.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "offensive_harness_oob_and_tls",
+    "http_paths": [
+      "/graphql"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [
+      28000,
+      29999,
+      33333
+    ],
+    "file_paths": [],
+    "config_keys": [
+      "ASK_USER"
+    ],
+    "process_or_container_indicators": [
+      "vxcontrol/pentagi",
+      "update.pentagi.com"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:update\\.pentagi\\.com|createFlow|ASK_USER=false|CN=PentAGI)"
+  },
+  "mitigation_steps": [
+    "Monitor egress and OOB callback attempts across TCP ports 28000-29999 and 33333.",
+    "Alert on PentAGI container images or GraphQL createFlow mutations in production."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1571",
+      "T1071.001"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02",
+      "ASI10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Elastic Security Labs Threat Command",
+      "reference_id": "ELASTIC-PENTAGI-2026",
+      "url": "https://www.elastic.co/security-labs/threat-command/agentic-offensive-frameworks-detection-artex",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "PentAGI OOB callback ports, TLS CN=PentAGI, and GraphQL sandbox indicators."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:96b426ca5f36d8e562e13e21288d49ca8ea6a16022896923773c2dbdf8ec4ee0"
+}

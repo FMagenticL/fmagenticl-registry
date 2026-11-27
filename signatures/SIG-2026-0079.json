@@ -1,0 +1,78 @@
+{
+  "id": "SIG-2026-0079",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Open WebUI Socket.IO get_event_call RCE & Jupyter Gate Bypass (CVE-2026-59216, CVE-2026-45672)",
+  "summary": "Detects cross-user session_id manipulation on Open WebUI Socket.IO transports (>=0.9.0,<0.10.0) and Jupyter code-execution calls bypassing ENABLE_CODE_EXECUTION=false (<0.8.12).",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "socketio_rce_and_gate_bypass",
+    "http_paths": [
+      "/ws/socket.io/",
+      "/socket.io/"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "open-webui",
+        "affected_range": ">=0.9.0,<0.10.0"
+      },
+      {
+        "ecosystem": "PyPI",
+        "name": "open-webui",
+        "affected_range": "<0.8.12"
+      }
+    ],
+    "detection_regex": "(?:/socket\\.io/.*session_id|get_event_call|ENABLE_CODE_EXECUTION)"
+  },
+  "mitigation_steps": [
+    "Upgrade open-webui to >= 0.10.0 and isolate WebSocket /ws/socket.io/ behind authenticated proxies.",
+    "Disable untrusted Jupyter code execution integrations and audit active Socket.IO sessions."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "SB26-194"
+    ],
+    "cve_ids": [
+      "CVE-2026-59216",
+      "CVE-2026-45672"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-287",
+      "CWE-94"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1059.006"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Vulnerability Summary Bulletin",
+      "reference_id": "SB26-194",
+      "url": "https://www.cisa.gov/news-events/bulletins/sb26-194",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "CISA bulletin reference for Open WebUI vulnerabilities."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:b8ef7b7d3464f899fd39a061be2e017edc1364e44e605d9113c2d90221b7a212"
+}

@@ -107,9 +107,47 @@ def validate_signature_record(record: dict, source_name: str = "<memory>") -> Li
     if record["severity"] not in ALLOWED_SEVERITIES:
         errors.append(f"{source_name}: invalid severity '{record['severity']}'")
 
+    allowed_top = set(required) | {"manifest", "ed25519_sig"}
+    extra_top = set(record.keys()) - allowed_top
+    if extra_top:
+        errors.append(f"{source_name}: unexpected top-level fields: {sorted(extra_top)}")
+
+    title = str(record["title"])
+    if not (8 <= len(title) <= 160):
+        errors.append(f"{source_name}: title length {len(title)} outside 8..160")
+
     summary = str(record["summary"])
     if not (20 <= len(summary) <= 280):
         errors.append(f"{source_name}: summary length {len(summary)} outside 20..280")
+
+    mitigation_steps = record.get("mitigation_steps")
+    if not isinstance(mitigation_steps, list) or not mitigation_steps:
+        errors.append(f"{source_name}: mitigation_steps must be a non-empty list")
+    else:
+        for idx, step in enumerate(mitigation_steps):
+            if not isinstance(step, str) or not (10 <= len(step) <= 240):
+                errors.append(f"{source_name}: mitigation_steps[{idx}] length outside 10..240")
+
+    tax = record.get("taxonomy")
+    if not isinstance(tax, dict):
+        errors.append(f"{source_name}: taxonomy must be an object")
+    else:
+        req_tax = {"advisory_ids", "cve_ids", "ghsa_ids", "cwe_ids", "mitre_attack_ids", "mitre_atlas_ids", "owasp_tags"}
+        missing_tax = req_tax - set(tax.keys())
+        extra_tax = set(tax.keys()) - req_tax
+        if missing_tax:
+            errors.append(f"{source_name}: taxonomy missing fields {sorted(missing_tax)}")
+        if extra_tax:
+            errors.append(f"{source_name}: taxonomy unexpected fields {sorted(extra_tax)}")
+        for cve in tax.get("cve_ids", []):
+            if not re.match(r"^CVE-[0-9]{4}-[0-9]{4,}$", str(cve)):
+                errors.append(f"{source_name}: invalid cve_id '{cve}'")
+        for ghsa in tax.get("ghsa_ids", []):
+            if not re.match(r"^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$", str(ghsa)):
+                errors.append(f"{source_name}: invalid ghsa_id '{ghsa}'")
+        for cwe in tax.get("cwe_ids", []):
+            if not re.match(r"^CWE-[0-9]+$", str(cwe)):
+                errors.append(f"{source_name}: invalid cwe_id '{cwe}'")
 
     obs = record["observable"]
     if not isinstance(obs, dict):

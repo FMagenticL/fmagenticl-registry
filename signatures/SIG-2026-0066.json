@@ -1,0 +1,68 @@
+{
+  "id": "SIG-2026-0066",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "gcli2api & Pooled Stolen-Key LLM Reseller Proxy Stack (UNC6993)",
+  "summary": "Detects unauthorized LLM key-pooling and load-balancing proxy software (gcli2api, veloera, sub2api, one-api) abused in LLMjacking credential-monetization operations.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "llmjacking_reseller_proxy",
+    "http_paths": [
+      "/v1/chat/completions",
+      "/v1/models",
+      "/api/user/self"
+    ],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "gcli2api",
+      "veloera",
+      "sub2api",
+      "one-api"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?i)(?:gcli2api|veloera|sub2api|one-api)"
+  },
+  "mitigation_steps": [
+    "Audit cloud instances and containers for unauthorized gcli2api, veloera, or sub2api proxies.",
+    "Rotate compromised LLM provider keys and enforce IP/mTLS allowlists on internal gateways."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "UNC6993"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1078.004",
+      "T1496"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI03",
+      "LLM10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Google Threat Intelligence Group",
+      "reference_id": "GTIG-UNC6993-2026",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/agentic-threat-activity-crosses-a-significant-threshold",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "GTIG reporting on UNC6993 pooled stolen-key LLM reseller infrastructure."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:d53a690a67aaa7a6ca17af9f51d34a9dbe8ffb2e3fb7dd088f370db4405ae757"
+}

@@ -1,0 +1,73 @@
+{
+  "id": "SIG-2026-0067",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Trojanized anthropic.claude-code 2.1.312-2.1.313 Cursor Extension Backdoor",
+  "summary": "Detects compromised Cursor marketplace builds of anthropic.claude-code that append a svc-telemetry Ed25519 SSH key and establish persistent reverse tunnels.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "trojanized_ide_extension",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "~/.config/.smt",
+      "~/.config/.smtk",
+      "~/Library/LaunchAgents/com.apple.sysmond.plist",
+      ".ssh/authorized_keys",
+      "Startup/sysmon.cmd"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "autossh",
+      "com.apple.sysmond",
+      "134.209.82.225"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "OpenVSX/Cursor",
+        "name": "anthropic.claude-code",
+        "affected_range": ">=2.1.312,<=2.1.313"
+      }
+    ],
+    "detection_regex": "(?:svc-telemetry|\\.stk_[0-9a-f]{10}|com\\.apple\\.sysmond\\.plist|134\\.209\\.82\\.225|ecb58cb29078d9646ad1dcdbe51526f2d9cfea06be5fb2ab183e8ecc3ab6bf15)"
+  },
+  "mitigation_steps": [
+    "Uninstall anthropic.claude-code versions 2.1.312 and 2.1.313 immediately and verify publisher provenance.",
+    "Remove svc-telemetry entries from authorized_keys, ~/.config/.smt*, and com.apple.sysmond persistence."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1195.002",
+      "T1098.004",
+      "T1572"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0010"
+    ],
+    "owasp_tags": [
+      "ASI04"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Microsoft Threat Intelligence",
+      "reference_id": "MSFT-CLAUDE-CURSOR-2026",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "Persistent SSH backdoor IOCs for trojanized Cursor extension builds."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:dd11706d538c94cf6097f215e98d93b93f6606224a7a5a35c840960c0fae2684"
+}

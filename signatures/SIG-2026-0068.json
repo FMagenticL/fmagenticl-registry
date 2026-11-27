@@ -1,0 +1,79 @@
+{
+  "id": "SIG-2026-0068",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "CRITICAL",
+  "title": "Malicious @ifasn/*-doc-mcp npm MCP Server Multi-Cloud IMDS Stealer",
+  "summary": "Detects malicious npm MCP packages (MAL-2026-18487, MAL-2026-18488) that probe AWS, GCP, Azure, and Alibaba Cloud metadata endpoints and exfiltrate results.",
+  "observable": {
+    "surface": "mcp_transport",
+    "observable_type": "malicious_mcp_package",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      "package.json",
+      ".mcp.json",
+      ".vscode/mcp.json",
+      "~/.cursor/mcp.json",
+      "output/meta_field_dump.txt",
+      "output/meta_v2_dump.txt",
+      "output/imds_audit.txt"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "npm",
+        "name": "@ifasn/mdd-doc-mcp",
+        "affected_range": ">=0.0.0"
+      },
+      {
+        "ecosystem": "npm",
+        "name": "@ifasn/mmd-doc-mcp",
+        "affected_range": ">=0.0.0"
+      }
+    ],
+    "detection_regex": "(?:(?:md|mdd|mmd|mmdd|ms|mnm)-doc-mcp|121\\.199\\.24\\.94|health-utils-1\\.0\\.0\\.tgz)"
+  },
+  "mitigation_steps": [
+    "Purge @ifasn/*-doc-mcp packages from lockfiles, node_modules, and IDE MCP configurations.",
+    "Enforce IMDSv2 hop-limit=1 and rotate cloud IAM credentials exposed on affected hosts."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "MAL-2026-18487",
+      "MAL-2026-18488"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1195.002",
+      "T1552.005"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0010"
+    ],
+    "owasp_tags": [
+      "ASI03",
+      "ASI04"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OpenSSF Malicious Packages",
+      "reference_id": "MAL-2026-18487",
+      "url": "https://github.com/ossf/malicious-packages",
+      "source_type": "open_advisory",
+      "license_or_terms": "Apache-2.0",
+      "note": "OpenSSF MAL-2026-18487 / MAL-2026-18488 package indicators."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:9f1aefcf7b6b4b1f2e7576db3f3a7a4913540b139ac6817aff16006335264ff9"
+}

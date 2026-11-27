@@ -1,0 +1,75 @@
+{
+  "id": "SIG-2026-0073",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "LiteLLM Pre-Authentication Authorization Header SQL Injection (CVE-2026-42208)",
+  "summary": "Detects SQL injection payloads embedded inside Bearer Authorization headers targeting LiteLLM Proxy API-key verification to extract stored provider keys.",
+  "observable": {
+    "surface": "llm_api",
+    "observable_type": "auth_header_sqli",
+    "http_paths": [
+      "/chat/completions",
+      "/v1/chat/completions"
+    ],
+    "http_headers": [
+      "Authorization"
+    ],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "litellm",
+        "affected_range": ">=1.81.16,<1.83.7"
+      }
+    ],
+    "detection_regex": "(?i)Authorization\\s*:\\s*Bearer\\s+[^\\r\\n]*(?:'|--|UNION\\s+SELECT|OR\\s+1=1)"
+  },
+  "mitigation_steps": [
+    "Upgrade litellm to >= 1.83.7 immediately and rotate all stored upstream LLM provider API keys.",
+    "Reject Bearer Authorization headers containing SQL meta-characters at the edge WAF."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "CISA-KEV"
+    ],
+    "cve_ids": [
+      "CVE-2026-42208"
+    ],
+    "ghsa_ids": [
+      "GHSA-r75f-5x8p-qvmc"
+    ],
+    "cwe_ids": [
+      "CWE-89"
+    ],
+    "mitre_attack_ids": [
+      "T1190",
+      "T1552"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI03"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2026-42208",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "CC0-1.0 / US-Public-Domain",
+      "note": "CISA KEV entry for LiteLLM Authorization header SQL injection."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:e71f8097696dee679bf559f4afc66dffc2760b5df2ca5a6f3c5204779fdda990"
+}

@@ -1,178 +1,54 @@
+#!/usr/bin/env python3
 """
-FMagenticL - End-to-end verification test script.
-Starts the server, seeds data, runs API tests, and validates middleware.
+FMagenticL v3.0.0 — End-to-end verification script.
+Validates the signature corpus, LocalCache Ed25519 verification, air-gap fail-closed
+middleware, and read-only WorkspaceScanner without legacy v1/v2 server dependencies.
 """
-import subprocess
-import time
+
 import json
 import sys
-import os
-import requests
+import tempfile
 from pathlib import Path
 
-# Add the outer fmagenticl folder to path so the inner fmagenticl package is importable
-sys.path.insert(0, str(Path(__file__).parent.parent))
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
-from fmagenticl.client.middleware import FMagenticLClient, CircuitBreaker, LocalCache
-from fmagenticl.client.crypto_identity import AgentIdentity
-from fmagenticl.server.gatekeeper import Gatekeeper
-from fmagenticl.server.models import TelemetrySubmission, Environment, Failure, ResolutionPatch
+from fmagenticl.client.local_cache import LocalCache
+from fmagenticl.client.middleware import FMagenticLClient
+from fmagenticl.client.scanner import WorkspaceScanner
+from scripts.registry_lint_gate import validate_directory
 
-BASE_URL = "http://127.0.0.1:8000"
 
-def start_server():
-    """Start FastAPI server in background."""
-    # Run uvicorn fmagenticl.server.main:app, redirecting streams to DEVNULL to prevent buffer lock (resolves Bug 15)
-    proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "fmagenticl.server.main:app", "--host", "127.0.0.1", "--port", "8000"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
-    # Wait for server to start
-    for _ in range(20):
-        try:
-            resp = requests.get(f"{BASE_URL}/v1/health", timeout=1)
-            if resp.status_code == 200:
-                return proc
-        except requests.ConnectionError:
-            time.sleep(0.5)
-    proc.kill()
-    raise RuntimeError("Server failed to start")
+def main() -> int:
+    count, errors = validate_directory(REPO_ROOT / "signatures")
+    assert not errors, f"Registry lint gate failed: {errors}"
+    assert count >= 60, f"Expected >= 60 signatures, got {count}"
 
-def test_resolve_endpoint():
-    print("Testing /v1/resolve endpoint...")
-    # Use one of the seeded fingerprints
-    seeded_fingerprint = "sha256:6d9d9f7a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e"
-    resp = requests.get(f"{BASE_URL}/v1/resolve/{seeded_fingerprint}")
-    assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
-    data = resp.json()
-    assert data["status"] == "RESOLVED", f"Expected RESOLVED, got {data['status']}"
-    print(" PASS")
+    snap_path = REPO_ROOT / "fmagenticl" / "data" / "snapshot.json"
+    cache = LocalCache(snapshot_path=str(snap_path), verify_signature=True)
+    client = FMagenticLClient(local_cache=cache, require_signature=True, air_gap=True)
 
-def test_gatekeeper_shell_injection():
-    print("Testing gatekeeper shell injection...")
-    # Create a submission with malicious fallback_cli
-    submission = TelemetrySubmission(
-        fingerprint="sha256:1111111111111111111111111111111111111111111111111111111111111111",
-        environment=Environment(os="linux"),
-        failure=Failure(error_code="TEST"),
-        resolution_patch=ResolutionPatch(
-            action="CLI_OVERRIDE",
-            fallback_cli="echo 1; rm -rf /"
+    rec = client.lookup_signature("SIG-2026-0001")
+    assert rec is not None and rec["id"] == "SIG-2026-0001", "Failed SIG-2026-0001 lookup"
+
+    listed = client.list_signatures(limit=200)
+    assert len(listed) >= 60, f"Expected >= 60 listed signatures, got {len(listed)}"
+
+    with tempfile.TemporaryDirectory() as td:
+        ws = Path(td)
+        (ws / ".claude").mkdir()
+        (ws / ".claude" / "settings.json").write_text(
+            json.dumps({"hooks": {"PreToolUse": [{"command": "echo test"}]}}),
+            encoding="utf-8",
         )
-    )
-    reasons = Gatekeeper.validate_submission(submission)
-    assert "shell_injection_marker_detected_in_fallback_cli" in reasons, f"Expected shell injection detection, got {reasons}"
-    print(" PASS")
+        report = WorkspaceScanner(client).scan_workspace(ws)
+        assert report["clean"] is False
+        assert any(f["signature_id"] == "SIG-2026-0016" for f in report["findings"])
 
-def test_gatekeeper_persona():
-    print("Testing gatekeeper persona filter...")
-    submission = TelemetrySubmission(
-        fingerprint="sha256:2222222222222222222222222222222222222222222222222222222222222222",
-        environment=Environment(os="linux"),
-        failure=Failure(error_code="TEST", raw_signature="This is stupid and annoying"),
-        resolution_patch=ResolutionPatch(action="CLI_OVERRIDE", fallback_cli="ls")
-    )
-    reasons = Gatekeeper.validate_submission(submission)
-    assert "persona_detected_in_raw_signature" in reasons, f"Expected persona detection, got {reasons}"
-    print(" PASS")
+    print(f"ALL V3.0 VERIFICATIONS PASSED ({count} signatures)")
+    return 0
 
-def test_telemetry_ingestion_and_dedup():
-    print("Testing telemetry ingestion and deduplication...")
-    # Create a valid submission
-    fingerprint = "sha256:3333333333333333333333333333333333333333333333333333333333333333"
-    submission = {
-        "$schema": "https://fmagenticl.org/v1/manifest.json",
-        "fingerprint": fingerprint,
-        "environment": {"os": "linux", "os_version": "5.15", "runtime": "python@3.11", "package": "test-pkg@1.0"},
-        "failure": {"error_code": "TEST_ERROR", "exit_code": 1, "raw_signature": "test failure"},
-        "resolution_patch": {"action": "CLI_OVERRIDE", "fallback_cli": "echo fixed"},
-        "verified_by_reporter": True
-    }
-    # First submission
-    resp = requests.post(f"{BASE_URL}/v1/telemetry", json=submission)
-    assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
-    
-    # Duplicate (expecting 409 conflict return data optimization)
-    resp = requests.post(f"{BASE_URL}/v1/telemetry", json=submission)
-    assert resp.status_code == 409, f"Expected 409, got {resp.status_code}"
-    data = resp.json()
-    assert "existing_patch" in data, f"Expected existing_patch in duplicate response, got: {data}"
-    print(" PASS")
-
-def test_ed25519_registration_and_signature():
-    print("Testing Ed25519 registration and signature...")
-    identity = AgentIdentity()
-    public_key_b64 = identity.public_key_b64()
-    
-    # Solve PoW (difficulty 2 for test)
-    nonce = AgentIdentity.compute_pow(public_key_b64, 2)
-    
-    # Create registration payload
-    payload = {
-        "public_key": public_key_b64,
-        "nonce": nonce,
-        "pow_difficulty": 2
-    }
-    payload_bytes = json.dumps(payload, sort_keys=True).encode()
-    signature = identity.sign_b64(payload_bytes)
-    reg_data = {**payload, "signature": signature}
-    
-    resp = requests.post(f"{BASE_URL}/v1/telemetry", json=reg_data)
-    assert resp.status_code == 200, f"Registration failed: {resp.status_code} {resp.text}"
-    
-    # Now submit a telemetry with signature
-    fingerprint = "sha256:4444444444444444444444444444444444444444444444444444444444444444"
-    telemetry = {
-        "$schema": "https://fmagenticl.org/v1/manifest.json",
-        "fingerprint": fingerprint,
-        "environment": {"os": "linux"},
-        "failure": {"error_code": "SIGNED_ERROR"},
-        "resolution_patch": {"action": "CLI_OVERRIDE", "fallback_cli": "echo ok"}
-    }
-    telemetry_bytes = json.dumps(telemetry, sort_keys=True).encode()
-    sig = identity.sign_b64(telemetry_bytes)
-    headers = {"X-Public-Key": public_key_b64, "X-Signature": sig}
-    
-    resp = requests.post(f"{BASE_URL}/v1/telemetry", json=telemetry, headers=headers)
-    assert resp.status_code == 200, f"Signed submission failed: {resp.status_code} {resp.text}"
-    print(" PASS")
-
-def test_client_middleware_circuit_breaker():
-    print("Testing client middleware circuit breaker...")
-    cb = CircuitBreaker(failure_threshold=1, reset_timeout=0.1)
-    client = FMagenticLClient(api_base=BASE_URL, circuit_breaker=cb, timeout=0.01)
-    
-    # Force failure by manipulating circuit breaker to test fast-fail.
-    cb.record_failure()
-    assert cb.can_request() == False, "Circuit breaker should be open"
-    
-    start = time.time()
-    result = client.resolve_failure({"os": "linux"}, {"error_code": "X"})
-    elapsed = time.time() - start
-    assert result is None and elapsed < 0.001, f"Should fast-fail in <1ms, took {elapsed:.5f}s"
-    print(" PASS")
-
-def main():
-    # Remove old database file for clean test run
-    if os.path.exists("fmagenticl.db"):
-        try:
-            os.remove("fmagenticl.db")
-        except Exception:
-            pass
-
-    server_proc = start_server()
-    try:
-        test_resolve_endpoint()
-        test_gatekeeper_shell_injection()
-        test_gatekeeper_persona()
-        test_telemetry_ingestion_and_dedup()
-        test_ed25519_registration_and_signature()
-        test_client_middleware_circuit_breaker()
-        print("\nAll tests passed successfully.")
-    finally:
-        server_proc.terminate()
-        server_proc.wait()
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

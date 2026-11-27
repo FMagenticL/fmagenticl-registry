@@ -1,0 +1,73 @@
+{
+  "id": "SIG-2026-0080",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "CRITICAL",
+  "title": "Web-Server Process Autonomous Recon & Exploit Tool-Spawn Burst",
+  "summary": "Flags web or application server daemons spawning 10 or more distinct reconnaissance, cracking, or transfer utilities within a 5-minute burst window.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "process_spawn_burst",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "w3wp.exe",
+      "httpd",
+      "apache2",
+      "nginx",
+      "lighttpd",
+      "node",
+      "java",
+      "nmap",
+      "sqlmap",
+      "nuclei",
+      "ffuf",
+      "gobuster",
+      "hydra",
+      "nc"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": 300,
+    "threshold_count": 10,
+    "affected_packages": [],
+    "detection_regex": "(?:w3wp\\.exe|httpd|apache2|nginx|node|java).*(?:nmap|sqlmap|nuclei|ffuf|gobuster|hydra|nc\\b)"
+  },
+  "mitigation_steps": [
+    "Isolate host or container immediately when web daemons spawn multiple recon/exploit binaries.",
+    "Enforce read-only root filesystems and seccomp/AppArmor child-process restrictions."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1505.003",
+      "T1059",
+      "T1046"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI05",
+      "ASI10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Microsoft Threat Intelligence",
+      "reference_id": "MSFT-ARTEX-BURST-2026",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/11/25/what-defenders-need-to-know-artex-agentic-ai-framework-threat-actors-abuse/",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "10+ tool-spawn in 5m behavioral heuristic from ARTEX campaigns."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:01fb924d25fdc02a2015acfe79ce240628ea274a2eab4935b37bb0e3db16e8f6"
+}

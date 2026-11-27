@@ -1,0 +1,56 @@
+{
+  "id": "SIG-2026-0081",
+  "confidence_tier": "BEHAVIORAL_INDICATOR",
+  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "severity": "HIGH",
+  "title": "Zero-Jitter 5-Second Agentic Beacon & Simultaneous Dual-Fetch Cadence",
+  "summary": "Detects CyberStrikeAI-style implants beaconing at exact 5-second zero-jitter intervals (12 hits/60s) or PentAGI browser agents requesting every target URL twice simultaneously.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "periodic_zero_jitter_beacon",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": 60,
+    "threshold_count": 12,
+    "affected_packages": [],
+    "detection_regex": "(?i)(?:pass=|headlesschrome|playwright)"
+  },
+  "mitigation_steps": [
+    "Correlate HTTP inter-arrival variance to flag zero-jitter 5-second C2 beacons.",
+    "Rate-limit and challenge automated headless browser pairs issuing simultaneous dual fetches."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1071.001",
+      "T1595"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Elastic Security Labs Threat Command",
+      "reference_id": "ELASTIC-BEACON-2026",
+      "url": "https://www.elastic.co/security-labs/threat-command/agentic-offensive-frameworks-detection-artex",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "Zero-jitter 5s CyberStrikeAI beacon and PentAGI dual-fetch telemetry."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:177613f8008d64967606565ecadee261921243ff62838eb0ef0b2116db772c22"
+}

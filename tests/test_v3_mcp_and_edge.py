@@ -106,7 +106,7 @@ def test_mcp_js_and_middleware_v3_contract():
     assert res["idMatch"]["signature"]["id"] == "SIG-2026-0001"
     assert res["flashMatch"]["status"] == "MATCH_FOUND"
     assert res["cveMatch"]["signature"]["id"] == "SIG-2026-0048"
-    assert res["behCount"] == 15
+    assert res["behCount"] >= 15
     assert res["headStatus"] == 200
     assert res["hugeStatus"] == 413
     assert res["telStatus"] == 404

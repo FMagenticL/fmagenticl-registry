@@ -123,6 +123,6 @@ def test_ast_all_httpx_calls_in_middleware_are_enumerated():
                         ):
                             httpx_methods.add(item.name)
 
-    covered = {name for name, _ in EGRESS_CALLS} | {"_query_remote_unchecked"}
+    covered = {name for name, _ in EGRESS_CALLS} | {"_query_remote_unchecked", "_query_remote_signature_id"}
     missing = httpx_methods - covered
     assert not missing, f"Uncovered httpx methods in FMagenticLClient: {sorted(missing)}"

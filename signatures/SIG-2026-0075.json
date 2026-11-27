@@ -1,0 +1,68 @@
+{
+  "id": "SIG-2026-0075",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "LiteLLM 1.107.0 Compromised PyPI Package & Container Image (MAL-2026-2144)",
+  "summary": "Identifies backdoored litellm==1.107.0 PyPI releases and matching Docker tags distributed during the October 21, 2026 CI/CD pipeline supply-chain compromise.",
+  "observable": {
+    "surface": "container_and_host",
+    "observable_type": "compromised_ai_package_release",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "litellm:v1.107.0",
+      "litellm==1.107.0"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "PyPI",
+        "name": "litellm",
+        "affected_range": "==1.107.0"
+      }
+    ],
+    "detection_regex": "litellm(?:==|:v?)1\\.107\\.0"
+  },
+  "mitigation_steps": [
+    "Purge litellm==1.107.0 packages and litellm:v1.107.0 container images across all environments.",
+    "Rotate all API keys, cloud credentials, and SSH keys accessible to hosts that ran 1.107.0."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "MAL-2026-2144"
+    ],
+    "cve_ids": [],
+    "ghsa_ids": [
+      "GHSA-92x9-889m-jgmw"
+    ],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1195.002"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0010"
+    ],
+    "owasp_tags": [
+      "ASI04"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "OpenSSF Malicious Packages",
+      "reference_id": "MAL-2026-2144",
+      "url": "https://github.com/ossf/malicious-packages",
+      "source_type": "open_advisory",
+      "license_or_terms": "Apache-2.0",
+      "note": "OpenSSF MAL-2026-2144 compromised litellm==1.107.0 release."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:be7280cf58dd5294422392dba3d7497425674b52a60b4758ceb5d99dc2d5842d"
+}

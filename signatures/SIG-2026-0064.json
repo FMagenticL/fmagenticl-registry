@@ -1,0 +1,62 @@
+{
+  "id": "SIG-2026-0064",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "HIGH",
+  "title": "HexStrike HTTP/Browser Agent Wire Headers & Port 8888 Listener",
+  "summary": "Detects live HexStrike offensive agent wire traffic via default HTTP and browser-agent User-Agents, active XSS probe marker strings, and exposed port 8888 listeners.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "offensive_harness_wire_fingerprint",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [
+      "HexStrike-HTTP-Framework/1.0",
+      "HexStrike-BrowserAgent/1.0"
+    ],
+    "ports": [
+      8888
+    ],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:HexStrike-(?:HTTP-Framework|BrowserAgent)/1\\.0|hexstrikeXSSTest123)"
+  },
+  "mitigation_steps": [
+    "Block inbound requests carrying HexStrike User-Agent headers or hexstrikeXSSTest123 probes.",
+    "Restrict port 8888 listeners from untrusted external access."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1595.002",
+      "T1190"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI02",
+      "ASI10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Elastic Security Labs Threat Command",
+      "reference_id": "ELASTIC-HEXSTRIKE-2026",
+      "url": "https://www.elastic.co/security-labs/threat-command/agentic-offensive-frameworks-detection-artex",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "HexStrike User-Agent headers, XSS probe string, and port 8888 listener."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:ff46f8c914e6c6277ed9d9b1e8084c638c2ce89fe080e39a49017784e1f4076e"
+}

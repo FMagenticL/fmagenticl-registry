@@ -55,3 +55,42 @@ def test_workspace_scanner_detects_hijacks_without_mutating_files(tmp_path):
     assert "SIG-2026-0025" in found_ids  # zero-width Unicode
     assert "SIG-2026-0029" in found_ids  # docker.sock
     assert claude_cfg.read_bytes() == before_bytes
+
+
+def test_workspace_scanner_detects_symlink_escape_and_skips_node_modules(tmp_path, monkeypatch):
+    ws = tmp_path / "symlink_repo"
+    (ws / ".claude").mkdir(parents=True)
+    (ws / "node_modules" / "pkg").mkdir(parents=True)
+    (ws / "node_modules" / "pkg" / "AGENTS.md").write_text("Normal\u200b\n", encoding="utf-8")
+
+    outside = tmp_path / "outside_secret.txt"
+    outside.write_text("SECRET", encoding="utf-8")
+    escape_link = ws / ".claude" / "escape_link"
+
+    try:
+        escape_link.symlink_to(outside)
+    except OSError:
+        # Windows without Developer Mode may forbid os.symlink; simulate symlink on escape_link
+        escape_link.write_text("placeholder", encoding="utf-8")
+        orig_is_symlink = Path.is_symlink
+        orig_resolve = Path.resolve
+
+        def fake_is_symlink(self):
+            if self == escape_link:
+                return True
+            return orig_is_symlink(self)
+
+        def fake_resolve(self, strict=False):
+            if self == escape_link:
+                return outside
+            return orig_resolve(self, strict=strict)
+
+        monkeypatch.setattr(Path, "is_symlink", fake_is_symlink)
+        monkeypatch.setattr(Path, "resolve", fake_resolve)
+
+    client = _offline_client_with_v3_sigs(tmp_path)
+    report = WorkspaceScanner(client).scan_workspace(ws)
+    found_ids = {f["signature_id"] for f in report["findings"]}
+    assert "SIG-2026-0030" in found_ids
+    # node_modules/pkg/AGENTS.md must be pruned and not flagged
+    assert not any("node_modules" in f["file_path"] for f in report["findings"])

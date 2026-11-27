@@ -1,7 +1,7 @@
 {
   "registry_version": "3.0.0",
-  "generated": "2026-11-26T17:53:26Z",
-  "count": 60,
+  "generated": "2026-11-27T12:37:52Z",
+  "count": 82,
   "signatures": [
     {
       "id": "SIG-2026-0001",
@@ -541,6 +541,204 @@
       "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
       "severity": "CRITICAL",
       "title": "ConnectWise ScreenConnect Auth-Bypass Tenant Pivot (CVE-2024-1709 \u2014 CISA KEV)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0061",
+      "fingerprint": "sha256:dd818bb75e099c787dbdff85d36c7afb7323779ec39a67aab65236a34321402d",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "OFFENSIVE_AGENT_HARNESS",
+      "severity": "CRITICAL",
+      "title": "ARTEX Wire User-Agents, Port 8787 Console Realm & Probe Artifacts",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0062",
+      "fingerprint": "sha256:2a8a9be217ab222d651c903cc6e1bf13f24b6caa1257d00db76001871805847d",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "OFFENSIVE_AGENT_HARNESS",
+      "severity": "CRITICAL",
+      "title": "CyberStrikeAI WebShell Agent, OS-Probe Command & Host Persistence",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0063",
+      "fingerprint": "sha256:96b426ca5f36d8e562e13e21288d49ca8ea6a16022896923773c2dbdf8ec4ee0",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "OFFENSIVE_AGENT_HARNESS",
+      "severity": "HIGH",
+      "title": "PentAGI OOB Callback Ports, TLS Issuer & GraphQL Flow Sandbox",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0064",
+      "fingerprint": "sha256:ff46f8c914e6c6277ed9d9b1e8084c638c2ce89fe080e39a49017784e1f4076e",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "OFFENSIVE_AGENT_HARNESS",
+      "severity": "HIGH",
+      "title": "HexStrike HTTP/Browser Agent Wire Headers & Port 8888 Listener",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0065",
+      "fingerprint": "sha256:8ee9534d098979f8a9ff74bb7e7fe2feeabe39dda6297f1b217c7fbedf47a3ba",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "OFFENSIVE_AGENT_HARNESS",
+      "severity": "HIGH",
+      "title": "Cairn Autonomous State-Space Worker Container & Blackboard Console",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0066",
+      "fingerprint": "sha256:d53a690a67aaa7a6ca17af9f51d34a9dbe8ffb2e3fb7dd088f370db4405ae757",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "OFFENSIVE_AGENT_HARNESS",
+      "severity": "HIGH",
+      "title": "gcli2api & Pooled Stolen-Key LLM Reseller Proxy Stack (UNC6993)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0067",
+      "fingerprint": "sha256:dd11706d538c94cf6097f215e98d93b93f6606224a7a5a35c840960c0fae2684",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+      "severity": "CRITICAL",
+      "title": "Trojanized anthropic.claude-code 2.1.312-2.1.313 Cursor Extension Backdoor",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0068",
+      "fingerprint": "sha256:9f1aefcf7b6b4b1f2e7576db3f3a7a4913540b139ac6817aff16006335264ff9",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+      "severity": "CRITICAL",
+      "title": "Malicious @ifasn/*-doc-mcp npm MCP Server Multi-Cloud IMDS Stealer",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0069",
+      "fingerprint": "sha256:563361e3ac107d1af92c4c5681edd29ceef79b443f793cfb54020b98ddf69c29",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+      "severity": "CRITICAL",
+      "title": "MCP-Suffix PyPI Typosquat Malware Cluster (langchain-core-mcp, openai-mcp)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0070",
+      "fingerprint": "sha256:ed8ccd6c9237a9c52b7a85b74110ae247b52b1533e49727253ea806b0f0b40a1",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+      "severity": "HIGH",
+      "title": "Windsurf IDE STDIO MCP Prompt-Injection Auto-Execution (CVE-2026-30615)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0071",
+      "fingerprint": "sha256:f622d5a5c441451bbb4dbaa8237f933a1996656a2383c130d877e1b60a72ba8a",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+      "severity": "MEDIUM",
+      "title": "Untrusted Pull-Request .mcp.json Execution in claude-code-action (CVE-2026-47751)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0072",
+      "fingerprint": "sha256:ac8fd1dfbb3a89ab68593134dabe3aebda8345a45d85a7ac71521df2c1fe30e8",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "LiteLLM MCP STDIO Test RCE Chained with Starlette BadHost (CVE-2026-42271 / CVE-2026-48710)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0073",
+      "fingerprint": "sha256:e71f8097696dee679bf559f4afc66dffc2760b5df2ca5a6f3c5204779fdda990",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "LiteLLM Pre-Authentication Authorization Header SQL Injection (CVE-2026-42208)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0074",
+      "fingerprint": "sha256:ae5633f8750963eca2dec1b2bc1f16e8690d2912eedc01fdf88996334fc6af0e",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "LiteLLM MCP Streamable HTTP Authentication Bypass (CVE-2026-59822)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0075",
+      "fingerprint": "sha256:be7280cf58dd5294422392dba3d7497425674b52a60b4758ceb5d99dc2d5842d",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "LiteLLM 1.107.0 Compromised PyPI Package & Container Image (MAL-2026-2144)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0076",
+      "fingerprint": "sha256:2774f7ced43b747c8f1a3e37251ed62dad47da73accde3f37b65941da31efe6c",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "HIGH",
+      "title": "LiteLLM /prompts/test Unsandboxed SSTI Remote Code Execution (CVE-2026-42203)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0077",
+      "fingerprint": "sha256:0cbdd3533eeebe254482f341ecca177f9cde170f014960b7dfb51e4a8b2c2b9a",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "One API / New API Family isCliRequest Header Authentication Bypass",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0078",
+      "fingerprint": "sha256:b331c9fc77c7338270b842746498539a30996dad3b90da5c077b0f4b60113d7a",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "RAGFlow Jinja2 Server-Side Template Injection RCE (CVE-2026-28797)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0079",
+      "fingerprint": "sha256:b8ef7b7d3464f899fd39a061be2e017edc1364e44e605d9113c2d90221b7a212",
+      "confidence_tier": "CONFIRMED_SIGNATURE",
+      "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+      "severity": "CRITICAL",
+      "title": "Open WebUI Socket.IO get_event_call RCE & Jupyter Gate Bypass (CVE-2026-59216, CVE-2026-45672)",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0080",
+      "fingerprint": "sha256:01fb924d25fdc02a2015acfe79ce240628ea274a2eab4935b37bb0e3db16e8f6",
+      "confidence_tier": "BEHAVIORAL_INDICATOR",
+      "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+      "severity": "CRITICAL",
+      "title": "Web-Server Process Autonomous Recon & Exploit Tool-Spawn Burst",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0081",
+      "fingerprint": "sha256:177613f8008d64967606565ecadee261921243ff62838eb0ef0b2116db772c22",
+      "confidence_tier": "BEHAVIORAL_INDICATOR",
+      "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+      "severity": "HIGH",
+      "title": "Zero-Jitter 5-Second Agentic Beacon & Simultaneous Dual-Fetch Cadence",
+      "signed": true
+    },
+    {
+      "id": "SIG-2026-0082",
+      "fingerprint": "sha256:e3c5699b6b3583287d118660f28e0a8a8e8167b762b6715afce0cf92d0118450",
+      "confidence_tier": "BEHAVIORAL_INDICATOR",
+      "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+      "severity": "CRITICAL",
+      "title": "Self-Funding Stolen-Key Verification Sweep & Proxy-Failover Burst",
       "signed": true
     }
   ]

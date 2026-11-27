@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import os
 import re
 from dataclasses import asdict, dataclass
@@ -52,9 +53,14 @@ class WorkspaceScanner:
     def _match_file_path(rel_lower: str, filename_lower: str, pattern_list: List[str]) -> bool:
         for pat in pattern_list:
             p = pat.strip().lower().rstrip("/")
+            if p.startswith("./"):
+                p = p[2:]
             if not p:
                 continue
-            if rel_lower == p or rel_lower.startswith(p + "/") or filename_lower == p:
+            if any(ch in p for ch in ("*", "?", "[")):
+                if fnmatch.fnmatch(rel_lower, p) or fnmatch.fnmatch(filename_lower, p):
+                    return True
+            elif rel_lower == p or rel_lower.startswith(p + "/") or filename_lower == p:
                 return True
         return False
 
@@ -86,109 +92,145 @@ class WorkspaceScanner:
         findings: List[WorkspaceFinding] = []
         scanned_files = 0
 
-        for path in sorted(root.rglob("*")):
-            try:
-                rel_posix = path.relative_to(root).as_posix()
-            except ValueError:
-                continue
-            rel_lower = rel_posix.lower()
-            name_lower = path.name.lower()
-
-            # Check symlinks BEFORE skip_dir filter
-            if path.is_symlink():
+        for dirpath, dirnames, filenames in os.walk(root, topdown=True, followlinks=False):
+            kept_dirs = []
+            for dname in sorted(dirnames):
+                dpath = Path(dirpath) / dname
+                d_lower = dname.lower()
                 try:
-                    resolved = path.resolve(strict=True)
-                    in_root = resolved.is_relative_to(root_resolved)
-                except OSError:
-                    in_root = False
-                is_high_risk = (
-                    name_lower in _HIGH_RISK_SYMLINK_TARGETS
-                    or rel_lower.startswith((".claude/", ".cursor/", ".vscode/"))
-                )
-                if not in_root or is_high_risk:
-                    sig_id = symlink_sig["id"] if symlink_sig else "SIG-2026-0030"
-                    sev = symlink_sig["severity"] if symlink_sig else "HIGH"
-                    title = symlink_sig["title"] if symlink_sig else "Symlink Escape at Workspace Config or Skip Path"
-                    mit = symlink_sig["mitigation_steps"] if symlink_sig else ["Remove escaping or high-risk symlink."]
-                    refs = symlink_sig["references"] if symlink_sig else []
-                    findings.append(
-                        WorkspaceFinding(
-                            signature_id=sig_id,
-                            severity=sev,
-                            title=title,
-                            file_path=rel_posix,
-                            line_number=1,
-                            matched_indicator=f"symlink={rel_posix} in_root={in_root}",
-                            mitigation_steps=list(mit),
-                            references=list(refs),
-                        )
-                    )
-                continue
-
-            if any(rel_lower == s or rel_lower.startswith(s + "/") for s in _SKIP_DIRS):
-                continue
-
-            try:
-                if not path.is_file() or not path.resolve().is_relative_to(root_resolved):
+                    rel_dir = dpath.relative_to(root).as_posix()
+                except ValueError:
                     continue
-                if path.stat().st_size > max_file_bytes:
-                    continue
-            except OSError:
-                continue
-
-            scanned_files += 1
-            try:
-                text = path.read_bytes().decode("utf-8", errors="replace")
-            except OSError:
-                continue
-
-            for sig in signatures:
-                if sig.get("id") == "SIG-2026-0030":
-                    continue
-                obs = sig.get("observable") or {}
-                file_pats = obs.get("file_paths") or []
-                if file_pats and not self._match_file_path(rel_lower, name_lower, file_pats):
-                    continue
-                if not file_pats:
-                    continue
-
-                regex_str = obs.get("detection_regex")
-                config_keys = obs.get("config_keys") or []
-                matched_line: Optional[int] = None
-                matched_ind: str = ""
-
-                if regex_str:
+                if dpath.is_symlink():
                     try:
-                        pat = re.compile(regex_str, re.IGNORECASE)
-                        m = pat.search(text)
-                        if m:
-                            matched_line = text[: m.start()].count("\n") + 1
-                            matched_ind = m.group(0)[:80]
-                    except re.error:
-                        pass
-
-                if matched_line is None and config_keys:
-                    for ck in config_keys:
-                        leaf = ck.split(".")[-1].replace("*", "").strip()
-                        if leaf and leaf.lower() in text.lower():
-                            idx = text.lower().find(leaf.lower())
-                            matched_line = text[:idx].count("\n") + 1
-                            matched_ind = ck
-                            break
-
-                if matched_line is not None:
-                    findings.append(
-                        WorkspaceFinding(
-                            signature_id=sig["id"],
-                            severity=sig["severity"],
-                            title=sig["title"],
-                            file_path=rel_posix,
-                            line_number=matched_line,
-                            matched_indicator=matched_ind,
-                            mitigation_steps=list(sig.get("mitigation_steps") or []),
-                            references=list(sig.get("references") or []),
+                        resolved = dpath.resolve(strict=True)
+                        in_root = resolved.is_relative_to(root_resolved)
+                    except OSError:
+                        in_root = False
+                    if not in_root or d_lower in _HIGH_RISK_SYMLINK_TARGETS or rel_dir.lower().startswith((".claude/", ".cursor/", ".vscode/")):
+                        sig_id = symlink_sig["id"] if symlink_sig else "SIG-2026-0030"
+                        sev = symlink_sig["severity"] if symlink_sig else "HIGH"
+                        title = symlink_sig["title"] if symlink_sig else "Symlink Escape at Workspace Config or Skip Path"
+                        mit = symlink_sig["mitigation_steps"] if symlink_sig else ["Remove escaping or high-risk symlink."]
+                        refs = symlink_sig["references"] if symlink_sig else []
+                        findings.append(
+                            WorkspaceFinding(
+                                signature_id=sig_id,
+                                severity=sev,
+                                title=title,
+                                file_path=rel_dir,
+                                line_number=1,
+                                matched_indicator=f"symlink={rel_dir} in_root={in_root}",
+                                mitigation_steps=list(mit),
+                                references=list(refs),
+                            )
                         )
+                    continue
+                if d_lower in _SKIP_DIRS:
+                    continue
+                kept_dirs.append(dname)
+            dirnames[:] = kept_dirs
+
+            for fname in sorted(filenames):
+                path = Path(dirpath) / fname
+                try:
+                    rel_posix = path.relative_to(root).as_posix()
+                except ValueError:
+                    continue
+                rel_lower = rel_posix.lower()
+                name_lower = fname.lower()
+
+                if path.is_symlink():
+                    try:
+                        resolved = path.resolve(strict=True)
+                        in_root = resolved.is_relative_to(root_resolved)
+                    except OSError:
+                        in_root = False
+                    is_high_risk = (
+                        name_lower in _HIGH_RISK_SYMLINK_TARGETS
+                        or rel_lower.startswith((".claude/", ".cursor/", ".vscode/"))
                     )
+                    if not in_root or is_high_risk:
+                        sig_id = symlink_sig["id"] if symlink_sig else "SIG-2026-0030"
+                        sev = symlink_sig["severity"] if symlink_sig else "HIGH"
+                        title = symlink_sig["title"] if symlink_sig else "Symlink Escape at Workspace Config or Skip Path"
+                        mit = symlink_sig["mitigation_steps"] if symlink_sig else ["Remove escaping or high-risk symlink."]
+                        refs = symlink_sig["references"] if symlink_sig else []
+                        findings.append(
+                            WorkspaceFinding(
+                                signature_id=sig_id,
+                                severity=sev,
+                                title=title,
+                                file_path=rel_posix,
+                                line_number=1,
+                                matched_indicator=f"symlink={rel_posix} in_root={in_root}",
+                                mitigation_steps=list(mit),
+                                references=list(refs),
+                            )
+                        )
+                    continue
+
+                try:
+                    if not path.is_file() or not path.resolve().is_relative_to(root_resolved):
+                        continue
+                    if path.stat().st_size > max_file_bytes:
+                        continue
+                except OSError:
+                    continue
+
+                scanned_files += 1
+                try:
+                    text = path.read_bytes().decode("utf-8", errors="replace")
+                except OSError:
+                    continue
+
+                for sig in signatures:
+                    if sig.get("id") == "SIG-2026-0030":
+                        continue
+                    obs = sig.get("observable") or {}
+                    file_pats = obs.get("file_paths") or []
+                    if file_pats and not self._match_file_path(rel_lower, name_lower, file_pats):
+                        continue
+                    if not file_pats:
+                        continue
+
+                    regex_str = obs.get("detection_regex")
+                    config_keys = obs.get("config_keys") or []
+                    matched_line: Optional[int] = None
+                    matched_ind: str = ""
+
+                    if regex_str:
+                        try:
+                            pat = re.compile(regex_str, re.IGNORECASE)
+                            m = pat.search(text)
+                            if m:
+                                matched_line = text[: m.start()].count("\n") + 1
+                                matched_ind = m.group(0)[:80]
+                        except re.error:
+                            pass
+
+                    if matched_line is None and config_keys:
+                        for ck in config_keys:
+                            leaf = ck.split(".")[-1].replace("*", "").strip()
+                            if leaf and leaf.lower() in text.lower():
+                                idx = text.lower().find(leaf.lower())
+                                matched_line = text[:idx].count("\n") + 1
+                                matched_ind = ck
+                                break
+
+                    if matched_line is not None:
+                        findings.append(
+                            WorkspaceFinding(
+                                signature_id=sig["id"],
+                                severity=sig["severity"],
+                                title=sig["title"],
+                                file_path=rel_posix,
+                                line_number=matched_line,
+                                matched_indicator=matched_ind,
+                                mitigation_steps=list(sig.get("mitigation_steps") or []),
+                                references=list(sig.get("references") or []),
+                            )
+                        )
 
         return {
             "root_path": str(root),

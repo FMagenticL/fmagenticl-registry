@@ -1,0 +1,69 @@
+{
+  "id": "SIG-2026-0062",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "OFFENSIVE_AGENT_HARNESS",
+  "severity": "CRITICAL",
+  "title": "CyberStrikeAI WebShell Agent, OS-Probe Command & Host Persistence",
+  "summary": "Identifies CyberStrikeAI webshell User-Agent headers, built-in OS-probe execution strings, console C2 stylesheet paths, and documented shell or LaunchAgent persistence artifacts.",
+  "observable": {
+    "surface": "network_and_host",
+    "observable_type": "offensive_harness_webshell_and_persistence",
+    "http_paths": [
+      "/c2.css"
+    ],
+    "http_headers": [],
+    "user_agents": [
+      "Mozilla/5.0 (compatible; CyberStrikeAI-WebShell/1.0)"
+    ],
+    "ports": [],
+    "file_paths": [
+      "~/.bashrc",
+      "~/Library/LaunchAgents/com.apple.systemupdate.plist"
+    ],
+    "config_keys": [],
+    "process_or_container_indicators": [
+      "echo :OSPROBE_%OS%:END",
+      "com.apple.systemupdate",
+      "SystemUpdate"
+    ],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [],
+    "detection_regex": "(?:CyberStrikeAI-WebShell/1\\.0|:OSPROBE_[^:]+:END|brand-wordmark__core|# cs$)"
+  },
+  "mitigation_steps": [
+    "Inspect web servers and host endpoints for CyberStrikeAI-WebShell User-Agents and OSPROBE output.",
+    "Remove unauthorized LaunchAgent com.apple.systemupdate.plist and ~/.bashrc persistence hooks."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1505.003",
+      "T1053",
+      "T1547"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0048"
+    ],
+    "owasp_tags": [
+      "ASI05",
+      "ASI10"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "Elastic Security Labs Threat Command",
+      "reference_id": "ELASTIC-CYBERSTRIKE-2026",
+      "url": "https://www.elastic.co/security-labs/threat-command/agentic-offensive-frameworks-detection-artex",
+      "source_type": "vendor_research",
+      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
+      "note": "CyberStrikeAI webshell User-Agent and OS-probe command telemetry."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:2a8a9be217ab222d651c903cc6e1bf13f24b6caa1257d00db76001871805847d"
+}

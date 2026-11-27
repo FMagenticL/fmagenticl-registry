@@ -1,0 +1,71 @@
+{
+  "id": "SIG-2026-0071",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "MCP_AND_WORKSPACE_HIJACK",
+  "severity": "MEDIUM",
+  "title": "Untrusted Pull-Request .mcp.json Execution in claude-code-action (CVE-2026-47751)",
+  "summary": "Flags CI workflows invoking anthropics/claude-code-action alongside untrusted pull-request .mcp.json manifests capable of triggering arbitrary command execution.",
+  "observable": {
+    "surface": "workspace_config",
+    "observable_type": "ci_untrusted_mcp_workflow",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [
+      ".mcp.json",
+      ".github/workflows/*.yml"
+    ],
+    "config_keys": [
+      "mcpServers",
+      "jobs.*.steps.*.uses"
+    ],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "GitHubActions",
+        "name": "anthropics/claude-code-action",
+        "affected_range": "pre-patch"
+      }
+    ],
+    "detection_regex": "anthropics/claude-code-action"
+  },
+  "mitigation_steps": [
+    "Update anthropics/claude-code-action to the patched release and disable untrusted PR .mcp.json loading.",
+    "Restrict pull_request_target workflows from checking out untrusted fork .mcp.json configurations."
+  ],
+  "taxonomy": {
+    "advisory_ids": [],
+    "cve_ids": [
+      "CVE-2026-47751"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [],
+    "mitre_attack_ids": [
+      "T1195.002",
+      "T1059"
+    ],
+    "mitre_atlas_ids": [
+      "AML.T0051"
+    ],
+    "owasp_tags": [
+      "ASI04",
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "NeuralTrust Security Research",
+      "reference_id": "CVE-2026-47751",
+      "url": "https://neuraltrust.ai/blog/claude-code-cursor-mcp-security",
+      "source_type": "vendor_research",
+      "license_or_terms": "Factual CVE metadata extraction",
+      "note": "CVE-2026-47751 CI workflow .mcp.json execution risk."
+    }
+  ],
+  "schema_version": "3.0",
+  "fingerprint": "sha256:f622d5a5c441451bbb4dbaa8237f933a1996656a2383c130d877e1b60a72ba8a"
+}
