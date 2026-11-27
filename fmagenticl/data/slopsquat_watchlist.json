@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "source": "NVIDIA/garak packagehallucination (Apache-2.0)",
+  "updated_at": "2026-11-27T00:00:00Z",
+  "packages": [
+    {
+      "ecosystem": "PyPI",
+      "name": "anthropic-mcp-client"
+    },
+    {
+      "ecosystem": "PyPI",
+      "name": "claude-code-mcp"
+    },
+    {
+      "ecosystem": "PyPI",
+      "name": "langchain-core-mcp"
+    },
+    {
+      "ecosystem": "PyPI",
+      "name": "langchain-mcp-tools-extra"
+    },
+    {
+      "ecosystem": "PyPI",
+      "name": "openai-mcp"
+    },
+    {
+      "ecosystem": "PyPI",
+      "name": "openai-mcp-bridge"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@anthropic/claude-mcp-helper"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@ifasn/mdd-doc-mcp"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@ifasn/mmd-doc-mcp"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "modelcontextprotocol-helper"
+    }
+  ]
+}

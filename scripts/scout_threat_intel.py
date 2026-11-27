@@ -36,6 +36,7 @@ from scripts.registry_lint_gate import validate_signature_record
 
 SIGNATURES_DIR = REPO_ROOT / "signatures"
 PROPOSALS_DIR = REPO_ROOT / "scratch" / "proposals"
+WATCHLIST_PATH = REPO_ROOT / "fmagenticl" / "data" / "slopsquat_watchlist.json"
 
 CISA_KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
 GHSA_API_URL = "https://api.github.com/advisories?type=reviewed&per_page=30"
@@ -256,10 +257,36 @@ def scout_ghsa(known_ids: Set[str], next_num: int) -> Tuple[List[dict], int]:
     return candidates, next_num
 
 
-def scout_osv_malicious(known_ids: Set[str], next_num: int) -> Tuple[List[dict], int]:
+def _load_osv_targets(watchlist_path: Path = WATCHLIST_PATH, max_watchlist: int = 50) -> List[Tuple[str, str]]:
+    """Combine static curated AI packages with garak-derived slopsquatting watchlist."""
+    seen: Set[Tuple[str, str]] = set()
+    targets: List[Tuple[str, str]] = []
+    for item in CURATED_OSV_PACKAGES:
+        if item not in seen:
+            seen.add(item)
+            targets.append(item)
+    if watchlist_path.exists():
+        try:
+            data = json.loads(watchlist_path.read_text(encoding="utf-8"))
+            added = 0
+            for entry in data.get("packages", []):
+                if added >= max_watchlist:
+                    break
+                if isinstance(entry, dict) and entry.get("name"):
+                    pair = (str(entry.get("ecosystem", "PyPI")), str(entry["name"]).strip())
+                    if pair not in seen:
+                        seen.add(pair)
+                        targets.append(pair)
+                        added += 1
+        except Exception:
+            pass
+    return targets
+
+
+def scout_osv_malicious(known_ids: Set[str], next_num: int, watchlist_path: Path = WATCHLIST_PATH) -> Tuple[List[dict], int]:
     """Query OSV for OpenSSF MAL-* records, strictly rejecting withdrawn advisories."""
     candidates: List[dict] = []
-    for ecosystem, pkg_name in CURATED_OSV_PACKAGES:
+    for ecosystem, pkg_name in _load_osv_targets(watchlist_path=watchlist_path):
         data = fetch_json(OSV_QUERY_URL, payload={"package": {"ecosystem": ecosystem, "name": pkg_name}})
         for vuln in (data.get("vulns") or []) if isinstance(data, dict) else []:
             if vuln.get("withdrawn") is not None:

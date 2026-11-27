@@ -12,4 +12,5 @@ FMagenticL is an independent open-source project and is not affiliated with, spo
 - **MITRE ATT&CK® & CVE®:** MITRE ATT&CK® and CVE® are registered trademarks, and MITRE ATLAS™ is a trademark, of The MITRE Corporation. © 2026 The MITRE Corporation. Taxonomic identifiers (`T*`, `AML.T*`, `CVE-*`) are referenced for defensive interoperability.
 - **U.S. Government Advisories:** Federal advisories (FBI FLASH, CISA KEV, FinCEN) are U.S. Government works (17 U.S.C. § 105) cited strictly by public advisory ID and canonical `.gov` URL.
 - **GitHub Advisory Database (`GHSA-*`):** Referenced by factual advisory ID, affected package bounds, and upstream URL under CC BY 4.0.
+- **NVIDIA/garak (`packagehallucination`):** Hallucinated package-name watchlist metadata extracted under Apache-2.0.
 - **Standards:** RFC 8785 (JSON Canonicalization Scheme), RFC 8615 (Well-Known URIs), MCP Streamable HTTP (2025-03-26).
