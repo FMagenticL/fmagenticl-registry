@@ -1,0 +1,65 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0088",
+  "fingerprint": "sha256:fa9cd956b5ab48c6c862675d85bc5ecb4921d79fc8b121dd73e024b326941e92",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "n8n Actively Exploited Vulnerability (CVE-2025-68613)",
+  "summary": "Tracks active exploitation of n8n (CVE-2025-68613) listed in the CISA Known Exploited Vulnerabilities catalog.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "kev_cve_identifier",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "CISA-KEV",
+        "name": "n8n",
+        "affected_range": "see-advisory"
+      }
+    ],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Apply vendor patches for n8n (CVE-2025-68613) per CISA KEV remediation guidance.",
+    "Restrict external ingress to affected management or API surfaces."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "CISA-KEV"
+    ],
+    "cve_ids": [
+      "CVE-2025-68613"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-913"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2025-68613",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual KEV catalog metadata extraction; original clean-room summary."
+    }
+  ]
+}

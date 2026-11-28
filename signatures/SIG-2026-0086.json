@@ -1,0 +1,65 @@
+{
+  "schema_version": "3.0",
+  "id": "SIG-2026-0086",
+  "fingerprint": "sha256:66a40682cbcf2180cc903813f9c163bc2b61ff429de53e857b0eeb88349b9675",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
+  "severity": "CRITICAL",
+  "title": "Langflow Actively Exploited Vulnerability (CVE-2025-34291)",
+  "summary": "Tracks active exploitation of Langflow (CVE-2025-34291) listed in the CISA Known Exploited Vulnerabilities catalog.",
+  "observable": {
+    "surface": "http_gateway",
+    "observable_type": "kev_cve_identifier",
+    "http_paths": [],
+    "http_headers": [],
+    "user_agents": [],
+    "ports": [],
+    "file_paths": [],
+    "config_keys": [],
+    "process_or_container_indicators": [],
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "CISA-KEV",
+        "name": "langflow",
+        "affected_range": "see-advisory"
+      }
+    ],
+    "detection_regex": null
+  },
+  "mitigation_steps": [
+    "Apply vendor patches for Langflow (CVE-2025-34291) per CISA KEV remediation guidance.",
+    "Restrict external ingress to affected management or API surfaces."
+  ],
+  "taxonomy": {
+    "advisory_ids": [
+      "CISA-KEV"
+    ],
+    "cve_ids": [
+      "CVE-2025-34291"
+    ],
+    "ghsa_ids": [],
+    "cwe_ids": [
+      "CWE-346"
+    ],
+    "mitre_attack_ids": [
+      "T1190"
+    ],
+    "mitre_atlas_ids": [],
+    "owasp_tags": [
+      "ASI05"
+    ]
+  },
+  "references": [
+    {
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2025-34291",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual KEV catalog metadata extraction; original clean-room summary."
+    }
+  ]
+}

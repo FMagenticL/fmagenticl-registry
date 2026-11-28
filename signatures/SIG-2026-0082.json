@@ -1,67 +1,65 @@
 {
+  "schema_version": "3.0",
   "id": "SIG-2026-0082",
-  "confidence_tier": "BEHAVIORAL_INDICATOR",
-  "threat_category": "AUTONOMOUS_BEHAVIORAL_IOC",
+  "fingerprint": "sha256:e3c5699b6b3583287d118660f28e0a8a8e8167b762b6715afce0cf92d0118450",
+  "confidence_tier": "CONFIRMED_SIGNATURE",
+  "threat_category": "EXPLOITED_AI_INFRASTRUCTURE",
   "severity": "CRITICAL",
-  "title": "Self-Funding Stolen-Key Verification Sweep & Proxy-Failover Burst",
-  "summary": "Detects sub-25-second autonomous cloud-to-LLM verification chains transitioning from Entra/ARM secret reads into /v1/models validation and proxy failover upon HTTP 403/404.",
+  "title": "MLflow Actively Exploited Vulnerability (CVE-2026-64849)",
+  "summary": "Tracks active exploitation of MLflow (CVE-2026-64849) listed in the CISA Known Exploited Vulnerabilities catalog.",
   "observable": {
-    "surface": "llm_api",
-    "observable_type": "cross_plane_key_harvest_sequence",
-    "http_paths": [
-      "/v1/models",
-      "/v1/chat/completions"
-    ],
+    "surface": "http_gateway",
+    "observable_type": "kev_cve_identifier",
+    "http_paths": [],
     "http_headers": [],
     "user_agents": [],
     "ports": [],
     "file_paths": [],
     "config_keys": [],
     "process_or_container_indicators": [],
-    "cloud_api_sequence": [
-      "EntraIdSpnSignInEvents",
-      "MicrosoftGraph",
-      "AzureResourceManager",
-      "KeyVaultSecretRead",
-      "LLMModelList"
+    "cloud_api_sequence": [],
+    "window_seconds": null,
+    "threshold_count": null,
+    "affected_packages": [
+      {
+        "ecosystem": "CISA-KEV",
+        "name": "mlflow",
+        "affected_range": "see-advisory"
+      }
     ],
-    "window_seconds": 25,
-    "threshold_count": 4,
-    "affected_packages": [],
     "detection_regex": null
   },
   "mitigation_steps": [
-    "Revoke service principal credentials exhibiting sub-25-second secret-read-to-LLM validation bursts.",
-    "Alert on rapid /v1/models key sweeps followed by immediate proxy IP failover on 403/404."
+    "Apply vendor patches for MLflow (CVE-2026-64849) per CISA KEV remediation guidance.",
+    "Restrict external ingress to affected management or API surfaces."
   ],
   "taxonomy": {
-    "advisory_ids": [],
-    "cve_ids": [],
+    "advisory_ids": [
+      "CISA-KEV"
+    ],
+    "cve_ids": [
+      "CVE-2026-64849"
+    ],
     "ghsa_ids": [],
-    "cwe_ids": [],
+    "cwe_ids": [
+      "CWE-918"
+    ],
     "mitre_attack_ids": [
-      "T1078.004",
-      "T1580",
-      "T1090"
+      "T1190"
     ],
-    "mitre_atlas_ids": [
-      "AML.T0048"
-    ],
+    "mitre_atlas_ids": [],
     "owasp_tags": [
-      "ASI03",
-      "ASI10"
+      "ASI05"
     ]
   },
   "references": [
     {
-      "source_name": "Amazon Threat Intelligence",
-      "reference_id": "AWS-SELFFUND-2026",
-      "url": "https://aws.amazon.com/blogs/security/amazon-threat-intelligence-observes-threat-actors-running-cybercrime-campaigns-with-artex-ai-agents/",
-      "source_type": "vendor_research",
-      "license_or_terms": "Clean-room factual extraction (17 U.S.C. 102(b))",
-      "note": "Sub-25-second autonomous stolen-key verification and proxy-failover pattern."
+      "source_name": "CISA Known Exploited Vulnerabilities",
+      "reference_id": "CVE-2026-64849",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "source_type": "government_advisory",
+      "license_or_terms": "US-Public-Domain (17 U.S.C. 105)",
+      "note": "Factual KEV catalog metadata extraction; original clean-room summary."
     }
-  ],
-  "schema_version": "3.0",
-  "fingerprint": "sha256:e3c5699b6b3583287d118660f28e0a8a8e8167b762b6715afce0cf92d0118450"
+  ]
 }
